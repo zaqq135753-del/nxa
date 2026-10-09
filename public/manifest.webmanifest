@@ -1,0 +1,22 @@
+{
+  "name": "Guia Oficial Caraíva — Experiência Viva",
+  "short_name": "Guia Caraíva",
+  "description": "Experiência digital viva, imersiva e espacial de Caraíva, Bahia. Marés, gastronomia, praias e Concierge IA.",
+  "start_url": "/guia",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#102B31",
+  "theme_color": "#102B31",
+  "icons": [
+    {
+      "src": "/apple-touch-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ]
+}

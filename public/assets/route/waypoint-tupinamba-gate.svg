@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="lushSky" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#93C5FD" />
+      <stop offset="100%" stop-color="#D1FAE5" />
+    </linearGradient>
+    <linearGradient id="sandTup" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#F5ECE1" />
+      <stop offset="100%" stop-color="#DEC9B3" />
+    </linearGradient>
+  </defs>
+  <rect width="600" height="200" fill="url(#lushSky)" />
+  <rect y="190" width="600" height="210" fill="url(#sandTup)" />
+
+  <!-- Fachada e Jardim Tropical da Pousada Tupinambá -->
+  <g transform="translate(70, 90)">
+    <!-- Casa Colonial Verde Resposo e Madeira -->
+    <rect x="0" y="30" width="460" height="160" fill="#1C3F38" stroke="#132A25" stroke-width="2" />
+    <!-- Telhado em Duas Águas -->
+    <path d="M -20,30 L 230,-25 L 480,30 Z" fill="#9A3412" stroke="#7C2D12" stroke-width="2" />
+    <!-- Varanda com Rede Balançando -->
+    <rect x="40" y="90" width="380" height="100" fill="#2E6B56" opacity="0.4" />
+    <!-- Rede de descanso -->
+    <path d="M 60,110 Q 110,140 160,110" stroke="#FFF" stroke-width="3.5" fill="none" />
+    <!-- Portão com Arandela Acesa -->
+    <rect x="180" y="95" width="100" height="95" fill="none" stroke="#D97706" stroke-width="3" />
+    <circle cx="230" cy="85" r="8" fill="#FDE047" filter="drop-shadow(0 0 6px #FACC15)" />
+    <!-- Placa de Identificação -->
+    <rect x="160" y="40" width="140" height="34" rx="6" fill="#F5ECE1" stroke="#1C3F38" stroke-width="2" />
+    <text x="230" y="58" font-family="system-ui, sans-serif" font-size="11" font-weight="bold" fill="#1C3F38" text-anchor="middle">POUSADA TUPINAMBÁ</text>
+    <text x="230" y="69" font-family="system-ui, sans-serif" font-size="8" fill="#059669" text-anchor="middle">REDE TAMIKUA · CARAÍVA</text>
+  </g>
+
+  <!-- Folhagens Tropicais de Costela de Adão e Coqueiros -->
+  <g fill="#166534" opacity="0.9">
+    <ellipse cx="60" cy="240" rx="35" ry="60" transform="rotate(-30 60 240)" />
+    <ellipse cx="540" cy="230" rx="35" ry="65" transform="rotate(30 540 230)" />
+    <ellipse cx="490" cy="270" rx="40" ry="50" transform="rotate(15 490 270)" />
+  </g>
+
+  <!-- Caminho de Pedras Rústicas na Areia -->
+  <g fill="#D6D3D1" stroke="#A8A29E">
+    <ellipse cx="230" cy="280" rx="16" ry="8" />
+    <ellipse cx="245" cy="310" rx="18" ry="9" />
+    <ellipse cx="225" cy="340" rx="19" ry="10" />
+    <ellipse cx="240" cy="370" rx="20" ry="11" />
+  </g>
+
+  <text x="300" y="360" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#1C3F38" text-anchor="middle">🌺 SEJA BEM-VINDO À POUSADA TUPINAMBÁ</text>
+
+  <!-- Indicador -->
+  <rect x="20" y="20" width="270" height="52" rx="10" fill="rgba(28, 63, 56, 0.95)" />
+  <text x="35" y="42" font-family="system-ui, sans-serif" font-size="13" font-weight="bold" fill="#FFF">PONTO 5: CHEGADA À POUSADA</text>
+  <text x="35" y="60" font-family="system-ui, sans-serif" font-size="11" fill="#86EFAC">Tupinambá Pousada &amp; Hostel (Portão)</text>
+</svg>

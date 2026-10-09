@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <defs>
+    <linearGradient id="skyCaraiva" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FCE7D0"/>
+      <stop offset="60%" stop-color="#F5D0A9"/>
+      <stop offset="100%" stop-color="#E2B17F"/>
+    </linearGradient>
+    <linearGradient id="sandGround" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#EAD8BE"/>
+      <stop offset="100%" stop-color="#D9C09E"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#skyCaraiva)"/>
+  <circle cx="620" cy="160" r="70" fill="#F8B153" opacity="0.6"/>
+  <path d="M0 290 Q 200 280, 400 300 T 800 295 L 800 450 L 0 450 Z" fill="url(#sandGround)"/>
+  <path d="M70 290 Q 80 180, 110 120 M110 120 Q 50 110, 10 130 M110 120 Q 90 80, 70 60 M110 120 Q 140 70, 170 80 M110 120 Q 160 110, 200 130" stroke="#234231" stroke-width="4" fill="none"/>
+  <path d="M720 295 Q 700 190, 680 130 M680 130 Q 620 120, 590 140 M680 130 Q 660 80, 650 60 M680 130 Q 710 70, 740 90 M680 130 Q 730 120, 760 140" stroke="#234231" stroke-width="4" fill="none"/>
+  <rect x="220" y="190" width="360" height="150" rx="4" fill="#7A4E2D"/>
+  <polygon points="200,190 400,110 600,190" fill="#9C663B"/>
+  <rect x="250" y="240" width="12" height="100" fill="#52321B"/>
+  <rect x="330" y="240" width="12" height="100" fill="#52321B"/>
+  <rect x="410" y="240" width="12" height="100" fill="#52321B"/>
+  <rect x="490" y="240" width="12" height="100" fill="#52321B"/>
+  <rect x="280" y="225" width="34" height="45" rx="2" fill="#2E6B80"/>
+  <rect x="360" y="225" width="34" height="45" rx="2" fill="#2E6B80"/>
+  <rect x="440" y="235" width="36" height="75" rx="2" fill="#B34B30"/>
+  <path d="M260 270 Q 300 310, 340 270" stroke="#F4EDE2" stroke-width="6" fill="none" stroke-linecap="round"/>
+  <rect x="30" y="30" width="280" height="40" rx="8" fill="#1B3B2B" opacity="0.85"/>
+  <text x="45" y="55" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="700" fill="#F4EADB">
+    CARAMURU HOSTEL CARAÍVA
+  </text>
+</svg>

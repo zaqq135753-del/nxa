@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <defs>
+    <linearGradient id="riverWater" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#41879B"/>
+      <stop offset="50%" stop-color="#2D6B80"/>
+      <stop offset="100%" stop-color="#1B4D5E"/>
+    </linearGradient>
+    <linearGradient id="sandBank" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#E8D2B4"/>
+      <stop offset="100%" stop-color="#D4B995"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="200" fill="#FBF3E8"/>
+  <circle cx="400" cy="180" r="140" fill="#FAD19B" opacity="0.5"/>
+  <path d="M0 160 Q 90 190, 140 260 L 0 320 Z" fill="url(#sandBank)"/>
+  <rect y="180" width="800" height="270" fill="url(#riverWater)"/>
+  <path d="M0 240 Q 200 230, 400 245 T 800 240" stroke="#71A8B8" stroke-width="2" opacity="0.6"/>
+  <path d="M0 310 Q 200 300, 400 315 T 800 310" stroke="#71A8B8" stroke-width="2" opacity="0.5"/>
+  <path d="M0 390 Q 200 380, 400 395 T 800 390" stroke="#71A8B8" stroke-width="2" opacity="0.4"/>
+  <path d="M660 160 Q 720 200, 800 230 L 800 450 L 640 450 Q 600 300, 660 160 Z" fill="url(#sandBank)"/>
+  <g transform="translate(360, 260)">
+    <path d="M-60 15 C -30 35, 40 35, 70 15 C 50 30, -40 30, -60 15 Z" fill="#844B20"/>
+    <path d="M-60 15 C -20 24, 30 24, 70 15 L 65 18 C 25 28, -25 28, -55 18 Z" fill="#B36832"/>
+    <circle cx="30" cy="-6" r="6" fill="#3D2614"/>
+    <path d="M30 0 L 26 20 M 26 8 L 15 16" stroke="#3D2614" stroke-width="3" stroke-linecap="round"/>
+    <line x1="12" y1="12" x2="5" y2="38" stroke="#F4EDE2" stroke-width="3" stroke-linecap="round"/>
+    <circle cx="-15" cy="-2" r="5.5" fill="#1B3B2B"/>
+    <rect x="-22" y="4" width="14" height="15" rx="3" fill="#C27D38"/>
+  </g>
+  <rect x="230" y="40" width="340" height="48" rx="24" fill="#1B3B2B" opacity="0.9"/>
+  <text x="400" y="69" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="13" font-weight="600" fill="#F4EADB" text-anchor="middle">
+    "Daqui em diante Caraíva muda o ritmo."
+  </text>
+</svg>

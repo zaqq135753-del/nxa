@@ -1,0 +1,66 @@
+.caraiva-guide .caraiva-live-map { --clm-gold:#f6c945; --clm-night:#090b0c; --clm-surface:#141719; --clm-sand:#f7f4ed; --clm-river:#3f7d83; --clm-mangrove:#486b5b; position:fixed; inset:0; background:var(--clm-night); color:var(--clm-sand); overflow:hidden; z-index:25; }
+.caraiva-guide .clm-scene { position:absolute; inset:0 0 calc(96px + env(safe-area-inset-bottom,0px)); }
+.caraiva-guide .clm-engine { position:absolute; inset:0; width:100%; height:100%; }
+.caraiva-guide .clm-engine gmp-map-3d { width:100%; height:100%; display:block; }
+.caraiva-guide .clm-illustrated { overflow:hidden; touch-action:none; background:radial-gradient(ellipse at 50% 60%,#213c35,#090b0c 80%); }
+.caraiva-guide .clm-village-illustration { position:absolute; max-width:none; opacity:.85; user-select:none; pointer-events:none; filter:brightness(.74) saturate(.7); }
+.caraiva-guide .clm-orb { position:absolute; width:52px; height:52px; transform:translate(-50%,-50%); cursor:pointer; touch-action:manipulation; filter:drop-shadow(0 4px 6px #0008); background:transparent; border:0; padding:0; }
+.caraiva-guide .clm-orb[aria-pressed="true"] { z-index:10; scale:1.15; }
+.caraiva-guide .clm-orb:hover { filter:drop-shadow(0 0 7px #f6c94566); }
+.caraiva-guide .clm-orb:focus-visible { outline:2px solid var(--clm-gold); outline-offset:3px; border-radius:50%; }
+.caraiva-guide .clm-user-position { position:absolute; width:18px; height:18px; transform:translate(-50%,-50%); background:#3f7d83; border:3px solid #fff; border-radius:50%; box-shadow:0 0 0 7px #3f7d8333; }
+.caraiva-guide .clm-illustration-credit { position:absolute; bottom:6px; left:12px; font-size:10px; color:#c5d1cb; background:#090b0cb8; border-radius:6px; padding:4px 8px; pointer-events:none; }
+.caraiva-guide .clm-toolbar { position:absolute; z-index:3; top:env(safe-area-inset-top,0px); left:0; right:0; padding:14px max(16px,env(safe-area-inset-left,0px)) 12px max(16px,env(safe-area-inset-right,0px)); background:linear-gradient(#090b0cf5,#090b0cbe 85%,transparent); pointer-events:none; }
+.caraiva-guide .clm-toolbar>* { pointer-events:auto; max-width:640px; }
+.caraiva-guide .clm-brand-row { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+.caraiva-guide .clm-home { display:flex; align-items:center; gap:10px; min-height:44px; text-align:left; font:500 11px Georgia,serif; letter-spacing:.16em; }
+.caraiva-guide .clm-home strong { display:block; font:700 13px sans-serif; color:var(--clm-gold); letter-spacing:.2em; margin-top:3px; }
+.caraiva-guide .clm-modes { display:flex; background:#141719ec; border:1px solid #ffffff20; border-radius:14px; overflow:hidden; }
+.caraiva-guide .clm-modes button { min-width:44px; min-height:44px; font-size:11px; color:#b4c3bd; }
+.caraiva-guide .clm-modes button[aria-pressed="true"] { background:#f6c94518; color:var(--clm-gold); }
+.caraiva-guide .clm-tagline { font-size:11px; color:#b6c2bc; margin:4px 0 12px; }
+.caraiva-guide .clm-search { display:flex; align-items:center; gap:10px; min-height:44px; padding:0 14px; border-radius:16px; border:1px solid #ffffff23; background:#141719e8; color:#a9bcb3; }
+.caraiva-guide .clm-search input { flex:1; min-width:0; outline:none; border:0; background:transparent; font-size:12px; color:var(--clm-sand); padding:12px 0; }
+.caraiva-guide .clm-search input::placeholder { color:#a5b2ac; }
+.caraiva-guide .clm-search:focus-within { border-color:var(--clm-gold); }
+.caraiva-guide .clm-filter-row { display:flex; align-items:center; gap:6px; overflow-x:auto; scrollbar-width:none; margin-top:8px; padding:3px 0; }
+.caraiva-guide .clm-filter-row::-webkit-scrollbar { display:none; }
+.caraiva-guide .clm-filter-row button { white-space:nowrap; flex-shrink:0; min-height:44px; padding:0 13px; font-size:11px; border:1px solid #ffffff25; border-radius:22px; background:#141719ee; color:#d1d9d4; }
+.caraiva-guide .clm-filter-row button[aria-pressed="true"] { color:var(--clm-gold); border-color:#f6c94580; background:#303022ee; }
+.caraiva-guide .clm-context-filters { margin-top:0; }
+.caraiva-guide .clm-context-filters button { font-size:10px; }
+.caraiva-guide .clm-price { min-height:44px; display:flex; align-items:center; gap:6px; border:1px solid #ffffff25; background:#141719ee; border-radius:22px; font-size:10px; white-space:nowrap; padding:0 11px; }
+.caraiva-guide .clm-price select { min-height:42px; background:transparent; color:var(--clm-sand); max-width:78px; font-size:10px; }
+.caraiva-guide .clm-price select option { background:#141719; }
+.caraiva-guide .caraiva-live-map button:disabled { opacity:.4; cursor:not-allowed; }
+.caraiva-guide .clm-status { position:absolute; top:calc(259px + env(safe-area-inset-top,0px)); left:max(16px,env(safe-area-inset-left,0px)); right:64px; display:flex; gap:5px; flex-wrap:wrap; pointer-events:none; font-size:9px; }
+.caraiva-guide .clm-status span { border:1px solid #ffffff15; border-radius:8px; background:#090b0ccc; color:#c4d0c9; padding:5px 8px; }
+.caraiva-guide .clm-controls { position:absolute; z-index:4; right:max(14px,env(safe-area-inset-right,0px)); bottom:calc(222px + env(safe-area-inset-bottom,0px)); display:flex; flex-direction:column; gap:6px; }
+.caraiva-guide .clm-controls button { width:44px; height:44px; display:grid; place-items:center; border-radius:14px; border:1px solid #ffffff26; color:#d7e3db; background:#141719e8; box-shadow:0 4px 15px #0004; }
+.caraiva-guide .clm-controls button:hover { color:var(--clm-gold); }
+.caraiva-guide .clm-location-note { position:absolute; left:max(16px,env(safe-area-inset-left,0px)); right:74px; bottom:calc(197px + env(safe-area-inset-bottom,0px)); color:#c5d1cb; background:#090b0ce6; border-radius:8px; padding:5px 8px; width:fit-content; max-width:calc(100% - 88px); font-size:9px; pointer-events:none; }
+.caraiva-guide .clm-notice { position:absolute; top:calc(295px + env(safe-area-inset-top,0px)); left:16px; right:74px; font-size:10px; color:#a7b9ad; background:#090b0cd9; padding:8px 10px; border-radius:10px; width:fit-content; max-width:calc(100% - 88px); }
+.caraiva-guide .clm-list-toggle { position:absolute; left:max(16px,env(safe-area-inset-left,0px)); bottom:calc(153px + env(safe-area-inset-bottom,0px)); min-height:44px; display:flex; align-items:center; gap:8px; padding:0 12px; border:1px solid #ffffff24; border-radius:14px; background:#141719f0; font-size:11px; }
+.caraiva-guide .clm-list-toggle span { font-size:9px; color:#b0c0b5; }
+.caraiva-guide .caraiva-live-map[data-selected="true"] .clm-list-toggle { bottom:calc(223px + env(safe-area-inset-bottom,0px)); }
+.caraiva-guide .clm-place-list { position:absolute; z-index:5; left:16px; right:74px; bottom:calc(205px + env(safe-area-inset-bottom,0px)); max-height:calc(100dvh - 500px - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px)); min-height:70px; max-width:370px; overflow-y:auto; background:#141719f5; border:1px solid #ffffff25; border-radius:20px; padding:8px; box-shadow:0 8px 30px #0008; }
+.caraiva-guide .clm-place-list button { display:flex; flex-direction:column; gap:3px; min-height:54px; padding:9px; text-align:left; border-radius:12px; width:100%; font-size:12px; }
+.caraiva-guide .clm-place-list small { font-size:10px; color:#a1b5a8; }
+.caraiva-guide .clm-place-list button:hover { background:#486b5b22; }
+.caraiva-guide .clm-selection { position:absolute; z-index:4; bottom:calc(110px + env(safe-area-inset-bottom,0px)); left:max(16px,env(safe-area-inset-left,0px)); right:max(16px,env(safe-area-inset-right,0px)); max-width:480px; margin:auto; padding:12px 54px 12px 15px; border:1px solid #f6c94555; border-radius:19px; background:#141719f0; backdrop-filter:blur(10px); box-shadow:0 8px 25px #0005; }
+.caraiva-guide .clm-selection-category { display:block; font-size:9px; color:var(--clm-gold); margin-bottom:3px; }
+.caraiva-guide .clm-selection strong { display:block; font:500 18px Georgia,serif; }
+.caraiva-guide .clm-selection small { font-size:9px; color:#b9c9bc; display:block; margin-top:4px; }
+.caraiva-guide .clm-selection button { position:absolute; right:5px; top:8px; min-width:44px; min-height:44px; display:grid; place-items:center; }
+.caraiva-guide .clm-empty { position:absolute; left:16px; right:74px; top:45%; max-width:350px; padding:16px; border:1px solid #ffffff22; border-radius:20px; background:#141719f0; font-size:12px; }
+.caraiva-guide .clm-empty strong { display:block; margin:8px 0; font-size:14px; }
+.caraiva-guide .clm-empty p { color:#a5b9aa; font-size:11px; }
+.caraiva-guide .clm-empty button { min-height:44px; margin-top:10px; color:var(--clm-gold); }
+.caraiva-guide .clm-loading { position:absolute; inset:0; display:grid; place-items:center; overflow:hidden; background:#090b0c; }
+.caraiva-guide .clm-loading img { position:absolute; opacity:.2; width:100%; }
+.caraiva-guide .clm-loading span { position:relative; font-size:12px; color:#d7dccd; }
+.caraiva-guide .clm-sr-only { position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); }
+@media (min-width:900px) { .caraiva-guide .caraiva-live-map .clm-location-note { bottom:calc(197px + env(safe-area-inset-bottom,0px)); } }
+@media (min-width:900px) { .caraiva-guide .clm-toolbar { right:auto; width:520px; background:linear-gradient(#090b0cf5,#090b0c70,transparent); } .caraiva-guide .clm-status { right:auto; } .caraiva-guide .clm-place-list { max-height:calc(100dvh - 390px); } .caraiva-guide .clm-location-note { bottom:calc(116px + env(safe-area-inset-bottom,0px)); } .caraiva-guide .clm-list-toggle { bottom:calc(153px + env(safe-area-inset-bottom,0px)); } }
+@media (max-height:500px) and (orientation:landscape) { .caraiva-guide .clm-toolbar { width:calc(100% - 225px); right:auto; padding-top:5px; } .caraiva-guide .clm-search,.caraiva-guide .clm-tagline,.caraiva-guide .clm-context-filters { display:none; } .caraiva-guide .clm-controls { top:max(10px,env(safe-area-inset-top,0px)); bottom:auto; flex-direction:row; } .caraiva-guide .clm-status { top:115px; right:260px; } .caraiva-guide .clm-notice { top:145px; max-width:280px; right:auto; } .caraiva-guide .clm-location-note { right:16px; left:auto; bottom:calc(168px + env(safe-area-inset-bottom,0px)); max-width:220px; } .caraiva-guide .clm-place-list { max-height:140px; bottom:calc(147px + env(safe-area-inset-bottom,0px)); left:16px; right:auto; width:260px; } .caraiva-guide .clm-list-toggle { bottom:calc(98px + env(safe-area-inset-bottom,0px)); } .caraiva-guide .clm-selection { left:auto; width:330px; margin:0; } .caraiva-guide .clm-empty { top:145px; left:auto; width:310px; } }
+@media (max-height:500px) and (orientation:landscape) { .caraiva-guide .caraiva-live-map .clm-list-toggle { bottom:calc(140px + env(safe-area-inset-bottom,0px)); } }

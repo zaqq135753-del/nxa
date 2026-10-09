@@ -1,0 +1,74 @@
+[
+  {
+    "property_id": "network",
+    "file": "/assets/brand/tamikua-mark.svg",
+    "source": "Rede Tamikua Identidade Oficial",
+    "description": "Símbolo oficial da marca: sol de Caraíva, rio, mangue e canoa tradicional",
+    "orientation": "square",
+    "usage": "brand_mark",
+    "authorization_status": "verified"
+  },
+  {
+    "property_id": "network",
+    "file": "/assets/brand/tamikua-logo.svg",
+    "source": "Rede Tamikua Identidade Oficial",
+    "description": "Logotipo horizontal Tamikua para o Management OS e Guest App",
+    "orientation": "horizontal",
+    "usage": "brand_logo",
+    "authorization_status": "verified"
+  },
+  {
+    "property_id": "property_01",
+    "file": "/assets/properties/caramuru-cover.svg",
+    "source": "Pesquisa Pública Caramuru Hostel Caraíva",
+    "description": "Fachada e área rústica de convivência do Caramuru Hostel Caraíva",
+    "orientation": "horizontal",
+    "usage": "property_cover",
+    "authorization_status": "pending"
+  },
+  {
+    "property_id": "property_02",
+    "file": "/assets/properties/tupinamba-cover.svg",
+    "source": "Instagram Oficial @tupinambapousadaehostelcaraiva",
+    "description": "Jardim tropical e varandas da Tupinambá Pousada e Hostel",
+    "orientation": "horizontal",
+    "usage": "property_cover",
+    "authorization_status": "pending"
+  },
+  {
+    "property_id": "property_03",
+    "file": "/assets/placeholders/pousada-03-cover.svg",
+    "source": "Sistema Interno Rede Tamikua",
+    "description": "Placeholder ilustrativo para a Pousada 03 da Rede Tamikua",
+    "orientation": "horizontal",
+    "usage": "property_cover",
+    "authorization_status": "verified"
+  },
+  {
+    "property_id": "property_04",
+    "file": "/assets/placeholders/pousada-04-cover.svg",
+    "source": "Sistema Interno Rede Tamikua",
+    "description": "Placeholder ilustrativo para a Pousada 04 da Rede Tamikua",
+    "orientation": "horizontal",
+    "usage": "property_cover",
+    "authorization_status": "verified"
+  },
+  {
+    "property_id": "network",
+    "file": "/assets/route/rio-caraiva-canoa.svg",
+    "source": "Cartografia e Ilustração Autoral Caraíva",
+    "description": "Travessia de canoa tradicional pelo Rio Caraíva",
+    "orientation": "horizontal",
+    "usage": "route_checkpoint",
+    "authorization_status": "verified"
+  },
+  {
+    "property_id": "network",
+    "file": "/assets/route/vila-caminho-areia.svg",
+    "source": "Cartografia e Ilustração Autoral Caraíva",
+    "description": "Ruas de areia, casario histórico e mangue de Caraíva",
+    "orientation": "horizontal",
+    "usage": "route_checkpoint",
+    "authorization_status": "verified"
+  }
+]
