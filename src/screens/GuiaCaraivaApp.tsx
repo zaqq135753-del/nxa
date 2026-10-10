@@ -30,7 +30,7 @@ const CaraivaLiveMap = React.lazy(() => import("../components/guia/live-map/Cara
 import { CaraivaBusinessDetailModal } from "../components/guia/CaraivaBusinessDetailModal";
 import { CaraivaSavedScreen } from "../components/guia/CaraivaSavedScreen";
 import { CaraivaConciergeScreen } from "../components/guia/CaraivaConciergeScreen";
-import { CaraivaMerchantPanel } from "../components/guia/CaraivaMerchantPanel";
+import { PartnerPremiumDashboard } from "../components/partner/PartnerPremiumDashboard";
 
 import { CaraivaLivingHeader } from "../components/guia/CaraivaLivingHeader";
 import { CaraivaDock } from "../components/guia/CaraivaDock";
@@ -592,8 +592,8 @@ export const GuiaCaraivaApp: React.FC = () => {
 
         {/* 7. PORTAL DO COMERCIANTE (/business) */}
         {activeTab === "business" && (
-          <CaraivaMerchantPanel
-            initialBusinessId={selectedBusiness?.id || "boteco-do-para"}
+          <PartnerPremiumDashboard
+            businessId={selectedBusiness?.id || "boteco-do-para"}
             onBackToGuide={() => setActiveTab("inicio")}
           />
         )}
