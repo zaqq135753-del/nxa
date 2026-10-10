@@ -4,6 +4,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import GuiaCaraivaApp from './screens/GuiaCaraivaApp';
 import { MerchantSetup } from './components/partner/MerchantSetup';
 import './index.css';
+import './theme/caraiva-design-system.css';
 import './components/guia/caraiva-mobile-layout.css';
 function GuideRoute() {
   const id = new URLSearchParams(location.search).get('cadastro');

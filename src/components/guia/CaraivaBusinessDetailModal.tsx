@@ -29,6 +29,8 @@ import { openBusinessWhatsApp, trackEvent } from "../../services/analytics";
 import { isFavorite, toggleFavorite, addToItinerary } from "../../services/favoritesService";
 import { StreetViewModal } from "./StreetViewModal";
 import { businessToGuidePlace } from "../../services/maps/places";
+import { getBusinessProfileDetail } from "../../data/caraivaExtendedProfiles";
+import { BusinessMenuTab, BusinessBookingTab } from "./business-detail/BusinessExtendedSections";
 
 interface CaraivaBusinessDetailModalProps {
   business: Business | null;
@@ -42,6 +44,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
   onClose,
   onOpenMap,
 }) => {
+  const [detailTab, setDetailTab] = useState<"visao-geral" | "cardapio" | "reserva">("visao-geral");
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [favorite, setFavorite] = useState(false);
   const [addedToDay, setAddedToDay] = useState(false);
@@ -353,6 +356,62 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             </div>
           </div>
 
+          {/* Tabs do Estabelecimento: Visão Geral, Cardápio e Reserva */}
+          <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-white/[0.05] border border-white/10 select-none">
+            <button
+              onClick={() => setDetailTab("visao-geral")}
+              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all text-center ${
+                detailTab === "visao-geral"
+                  ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
+                  : "text-slate-300 hover:text-white"
+              }`}
+            >
+              Visão Geral
+            </button>
+            <button
+              onClick={() => setDetailTab("cardapio")}
+              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all text-center ${
+                detailTab === "cardapio"
+                  ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
+                  : "text-slate-300 hover:text-white"
+              }`}
+            >
+              🍽️ Cardápio & Preços
+            </button>
+            <button
+              onClick={() => setDetailTab("reserva")}
+              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all text-center ${
+                detailTab === "reserva"
+                  ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
+                  : "text-slate-300 hover:text-white"
+              }`}
+            >
+              📅 Reservas & Horários
+            </button>
+          </div>
+
+          {detailTab === "cardapio" && (
+            <div className="pt-2">
+              <BusinessMenuTab
+                businessName={business.name}
+                menuItems={getBusinessProfileDetail(business.slug || business.id, business.name).menuItems}
+                whatsappNumber={business.whatsapp}
+              />
+            </div>
+          )}
+
+          {detailTab === "reserva" && (
+            <div className="pt-2">
+              <BusinessBookingTab
+                businessName={business.name}
+                schedule={getBusinessProfileDetail(business.slug || business.id, business.name).schedule}
+                whatsappNumber={business.whatsapp}
+              />
+            </div>
+          )}
+
+          {detailTab === "visao-geral" && (
+            <>
           {/* Authentic Description */}
           <div>
             <h3 className="text-sm font-semibold text-white uppercase tracking-wider mb-2 flex items-center gap-1.5">
@@ -546,6 +605,8 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
               </button>
             </div>
           </div>
+          </>
+          )}
         </div>
 
         {/* Sticky Action Footer */}
