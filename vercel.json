@@ -5,6 +5,14 @@
   "outputDirectory": "dist",
   "rewrites": [
     {
+      "source": "/parceiros/painel",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/parceiros/painel/",
+      "destination": "/index.html"
+    },
+    {
       "source": "/parceiros/cadastro",
       "destination": "/index.html"
     },
