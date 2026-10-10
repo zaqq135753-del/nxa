@@ -72,27 +72,7 @@ export function checkSalesAdminAccess(_userId?: string): {
   userRole?: string;
   userName?: string;
 } {
-  try {
-    const raw = localStorage.getItem("tamikua:logged-user");
-    if (raw) {
-      const u = JSON.parse(raw);
-      const isSuper =
-        u.roles?.includes("Administrator") ||
-        u.roles?.includes("System Manager") ||
-        u.roles?.includes("platform_admin");
-      if (isSuper) {
-        return { isAuthorized: true, userRole: "platform_admin", userName: u.name || u.full_name || "Admin" };
-      }
-    }
-  } catch {
-    // fallback
-  }
-
-  // Em ambiente de desenvolvimento local, conceder acesso de admin do sistema
-  if (import.meta.env.DEV) {
-    return { isAuthorized: true, userRole: "platform_admin", userName: "Admin Isaque (Dev)" };
-  }
-
+  // Authorization must come from a verified server session, never localStorage.
   return { isAuthorized: false };
 }
 

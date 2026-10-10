@@ -111,7 +111,7 @@ export const GuiaCaraivaApp: React.FC = () => {
   const { theme, toggleTheme } = useGuideTheme();
   const [photoCreditsOpen, setPhotoCreditsOpen] = useState(false);
   const [onboardingOpen, setOnboardingOpen] = useState(hasGuideResume);
-  const [onboardingRole, setOnboardingRole] = useState<"visitor" | "business" | undefined>();
+  const onboardingRole = "visitor" as const;
   const [welcomeRevision, setWelcomeRevision] = useState(0);
   const visitorName = useMemo(readGuideGreeting, [welcomeRevision]);
   const visitorInterests = useMemo(readGuideInterests, [welcomeRevision]);
@@ -293,7 +293,6 @@ export const GuiaCaraivaApp: React.FC = () => {
           onHome={() => navigateGuide("inicio")} onAudio={handleToggleGlobalAudio}
           onBusiness={() => navigateGuide("business")} theme={theme} onToggleTheme={toggleTheme} />
       )}
-      {activeTab === "business" && <button type="button" className="cv-onboarding-launch" onClick={() => { setOnboardingRole(activeTab === "business" ? "business" : undefined); setOnboardingOpen(true); }}><span><strong>{activeTab === "business" ? "Seu negócio faz parte da vila." : visitorName ? visitorName + ", sua Caraíva começa aqui." : "Sua Caraíva, no seu tempo."}</strong><small>{activeTab === "business" ? "Comece o cadastro essencial. Complete o restante depois." : visitorInterests.length ? visitorInterests.join(" · ") + " · Editar minhas escolhas" : "Personalize suas descobertas ou apresente seu estabelecimento."}</small></span><Compass size={27}/></button>}
       {/* Main Content Render Area */}
       <GuideTabArrival tab={activeTab}/>
       <main key={activeTab} className={`relative z-20${activeTab !== "business" ? " caraiva-content" : ""}`}>
@@ -312,7 +311,6 @@ export const GuiaCaraivaApp: React.FC = () => {
               onConcierge={request => { setConciergeRequest(request || ""); navigateGuide("concierge"); }}
             />
 
-            <button type="button" className="cv-onboarding-launch cv-welcome-note" onClick={() => { setOnboardingRole(undefined); setOnboardingOpen(true); }}><span><strong>{visitorName ? visitorName + ", que bom te ter aqui." : "Que bom te ter por aqui."}</strong><small>{visitorInterests.length ? "Seu guia já tem um pouco de você. Editar minhas escolhas" : "Conte um pouco de você. A gente cuida das descobertas."}</small></span><Compass size={23}/></button>
             {/* Visual Intentions Bar */}
             <div className="cv-home-intentions max-w-4xl mx-auto px-4 sm:px-6">
               <CaraivaIntentionsBar 

@@ -21,7 +21,8 @@ const categories: {id: LiveMapCategory; label: string}[] = [
 function detectCapabilities() {
   let webgl = false;
   try {
-    const gl = document.createElement("canvas").getContext("webgl2");
+    const canvas = document.createElement("canvas");
+    const gl = canvas.getContext("webgl2") || canvas.getContext("webgl");
     webgl = Boolean(gl); gl?.getExtension("WEBGL_lose_context")?.loseContext();
   } catch { /* Renderers retain a functional lightweight fallback. */ }
   const device = navigator as Navigator & {deviceMemory?:number;connection?:{saveData?:boolean;effectiveType?:string}};
@@ -59,13 +60,17 @@ export default function CaraivaLiveMap({businesses,selectedBusiness,onSelectBusi
   const visible = useMemo(() => filterLiveMapPoints(points,filters),[points,filters]);
   const selected = visible.find(point => point.business.id === selectedId);
   const activeFilterCount = Number(filters.category !== "todos") + Number(filters.openOnly) + Number(filters.nearbyOnly) + Number(filters.maxPrice < 4);
-  const modeLabel = mode === "3d" ? "3D" : mode === "2d" ? "2D" : "Vila";
+  const modeLabel = mode === "3d" ? "Google 3D" : mode === "2d" ? "Satélite" : "Ilustrado";
   useEffect(()=>{const element=root.current,toolbar=element?.querySelector<HTMLElement>('.clm-toolbar');if(!element||!toolbar)return;const observer=new ResizeObserver(()=>element.style.setProperty('--clm-toolbar-height',toolbar.getBoundingClientRect().height+'px'));observer.observe(toolbar);return()=>observer.disconnect();},[]);
   useEffect(() => {
     if (!filtersOpen) return;
     const previous = document.activeElement as HTMLElement | null;
-    filterDialog.current?.showModal();
-    return () => { if (previous?.isConnected) previous.focus({preventScroll:true}); else filterTrigger.current?.focus({preventScroll:true}); };
+    const dialog = filterDialog.current;
+    if (dialog && !dialog.open) dialog.showModal();
+    return () => {
+      if (dialog?.open) dialog.close();
+      if (previous?.isConnected) previous.focus({preventScroll:true}); else filterTrigger.current?.focus({preventScroll:true});
+    };
   }, [filtersOpen]);
 
   useEffect(()=>{const desktop=matchMedia('(min-width:1024px) and (min-height:780px)');const sync=(event:MediaQueryListEvent)=>setListOpen(event.matches);desktop.addEventListener('change',sync);return()=>desktop.removeEventListener('change',sync);},[]);
@@ -94,7 +99,7 @@ export default function CaraivaLiveMap({businesses,selectedBusiness,onSelectBusi
 
   const onReady = useCallback(() => setLoading(false),[]);
   const onError = useCallback((reason:string) => {
-    setNotice(reason); setLoading(true);
+    setNotice(reason); setLoading(false);
     setMode(previous => previous === "3d" && isGoogleMapsConfigured() ? "2d" : "illustrated");
   },[]);
   const choose = useCallback((point:LiveMapPoint) => {
@@ -102,14 +107,14 @@ export default function CaraivaLiveMap({businesses,selectedBusiness,onSelectBusi
   },[onSelectBusiness]);
   const changeMode = (next:LiveMapMode) => {
     if (next === mode) return;
-    setLoading(true); setNotice(""); setMode(next);
+    setLoading(true); setNotice(""); setMode(next); setFiltersOpen(false); setListOpen(false);
   };
   const camera = (change:Omit<MapCameraCommand,"id">) => setCommand(previous => ({id:previous.id+1,...change}));
   const engineProps = {points:visible,selectedId,userPosition,command,onSelect:choose,onReady,onError};
   const Engine = mode === "3d" ? Google3DMap : mode === "2d" ? Google2DMap : IllustratedMap;
 
   const modeControls = (<div className="clm-modes" role="group" aria-label="Base do mapa">
-          <button type="button" aria-pressed={mode === "3d"} disabled={!capabilities.webgl} title={capabilities.webgl ? "3D da plataforma Google, quando disponível" : "3D requer aceleração gráfica"} onClick={() => changeMode("3d")}>Google 3D</button>
+          <button type="button" aria-pressed={mode === "3d"} title={capabilities.webgl ? "3D da plataforma Google, quando disponível" : "Seu navegador pode usar o modo 2D caso não libere aceleração gráfica"} onClick={() => changeMode("3d")}>Google 3D</button>
           <button type="button" aria-pressed={mode === "2d"} onClick={() => changeMode("2d")}>Satélite 2D</button>
           <button type="button" aria-pressed={mode === "illustrated"} onClick={() => changeMode("illustrated")}>Ilustrado</button>
         </div>);

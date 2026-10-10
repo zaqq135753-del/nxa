@@ -20,7 +20,7 @@ import {
 import { CARAIVA_BUSINESSES } from "../../data/caraivaDigitalData";
 import { getBusinessStats, type BusinessStats } from "../../services/analytics";
 import { generateQrSvgDataUri } from "../../services/partnerOnboardingService";
-import { PartnerOnboardingWizard } from "../partner/PartnerOnboardingWizard";
+import { MerchantSetup } from "../partner/MerchantSetup";
 
 interface CaraivaMerchantPanelProps {
   initialBusinessId?: string;
@@ -110,29 +110,12 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
 
   if (showEditWizard) {
     return (
-      <PartnerOnboardingWizard
-        userId={`merchant-${selectedBizId}`}
-        userRole="owner"
-        initialDraft={{
-          id: currentBusiness.id,
-          name: currentBusiness.name,
-          category: currentBusiness.category,
-          shortDescription: currentBusiness.shortDescription,
-          description: currentBusiness.description,
-          whatsapp: currentBusiness.whatsapp || "73999999999",
-          address: currentBusiness.address,
-          locationReference: currentBusiness.locationReference,
-          latitude: currentBusiness.latitude || -16.8145,
-          longitude: currentBusiness.longitude || -39.1485,
-        }}
-        onSubmitted={() => setShowEditWizard(false)}
-        onExit={() => setShowEditWizard(false)}
-      />
+      <MerchantSetup initialBusiness={currentBusiness} onClose={() => setShowEditWizard(false)} />
     );
   }
 
   return (
-    <div className="min-h-screen bg-[#080d12] text-slate-100 font-sans pb-24">
+    <div className="cv-merchant-panel min-h-screen bg-[#080d12] text-slate-100 font-sans pb-24">
       {/* Top Header */}
       <header className="sticky top-0 z-40 bg-[#080d12]/95 backdrop-blur-xl border-b border-white/10 px-3 sm:px-6 py-2.5 sm:py-3 flex items-center justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
@@ -171,6 +154,7 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
           <ChevronDown className="w-3.5 h-3.5 text-slate-400 absolute right-2 top-1/2 -translate-y-1/2 pointer-events-none" />
         </div>
       </header>
+      <p className="mx-3 sm:mx-6 my-3 rounded-xl border border-amber-300/20 bg-amber-300/5 p-3 text-xs leading-relaxed text-amber-100">Demonstração local · sem login, envio ou publicação. Selecione um estabelecimento para testar a edição; o vínculo com cada loja será validado pelo futuro backend.</p>
 
       {/* Navigation Sub-Header */}
       <div className="border-b border-white/10 bg-[#080c10] px-3 sm:px-6">
@@ -438,11 +422,11 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-6 rounded-3xl bg-slate-900 border border-white/10">
               <div className="space-y-1">
                 <span className="text-[10px] font-mono font-bold text-emerald-400 uppercase bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
-                  Perfil Publicado & Ativo
+                  Prévia do perfil · demonstração
                 </span>
                 <h3 className="text-xl font-bold font-serif text-white">{currentBusiness.name}</h3>
                 <p className="text-xs text-slate-300">
-                  Para garantir a confiabilidade do guia de Caraíva, qualquer alteração passa pelo fluxo de rascunho seguro e aprovação da curadoria.
+                  A edição salva um rascunho neste aparelho. Envio e aprovação da curadoria dependem da futura integração com o backend.
                 </p>
               </div>
 
@@ -551,7 +535,7 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
               {offerCreated && (
                 <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>Oferta publicada com sucesso! Já visível na aba "Agora" dos turistas.</span>
+                  <span>Prévia da oferta criada nesta tela. Ela não foi enviada nem publicada no guia.</span>
                 </div>
               )}
             </form>
@@ -609,7 +593,7 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
               {eventCreated && (
                 <div className="p-3 rounded-xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 text-xs font-semibold flex items-center gap-2 animate-in fade-in">
                   <CheckCircle2 className="w-4 h-4 shrink-0" />
-                  <span>Evento divulgado na agenda de Caraíva com sucesso!</span>
+                  <span>Prévia do evento criada nesta tela. Ela não foi enviada nem publicada na agenda.</span>
                 </div>
               )}
             </form>

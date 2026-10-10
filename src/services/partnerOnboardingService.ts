@@ -1,3 +1,4 @@
+import QRCode from 'qrcode';
 /**
  * Caraíva Digital — Partner Onboarding Service & RBAC / RLS Engine
  * Gerencia tokens de convite seguros, fluxo de ativação, autosave,
@@ -873,74 +874,15 @@ export function getPendingChangeRequests(): BusinessChangeRequest[] {
  * sem requisições de rede, perfeito para a conectividade de Caraíva.
  */
 export function generateQrSvgDataUri(text: string, title?: string): string {
-  // Matriz determinística de módulos baseada em hash do texto
-  const size = 25; // 25x25 grid
-  const cells: boolean[][] = Array.from({ length: size }, () =>
-    Array.from({ length: size }, () => false)
-  );
-
-  // 1. Padrões de localização (Finder patterns nos cantos)
-  const drawFinder = (startX: number, startY: number) => {
-    for (let r = 0; r < 7; r++) {
-      for (let c = 0; c < 7; c++) {
-        if (
-          r === 0 ||
-          r === 6 ||
-          c === 0 ||
-          c === 6 ||
-          (r >= 2 && r <= 4 && c >= 2 && c <= 4)
-        ) {
-          cells[startY + r][startX + c] = true;
-        }
-      }
-    }
-  };
-
-  drawFinder(0, 0); // Superior esquerdo
-  drawFinder(size - 7, 0); // Superior direito
-  drawFinder(0, size - 7); // Inferior esquerdo
-
-  // 2. Preenchimento de dados determinístico
-  let seed = 0;
-  for (let i = 0; i < text.length; i++) {
-    seed = (seed * 31 + text.charCodeAt(i)) & 0xffffffff;
+  const qr = QRCode.create(text, { errorCorrectionLevel: 'M' });
+  const size = qr.modules.size;
+  const safeTitle = (title || 'QR Code Caraíva Digital').replace(/[<>&]/g, '');
+  let path = '';
+  for (let row = 0; row < size; row++) for (let col = 0; col < size; col++) {
+    if (qr.modules.get(row, col)) path += 'M' + (col + 4) + ' ' + (row + 4) + 'h1v1h-1z';
   }
-
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
-      // Ignorar áreas de finder
-      const inTopLeft = r < 8 && c < 8;
-      const inTopRight = r < 8 && c >= size - 8;
-      const inBottomLeft = r >= size - 8 && c < 8;
-      if (!inTopLeft && !inTopRight && !inBottomLeft) {
-        seed = (seed * 1103515245 + 12345) & 0x7fffffff;
-        cells[r][c] = seed % 3 === 0;
-      }
-    }
-  }
-
-  // 3. Montar SVG String
-  const cellSize = 10;
-  const padding = 20;
-  const totalWidth = size * cellSize + padding * 2;
-  const totalHeight = totalWidth;
-
-  let rects = "";
-  for (let r = 0; r < size; r++) {
-    for (let c = 0; c < size; c++) {
-      if (cells[r][c]) {
-        rects += `<rect x="${padding + c * cellSize}" y="${padding + r * cellSize}" width="${cellSize}" height="${cellSize}" fill="#0A181C" rx="1" />`;
-      }
-    }
-  }
-
-  const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalWidth} ${totalHeight}" width="${totalWidth}" height="${totalHeight}">
-    <title>${title || "QR Code Caraíva Digital"}</title>
-    <rect width="100%" height="100%" fill="#FBF8F3" rx="16"/>
-    ${rects}
-  </svg>`;
-
-  return `data:image/svg+xml;utf8,${encodeURIComponent(svg)}`;
+  const svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + (size + 8) + ' ' + (size + 8) + '" width="320" height="320" shape-rendering="crispEdges"><title>' + safeTitle + '</title><rect width="100%" height="100%" fill="white"/><path d="' + path + '" fill="#102820"/></svg>';
+  return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
 }
 
 /**

@@ -6,23 +6,14 @@
 import { REAL_CARAIVA_SPOTS, type CaraivaSpot } from "../data/caraivaSpots";
 import { CARAIVA_REALTIME_CONTEXT } from "../data/caraivaIntelligence";
 
-const FALLBACK_KEY = "";
-
 export function getOpenAiApiKey(): string {
-  if (typeof window !== "undefined") {
-    const local = localStorage.getItem("CARAIVA_OPENAI_API_KEY");
-    if (local && local.trim()) return local.trim();
-  }
-  const envKey = import.meta.env.VITE_OPENAI_API_KEY;
-  if (envKey && typeof envKey === "string" && envKey.trim()) {
-    return envKey.trim();
-  }
-  return FALLBACK_KEY;
+  // Private provider credentials belong to a future authenticated backend.
+  return "";
 }
 
-export function setOpenAiApiKey(key: string): void {
+export function setOpenAiApiKey(_key: string): void {
   if (typeof window !== "undefined") {
-    localStorage.setItem("CARAIVA_OPENAI_API_KEY", key.trim());
+    localStorage.removeItem("CARAIVA_OPENAI_API_KEY");
   }
 }
 

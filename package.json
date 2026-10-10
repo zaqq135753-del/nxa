@@ -7,14 +7,14 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "preview": "vite preview",
-    "i18n:extract": "node scripts/i18n-extract.mjs",
-    "i18n:import": "node scripts/i18n-import.mjs",
-    "start": "node server.mjs"
+    "start": "node server.mjs",
+    "postbuild": "node scripts/verify-public-build.mjs"
   },
   "dependencies": {
     "@googlemaps/js-api-loader": "^2.1.3",
     "@types/three": "^0.186.0",
     "lucide-react": "^0.525.0",
+    "qrcode": "1.5.4",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
     "react-router-dom": "^7.18.2",
@@ -28,9 +28,11 @@
   "devDependencies": {
     "@tailwindcss/vite": "^4.1.0",
     "@types/google.maps": "^3.66.4",
+    "@types/qrcode": "1.5.6",
     "@types/react": "^19.1.0",
     "@types/react-dom": "^19.1.0",
     "@vitejs/plugin-react": "^4.5.0",
+    "jsqr": "1.4.0",
     "playwright": "^1.61.1",
     "sharp": "^0.35.4",
     "tailwindcss": "^4.1.0",
