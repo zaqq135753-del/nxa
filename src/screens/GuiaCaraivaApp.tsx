@@ -8,12 +8,12 @@ import {
 import { CARAIVA_BUSINESSES, type Business, type BusinessCategory, type NowActivity } from "../data/caraivaDigitalData";
 import { asset } from "../lib/asset";
 import { caraivaAudio } from "../utils/caraivaAudio";
-import { getFavorites } from "../services/favoritesService";
+import { getFavorites, isFavorite, toggleFavorite } from "../services/favoritesService";
 import { trackEvent } from "../services/analytics";
 import { checkSalesAdminAccess } from "../services/adminSalesService";
 
 // Modular Subcomponents
-import StoriesEngine, { type GuiaStory } from "../components/guia/StoriesEngine";
+import type { GuiaStory } from "../components/guia/StoriesEngine";
 import TideWeatherAiModal from "../components/guia/TideWeatherAiModal";
 import MultimodalCameraModal from "../components/guia/MultimodalCameraModal";
 
@@ -22,6 +22,9 @@ import { CaraivaCinematicHero } from "../components/guia/CaraivaCinematicHero";
 import { CaraivaIntentionsBar } from "../components/guia/CaraivaIntentionsBar";
 import { CaraivaNowSection } from "../components/guia/CaraivaNowSection";
 import { CaraivaNearYouSection } from "../components/guia/CaraivaNearYouSection";
+import { CaraivaAiHeroAssistant } from "../components/guia/home/CaraivaAiHeroAssistant";
+import { CaraivaStoriesRow } from "../components/guia/home/CaraivaStoriesRow";
+import { BusinessCard3D } from "../components/guia/home/BusinessCard3D";
 import { CaraivaAgoraScreen } from "../components/guia/CaraivaAgoraScreen";
 const CaraivaLiveMap = React.lazy(() => import("../components/guia/live-map/CaraivaLiveMap"));
 import { CaraivaBusinessDetailModal } from "../components/guia/CaraivaBusinessDetailModal";
@@ -311,6 +314,29 @@ export const GuiaCaraivaApp: React.FC = () => {
               onConcierge={request => { setConciergeRequest(request || ""); navigateGuide("concierge"); }}
             />
 
+            {/* Assistente de IA em Destaque — O que fazer agora */}
+            <div className="max-w-4xl mx-auto">
+              <CaraivaAiHeroAssistant
+                onAskConcierge={(prompt) => {
+                  setConciergeRequest(prompt);
+                  navigateGuide("concierge");
+                }}
+                onExploreCategory={(cat) => {
+                  setSelectedCategory(cat as any);
+                  setActiveTab("explorar");
+                }}
+              />
+            </div>
+
+            {/* Stories da Vila Redesenhados & Valorizados */}
+            <div className="max-w-4xl mx-auto">
+              <CaraivaStoriesRow
+                stories={stories}
+                onSelectStory={setActiveStory}
+                onOpenCreateStory={() => setIsPostingStory(true)}
+              />
+            </div>
+
             {/* Visual Intentions Bar */}
             <div className="cv-home-intentions max-w-4xl mx-auto px-4 sm:px-6">
               <CaraivaIntentionsBar 
@@ -319,22 +345,41 @@ export const GuiaCaraivaApp: React.FC = () => {
               />
             </div>
 
-            {/* Stories Rail */}
-            <div className="max-w-4xl mx-auto">
-              <StoriesEngine
-                stories={stories}
-                activeStory={activeStory}
-                onSelectStory={setActiveStory}
-                onOpenPostModal={() => setIsPostingStory(true)}
-                onShareToInstagram={() => showToast("Compartilhado com sucesso!")}
-                onShowToast={showToast}
-                onSelectSpotByName={(name) => {
-                  const b = CARAIVA_BUSINESSES.find((item) =>
-                    item.name.toLowerCase().includes(name.toLowerCase())
-                  );
-                  if (b) setSelectedBusiness(b);
-                }}
-              />
+            {/* Destaques em Alta com Cards 3D Ricos */}
+            <div className="max-w-4xl mx-auto px-4 sm:px-6">
+              <div className="flex items-center justify-between mb-3">
+                <div>
+                  <h3 className="text-base font-extrabold text-white tracking-tight flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-amber-400" />
+                    <span>Em Alta na Vila</span>
+                  </h3>
+                  <p className="text-xs text-slate-400">Os lugares mais procurados e recomendados pela IA</p>
+                </div>
+                <button
+                  onClick={() => setActiveTab("explorar")}
+                  className="text-xs font-bold text-teal-400 hover:text-teal-300"
+                >
+                  Ver todos ↗
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {CARAIVA_BUSINESSES.slice(0, 4).map((b) => (
+                  <BusinessCard3D
+                    key={b.id}
+                    business={b}
+                    onSelect={handleOpenBusinessModal}
+                    onOpenMap={handleOpenMapWithBusiness}
+                    onToggleFavorite={(id, name) => {
+                      const next = toggleFavorite(id, name);
+                      setFavoritesCount(getFavorites().length);
+                      showToast(next ? `❤️ ${name} salvo!` : `Removido dos salvos`);
+                    }}
+                    isFavorite={isFavorite(b.id)}
+                    aiBadgeReason={b.category === "restaurantes" ? "Pôr do Sol & Pastel Famoso" : "Recomendado Hoje"}
+                  />
+                ))}
+              </div>
             </div>
 
             {/* Caraíva Agora Urgency Carousel */}
