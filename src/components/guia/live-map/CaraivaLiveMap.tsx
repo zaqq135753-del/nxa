@@ -106,7 +106,11 @@ export default function CaraivaLiveMap({businesses,selectedBusiness,onSelectBusi
     setSelectedId(point.business.id); setListOpen(matchMedia("(min-width:1024px) and (min-height:780px)").matches); onSelectBusiness?.(point.business);
   },[onSelectBusiness]);
   const changeMode = (next:LiveMapMode) => {
-    if (next === mode) return;
+    if (next === mode) { setFiltersOpen(false); return; }
+    if (next !== "illustrated" && !isGoogleMapsConfigured()) {
+      setNotice("Google Maps não configurado nesta publicação. Configure VITE_GOOGLE_MAPS_API_KEY na Vercel e autorize caraiva.digital no Google Cloud.");
+      setFiltersOpen(false); return;
+    }
     setLoading(true); setNotice(""); setMode(next); setFiltersOpen(false); setListOpen(false);
   };
   const camera = (change:Omit<MapCameraCommand,"id">) => setCommand(previous => ({id:previous.id+1,...change}));

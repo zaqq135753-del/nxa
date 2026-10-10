@@ -33,7 +33,7 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
   };
 
   return (
-    <section className="px-4 mt-5">
+    <section className="cv-now-section px-4 mt-5">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <div className="w-6 h-6 rounded-full bg-amber-400/15 flex items-center justify-center text-amber-400">
@@ -60,12 +60,12 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
       </div>
 
       {/* Carrossel de Cards Cinematográficos Horizontais */}
-      <div className="flex gap-3 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 snap-x select-none">
+      <div className="cv-now-carousel flex gap-3 overflow-x-auto pb-2 scrollbar-none -mx-4 px-4 snap-x select-none">
         {CARAIVA_NOW_ACTIVITIES.map((item) => (
           <div
             key={item.id}
             onClick={() => handleAction(item)}
-            className="shrink-0 w-[230px] sm:w-[250px] rounded-2xl bg-[#111921] border border-white/10 shadow-lg hover:border-amber-400/40 transition-all active:scale-[0.98] snap-start overflow-hidden flex flex-col justify-between cursor-pointer group"
+            className="cv-now-card shrink-0 w-[230px] sm:w-[250px] rounded-2xl bg-[#111921] border border-white/10 shadow-lg hover:border-amber-400/40 transition-all active:scale-[0.98] snap-start overflow-hidden flex flex-col justify-between cursor-pointer group"
           >
             {/* Imagem com Tag de Urgência */}
             <div className="relative h-28 w-full overflow-hidden">

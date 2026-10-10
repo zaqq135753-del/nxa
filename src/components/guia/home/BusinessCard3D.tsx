@@ -23,10 +23,10 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
   return (
     <div
       onClick={() => onSelect(business)}
-      className="cd-card-3d cd-btn-tactile"
+      className="cd-card-3d cd-business-card"
       style={{
         borderRadius: 24,
-        background: '#FFFFFF',
+        background: 'var(--cv-paper)',
         border: '1px solid rgba(13, 40, 52, 0.08)',
         boxShadow: '0 6px 20px rgba(13, 40, 52, 0.06)',
         overflow: 'hidden',
@@ -62,7 +62,7 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
               backdropFilter: 'blur(8px)',
               fontSize: 11,
               fontWeight: 800,
-              color: '#0D2834',
+              color: 'var(--cv-ink)',
               display: 'flex',
               alignItems: 'center',
               gap: 4,
@@ -123,23 +123,23 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
       {/* Conteúdo do Card */}
       <div style={{ padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 6 }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 8 }}>
-          <h4 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: '#0D2834', letterSpacing: '-0.01em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+          <h4 style={{ margin: 0, fontSize: 16, fontWeight: 800, color: 'var(--cv-ink)', letterSpacing: '-0.01em', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
             {business.name}
           </h4>
           <div style={{ display: 'flex', alignItems: 'center', gap: 3, flexShrink: 0 }}>
             <Star size={13} color="#F59E0B" fill="#F59E0B" />
-            <span style={{ fontSize: 13, fontWeight: 800, color: '#0D2834' }}>
+            <span style={{ fontSize: 13, fontWeight: 800, color: 'var(--cv-ink)' }}>
               {business.rating.toFixed(1)}
             </span>
           </div>
         </div>
 
-        <p style={{ margin: 0, fontSize: 12, color: '#64748B', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
+        <p style={{ margin: 0, fontSize: 12, color: 'var(--cv-muted)', lineHeight: 1.4, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
           {business.shortDescription || business.description}
         </p>
 
         {/* Informações de Localização e Horário */}
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 6, paddingTop: 8, borderTop: '1px solid #F1F5F9', fontSize: 11, color: '#64748B' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 6, paddingTop: 8, borderTop: '1px solid var(--cv-line)', fontSize: 11, color: 'var(--cv-muted)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <Navigation size={12} color="#0FA3A5" />
             <span>{business.distanceTime} a pé</span>

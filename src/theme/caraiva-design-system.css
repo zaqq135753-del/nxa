@@ -150,3 +150,10 @@
   box-shadow: var(--cd-shadow-sm);
   border-radius: var(--cd-radius-lg);
 }
+.caraiva-guide .cd-business-card{width:100%;min-width:0;border-color:var(--cv-line)!important;box-shadow:0 12px 30px #0003!important;transition:transform .35s,box-shadow .35s}
+.caraiva-guide.caraiva-guide .cv-now-carousel{display:flex;flex-direction:row;flex-wrap:nowrap;overflow-x:auto;margin-inline:0;padding:8px 2px 20px;gap:14px;scroll-snap-type:x mandatory}
+.caraiva-guide.caraiva-guide .cv-now-carousel>.cv-now-card{flex:0 0 min(82vw,300px);width:min(82vw,300px);max-width:none;background:var(--cv-paper);border-color:var(--cv-line);box-shadow:0 12px 24px #0003;transition:transform .35s,box-shadow .35s}
+.caraiva-guide .cv-now-section h2,.caraiva-guide .cv-now-card h3{color:var(--cv-ink)}
+.caraiva-guide .cv-now-section p{color:var(--cv-muted)}
+@media(hover:hover) and (pointer:fine){.caraiva-guide .cd-business-card:hover,.caraiva-guide .cv-now-card:hover{transform:perspective(1000px) translateY(-6px) rotateX(2deg);box-shadow:0 20px 40px #0005!important}.caraiva-guide .cd-business-card img{transition:transform .6s}.caraiva-guide .cd-business-card:hover img{transform:scale(1.045)}}
+@media(prefers-reduced-motion:reduce){.caraiva-guide .cd-card-3d,.caraiva-guide .cv-now-card,.caraiva-guide .cd-business-card img{animation:none!important;transition:none!important;transform:none!important}}

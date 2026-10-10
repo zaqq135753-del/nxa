@@ -30,7 +30,7 @@ export default function Google2DMap(props: LiveMapEngineProps) {
       if (cancelled || !host.current) return;
       const instance = new google.maps.Map(host.current,{
         center:CARAIVA_CENTER_COORDS,zoom:16,disableDefaultUI:true,gestureHandling:"greedy",styles:DARK_STYLE,
-        clickableIcons:false,keyboardShortcuts:true,mapTypeId:"roadmap",minZoom:11,maxZoom:20,
+        clickableIcons:false,keyboardShortcuts:true,mapTypeId:"satellite",minZoom:11,maxZoom:20,
       });
       map.current = instance;
       listeners.push(instance.addListener("idle",() => setZoom(instance.getZoom() ?? 16)));
