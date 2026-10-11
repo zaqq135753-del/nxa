@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Clock, Calendar, Check, Plus, ShoppingBag } from 'lucide-react';
 import type { MenuItemDetail, BusinessScheduleInfo } from '../../../data/caraivaExtendedProfiles';
 import { addToCart, type CatalogProduct } from '../../../services/catalogCartService';
+import { SafeBusinessImage } from '../SafeBusinessImage';
 
 interface BusinessMenuTabProps {
   businessId?: string;
@@ -103,9 +104,11 @@ export const BusinessMenuTab: React.FC<BusinessMenuTabProps> = ({
           >
             {item.image && (
               <div style={{ position: 'relative', width: 92, height: 92, flexShrink: 0, borderRadius: 16, overflow: 'hidden' }}>
-                <img
+                <SafeBusinessImage
                   src={item.image}
                   alt={item.name}
+                  category="gastronomia"
+                  fallbackSeed={item.name}
                   style={{ width: '100%', height: '100%', objectFit: 'cover' }}
                   loading="lazy"
                 />

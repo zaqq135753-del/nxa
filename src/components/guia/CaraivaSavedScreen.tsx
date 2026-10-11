@@ -21,6 +21,7 @@ import {
   type ItineraryItem,
 } from "../../services/favoritesService";
 import { openBusinessWhatsApp } from "../../services/analytics";
+import { SafeBusinessImage } from "./SafeBusinessImage";
 
 interface CaraivaSavedScreenProps {
   onSelectBusiness: (business: Business) => void;
@@ -296,9 +297,11 @@ export const CaraivaSavedScreen: React.FC<CaraivaSavedScreenProps> = ({
                   className="rounded-2xl bg-white/[0.03] border border-white/10 overflow-hidden hover:border-white/20 transition-all flex flex-col group"
                 >
                   <div className="cv-photo relative h-40 w-full overflow-hidden">
-                    <img
-                      src={b.heroImage}
+                    <SafeBusinessImage
+                      src={b.heroImage || b.cover_image}
                       alt={b.name}
+                      category={b.category}
+                      fallbackSeed={b.name}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />

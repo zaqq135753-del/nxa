@@ -21,6 +21,7 @@ import { useUserLocation, calculateHaversineDistanceMeters } from "../../service
 import { businessToGuidePlace } from "../../services/maps/places";
 import { StreetViewModal } from "./StreetViewModal";
 import { type GuidePlace } from "../../services/maps/types";
+import { SafeBusinessImage } from "./SafeBusinessImage";
 
 export interface CaraivaNearYouSectionProps {
   onSelectBusiness: (business: Business) => void;
@@ -243,9 +244,11 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <div className="relative w-12 h-12 rounded-xl overflow-hidden shrink-0 bg-slate-900 border border-[var(--cv-line)]">
-                    <img
-                      src={biz.heroImage}
+                    <SafeBusinessImage
+                      src={biz.heroImage || biz.cover_image}
                       alt={biz.name}
+                      category={biz.category}
+                      fallbackSeed={biz.name}
                       className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                       loading="lazy"
                     />
@@ -319,9 +322,11 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
               >
                 {/* Foto Principal com Badges */}
                 <div className="cv-photo relative h-40 sm:h-44 w-full overflow-hidden bg-slate-900">
-                  <img
-                    src={biz.heroImage}
+                  <SafeBusinessImage
+                    src={biz.heroImage || biz.cover_image}
                     alt={biz.name}
+                    category={biz.category}
+                    fallbackSeed={biz.name}
                     loading="lazy"
                     decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"

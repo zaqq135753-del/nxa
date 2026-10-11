@@ -32,6 +32,7 @@ import { BusinessMenuTab, BusinessBookingTab } from "./business-detail/BusinessE
 import { CaraivaBusinessShowcaseTab } from "./business-detail/CaraivaBusinessShowcaseTab";
 import { CaraivaCartCheckoutModal } from "./business-detail/CaraivaCartCheckoutModal";
 import { getBusinessCatalog, getCartItems, type CartItem } from "../../services/catalogCartService";
+import { SafeBusinessImage } from "./SafeBusinessImage";
 
 interface CaraivaBusinessDetailModalProps {
   business: Business | null;
@@ -204,9 +205,11 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
 
         {/* Gallery Hero Carousel */}
         <div className="cv-photo relative w-full h-72 sm:h-80 bg-slate-900 shrink-0 select-none">
-          <img
+          <SafeBusinessImage
             src={photos[activePhotoIdx]}
             alt={business.name}
+            category={business.category}
+            fallbackSeed={business.name}
             className="w-full h-full object-cover transition-opacity duration-300"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-[#0c141a] via-[#0c141a]/30 to-black/40" />

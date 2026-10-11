@@ -35,7 +35,7 @@
   .caraiva-guide.caraiva-guide .caraiva-content{padding-bottom:calc(104px + env(safe-area-inset-bottom,0px))}
   .caraiva-guide .caraiva-content :is(button,a[href]){touch-action:manipulation}
   .caraiva-guide .caraiva-content :is(.overflow-x-auto,.no-scrollbar,.scrollbar-none){overscroll-behavior-x:contain;scroll-padding-inline:16px}
-  .caraiva-guide.caraiva-guide .caraiva-content .overflow-x-auto>button{min-height:44px;padding-top:10px;padding-bottom:10px}
+  .caraiva-guide.caraiva-guide .caraiva-content .cv-pill-list>button{min-height:44px;padding-top:10px;padding-bottom:10px}
   .caraiva-guide.caraiva-guide .cv-coast-hero{height:clamp(540px,72svh,560px)}
   .caraiva-guide.caraiva-guide .cv-coast-copy h1{font-size:44px;margin:14px 0 12px}
   .caraiva-guide.caraiva-guide .cv-coast-copy p{font-size:12px;line-height:1.65;margin-bottom:12px}
@@ -104,8 +104,8 @@
   .caraiva-guide[data-keyboard=true] :is(.caraiva-dock,.caraiva-orb,.cv-theme-floating){visibility:hidden;pointer-events:none}
   .caraiva-guide .cv-business-overlay{height:var(--cv-visible-height,100dvh);bottom:auto;padding-bottom:env(safe-area-inset-bottom,0px)}
   .caraiva-guide .cv-business-panel{max-height:calc(var(--cv-visible-height,100dvh) - env(safe-area-inset-top,0px) - 12px);overscroll-behavior:contain}
-  .caraiva-guide .cv-business-panel>.cv-photo{height:clamp(180px,32svh,260px)}
-  .caraiva-guide .cv-business-panel button{min-height:44px}
+  .caraiva-guide .cv-business-panel button:not(.cv-showcase-pill):not(.cv-qty-btn){min-height:44px}
+  .caraiva-guide .cv-business-panel .cv-showcase-pill{min-height:34px;height:34px;padding:0 14px;flex-shrink:0}
   .caraiva-guide[data-keyboard=true] .clm-scene{bottom:0}
   .caraiva-guide[data-keyboard=true] :is(.clm-controls,.clm-selection,.clm-notice){display:none}
   .caraiva-guide.caraiva-guide[data-keyboard=true] .clm-list-toggle{bottom:12px}

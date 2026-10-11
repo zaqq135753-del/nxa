@@ -2,6 +2,7 @@ import React, { useState, useMemo } from "react";
 import { Clock, MapPin, ChevronRight, MessageCircle, Sparkles } from "lucide-react";
 import { CARAIVA_NOW_ACTIVITIES, CARAIVA_EVENTS, CARAIVA_BUSINESSES, type NowActivity, type Business } from "../../data/caraivaDigitalData";
 import { openBusinessWhatsApp, trackEvent } from "../../services/analytics";
+import { SafeBusinessImage } from "./SafeBusinessImage";
 
 export interface CaraivaAgoraScreenProps {
   onSelectBusiness: (business: Business) => void;
@@ -137,9 +138,11 @@ export const CaraivaAgoraScreen: React.FC<CaraivaAgoraScreenProps> = ({
           >
             {/* Foto com Tag de Urgência */}
             <div className="relative w-24 h-24 rounded-xl overflow-hidden shrink-0">
-              <img
+              <SafeBusinessImage
                 src={act.image}
                 alt={act.title}
+                category="gastronomia"
+                fallbackSeed={act.title}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

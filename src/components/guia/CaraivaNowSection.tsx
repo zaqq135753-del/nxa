@@ -2,6 +2,7 @@ import React from "react";
 import { Flame, Clock, MapPin, ChevronRight, MessageCircle } from "lucide-react";
 import { CARAIVA_NOW_ACTIVITIES, CARAIVA_BUSINESSES, type NowActivity, type Business } from "../../data/caraivaDigitalData";
 import { openBusinessWhatsApp, trackEvent } from "../../services/analytics";
+import { SafeBusinessImage } from "./SafeBusinessImage";
 
 export interface CaraivaNowSectionProps {
   onSelectBusiness: (business: Business) => void;
@@ -76,9 +77,11 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
           >
             {/* Imagem com Tag de Urgência */}
             <div className="relative h-28 w-full overflow-hidden bg-slate-900">
-              <img
+              <SafeBusinessImage
                 src={item.image}
                 alt={item.title}
+                category="gastronomia"
+                fallbackSeed={item.title}
                 loading="lazy"
                 decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"

@@ -1,6 +1,7 @@
 import React, { useRef, useState, useCallback } from 'react';
 import { Star, Navigation, Heart, Sparkles } from 'lucide-react';
 import type { Business } from '../../../data/caraivaDigitalData';
+import { SafeBusinessImage } from '../SafeBusinessImage';
 
 interface BusinessCard3DProps {
   business: Business;
@@ -105,9 +106,11 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
 
       {/* Imagem do Local com Badges de Destaque 3D */}
       <div style={{ position: 'relative', width: '100%', height: 180, overflow: 'hidden', background: '#0D2834' }}>
-        <img
+        <SafeBusinessImage
           src={photo}
           alt={business.name}
+          category={business.category}
+          fallbackSeed={business.name}
           style={{
             width: '100%',
             height: '100%',

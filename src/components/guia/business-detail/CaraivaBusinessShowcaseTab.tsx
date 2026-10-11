@@ -13,6 +13,7 @@ import {
   addToCart,
   updateCartQuantity,
 } from '../../../services/catalogCartService';
+import { SafeBusinessImage } from '../SafeBusinessImage';
 
 interface CaraivaBusinessShowcaseTabProps {
   catalog: BusinessCatalog;
@@ -92,7 +93,7 @@ export const CaraivaBusinessShowcaseTab: React.FC<CaraivaBusinessShowcaseTabProp
       </div>
 
       {/* 2. Categorias em Pílula */}
-      <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar">
+      <div className="flex items-center gap-2 overflow-x-auto pb-1.5 no-scrollbar select-none">
         {catalog.categories.map((cat) => {
           const active = selectedCategory === cat.id;
           return (
@@ -100,10 +101,10 @@ export const CaraivaBusinessShowcaseTab: React.FC<CaraivaBusinessShowcaseTabProp
               key={cat.id}
               type="button"
               onClick={() => setSelectedCategory(cat.id)}
-              className={`px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer ${
+              className={`cv-showcase-pill shrink-0 px-3.5 py-1.5 rounded-full text-xs font-bold transition-all whitespace-nowrap cursor-pointer flex items-center justify-center ${
                 active
-                  ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20 scale-105'
-                  : 'bg-white/10 hover:bg-white/15 text-[var(--cv-muted)] border border-[var(--cv-line)]'
+                  ? 'bg-amber-400 text-slate-950 shadow-md shadow-amber-400/20'
+                  : 'bg-white/10 hover:bg-white/15 text-slate-300 border border-white/10'
               }`}
             >
               {cat.label}
@@ -129,9 +130,11 @@ export const CaraivaBusinessShowcaseTab: React.FC<CaraivaBusinessShowcaseTabProp
               {/* Foto do Produto */}
               {product.image && (
                 <div className="relative w-20 h-20 rounded-xl overflow-hidden shrink-0 border border-[var(--cv-line)] bg-slate-900">
-                  <img
+                  <SafeBusinessImage
                     src={product.image}
                     alt={product.name}
+                    category="gastronomia"
+                    fallbackSeed={product.name}
                     className="w-full h-full object-cover"
                     loading="lazy"
                   />
