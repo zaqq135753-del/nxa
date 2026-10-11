@@ -20,8 +20,6 @@ import {
   Palette,
   Anchor,
   Compass,
-  Receipt,
-  Radio,
 } from "lucide-react";
 import type { Business, EventItem, OfferItem } from "../../data/caraivaDigitalData";
 import { CARAIVA_EVENTS, CARAIVA_OFFERS, claimBusinessProfile } from "../../data/caraivaDigitalData";
@@ -31,8 +29,6 @@ import { StreetViewModal } from "./StreetViewModal";
 import { businessToGuidePlace } from "../../services/maps/places";
 import { getBusinessProfileDetail } from "../../data/caraivaExtendedProfiles";
 import { BusinessMenuTab, BusinessBookingTab } from "./business-detail/BusinessExtendedSections";
-import { CaraivaTableBillView } from "./table/CaraivaTableBillView";
-import { CaraivaTableOnboardingModal } from "./table/CaraivaTableOnboardingModal";
 import { CaraivaBusinessShowcaseTab } from "./business-detail/CaraivaBusinessShowcaseTab";
 import { CaraivaCartCheckoutModal } from "./business-detail/CaraivaCartCheckoutModal";
 import { getBusinessCatalog, getCartItems, type CartItem } from "../../services/catalogCartService";
@@ -42,7 +38,7 @@ interface CaraivaBusinessDetailModalProps {
   onClose: () => void;
   onOpenMap?: (business: Business) => void;
   onStartRoute?: (business: Business) => void;
-  initialTab?: "visao-geral" | "cardapio" | "vitrine" | "conta" | "reserva";
+  initialTab?: "visao-geral" | "cardapio" | "vitrine" | "reserva";
 }
 
 export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProps> = ({
@@ -51,14 +47,12 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
   onOpenMap,
   initialTab,
 }) => {
-  const [detailTab, setDetailTab] = useState<"visao-geral" | "cardapio" | "vitrine" | "conta" | "reserva">(initialTab || "visao-geral");
+  const [detailTab, setDetailTab] = useState<"visao-geral" | "cardapio" | "vitrine" | "reserva">(initialTab || "visao-geral");
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [favorite, setFavorite] = useState(false);
   const [addedToDay, setAddedToDay] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [isStreetViewOpen, setIsStreetViewOpen] = useState(false);
-  const [isTableOnboardingOpen, setIsTableOnboardingOpen] = useState(false);
-  const [tableNumber, setTableNumber] = useState("Mesa 07");
   const [isCartModalOpen, setIsCartModalOpen] = useState(false);
   const [cartItems, setCartItems] = useState<CartItem[]>(() => getCartItems());
 
@@ -322,45 +316,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             </div>
           </div>
 
-          {/* Indicador sutil de Mesa Conectada para gastronomia / praia */}
-          {(business.category === "restaurantes" ||
-            business.category === "bares" ||
-            business.category === "cafes" ||
-            business.category === "noite" ||
-            business.category === "praias") && (
-            <div className="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-teal-500/10 border border-amber-500/20 flex items-center justify-between gap-2 shadow-sm">
-              <div className="flex items-center gap-2 min-w-0">
-                <span className="relative flex h-2.5 w-2.5 shrink-0">
-                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
-                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
-                </span>
-                <p className="text-xs font-semibold text-slate-200 truncate">
-                  <strong className="text-amber-300 font-bold">{tableNumber}</strong> conectada via NFC
-                </p>
-              </div>
-
-              <div className="flex items-center gap-1.5 shrink-0">
-                <button
-                  type="button"
-                  onClick={() => setIsTableOnboardingOpen(true)}
-                  className="px-2 py-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 font-bold text-[11px] flex items-center gap-1 transition-colors"
-                >
-                  <Radio className="w-3 h-3" />
-                  <span>Aproximar</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setDetailTab("conta")}
-                  className="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/15 text-white font-medium text-[11px] flex items-center gap-1 transition-colors"
-                >
-                  <Receipt className="w-3 h-3 text-amber-300" />
-                  <span>Ver Conta</span>
-                </button>
-              </div>
-            </div>
-          )}
-
-          {/* Tabs do Estabelecimento: Visão Geral, Cardápio/Vitrine, Conta e Reserva */}
+          {/* Tabs do Estabelecimento: Visão Geral, Cardápio/Vitrine e Reservas */}
           {(() => {
             const isFood = business.category === "restaurantes" || business.category === "bares" || business.category === "cafes";
             const currentCatalog = getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory);
@@ -397,20 +353,6 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                   )}
                 </button>
 
-                {/* Aba de Conta da Mesa (para estabelecimentos de consumo no local) */}
-                {(isFood || business.category === "noite" || business.category === "praias") && (
-                  <button
-                    onClick={() => setDetailTab("conta")}
-                    className={`flex-1 min-w-[92px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
-                      detailTab === "conta"
-                        ? "bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/25 font-black"
-                        : "text-amber-300 hover:text-white"
-                    }`}
-                  >
-                    🧾 Ver Conta
-                  </button>
-                )}
-
                 <button
                   onClick={() => setDetailTab("reserva")}
                   className={`flex-1 min-w-[80px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
@@ -444,17 +386,6 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                 businessName={business.name}
                 cartItems={cartItems}
                 onOpenCartModal={() => setIsCartModalOpen(true)}
-              />
-            </div>
-          )}
-
-          {detailTab === "conta" && (
-            <div className="pt-2">
-              <CaraivaTableBillView
-                businessId={business.id}
-                businessName={business.name}
-                tableNumber={tableNumber}
-                onOpenOnboarding={() => setIsTableOnboardingOpen(true)}
               />
             </div>
           )}
@@ -860,18 +791,6 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
           setIsStreetViewOpen(false);
           if (onOpenMap) onOpenMap(business);
           onClose();
-        }}
-      />
-
-      {/* Onboarding 3D de Mesa & NFC Tap */}
-      <CaraivaTableOnboardingModal
-        isOpen={isTableOnboardingOpen}
-        onClose={() => setIsTableOnboardingOpen(false)}
-        businessName={business.name}
-        initialTableNumber={tableNumber}
-        onConfirmed={(assignedTable: string) => {
-          setTableNumber(assignedTable);
-          setDetailTab("conta");
         }}
       />
 

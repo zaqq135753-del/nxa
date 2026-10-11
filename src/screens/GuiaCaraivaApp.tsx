@@ -127,7 +127,7 @@ export const GuiaCaraivaApp: React.FC = () => {
   
   // Modals & Selections
   const [selectedBusiness, setSelectedBusiness] = useState<Business | null>(null);
-  const [businessInitialTab, setBusinessInitialTab] = useState<"visao-geral" | "cardapio" | "conta" | "reserva">("visao-geral");
+  const [businessInitialTab, setBusinessInitialTab] = useState<"visao-geral" | "cardapio" | "vitrine" | "reserva">("visao-geral");
   const [mapFocusBusiness, setMapFocusBusiness] = useState<Business | null>(null);
   
   const [stories, setStories] = useState<GuiaStory[]>(HD_CARAIVA_STORIES);
@@ -150,21 +150,17 @@ export const GuiaCaraivaApp: React.FC = () => {
     window.scrollTo({ top: 0, behavior: "instant" });
   };
 
-  // Suporte a aproximação NFC / QR Code de Mesa via URL: ?mesa=07 ou ?conta=1
+  // Suporte a abertura direta de negócio via URL: ?local=boteco-do-para
   useEffect(() => {
     try {
       const params = new URLSearchParams(window.location.search);
-      const mesa = params.get("mesa");
-      const conta = params.get("conta");
       const bizParam = params.get("restaurante") || params.get("bar") || params.get("local");
 
-      if (mesa || conta || bizParam) {
-        const found = bizParam
-          ? CARAIVA_BUSINESSES.find(b => b.slug === bizParam || b.id === bizParam)
-          : CARAIVA_BUSINESSES.find(b => b.id === "boteco-do-para" || b.slug === "boteco-do-para") || CARAIVA_BUSINESSES[0];
+      if (bizParam) {
+        const found = CARAIVA_BUSINESSES.find(b => b.slug === bizParam || b.id === bizParam);
 
         if (found) {
-          setBusinessInitialTab("conta");
+          setBusinessInitialTab("visao-geral");
           setSelectedBusiness(found);
         }
       }
@@ -212,7 +208,7 @@ export const GuiaCaraivaApp: React.FC = () => {
     showToast(active ? "🌊 Áudio ambiente de Caraíva ativado!" : "🔇 Áudio pausado.");
   };
 
-  const handleOpenBusinessModal = (business: Business, tab: "visao-geral" | "cardapio" | "conta" | "reserva" = "visao-geral") => {
+  const handleOpenBusinessModal = (business: Business, tab: "visao-geral" | "cardapio" | "vitrine" | "reserva" = "visao-geral") => {
     setBusinessInitialTab(tab);
     setSelectedBusiness(business);
   };

@@ -34,7 +34,7 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
   businessName,
   cartItems,
 }) => {
-  const [destinationType, setDestinationType] = useState<'pousada' | 'praia' | 'mesa' | 'retirada'>('pousada');
+  const [destinationType, setDestinationType] = useState<'pousada' | 'praia' | 'retirada'>('pousada');
   const [destinationDetail, setDestinationDetail] = useState('');
   const [customerName, setCustomerName] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'pix' | 'cartao_entrega' | 'dinheiro'>('pix');
@@ -237,12 +237,11 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
                   <span>Onde entregar em Caraíva?</span>
                 </label>
 
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5">
+                <div className="grid grid-cols-3 gap-1.5">
                   {[
                     { id: 'pousada', label: '🏨 Pousada/Casa' },
-                    { id: 'praia', label: '🏖️ Na Areia' },
-                    { id: 'mesa', label: '🧾 Na Mesa' },
-                    { id: 'retirada', label: '🛍️ Retirar' },
+                    { id: 'praia', label: '🏖️ Ponto na Areia' },
+                    { id: 'retirada', label: '🛍️ Retirar no Local' },
                   ].map((opt) => (
                     <button
                       key={opt.id}
@@ -267,9 +266,7 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
                     destinationType === 'pousada'
                       ? 'Nome da pousada ou quarto (ex: Pousada da Barra, Suíte 03)'
                       : destinationType === 'praia'
-                      ? 'Ponto de referência na areia (ex: Barraca do Caju)'
-                      : destinationType === 'mesa'
-                      ? 'Número da mesa no estabelecimento'
+                      ? 'Ponto de referência na areia (ex: Perto da Barraca do Caju)'
                       : 'Retirada pessoal no balcão'
                   }
                   className="w-full px-3 py-2 rounded-xl text-xs bg-white/5 border border-[var(--cv-line)] focus:outline-none focus:border-amber-400 transition"
