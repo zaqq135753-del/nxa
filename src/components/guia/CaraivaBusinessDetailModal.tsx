@@ -35,13 +35,16 @@ import { getBusinessProfileDetail } from "../../data/caraivaExtendedProfiles";
 import { BusinessMenuTab, BusinessBookingTab } from "./business-detail/BusinessExtendedSections";
 import { CaraivaTableBillView } from "./table/CaraivaTableBillView";
 import { CaraivaTableOnboardingModal } from "./table/CaraivaTableOnboardingModal";
+import { CaraivaBusinessShowcaseTab } from "./business-detail/CaraivaBusinessShowcaseTab";
+import { CaraivaCartCheckoutModal } from "./business-detail/CaraivaCartCheckoutModal";
+import { getBusinessCatalog, getCartItems, type CartItem } from "../../services/catalogCartService";
 
 interface CaraivaBusinessDetailModalProps {
   business: Business | null;
   onClose: () => void;
   onOpenMap?: (business: Business) => void;
   onStartRoute?: (business: Business) => void;
-  initialTab?: "visao-geral" | "cardapio" | "conta" | "reserva";
+  initialTab?: "visao-geral" | "cardapio" | "vitrine" | "conta" | "reserva";
 }
 
 export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProps> = ({
@@ -50,7 +53,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
   onOpenMap,
   initialTab,
 }) => {
-  const [detailTab, setDetailTab] = useState<"visao-geral" | "cardapio" | "conta" | "reserva">(initialTab || "visao-geral");
+  const [detailTab, setDetailTab] = useState<"visao-geral" | "cardapio" | "vitrine" | "conta" | "reserva">(initialTab || "visao-geral");
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [favorite, setFavorite] = useState(false);
   const [addedToDay, setAddedToDay] = useState(false);
@@ -58,6 +61,17 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
   const [isStreetViewOpen, setIsStreetViewOpen] = useState(false);
   const [isTableOnboardingOpen, setIsTableOnboardingOpen] = useState(false);
   const [tableNumber, setTableNumber] = useState("Mesa 07");
+  const [isCartModalOpen, setIsCartModalOpen] = useState(false);
+  const [cartItems, setCartItems] = useState<CartItem[]>(() => getCartItems());
+
+  // Atualiza sacola quando há mudanças globais
+  useEffect(() => {
+    const handleCartUpdate = (e: any) => {
+      setCartItems(e.detail || getCartItems());
+    };
+    window.addEventListener("caraiva:cart-updated", handleCartUpdate);
+    return () => window.removeEventListener("caraiva:cart-updated", handleCartUpdate);
+  }, []);
 
   // Claim Profile Form State
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
@@ -411,49 +425,70 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             </div>
           )}
 
-          {/* Tabs do Estabelecimento: Visão Geral, Cardápio, Conta e Reserva */}
-          <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-white/[0.05] border border-white/10 select-none overflow-x-auto no-scrollbar">
-            <button
-              onClick={() => setDetailTab("visao-geral")}
-              className={`flex-1 min-w-[76px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
-                detailTab === "visao-geral"
-                  ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
-                  : "text-slate-300 hover:text-white"
-              }`}
-            >
-              Visão Geral
-            </button>
-            <button
-              onClick={() => setDetailTab("cardapio")}
-              className={`flex-1 min-w-[86px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
-                detailTab === "cardapio"
-                  ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
-                  : "text-slate-300 hover:text-white"
-              }`}
-            >
-              🍽️ Cardápio
-            </button>
-            <button
-              onClick={() => setDetailTab("conta")}
-              className={`flex-1 min-w-[92px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
-                detailTab === "conta"
-                  ? "bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/25 font-black"
-                  : "text-amber-300 hover:text-white"
-              }`}
-            >
-              🧾 Ver Conta
-            </button>
-            <button
-              onClick={() => setDetailTab("reserva")}
-              className={`flex-1 min-w-[80px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
-                detailTab === "reserva"
-                  ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
-                  : "text-slate-300 hover:text-white"
-              }`}
-            >
-              📅 Reservas
-            </button>
-          </div>
+          {/* Tabs do Estabelecimento: Visão Geral, Cardápio/Vitrine, Conta e Reserva */}
+          {(() => {
+            const isFood = business.category === "restaurantes" || business.category === "bares" || business.category === "cafes";
+            const currentCatalog = getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory);
+            const showcaseTabLabel = isFood ? "🍽️ Cardápio" : currentCatalog.tabLabel;
+            const businessCartCount = cartItems.filter(i => i.businessId === business.id).reduce((acc, i) => acc + i.quantity, 0);
+
+            return (
+              <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-white/[0.05] border border-white/10 select-none overflow-x-auto no-scrollbar">
+                <button
+                  onClick={() => setDetailTab("visao-geral")}
+                  className={`flex-1 min-w-[76px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
+                    detailTab === "visao-geral"
+                      ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                >
+                  Visão Geral
+                </button>
+
+                {/* Aba de Cardápio (se restaurante) ou Vitrine/Catálogo (se mercado, tattoo, passeios, etc) */}
+                <button
+                  onClick={() => setDetailTab(isFood ? "cardapio" : "vitrine")}
+                  className={`flex-1 min-w-[90px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap relative ${
+                    (detailTab === "cardapio" || detailTab === "vitrine")
+                      ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                >
+                  <span>{showcaseTabLabel}</span>
+                  {businessCartCount > 0 && (
+                    <span className="ml-1 px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-black text-[10px]">
+                      {businessCartCount}
+                    </span>
+                  )}
+                </button>
+
+                {/* Aba de Conta da Mesa (para estabelecimentos de consumo no local) */}
+                {(isFood || business.category === "noite" || business.category === "praias") && (
+                  <button
+                    onClick={() => setDetailTab("conta")}
+                    className={`flex-1 min-w-[92px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
+                      detailTab === "conta"
+                        ? "bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/25 font-black"
+                        : "text-amber-300 hover:text-white"
+                    }`}
+                  >
+                    🧾 Ver Conta
+                  </button>
+                )}
+
+                <button
+                  onClick={() => setDetailTab("reserva")}
+                  className={`flex-1 min-w-[80px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
+                    detailTab === "reserva"
+                      ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                >
+                  📅 Reservas
+                </button>
+              </div>
+            );
+          })()}
 
           {detailTab === "cardapio" && (
             <div className="pt-2">
@@ -461,6 +496,17 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                 businessName={business.name}
                 menuItems={getBusinessProfileDetail(business.slug || business.id, business.name).menuItems}
                 whatsappNumber={business.whatsapp}
+              />
+            </div>
+          )}
+
+          {detailTab === "vitrine" && (
+            <div className="pt-2">
+              <CaraivaBusinessShowcaseTab
+                catalog={getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory)}
+                businessName={business.name}
+                cartItems={cartItems}
+                onOpenCartModal={() => setIsCartModalOpen(true)}
               />
             </div>
           )}
@@ -862,6 +908,16 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
           setTableNumber(assignedTable);
           setDetailTab("conta");
         }}
+      />
+
+      {/* Modal de Sacola & Fechamento Direto de Pedido */}
+      <CaraivaCartCheckoutModal
+        isOpen={isCartModalOpen}
+        onClose={() => setIsCartModalOpen(false)}
+        businessId={business.id}
+        businessName={business.name}
+        whatsappNumber={business.whatsapp}
+        cartItems={cartItems}
       />
     </div>
   );
