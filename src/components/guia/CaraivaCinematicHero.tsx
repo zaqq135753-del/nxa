@@ -1,9 +1,45 @@
 import React, { useState } from "react";
-import { Waves, Sun, VolumeX, Compass } from "lucide-react";
+import { Waves, Sun, VolumeX, Compass, Camera } from "lucide-react";
 import { CARAIVA_REALTIME_CONTEXT } from "../../data/caraivaIntelligence";
 import { CaraivaSmartSearch } from "./CaraivaSmartSearch";
 import { caraivaAudio } from "../../utils/caraivaAudio";
 import { asset } from "../../lib/asset";
+
+const LIGHT_PHOTOS = [
+  {
+    id: "praia-barra",
+    title: "Praia da Barra",
+    src: asset("assets/caraiva-photos/caraiva-09-1600.webp"),
+  },
+  {
+    id: "rio-foz",
+    title: "Foz do Rio & Mar",
+    src: asset("assets/caraiva-photos/caraiva-05-640.webp"),
+  },
+  {
+    id: "beira-rio",
+    title: "Canoas na Areia",
+    src: asset("assets/caraiva-photos/caraiva-12-640.webp"),
+  },
+];
+
+const DARK_PHOTOS = [
+  {
+    id: "estrelas",
+    title: "Noite Estrelada",
+    src: asset("assets/caraiva-photos/caraiva-03-640.webp"),
+  },
+  {
+    id: "luzes",
+    title: "Luzes Mágicas",
+    src: asset("assets/caraiva-photos/caraiva-02-640.webp"),
+  },
+  {
+    id: "praia-noturna",
+    title: "Mar de Caraíva",
+    src: asset("assets/caraiva-photos/caraiva-09-1600.webp"),
+  },
+];
 
 export interface CaraivaCinematicHeroProps {
   theme?: "light" | "dark";
@@ -32,6 +68,7 @@ export const CaraivaCinematicHero: React.FC<CaraivaCinematicHeroProps> = ({
 }) => {
   const [isAudioActive, setIsAudioActive] = useState(false);
   const [isMediaLoaded, setIsMediaLoaded] = useState(false);
+  const [photoIndex, setPhotoIndex] = useState(0);
   const isLight = theme === "light";
 
   const handleToggleAudio = () => {
@@ -39,10 +76,9 @@ export const CaraivaCinematicHero: React.FC<CaraivaCinematicHeroProps> = ({
     setIsAudioActive(active);
   };
 
-  // Imagem dinâmica: no modo claro, vista solar da praia/rio com céu aberto; no escuro, vista noturna/crepúsculo
-  const bgImageSrc = isLight
-    ? asset("assets/caraiva-photos/caraiva-11-640.webp")
-    : asset("assets/caraiva-photos/caraiva-09-1600.webp");
+  const currentPhotoList = isLight ? LIGHT_PHOTOS : DARK_PHOTOS;
+  const activePhoto = currentPhotoList[photoIndex % currentPhotoList.length];
+  const bgImageSrc = activePhoto.src;
 
   return (
     <div
@@ -71,15 +107,15 @@ export const CaraivaCinematicHero: React.FC<CaraivaCinematicHeroProps> = ({
         {/* Gradiente multicamada Tropical Luxury condicionado pelo tema */}
         {isLight ? (
           <>
-            {/* Modo Claro: banho solar suave que se integra perfeitamente à areia (#F7F3E9) da página */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#1E4339]/30 via-[#F7F3E9]/25 to-[#F7F3E9]" />
-            <div className="absolute inset-0 bg-radial from-transparent via-amber-950/5 to-[#F7F3E9]/75" />
+            {/* Modo Claro: banho solar dourado que preserva o céu e o mar e se integra à areia (#F7F3E9) */}
+            <div className="absolute inset-0 bg-gradient-to-b from-sky-950/15 via-amber-100/10 to-[#F7F3E9]" />
+            <div className="absolute inset-0 bg-radial from-transparent via-amber-200/5 to-[#F7F3E9]/80" />
           </>
         ) : (
           <>
             {/* Modo Escuro: profundidade noturna de oceano e rio */}
-            <div className="absolute inset-0 bg-gradient-to-b from-[#0D191C]/80 via-[#0D191C]/40 to-[#0D191C]" />
-            <div className="absolute inset-0 bg-radial from-transparent via-[#0D191C]/30 to-[#0D191C]/90" />
+            <div className="absolute inset-0 bg-gradient-to-b from-[#0D191C]/75 via-[#0D191C]/35 to-[#0D191C]" />
+            <div className="absolute inset-0 bg-radial from-transparent via-[#0D191C]/25 to-[#0D191C]/90" />
           </>
         )}
 
@@ -145,6 +181,21 @@ export const CaraivaCinematicHero: React.FC<CaraivaCinematicHeroProps> = ({
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Botão Interativo para Trocar Vista / Foto de Fundo */}
+            <button
+              type="button"
+              onClick={() => setPhotoIndex((prev) => (prev + 1) % currentPhotoList.length)}
+              className={`text-[11px] font-semibold px-2.5 py-1 rounded-full border transition active:scale-95 flex items-center gap-1.5 cursor-pointer ${
+                isLight
+                  ? "text-[#1E4339] bg-white/90 hover:bg-white backdrop-blur-md border-[#DCE3D5] shadow-sm"
+                  : "text-amber-300 hover:text-amber-200 bg-black/40 backdrop-blur-md border-amber-400/25"
+              }`}
+              title="Clique para alternar a foto de fundo de Caraíva"
+            >
+              <Camera className="w-3.5 h-3.5 text-amber-500" />
+              <span>{activePhoto.title}</span>
+            </button>
+
             <button
               type="button"
               onClick={() => onConcierge?.()}
