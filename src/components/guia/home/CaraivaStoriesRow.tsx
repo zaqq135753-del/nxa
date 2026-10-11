@@ -33,8 +33,44 @@ export const CaraivaStoriesRow: React.FC<CaraivaStoriesRowProps> = ({
             Momentos ao vivo postados por moradores e viajantes
           </p>
         </div>
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#0FA3A5', background: 'rgba(15,163,165,0.12)', padding: '3px 9px', borderRadius: 9999, border: '1px solid rgba(15,163,165,0.25)' }}>
-          ● Ao Vivo
+        <span
+          style={{
+            position: 'relative',
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: 6,
+            fontSize: 11,
+            fontWeight: 700,
+            color: '#0FA3A5',
+            background: 'rgba(15,163,165,0.12)',
+            padding: '3px 10px',
+            borderRadius: 9999,
+            border: '1px solid rgba(15,163,165,0.25)',
+          }}
+        >
+          <span style={{ position: 'relative', display: 'flex', width: 8, height: 8 }}>
+            <span
+              className="cd-sonar-ring"
+              style={{
+                position: 'absolute',
+                inset: 0,
+                borderRadius: '50%',
+                background: '#0FA3A5',
+                opacity: 0.75,
+              }}
+            />
+            <span
+              style={{
+                position: 'relative',
+                display: 'inline-block',
+                width: 8,
+                height: 8,
+                borderRadius: '50%',
+                background: '#0FA3A5',
+              }}
+            />
+          </span>
+          <span>Ao Vivo</span>
         </span>
       </div>
 
@@ -102,6 +138,7 @@ export const CaraivaStoriesRow: React.FC<CaraivaStoriesRowProps> = ({
               }}
             >
               <div
+                className="cd-story-live-ring"
                 style={{
                   position: 'relative',
                   width: 64,
@@ -110,6 +147,7 @@ export const CaraivaStoriesRow: React.FC<CaraivaStoriesRowProps> = ({
                   padding: 2.5,
                   background: `linear-gradient(135deg, ${cat.color}, #0FA3A5, #F76B52)`,
                   boxShadow: '0 4px 14px rgba(13,40,52,0.12)',
+                  transition: 'transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1)',
                 }}
               >
                 <div

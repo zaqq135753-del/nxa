@@ -336,18 +336,18 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
                     </div>
                   )}
 
-                  {/* Botão de Favorito */}
+                  {/* Botão de Favorito com Animação Elástica Pop */}
                   <button
                     type="button"
                     onClick={(e) => handleToggleFav(e, biz)}
                     className={`absolute top-2.5 right-2.5 p-1.5 sm:p-2 rounded-full backdrop-blur-md border transition-all active:scale-90 shadow-md ${
                       isFav
-                        ? "bg-rose-500 border-rose-500 text-white"
+                        ? "bg-rose-500 border-rose-500 text-white cd-heart-popped shadow-lg shadow-rose-500/40"
                         : "bg-black/40 hover:bg-black/60 border-white/20 text-white"
                     }`}
                     title={isFav ? "Remover dos favoritos" : "Salvar em Minha Caraíva"}
                   >
-                    <Heart className={`w-3.5 h-3.5 ${isFav ? "fill-white" : ""}`} />
+                    <Heart className={`w-3.5 h-3.5 ${isFav ? "fill-white cd-heart-popped" : ""}`} />
                   </button>
 
                   {/* Status Aberto + Distância na Imagem */}

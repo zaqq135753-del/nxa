@@ -168,18 +168,23 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
                 width: 34,
                 height: 34,
                 borderRadius: '50%',
-                background: 'rgba(0,0,0,0.45)',
+                background: isFavorite ? 'rgba(244,63,94,0.92)' : 'rgba(0,0,0,0.45)',
                 backdropFilter: 'blur(8px)',
-                border: '1px solid rgba(255,255,255,0.2)',
+                border: isFavorite ? '1px solid rgba(244,63,94,1)' : '1px solid rgba(255,255,255,0.2)',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
                 cursor: 'pointer',
-                transition: 'transform 0.2s ease',
+                transition: 'transform 0.2s ease, background 0.2s ease',
               }}
-              className="active:scale-90 hover:scale-110"
+              className={`active:scale-90 hover:scale-110 ${isFavorite ? 'cd-heart-popped shadow-lg shadow-rose-500/40' : ''}`}
             >
-              <Heart size={16} color={isFavorite ? '#F43F5E' : '#FFFFFF'} fill={isFavorite ? '#F43F5E' : 'none'} />
+              <Heart
+                size={16}
+                color={isFavorite ? '#FFFFFF' : '#FFFFFF'}
+                fill={isFavorite ? '#FFFFFF' : 'none'}
+                className={isFavorite ? 'cd-heart-popped' : ''}
+              />
             </button>
           )}
         </div>

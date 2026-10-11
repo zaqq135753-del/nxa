@@ -274,3 +274,171 @@
     filter: blur(0);
   }
 }
+
+/* ==========================================================================
+   CARAÍVA VIBRANT INTERACTION & ATMOSPHERIC MOTION SYSTEM
+   ========================================================================== */
+
+/* 1. Ondas Suaves do Rio e Mar (Tidal Wave Ribbon) */
+@keyframes cd-wave-flow {
+  0% {
+    transform: translateX(0) translateZ(0);
+  }
+  50% {
+    transform: translateX(-25%) translateZ(0);
+  }
+  100% {
+    transform: translateX(0) translateZ(0);
+  }
+}
+
+.cd-wave-animated {
+  animation: cd-wave-flow 16s ease-in-out infinite;
+  will-change: transform;
+}
+
+/* 2. Anéis Dinâmicos dos Stories (Giro de Aura) */
+@keyframes cd-story-spin {
+  0% {
+    filter: hue-rotate(0deg);
+  }
+  100% {
+    filter: hue-rotate(360deg);
+  }
+}
+
+.cd-story-live-ring {
+  animation: cd-story-spin 8s linear infinite;
+}
+
+.cd-story-live-ring:hover {
+  transform: scale(1.08) rotate(3deg);
+  box-shadow: 0 8px 24px rgba(20, 194, 197, 0.45);
+}
+
+/* 3. Pulso de Radar / Sonar "Ao Vivo" */
+@keyframes cd-sonar-ping {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.8;
+  }
+  50% {
+    transform: scale(1.35);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+}
+
+.cd-sonar-ring {
+  animation: cd-sonar-ping 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+/* 4. Barrinhas do Equalizador de Áudio Real-Time */
+@keyframes cd-eq-1 {
+  0%, 100% { height: 4px; }
+  50% { height: 12px; }
+}
+@keyframes cd-eq-2 {
+  0%, 100% { height: 10px; }
+  50% { height: 4px; }
+}
+@keyframes cd-eq-3 {
+  0%, 100% { height: 6px; }
+  50% { height: 14px; }
+}
+
+.cd-eq-bar-1 { animation: cd-eq-1 0.75s ease-in-out infinite; }
+.cd-eq-bar-2 { animation: cd-eq-2 0.65s ease-in-out infinite 0.15s; }
+.cd-eq-bar-3 { animation: cd-eq-3 0.85s ease-in-out infinite 0.3s; }
+
+/* 5. Balanço Suave dos Barquinhos no Rio (Wave Rocking) */
+@keyframes cd-boat-rock {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-2px) rotate(-3deg);
+  }
+  75% {
+    transform: translateY(1px) rotate(3deg);
+  }
+}
+
+.cd-boat-rock {
+  animation: cd-boat-rock 3.6s ease-in-out infinite;
+}
+
+/* 6. Rotação Majestosa do Sol de Caraíva */
+@keyframes cd-sun-spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.cd-sun-spin {
+  animation: cd-sun-spin 20s linear infinite;
+}
+
+/* 7. Partículas Atmosféricas Flutuantes (Vagalumes / Poeira Dourada) */
+@keyframes cd-particle-drift {
+  0% {
+    transform: translateY(0px) translateX(0px) scale(0.8);
+    opacity: 0.2;
+  }
+  50% {
+    transform: translateY(-20px) translateX(12px) scale(1.1);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translateY(-40px) translateX(-8px) scale(0.6);
+    opacity: 0;
+  }
+}
+
+.cd-firefly {
+  animation: cd-particle-drift 6s ease-in-out infinite;
+  will-change: transform, opacity;
+}
+
+/* 8. Explosão e Burst de Corações ao Favoritar */
+@keyframes cd-heart-pop {
+  0% {
+    transform: scale(0.8);
+  }
+  45% {
+    transform: scale(1.35) rotate(-8deg);
+  }
+  75% {
+    transform: scale(0.95) rotate(4deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.cd-heart-popped {
+  animation: cd-heart-pop 0.45s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cd-wave-animated,
+  .cd-story-live-ring,
+  .cd-sonar-ring,
+  .cd-eq-bar-1,
+  .cd-eq-bar-2,
+  .cd-eq-bar-3,
+  .cd-boat-rock,
+  .cd-sun-spin,
+  .cd-firefly,
+  .cd-heart-popped {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
