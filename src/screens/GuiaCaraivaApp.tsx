@@ -4,6 +4,8 @@ import {
   Sparkles,
   CheckCircle2,
   Camera,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import { CARAIVA_BUSINESSES, type Business, type BusinessCategory, type NowActivity } from "../data/caraivaDigitalData";
 import { asset } from "../lib/asset";
@@ -136,6 +138,7 @@ export const GuiaCaraivaApp: React.FC = () => {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
   const [isAudioActive, setIsAudioActive] = useState(false);
   const [favoritesCount, setFavoritesCount] = useState<number>(() => getFavorites().length);
+  const [isTrendingExpanded, setIsTrendingExpanded] = useState(false);
 
   useGuideMotion(activeTab);
   useGuideViewport();
@@ -346,16 +349,36 @@ export const GuiaCaraivaApp: React.FC = () => {
                     Os lugares mais procurados e recomendados pela IA
                   </p>
                 </div>
-                <button
-                  onClick={() => setActiveTab("explorar")}
-                  className="text-xs font-bold text-amber-500 hover:text-amber-400"
-                >
-                  Ver todos ↗
-                </button>
+                <div className="flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsTrendingExpanded((prev) => !prev)}
+                    className="text-xs font-bold px-2.5 py-1 rounded-full border transition active:scale-95 flex items-center gap-1 cursor-pointer sm:hidden"
+                    style={{
+                      background: isTrendingExpanded ? "var(--cv-active)" : "var(--cv-soft)",
+                      borderColor: "var(--cv-line)",
+                      color: "var(--cv-ink)",
+                    }}
+                    title={isTrendingExpanded ? "Mostrar menos" : "Ver mais em alta"}
+                  >
+                    <span>{isTrendingExpanded ? "Menos" : "+2 em alta"}</span>
+                    {isTrendingExpanded ? (
+                      <ChevronUp className="w-3 h-3 text-amber-500" />
+                    ) : (
+                      <ChevronDown className="w-3 h-3 text-amber-500" />
+                    )}
+                  </button>
+                  <button
+                    onClick={() => setActiveTab("explorar")}
+                    className="text-xs font-bold text-amber-500 hover:text-amber-400"
+                  >
+                    Ver todos ↗
+                  </button>
+                </div>
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                {CARAIVA_BUSINESSES.slice(0, 4).map((b) => (
+                {(isTrendingExpanded ? CARAIVA_BUSINESSES.slice(0, 4) : CARAIVA_BUSINESSES.slice(0, 2)).map((b) => (
                   <BusinessCard3D
                     key={b.id}
                     business={b}
