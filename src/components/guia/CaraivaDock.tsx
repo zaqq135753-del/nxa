@@ -1,28 +1,81 @@
-import { Compass, Heart, Home, Map, Zap } from "lucide-react";
+import { Compass, Heart, Home, Map, Sparkles } from "lucide-react";
 import type { GuiaTab } from "../../screens/GuiaCaraivaApp";
 import type { CaraivaMoment } from "./useCaraivaMoment";
 
 const destinations = [
   { id: "inicio", label: "Início", Icon: Home },
   { id: "explorar", label: "Explorar", Icon: Compass },
-  { id: "agora", label: "Agora", Icon: Zap },
+  { id: "concierge", label: "Guia IA", Icon: Sparkles, isAiCore: true },
   { id: "mapa", label: "Mapa", Icon: Map },
   { id: "salvos", label: "Salvos", Icon: Heart },
 ] as const;
 
-export function CaraivaDock({ activeTab, onNavigate, favoritesCount, moment }: {
-  activeTab: GuiaTab; onNavigate: (tab: GuiaTab) => void; favoritesCount: number; moment: CaraivaMoment;
+export function CaraivaDock({
+  activeTab,
+  onNavigate,
+  favoritesCount,
+  moment,
+}: {
+  activeTab: GuiaTab;
+  onNavigate: (tab: GuiaTab) => void;
+  favoritesCount: number;
+  moment: CaraivaMoment;
 }) {
-  return <nav className="caraiva-dock" aria-label="Navegação do guia">
-    {destinations.map(({ id, label, Icon }) => <button type="button" key={id}
-      className={`caraiva-dock-item${id === "agora" ? " caraiva-dock-now" : ""}`}
-      aria-current={activeTab === id ? "page" : undefined}
-      aria-label={id === "agora" ? `Agora — ${moment.nowLabel}` : id === "salvos" ? `Salvos — ${favoritesCount} lugares` : label}
-      title={id === "agora" ? moment.nowLabel : label} onClick={() => onNavigate(id)}>
-      <span className="caraiva-dock-icon"><Icon size={21} aria-hidden="true" />
-        {id === "salvos" && favoritesCount > 0 && <span className="caraiva-dock-badge" aria-hidden="true">{favoritesCount > 99 ? "99+" : favoritesCount}</span>}
-      </span>
-      <span>{label}</span>{id === "agora" && <small>{moment.nowLabel}</small>}
-    </button>)}
-  </nav>;
+  const handleItemClick = (id: GuiaTab) => {
+    // Microinteração de vibração tátil (haptic feedback) nativa
+    if (typeof window !== "undefined" && "vibrate" in navigator) {
+      try {
+        navigator.vibrate(8);
+      } catch {
+        /* Ignora se o navegador restringir vibração */
+      }
+    }
+    onNavigate(id);
+  };
+
+  return (
+    <nav className="caraiva-dock cd-floating-dock" aria-label="Navegação do guia">
+      {destinations.map(({ id, label, Icon, ...rest }) => {
+        const isAi = "isAiCore" in rest && rest.isAiCore;
+        const isActive = activeTab === id;
+
+        return (
+          <button
+            type="button"
+            key={id}
+            className={`caraiva-dock-item cd-dock-btn ${isAi ? "cd-dock-ai-center" : ""}`}
+            aria-current={isActive ? "page" : undefined}
+            aria-label={
+              isAi
+                ? `Guia Caraíva IA — ${moment.nowLabel}`
+                : id === "salvos"
+                ? `Salvos — ${favoritesCount} lugares`
+                : label
+            }
+            title={isAi ? "Assistente Inteligente de Caraíva" : label}
+            onClick={() => handleItemClick(id as GuiaTab)}
+          >
+            <span className="caraiva-dock-icon">
+              {isAi ? (
+                <div className="cd-ai-orb-ring">
+                  <Icon size={22} className="cd-ai-icon-pulse" aria-hidden="true" />
+                </div>
+              ) : (
+                <Icon size={20} aria-hidden="true" />
+              )}
+
+              {id === "salvos" && favoritesCount > 0 && (
+                <span className="caraiva-dock-badge" aria-hidden="true">
+                  {favoritesCount > 99 ? "99+" : favoritesCount}
+                </span>
+              )}
+            </span>
+
+            <span className="cd-dock-label">{label}</span>
+            {isAi && <small className="cd-dock-sub">{moment.nowLabel}</small>}
+          </button>
+        );
+      })}
+    </nav>
+  );
 }

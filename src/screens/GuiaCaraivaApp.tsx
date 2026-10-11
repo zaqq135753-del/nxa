@@ -29,7 +29,7 @@ import { CaraivaAgoraScreen } from "../components/guia/CaraivaAgoraScreen";
 const CaraivaLiveMap = React.lazy(() => import("../components/guia/live-map/CaraivaLiveMap"));
 import { CaraivaBusinessDetailModal } from "../components/guia/CaraivaBusinessDetailModal";
 import { CaraivaSavedScreen } from "../components/guia/CaraivaSavedScreen";
-import { CaraivaConciergeScreen } from "../components/guia/CaraivaConciergeScreen";
+import { CaraivaConciergeAgent } from "../components/guia/concierge/CaraivaConciergeAgent";
 import { PartnerPremiumDashboard } from "../components/partner/PartnerPremiumDashboard";
 
 import { CaraivaLivingHeader } from "../components/guia/CaraivaLivingHeader";
@@ -581,9 +581,9 @@ export const GuiaCaraivaApp: React.FC = () => {
           />
         )}
 
-        {/* 6. CONCIERGE IA SCREEN */}
+        {/* 6. CONCIERGE IA SCREEN (21st.dev Agent Elements Style) */}
         {activeTab === "concierge" && (
-          <CaraivaConciergeScreen
+          <CaraivaConciergeAgent
             initialRequest={conciergeRequest}
             onSelectBusiness={handleOpenBusinessModal}
             onNavigateToSaved={() => setActiveTab("salvos")}

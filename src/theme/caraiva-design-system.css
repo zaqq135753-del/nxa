@@ -157,3 +157,102 @@
 .caraiva-guide .cv-now-section p{color:var(--cv-muted)}
 @media(hover:hover) and (pointer:fine){.caraiva-guide .cd-business-card:hover,.caraiva-guide .cv-now-card:hover{transform:perspective(1000px) translateY(-6px) rotateX(2deg);box-shadow:0 20px 40px #0005!important}.caraiva-guide .cd-business-card img{transition:transform .6s}.caraiva-guide .cd-business-card:hover img{transform:scale(1.045)}}
 @media(prefers-reduced-motion:reduce){.caraiva-guide .cd-card-3d,.caraiva-guide .cv-now-card,.caraiva-guide .cd-business-card img{animation:none!important;transition:none!important;transform:none!important}}
+
+/* ==========================================================================
+   21ST.DEV FLOATING DOCK & SPRING ANIMATION SYSTEM
+   ========================================================================== */
+
+/* Floating Island Dock */
+.caraiva-guide .cd-floating-dock {
+  background: rgba(13, 40, 52, 0.88) !important;
+  backdrop-filter: blur(28px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  border: 1px solid rgba(255, 255, 255, 0.16) !important;
+  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+  border-radius: 30px !important;
+  padding: 6px 10px !important;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+/* Itens de navegação com física de mola */
+.caraiva-guide .cd-dock-btn {
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease !important;
+  transform-origin: center bottom;
+}
+
+.caraiva-guide .cd-dock-btn:hover {
+  transform: translateY(-3px) scale(1.05);
+  color: #FFFFFF !important;
+}
+
+.caraiva-guide .cd-dock-btn:active {
+  transform: translateY(2px) scale(0.92);
+}
+
+.caraiva-guide .cd-dock-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+/* Botão Central de IA: Orb Ring com Pulso de Maré */
+.caraiva-guide .cd-dock-ai-center {
+  margin-top: -24px !important;
+}
+
+.caraiva-guide .cd-ai-orb-ring {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #0FA3A5, #38BDF8, #F76B52);
+  padding: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 8px 24px rgba(20, 194, 197, 0.45), 0 0 16px rgba(56, 189, 248, 0.35);
+  animation: cd-orb-pulse 3s infinite ease-in-out;
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.caraiva-guide .cd-ai-orb-ring:hover {
+  transform: scale(1.08) rotate(3deg);
+  box-shadow: 0 10px 30px rgba(20, 194, 197, 0.6);
+}
+
+.caraiva-guide .cd-ai-orb-ring svg {
+  background: #0D2834;
+  border-radius: 50%;
+  width: 100%;
+  height: 100%;
+  padding: 10px;
+  color: #38BDF8;
+}
+
+@keyframes cd-orb-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 8px 24px rgba(20, 194, 197, 0.45);
+  }
+  50% {
+    transform: scale(1.04);
+    box-shadow: 0 10px 30px rgba(56, 189, 248, 0.6), 0 0 20px rgba(247, 107, 82, 0.35);
+  }
+}
+
+/* Transições Cinematográficas entre Abas */
+.caraiva-guide .caraiva-content > div {
+  animation: cd-tab-enter 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes cd-tab-enter {
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.995);
+    filter: blur(2px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    filter: blur(0);
+  }
+}
