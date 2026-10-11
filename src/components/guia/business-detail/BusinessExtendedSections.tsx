@@ -1,18 +1,24 @@
 import React, { useState } from 'react';
-import { Utensils, Clock, Calendar, Check } from 'lucide-react';
+import { Clock, Calendar, Check, Plus, ShoppingBag } from 'lucide-react';
 import type { MenuItemDetail, BusinessScheduleInfo } from '../../../data/caraivaExtendedProfiles';
+import { addToCart, type CatalogProduct } from '../../../services/catalogCartService';
 
 interface BusinessMenuTabProps {
+  businessId?: string;
   businessName: string;
   menuItems: MenuItemDetail[];
   whatsappNumber?: string;
+  onOpenCartModal?: () => void;
 }
 
 export const BusinessMenuTab: React.FC<BusinessMenuTabProps> = ({
+  businessId = 'restaurante-local',
+  businessName,
   menuItems,
-  whatsappNumber = '5573999990000',
+  onOpenCartModal,
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
+  const [addedItemId, setAddedItemId] = useState<string | null>(null);
 
   const categories = [
     { id: 'todos', label: 'Tudo' },
@@ -26,9 +32,27 @@ export const BusinessMenuTab: React.FC<BusinessMenuTabProps> = ({
     ? menuItems
     : menuItems.filter((i) => i.category === selectedCategory);
 
-  const handleOrderWhatsapp = (item: MenuItemDetail) => {
-    const text = `Olá! Vi o prato *${item.name}* (${item.price}) no Guia *Caraíva Digital* e gostaria de saber se está disponível hoje! 🌴`;
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(text)}`, '_blank');
+  const handleAddToCart = (item: MenuItemDetail) => {
+    // Converte preço formatado "R$ 68,00" para número float
+    const numericPrice = parseFloat(
+      item.price.replace('R$', '').replace('.', '').replace(',', '.').trim()
+    ) || 50;
+
+    const catalogProd: CatalogProduct = {
+      id: item.id,
+      name: item.name,
+      category: item.category,
+      price: numericPrice,
+      formattedPrice: item.price,
+      description: item.description,
+      image: item.image,
+      stockStatus: 'em_estoque',
+      badge: item.badge as any,
+    };
+
+    addToCart(catalogProd, businessId, businessName, 'gastronomia');
+    setAddedItemId(item.id);
+    setTimeout(() => setAddedItemId(null), 1800);
   };
 
   return (
@@ -116,29 +140,67 @@ export const BusinessMenuTab: React.FC<BusinessMenuTabProps> = ({
                   {item.price}
                 </span>
                 <button
-                  onClick={() => handleOrderWhatsapp(item)}
+                  type="button"
+                  onClick={() => handleAddToCart(item)}
                   style={{
                     display: 'flex',
                     alignItems: 'center',
-                    gap: 4,
-                    padding: '6px 12px',
-                    borderRadius: 12,
+                    gap: 6,
+                    padding: '8px 14px',
+                    borderRadius: 14,
                     border: 'none',
-                    background: '#F0FDF4',
-                    color: '#15803D',
-                    fontSize: 11,
-                    fontWeight: 700,
+                    background: addedItemId === item.id ? '#14B8A6' : '#F59E0B',
+                    color: addedItemId === item.id ? '#FFFFFF' : '#0B131E',
+                    fontSize: 12,
+                    fontWeight: 800,
                     cursor: 'pointer',
+                    boxShadow: '0 4px 12px rgba(245, 158, 11, 0.25)',
+                    transition: 'all 0.2s ease',
                   }}
                 >
-                  <Utensils size={12} />
-                  Pedir / Consultar
+                  {addedItemId === item.id ? (
+                    <>
+                      <Check size={14} />
+                      Adicionado!
+                    </>
+                  ) : (
+                    <>
+                      <Plus size={14} />
+                      + Sacola
+                    </>
+                  )}
                 </button>
               </div>
             </div>
           </div>
         ))}
       </div>
+
+      {onOpenCartModal && (
+        <div style={{ marginTop: 8, display: 'flex', justifyContent: 'center' }}>
+          <button
+            type="button"
+            onClick={onOpenCartModal}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 8,
+              padding: '10px 18px',
+              borderRadius: 14,
+              border: '1px solid rgba(20, 184, 166, 0.3)',
+              background: 'rgba(20, 184, 166, 0.1)',
+              color: '#0D9488',
+              fontSize: 13,
+              fontWeight: 700,
+              cursor: 'pointer',
+              transition: 'all 0.2s ease',
+            }}
+          >
+            <ShoppingBag size={16} />
+            <span>Ver Sacola & Finalizar Pedido</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 };

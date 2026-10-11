@@ -7,7 +7,6 @@ import {
   Heart,
   Share2,
   Navigation,
-  MessageCircle,
   Calendar,
   Sparkles,
   ChevronLeft,
@@ -21,13 +20,12 @@ import {
   Palette,
   Anchor,
   Compass,
-  Footprints,
   Receipt,
   Radio,
 } from "lucide-react";
 import type { Business, EventItem, OfferItem } from "../../data/caraivaDigitalData";
 import { CARAIVA_EVENTS, CARAIVA_OFFERS, claimBusinessProfile } from "../../data/caraivaDigitalData";
-import { openBusinessWhatsApp, trackEvent } from "../../services/analytics";
+import { trackEvent } from "../../services/analytics";
 import { isFavorite, toggleFavorite, addToItinerary } from "../../services/favoritesService";
 import { StreetViewModal } from "./StreetViewModal";
 import { businessToGuidePlace } from "../../services/maps/places";
@@ -151,18 +149,6 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
         setTimeout(() => setCopiedLink(false), 2000);
       } catch { /* Clipboard permission may be denied; keep the profile usable. */ }
     }
-  };
-
-  const handleWhatsAppAction = () => {
-    openBusinessWhatsApp(
-      {
-        id: business.id,
-        name: business.name,
-        whatsappNumber: business.whatsapp || business.whatsappNumber || "5573999999999",
-      },
-      "business_detail_primary_cta",
-      `Olá! Estive vendo o ${business.name} no Caraíva Digital e gostaria de informações e reservas.`
-    );
   };
 
   const handleSubmitClaim = (e: React.FormEvent) => {
@@ -336,89 +322,38 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             </div>
           </div>
 
-          {/* Interactive Navigation & Street View Action Hub */}
-          <div className="p-3.5 rounded-2xl bg-gradient-to-r from-amber-500/10 via-sky-500/10 to-teal-500/10 border border-white/10 space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-xs font-bold text-amber-300 flex items-center gap-1.5">
-                <Footprints className="w-4 h-4 text-amber-400" />
-                <span>Navegação & Exploração na Areia</span>
-              </span>
-              <span className="text-[10px] text-slate-400">Google Maps Platform</span>
-            </div>
-
-            <div className="grid grid-cols-3 gap-2">
-              <button
-                onClick={() => {
-                  if (onOpenMap) onOpenMap(business);
-                  onClose();
-                }}
-                className="p-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs flex flex-col items-center justify-center gap-1 shadow-md shadow-amber-400/20 active:scale-95 transition-all text-center"
-              >
-                <Navigation className="w-4 h-4" />
-                <span>Como Chegar</span>
-              </button>
-
-              <button
-                onClick={() => {
-                  if (onOpenMap) onOpenMap(business);
-                  onClose();
-                }}
-                className="p-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs flex flex-col items-center justify-center gap-1 border border-white/10 active:scale-95 transition-all text-center"
-              >
-                <MapPin className="w-4 h-4 text-sky-400" />
-                <span>Ver no Mapa</span>
-              </button>
-
-              <button
-                onClick={() => setIsStreetViewOpen(true)}
-                className="p-2.5 rounded-xl bg-gradient-to-r from-sky-500/20 to-teal-500/20 hover:from-sky-500/30 hover:to-teal-500/30 text-teal-300 border border-teal-500/30 font-bold text-xs flex flex-col items-center justify-center gap-1 active:scale-95 transition-all text-center"
-              >
-                <Compass className="w-4 h-4 text-teal-400" />
-                <span>Ver Fachada</span>
-              </button>
-            </div>
-          </div>
-
-          {/* Banner de Identificação na Mesa & NFC */}
+          {/* Indicador sutil de Mesa Conectada para gastronomia / praia */}
           {(business.category === "restaurantes" ||
             business.category === "bares" ||
             business.category === "cafes" ||
             business.category === "noite" ||
             business.category === "praias") && (
-            <div className="p-3 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-teal-500/15 border border-amber-500/30 flex items-center justify-between gap-3 shadow-lg shadow-amber-950/20">
-              <div className="flex items-center gap-2.5 min-w-0">
-                <div className="w-9 h-9 rounded-xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center shrink-0 text-amber-300">
-                  <Radio className="w-4 h-4 animate-pulse" />
-                </div>
-                <div className="min-w-0">
-                  <div className="flex items-center gap-1.5">
-                    <span className="text-[10px] font-black uppercase tracking-wider text-amber-300 bg-amber-500/25 px-1.5 py-0.5 rounded-md">
-                      Mesa Digital
-                    </span>
-                    <span className="text-[10px] text-slate-300 font-medium">NFC / QR Instantâneo</span>
-                  </div>
-                  <p className="text-xs font-bold text-white truncate mt-0.5">
-                    {tableNumber} Conectada • Extrato em tempo real
-                  </p>
-                </div>
+            <div className="px-3.5 py-2.5 rounded-xl bg-gradient-to-r from-amber-500/10 via-amber-500/5 to-teal-500/10 border border-amber-500/20 flex items-center justify-between gap-2 shadow-sm">
+              <div className="flex items-center gap-2 min-w-0">
+                <span className="relative flex h-2.5 w-2.5 shrink-0">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-amber-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-amber-500"></span>
+                </span>
+                <p className="text-xs font-semibold text-slate-200 truncate">
+                  <strong className="text-amber-300 font-bold">{tableNumber}</strong> conectada via NFC
+                </p>
               </div>
 
               <div className="flex items-center gap-1.5 shrink-0">
                 <button
                   type="button"
                   onClick={() => setIsTableOnboardingOpen(true)}
-                  className="px-2.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs flex items-center gap-1 shadow-md shadow-amber-400/20 active:scale-95 transition-all"
-                  title="Aproximar Celular da Mesa"
+                  className="px-2 py-1 rounded-lg bg-amber-400/20 hover:bg-amber-400/30 text-amber-300 font-bold text-[11px] flex items-center gap-1 transition-colors"
                 >
-                  <Radio className="w-3.5 h-3.5" />
+                  <Radio className="w-3 h-3" />
                   <span>Aproximar</span>
                 </button>
                 <button
                   type="button"
                   onClick={() => setDetailTab("conta")}
-                  className="px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs flex items-center gap-1 border border-white/15 active:scale-95 transition-all"
+                  className="px-2 py-1 rounded-lg bg-white/10 hover:bg-white/15 text-white font-medium text-[11px] flex items-center gap-1 transition-colors"
                 >
-                  <Receipt className="w-3.5 h-3.5 text-amber-300" />
+                  <Receipt className="w-3 h-3 text-amber-300" />
                   <span>Ver Conta</span>
                 </button>
               </div>
@@ -493,9 +428,11 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
           {detailTab === "cardapio" && (
             <div className="pt-2">
               <BusinessMenuTab
+                businessId={business.id}
                 businessName={business.name}
                 menuItems={getBusinessProfileDetail(business.slug || business.id, business.name).menuItems}
                 whatsappNumber={business.whatsapp}
+                onOpenCartModal={() => setIsCartModalOpen(true)}
               />
             </div>
           )}
@@ -732,53 +669,81 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
         </div>
 
         {/* Sticky Action Footer */}
-        <div className="sticky bottom-0 p-3 sm:p-4 bg-[#080d12]/95 backdrop-blur-xl border-t border-white/10 flex items-center gap-2 z-30 flex-wrap sm:flex-nowrap">
-          <button
-            onClick={() => {
-              if (onOpenMap) onOpenMap(business);
-              onClose();
-            }}
-            className="flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-white/10 active:scale-98"
-          >
-            <Navigation className="w-4 h-4 text-sky-400" />
-            <span>Mapa</span>
-          </button>
+        {(() => {
+          const businessCartItems = cartItems.filter((i) => i.businessId === business.id);
+          const businessCartCount = businessCartItems.reduce((acc, i) => acc + i.quantity, 0);
+          const businessCartTotal = businessCartItems.reduce((acc, i) => acc + (i.product?.price || 0) * i.quantity, 0);
+          const isFood = business.category === "restaurantes" || business.category === "bares" || business.category === "cafes";
 
-          <button
-            onClick={() => setIsStreetViewOpen(true)}
-            className="flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-teal-500/30 active:scale-98"
-          >
-            <Compass className="w-4 h-4 text-teal-400" />
-            <span>Fachada 360°</span>
-          </button>
+          return (
+            <div className="sticky bottom-0 p-3 sm:p-4 bg-[#080d12]/95 backdrop-blur-xl border-t border-white/10 flex items-center gap-2 z-30 flex-wrap sm:flex-nowrap">
+              <button
+                onClick={() => {
+                  if (onOpenMap) onOpenMap(business);
+                  onClose();
+                }}
+                className="flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-white/10 active:scale-98"
+              >
+                <Navigation className="w-4 h-4 text-sky-400" />
+                <span>Mapa</span>
+              </button>
 
-          <button
-            onClick={handleAddToItinerary}
-            className="flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-white/10 active:scale-98"
-          >
-            {addedToDay ? (
-              <>
-                <Check className="w-4 h-4 text-emerald-400" />
-                <span className="text-emerald-300">Salvo!</span>
-              </>
-            ) : (
-              <>
-                <Plus className="w-4 h-4 text-amber-400" />
-                <span>+ Dia</span>
-              </>
-            )}
-          </button>
+              <button
+                onClick={() => setIsStreetViewOpen(true)}
+                className="flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-teal-500/30 active:scale-98"
+              >
+                <Compass className="w-4 h-4 text-teal-400" />
+                <span>Fachada 360°</span>
+              </button>
 
-          <button
-            onClick={handleWhatsAppAction}
-            className="w-full sm:w-auto sm:flex-[2] py-2.5 sm:py-3 px-3 rounded-xl bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-400 hover:to-teal-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/25 active:scale-98 transition-all"
-          >
-            <MessageCircle className="w-4 h-4 shrink-0 fill-slate-950" />
-            <span className="truncate">
-              {business.ctaLabel || (business.ctaType === "reservar" ? "Reservar Mesa" : business.ctaType === "consultar" ? "Consultar Hospedagem" : "WhatsApp")}
-            </span>
-          </button>
-        </div>
+              <button
+                onClick={handleAddToItinerary}
+                className="flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-white/10 active:scale-98"
+              >
+                {addedToDay ? (
+                  <>
+                    <Check className="w-4 h-4 text-emerald-400" />
+                    <span className="text-emerald-300">Salvo!</span>
+                  </>
+                ) : (
+                  <>
+                    <Plus className="w-4 h-4 text-amber-400" />
+                    <span>+ Dia</span>
+                  </>
+                )}
+              </button>
+
+              {businessCartCount > 0 ? (
+                <button
+                  type="button"
+                  onClick={() => setIsCartModalOpen(true)}
+                  className="w-full sm:w-auto sm:flex-[2.5] py-2.5 sm:py-3 px-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-between gap-2 shadow-lg shadow-amber-500/25 active:scale-98 transition-all animate-pulse"
+                >
+                  <div className="flex items-center gap-1.5 truncate">
+                    <span className="px-1.5 py-0.5 rounded-full bg-slate-950 text-amber-400 text-[11px] font-black">
+                      {businessCartCount}
+                    </span>
+                    <span className="truncate">Ver Sacola do Turista</span>
+                  </div>
+                  <span className="text-xs font-black bg-slate-950/15 px-2 py-0.5 rounded-md shrink-0">
+                    R$ {businessCartTotal.toFixed(2)}
+                  </span>
+                </button>
+              ) : (
+                <button
+                  type="button"
+                  onClick={() => setDetailTab(isFood ? "cardapio" : "vitrine")}
+                  className="w-full sm:w-auto sm:flex-[2] py-2.5 sm:py-3 px-3 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 active:scale-98 transition-all"
+                >
+                  <Sparkles className="w-4 h-4 shrink-0 fill-slate-950" />
+                  <span className="truncate">
+                    {isFood ? "Ver Cardápio & Pedir" : "Explorar Produtos & Serviços"}
+                  </span>
+                </button>
+              )}
+            </div>
+          );
+        })()}
 
         {/* Modal de Reivindicação de Perfil (Claim Business) */}
         {isClaimModalOpen && (
@@ -916,7 +881,6 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
         onClose={() => setIsCartModalOpen(false)}
         businessId={business.id}
         businessName={business.name}
-        whatsappNumber={business.whatsapp}
         cartItems={cartItems}
       />
     </div>

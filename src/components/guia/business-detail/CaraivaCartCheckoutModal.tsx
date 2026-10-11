@@ -23,7 +23,6 @@ interface CaraivaCartCheckoutModalProps {
   onClose: () => void;
   businessId: string;
   businessName: string;
-  whatsappNumber?: string;
   cartItems: CartItem[];
   onOrderCompleted?: (order: VillageOrderPayload) => void;
 }
@@ -33,7 +32,6 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
   onClose,
   businessId,
   businessName,
-  whatsappNumber = '5573999990000',
   cartItems,
 }) => {
   const [destinationType, setDestinationType] = useState<'pousada' | 'praia' | 'mesa' | 'retirada'>('pousada');
@@ -66,37 +64,15 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
 
     setSubmittedOrder(payload);
 
-    // Formata mensagem inteligente com payload para envio ou abertura no app do comércio
-    const itemsList = payload.items
-      .map((i) => `• ${i.quantity}x ${i.name} — R$ ${i.subtotal.toFixed(2)}`)
-      .join('\n');
-
-    const destinationLabel =
-      destinationType === 'pousada'
-        ? `🏨 Pousada/Casa: ${payload.destinationDetail}`
-        : destinationType === 'praia'
-        ? `🏖️ Ponto na Areia: ${payload.destinationDetail}`
-        : destinationType === 'mesa'
-        ? `🧾 Mesa no Local: ${payload.destinationDetail}`
-        : `🛍️ Retirada no Balcão`;
-
-    const paymentLabel =
-      paymentMethod === 'pix' ? 'Pix Imediato' : paymentMethod === 'cartao_entrega' ? 'Cartão na Entrega' : 'Dinheiro';
-
-    const orderText = `🌴 *NOVO PEDIDO — CARAÍVA DIGITAL* 🌴\n\n` +
-      `*Pedido:* #${payload.orderId}\n` +
-      `*Cliente:* ${payload.customerName}\n` +
-      `*Destino:* ${destinationLabel}\n` +
-      `*Pagamento:* ${paymentLabel}\n\n` +
-      `📦 *ITENS:* \n${itemsList}\n\n` +
-      `Subtotal: R$ ${subtotal.toFixed(2)}\n` +
-      `Taxa de Entrega: R$ ${deliveryFee.toFixed(2)}\n` +
-      `*TOTAL: R$ ${total.toFixed(2)}*\n\n` +
-      `🔗 *Payload para App de Gestão do Comércio:*\n` +
-      `https://caraiva.digital/app-negocio?pedido=${payload.orderId}&itens=${payload.items.length}`;
-
-    // Dispara via WhatsApp comercial como ponte imediata
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(orderText)}`, '_blank');
+    // Grava o pedido no histórico local do turista e simula envio direto ao aplicativo do comércio
+    try {
+      const existingOrders = JSON.parse(localStorage.getItem('caraiva_orders_history') || '[]');
+      existingOrders.unshift(payload);
+      localStorage.setItem('caraiva_orders_history', JSON.stringify(existingOrders));
+      window.dispatchEvent(new CustomEvent('caraiva:order-submitted', { detail: payload }));
+    } catch {
+      // Storage fallback
+    }
   };
 
   const handleCopyOrderPayload = async () => {
