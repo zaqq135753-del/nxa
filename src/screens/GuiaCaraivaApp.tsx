@@ -303,6 +303,7 @@ export const GuiaCaraivaApp: React.FC = () => {
           <div className="cv-guide-home space-y-6 pb-28">
             {/* Cinematic Hero with Search and Live Tide Pill */}
             <CaraivaCinematicHero
+              theme={theme}
               onPhotoCredits={() => setPhotoCreditsOpen(true)}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}

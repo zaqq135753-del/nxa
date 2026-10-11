@@ -35,6 +35,7 @@
 .caraiva-guide.caraiva-guide[data-theme=light] .cv-photo [class*="bg-black/"]{color:#fffdf7}
 .caraiva-guide.caraiva-guide[data-theme=light] .cv-photo [class*="border-white/"]{border-color:#ffffff40}
 .caraiva-guide.caraiva-guide[data-theme=light] .cv-hero{background:var(--cv-sand);border-radius:25px;margin:20px auto 0;width:calc(100% - 32px);max-width:848px;border:1px solid var(--cv-line);box-shadow:0 10px 35px #2447370d}
+.caraiva-guide.caraiva-guide[data-theme=light] .cv-cinematic-hero{background:var(--cv-sand)!important;border-color:var(--cv-line)!important}
 .caraiva-guide.caraiva-guide[data-theme=light] .cv-hero [class*="bg-gradient-to-b"],.caraiva-guide.caraiva-guide[data-theme=light] .cv-hero [class*="bg-radial"]{background:linear-gradient(180deg,#f7f3e9b0,#f7f3e960 45%,#f7f3e9ee)}
 .caraiva-guide.caraiva-guide[data-theme=light] .cv-hero :is(.text-white,[class*="text-white/"]){color:var(--cv-ink)}
 .caraiva-guide.caraiva-guide[data-theme=light] .cv-hero input{background:#fffdf7f0;border-color:#d6dece;color:var(--cv-ink);box-shadow:0 8px 25px #24473712;backdrop-filter:blur(12px)}
