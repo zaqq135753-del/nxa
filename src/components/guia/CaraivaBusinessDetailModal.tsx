@@ -22,6 +22,8 @@ import {
   Anchor,
   Compass,
   Footprints,
+  Receipt,
+  Radio,
 } from "lucide-react";
 import type { Business, EventItem, OfferItem } from "../../data/caraivaDigitalData";
 import { CARAIVA_EVENTS, CARAIVA_OFFERS, claimBusinessProfile } from "../../data/caraivaDigitalData";
@@ -31,25 +33,31 @@ import { StreetViewModal } from "./StreetViewModal";
 import { businessToGuidePlace } from "../../services/maps/places";
 import { getBusinessProfileDetail } from "../../data/caraivaExtendedProfiles";
 import { BusinessMenuTab, BusinessBookingTab } from "./business-detail/BusinessExtendedSections";
+import { CaraivaTableBillView } from "./table/CaraivaTableBillView";
+import { CaraivaTableOnboardingModal } from "./table/CaraivaTableOnboardingModal";
 
 interface CaraivaBusinessDetailModalProps {
   business: Business | null;
   onClose: () => void;
   onOpenMap?: (business: Business) => void;
   onStartRoute?: (business: Business) => void;
+  initialTab?: "visao-geral" | "cardapio" | "conta" | "reserva";
 }
 
 export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProps> = ({
   business,
   onClose,
   onOpenMap,
+  initialTab,
 }) => {
-  const [detailTab, setDetailTab] = useState<"visao-geral" | "cardapio" | "reserva">("visao-geral");
+  const [detailTab, setDetailTab] = useState<"visao-geral" | "cardapio" | "conta" | "reserva">(initialTab || "visao-geral");
   const [activePhotoIdx, setActivePhotoIdx] = useState(0);
   const [favorite, setFavorite] = useState(false);
   const [addedToDay, setAddedToDay] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [isStreetViewOpen, setIsStreetViewOpen] = useState(false);
+  const [isTableOnboardingOpen, setIsTableOnboardingOpen] = useState(false);
+  const [tableNumber, setTableNumber] = useState("Mesa 07");
 
   // Claim Profile Form State
   const [isClaimModalOpen, setIsClaimModalOpen] = useState(false);
@@ -66,13 +74,14 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
       setAddedToDay(false);
       setIsClaimModalOpen(false);
       setClaimSubmitted(false);
+      setDetailTab(initialTab || "visao-geral");
       trackEvent("business_view", {
         businessId: business.id,
         businessName: business.name,
         source: "business_modal",
       });
     }
-  }, [business]);
+  }, [business, initialTab]);
 
   if (!business) return null;
 
@@ -356,11 +365,57 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             </div>
           </div>
 
-          {/* Tabs do Estabelecimento: Visão Geral, Cardápio e Reserva */}
-          <div className="flex items-center gap-2 p-1.5 rounded-2xl bg-white/[0.05] border border-white/10 select-none">
+          {/* Banner de Identificação na Mesa & NFC */}
+          {(business.category === "restaurantes" ||
+            business.category === "bares" ||
+            business.category === "cafes" ||
+            business.category === "noite" ||
+            business.category === "praias") && (
+            <div className="p-3 rounded-2xl bg-gradient-to-r from-amber-500/15 via-orange-500/10 to-teal-500/15 border border-amber-500/30 flex items-center justify-between gap-3 shadow-lg shadow-amber-950/20">
+              <div className="flex items-center gap-2.5 min-w-0">
+                <div className="w-9 h-9 rounded-xl bg-amber-400/20 border border-amber-400/40 flex items-center justify-center shrink-0 text-amber-300">
+                  <Radio className="w-4 h-4 animate-pulse" />
+                </div>
+                <div className="min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-amber-300 bg-amber-500/25 px-1.5 py-0.5 rounded-md">
+                      Mesa Digital
+                    </span>
+                    <span className="text-[10px] text-slate-300 font-medium">NFC / QR Instantâneo</span>
+                  </div>
+                  <p className="text-xs font-bold text-white truncate mt-0.5">
+                    {tableNumber} Conectada • Extrato em tempo real
+                  </p>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-1.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setIsTableOnboardingOpen(true)}
+                  className="px-2.5 py-1.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs flex items-center gap-1 shadow-md shadow-amber-400/20 active:scale-95 transition-all"
+                  title="Aproximar Celular da Mesa"
+                >
+                  <Radio className="w-3.5 h-3.5" />
+                  <span>Aproximar</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDetailTab("conta")}
+                  className="px-2.5 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs flex items-center gap-1 border border-white/15 active:scale-95 transition-all"
+                >
+                  <Receipt className="w-3.5 h-3.5 text-amber-300" />
+                  <span>Ver Conta</span>
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Tabs do Estabelecimento: Visão Geral, Cardápio, Conta e Reserva */}
+          <div className="flex items-center gap-1.5 p-1.5 rounded-2xl bg-white/[0.05] border border-white/10 select-none overflow-x-auto no-scrollbar">
             <button
               onClick={() => setDetailTab("visao-geral")}
-              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all text-center ${
+              className={`flex-1 min-w-[76px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
                 detailTab === "visao-geral"
                   ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
                   : "text-slate-300 hover:text-white"
@@ -370,23 +425,33 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             </button>
             <button
               onClick={() => setDetailTab("cardapio")}
-              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all text-center ${
+              className={`flex-1 min-w-[86px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
                 detailTab === "cardapio"
                   ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
                   : "text-slate-300 hover:text-white"
               }`}
             >
-              🍽️ Cardápio & Preços
+              🍽️ Cardápio
+            </button>
+            <button
+              onClick={() => setDetailTab("conta")}
+              className={`flex-1 min-w-[92px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
+                detailTab === "conta"
+                  ? "bg-amber-400 text-slate-950 shadow-lg shadow-amber-400/25 font-black"
+                  : "text-amber-300 hover:text-white"
+              }`}
+            >
+              🧾 Ver Conta
             </button>
             <button
               onClick={() => setDetailTab("reserva")}
-              className={`flex-1 py-2 px-3 rounded-xl text-xs font-bold transition-all text-center ${
+              className={`flex-1 min-w-[80px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
                 detailTab === "reserva"
                   ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
                   : "text-slate-300 hover:text-white"
               }`}
             >
-              📅 Reservas & Horários
+              📅 Reservas
             </button>
           </div>
 
@@ -396,6 +461,17 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                 businessName={business.name}
                 menuItems={getBusinessProfileDetail(business.slug || business.id, business.name).menuItems}
                 whatsappNumber={business.whatsapp}
+              />
+            </div>
+          )}
+
+          {detailTab === "conta" && (
+            <div className="pt-2">
+              <CaraivaTableBillView
+                businessId={business.id}
+                businessName={business.name}
+                tableNumber={tableNumber}
+                onOpenOnboarding={() => setIsTableOnboardingOpen(true)}
               />
             </div>
           )}
@@ -773,6 +849,18 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
           setIsStreetViewOpen(false);
           if (onOpenMap) onOpenMap(business);
           onClose();
+        }}
+      />
+
+      {/* Onboarding 3D de Mesa & NFC Tap */}
+      <CaraivaTableOnboardingModal
+        isOpen={isTableOnboardingOpen}
+        onClose={() => setIsTableOnboardingOpen(false)}
+        businessName={business.name}
+        initialTableNumber={tableNumber}
+        onConfirmed={(assignedTable: string) => {
+          setTableNumber(assignedTable);
+          setDetailTab("conta");
         }}
       />
     </div>
