@@ -64,3 +64,8 @@
 
 .caraiva-guide.caraiva-guide[data-theme=light] :is([class~="bg-[#070b0e]"],[class~="bg-[#090e13]/90"],[class~="bg-[#0b1016]/80"],[class~="bg-[#1C3F38]"]){background:var(--cv-paper);color:var(--cv-ink)}
 .caraiva-guide.caraiva-guide[data-theme=light] :is([class~="bg-[#c97135]"],[class~="bg-[#E28444]"]){background:var(--cv-ink);color:var(--cv-paper)}
+
+/* Ensure text on hero background and media stays high-contrast white in light mode */
+.caraiva-guide.caraiva-guide[data-theme=light] .cv-cinematic-hero :is(.text-white, [class*="text-white/"], [class*="text-white"]){color:#ffffff !important}
+.caraiva-guide.caraiva-guide[data-theme=light] .cv-cinematic-hero [class*="text-white/80"]{color:rgba(255,255,255,0.85) !important}
+.caraiva-guide.caraiva-guide[data-theme=light] [data-cv-depth="true"] :is(.text-white, [class*="text-white"]){color:#ffffff !important}

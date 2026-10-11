@@ -83,14 +83,17 @@ export const CaraivaIntentionsBar: React.FC<CaraivaIntentionsBarProps> = ({
   return (
     <section className="px-4 mt-4">
       <div className="flex items-center justify-between mb-2.5">
-        <h2 className="text-xs font-bold uppercase tracking-wider text-white flex items-center gap-1.5">
+        <h2
+          className="text-xs sm:text-sm font-bold uppercase tracking-wider flex items-center gap-1.5"
+          style={{ color: "var(--cv-ink)" }}
+        >
           <span>Explore por Intenção</span>
         </h2>
         {selectedIntention && (
           <button
             type="button"
             onClick={() => onSelectIntention("agora")}
-            className="text-[11px] font-semibold text-amber-400 hover:underline active:scale-95"
+            className="text-[11px] font-semibold text-amber-500 hover:underline active:scale-95"
           >
             Limpar filtro
           </button>
@@ -106,10 +109,10 @@ export const CaraivaIntentionsBar: React.FC<CaraivaIntentionsBarProps> = ({
               key={item.id}
               type="button"
               onClick={() => onSelectIntention(item.id)}
-              className={`relative shrink-0 w-[80px] sm:w-[84px] h-[92px] sm:h-[96px] rounded-2xl overflow-hidden transition-all duration-300 active:scale-95 snap-start shadow-sm border ${
+              className={`relative shrink-0 w-[78px] sm:w-[86px] h-[92px] sm:h-[98px] rounded-2xl overflow-hidden transition-all duration-300 active:scale-95 snap-start shadow-sm border ${
                 isSelected
                   ? "border-amber-400 ring-2 ring-amber-400/40 scale-[1.03] shadow-lg shadow-amber-400/20"
-                  : "border-white/10 hover:border-white/25"
+                  : "border-white/20 hover:border-white/40"
               }`}
             >
               {/* Imagem de Fundo com Gradiente */}
@@ -123,22 +126,28 @@ export const CaraivaIntentionsBar: React.FC<CaraivaIntentionsBarProps> = ({
               <div
                 className={`absolute inset-0 transition-colors ${
                   isSelected
-                    ? "bg-gradient-to-t from-[#080d12]/95 via-[#080d12]/60 to-amber-500/30"
-                    : "bg-gradient-to-t from-black/85 via-black/40 to-black/20 hover:from-black/75"
+                    ? "bg-gradient-to-t from-black/90 via-black/50 to-amber-500/25"
+                    : "bg-gradient-to-t from-black/85 via-black/35 to-black/10 hover:from-black/75"
                 }`}
               />
 
               {/* Badge Dinâmico (ex: Ao vivo) */}
               {item.badge && (
-                <span className="absolute top-1.5 left-1.5 text-[8px] sm:text-[9px] font-extrabold uppercase tracking-wide bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded-full shadow-sm">
+                <span className="absolute top-1.5 left-1.5 text-[8px] sm:text-[9px] font-extrabold uppercase tracking-wide bg-amber-400 text-slate-950 px-1.5 py-0.5 rounded-full shadow-sm z-10">
                   {item.badge}
                 </span>
               )}
 
-              {/* Rótulo e Ícone */}
-              <div className="absolute bottom-2 inset-x-1.5 text-center text-white">
+              {/* Rótulo e Ícone com alto contraste garantido */}
+              <div
+                className="absolute bottom-1.5 inset-x-1 text-center z-10 flex flex-col items-center"
+                style={{ color: "#FFFFFF" }}
+              >
                 <span className="text-base block mb-0.5 filter drop-shadow">{item.icon}</span>
-                <span className="text-[10px] sm:text-[11px] font-bold tracking-tight block leading-tight truncate drop-shadow">
+                <span
+                  className="text-[10px] sm:text-[11px] font-bold tracking-tight block leading-tight truncate px-1.5 py-0.5 rounded-md bg-black/45 backdrop-blur-xs max-w-full"
+                  style={{ color: "#FFFFFF", textShadow: "0 1px 4px rgba(0,0,0,0.9)" }}
+                >
                   {item.label}
                 </span>
               </div>

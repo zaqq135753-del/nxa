@@ -26,14 +26,14 @@ export const CaraivaStoriesRow: React.FC<CaraivaStoriesRowProps> = ({
     <div style={{ margin: '14px 0', padding: '0 16px' }}>
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 10 }}>
         <div>
-          <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: '#0D2834', letterSpacing: '-0.01em' }}>
+          <h3 style={{ margin: 0, fontSize: 15, fontWeight: 800, color: 'var(--cv-ink)', letterSpacing: '-0.01em' }}>
             Stories da Vila
           </h3>
-          <p style={{ margin: 0, fontSize: 11, color: '#64748B' }}>
+          <p style={{ margin: 0, fontSize: 11, color: 'var(--cv-muted)' }}>
             Momentos ao vivo postados por moradores e viajantes
           </p>
         </div>
-        <span style={{ fontSize: 11, fontWeight: 700, color: '#0FA3A5', background: 'rgba(15,163,165,0.1)', padding: '3px 8px', borderRadius: 9999 }}>
+        <span style={{ fontSize: 11, fontWeight: 700, color: '#0FA3A5', background: 'rgba(15,163,165,0.12)', padding: '3px 9px', borderRadius: 9999, border: '1px solid rgba(15,163,165,0.25)' }}>
           ● Ao Vivo
         </span>
       </div>
@@ -67,7 +67,7 @@ export const CaraivaStoriesRow: React.FC<CaraivaStoriesRowProps> = ({
                 width: 64,
                 height: 64,
                 borderRadius: '50%',
-                background: 'linear-gradient(135deg, #FAF6EE, #F4ECE0)',
+                background: 'var(--cv-soft)',
                 border: '2px dashed #0FA3A5',
                 display: 'flex',
                 alignItems: 'center',
@@ -78,7 +78,7 @@ export const CaraivaStoriesRow: React.FC<CaraivaStoriesRowProps> = ({
             >
               <Plus size={24} />
             </div>
-            <span style={{ fontSize: 11, fontWeight: 700, color: '#0D2834', maxWidth: 66, textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            <span style={{ fontSize: 11, fontWeight: 700, color: 'var(--cv-ink)', maxWidth: 66, textAlign: 'center', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
               Seu Story
             </span>
           </div>
@@ -117,9 +117,9 @@ export const CaraivaStoriesRow: React.FC<CaraivaStoriesRowProps> = ({
                     width: '100%',
                     height: '100%',
                     borderRadius: '50%',
-                    border: '2px solid #FFFFFF',
+                    border: '2px solid var(--cv-paper)',
                     overflow: 'hidden',
-                    background: '#E2E8F0',
+                    background: 'var(--cv-soft)',
                   }}
                 >
                   <img
@@ -134,7 +134,7 @@ export const CaraivaStoriesRow: React.FC<CaraivaStoriesRowProps> = ({
                 style={{
                   fontSize: 11,
                   fontWeight: 700,
-                  color: '#0D2834',
+                  color: 'var(--cv-ink)',
                   maxWidth: 68,
                   textAlign: 'center',
                   overflow: 'hidden',

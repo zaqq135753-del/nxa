@@ -22,7 +22,6 @@ import { CaraivaCinematicHero } from "../components/guia/CaraivaCinematicHero";
 import { CaraivaIntentionsBar } from "../components/guia/CaraivaIntentionsBar";
 import { CaraivaNowSection } from "../components/guia/CaraivaNowSection";
 import { CaraivaNearYouSection } from "../components/guia/CaraivaNearYouSection";
-import { CaraivaAiHeroAssistant } from "../components/guia/home/CaraivaAiHeroAssistant";
 import { CaraivaStoriesRow } from "../components/guia/home/CaraivaStoriesRow";
 import { BusinessCard3D } from "../components/guia/home/BusinessCard3D";
 import { CaraivaAgoraScreen } from "../components/guia/CaraivaAgoraScreen";
@@ -62,7 +61,7 @@ const HD_CARAIVA_STORIES: GuiaStory[] = [
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=150&q=80",
     location: "Boteco do Pará, Rio Caraíva",
     timeAgo: "há 24 min",
-    image: asset("assets/guide/river-postcard.svg"),
+    image: asset("assets/caraiva-photos/caraiva-07-640.webp"),
     stickerText: "Pôr do Sol no Rio",
     caption: "@julia no Pôr do Sol",
     likes: 84,
@@ -314,20 +313,6 @@ export const GuiaCaraivaApp: React.FC = () => {
               onConcierge={request => { setConciergeRequest(request || ""); navigateGuide("concierge"); }}
             />
 
-            {/* Assistente de IA em Destaque — O que fazer agora */}
-            <div className="max-w-4xl mx-auto">
-              <CaraivaAiHeroAssistant
-                onAskConcierge={(prompt) => {
-                  setConciergeRequest(prompt);
-                  navigateGuide("concierge");
-                }}
-                onExploreCategory={(cat) => {
-                  setSelectedCategory(cat as any);
-                  setActiveTab("explorar");
-                }}
-              />
-            </div>
-
             {/* Stories da Vila Redesenhados & Valorizados */}
             <div className="max-w-4xl mx-auto">
               <CaraivaStoriesRow
@@ -349,15 +334,20 @@ export const GuiaCaraivaApp: React.FC = () => {
             <div className="max-w-4xl mx-auto px-4 sm:px-6">
               <div className="flex items-center justify-between mb-3">
                 <div>
-                  <h3 className="text-base font-extrabold text-white tracking-tight flex items-center gap-2">
-                    <Sparkles className="w-4 h-4 text-amber-400" />
+                  <h3
+                    className="text-base font-extrabold tracking-tight flex items-center gap-2"
+                    style={{ color: "var(--cv-ink)" }}
+                  >
+                    <Sparkles className="w-4 h-4 text-amber-500" />
                     <span>Em Alta na Vila</span>
                   </h3>
-                  <p className="text-xs text-slate-400">Os lugares mais procurados e recomendados pela IA</p>
+                  <p className="text-xs" style={{ color: "var(--cv-muted)" }}>
+                    Os lugares mais procurados e recomendados pela IA
+                  </p>
                 </div>
                 <button
                   onClick={() => setActiveTab("explorar")}
-                  className="text-xs font-bold text-teal-400 hover:text-teal-300"
+                  className="text-xs font-bold text-amber-500 hover:text-amber-400"
                 >
                   Ver todos ↗
                 </button>
@@ -403,22 +393,36 @@ export const GuiaCaraivaApp: React.FC = () => {
             <div className="max-w-4xl mx-auto px-4 sm:px-6">
               <button
                 onClick={() => setIsCameraModalOpen(true)}
-                className="w-full p-4 rounded-3xl bg-gradient-to-r from-amber-500/20 via-emerald-500/20 to-sky-500/20 border border-white/15 hover:border-white/30 text-white flex items-center justify-between shadow-2xl transition-all group"
+                className="w-full p-4 rounded-3xl transition-all group cd-card-3d flex items-center justify-between shadow-md"
+                style={{
+                  background: "var(--cv-paper)",
+                  border: "1px solid var(--cv-line)",
+                }}
               >
                 <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-bold shadow-lg shadow-amber-400/25 group-hover:scale-105 transition-transform">
+                  <div className="w-10 h-10 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-bold shadow-md shadow-amber-400/25 group-hover:scale-105 transition-transform">
                     <Camera className="w-5 h-5" />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-sm font-bold text-white flex items-center gap-1.5">
-                      Câmera IA: Aponte e Descubra <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                    <h3
+                      className="text-sm font-bold flex items-center gap-1.5"
+                      style={{ color: "var(--cv-ink)" }}
+                    >
+                      Câmera IA: Aponte e Descubra <Sparkles className="w-3.5 h-3.5 text-amber-500" />
                     </h3>
-                    <p className="text-xs text-slate-300">
+                    <p className="text-xs" style={{ color: "var(--cv-muted)" }}>
                       Fotografe qualquer casinha, barco ou prato para saber a história e preço
                     </p>
                   </div>
                 </div>
-                <span className="text-xs font-bold text-amber-300 bg-amber-400/10 px-3 py-1.5 rounded-xl border border-amber-400/20 hidden sm:inline">
+                <span
+                  className="text-xs font-bold px-3 py-1.5 rounded-xl border hidden sm:inline"
+                  style={{
+                    background: "rgba(15, 163, 165, 0.1)",
+                    borderColor: "rgba(15, 163, 165, 0.25)",
+                    color: "var(--cv-river)",
+                  }}
+                >
                   Abrir Câmera
                 </span>
               </button>

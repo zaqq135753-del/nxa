@@ -93,15 +93,25 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
       {/* Cabeçalho da Seção */}
       <div className="flex items-center justify-between mb-2.5">
         <div>
-          <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider leading-tight">
+          <h2
+            className="text-xs sm:text-sm font-bold uppercase tracking-wider leading-tight"
+            style={{ color: "var(--cv-ink)" }}
+          >
             {preferredInterests.length ? "Escolhidos para você" : "Experiências em Caraíva"}
           </h2>
-          <p className="text-[10px] sm:text-[11px] text-slate-400">
+          <p className="text-[10px] sm:text-[11px]" style={{ color: "var(--cv-muted)" }}>
             {preferredInterests.length ? "Seus interesses guiam as primeiras descobertas" : "Locais autênticos a poucos passos na areia"}
           </p>
         </div>
 
-        <span className="text-[10px] font-semibold text-amber-300 bg-amber-400/10 border border-amber-400/20 px-2.5 py-0.5 rounded-full">
+        <span
+          className="text-[10px] font-semibold px-2.5 py-0.5 rounded-full"
+          style={{
+            background: "rgba(15, 163, 165, 0.12)",
+            color: "var(--cv-river)",
+            border: "1px solid rgba(15, 163, 165, 0.25)",
+          }}
+        >
           {filteredBusinesses.length} lugares
         </span>
       </div>
@@ -122,11 +132,21 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
             key={v.id}
             type="button"
             onClick={() => setActiveVibe(v.id)}
-            className={`px-3 py-1 rounded-full whitespace-nowrap transition-all active:scale-95 ${
+            className="px-3 py-1 rounded-full whitespace-nowrap transition-all active:scale-95"
+            style={
               activeVibe === v.id
-                ? "bg-amber-400 text-slate-950 font-bold shadow-md shadow-amber-400/20"
-                : "bg-white/5 text-slate-300 border border-white/10 hover:bg-white/10"
-            }`}
+                ? {
+                    background: "var(--cv-river)",
+                    color: "#FFFFFF",
+                    fontWeight: 800,
+                    boxShadow: "0 2px 10px rgba(15, 163, 165, 0.25)",
+                  }
+                : {
+                    background: "var(--cv-soft)",
+                    color: "var(--cv-muted)",
+                    border: "1px solid var(--cv-line)",
+                  }
+            }
           >
             {v.label}
           </button>
@@ -141,10 +161,14 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
             <div
               key={biz.id}
               onClick={() => onSelectBusiness(biz)}
-              className="bg-[#111921] rounded-2xl sm:rounded-3xl border border-white/10 shadow-lg hover:border-amber-400/40 transition-all active:scale-[0.99] overflow-hidden flex flex-col cursor-pointer group"
+              className="cd-card-3d rounded-2xl sm:rounded-3xl shadow-md transition-all active:scale-[0.99] overflow-hidden flex flex-col cursor-pointer group"
+              style={{
+                background: "var(--cv-paper)",
+                border: "1px solid var(--cv-line)",
+              }}
             >
               {/* Foto Principal com Badges */}
-              <div className="cv-photo relative h-40 sm:h-44 w-full overflow-hidden">
+              <div className="cv-photo relative h-40 sm:h-44 w-full overflow-hidden bg-slate-900">
                 <img
                   src={biz.heroImage}
                   alt={biz.name}
@@ -152,7 +176,7 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
                   decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#111921] via-black/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
                 {/* Badge de Parceiro Fundador (Discreto) */}
                 {biz.isFounderPartner && (
@@ -203,23 +227,36 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
                 <div>
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <h3 className="text-sm sm:text-base font-bold text-white group-hover:text-amber-300 transition-colors leading-snug">
+                      <h3
+                        className="text-sm sm:text-base font-bold group-hover:text-amber-500 transition-colors leading-snug"
+                        style={{ color: "var(--cv-ink)" }}
+                      >
                         {biz.name}
                       </h3>
-                      <p className="text-[11px] text-slate-400 font-medium mt-0.5">
+                      <p className="text-[11px] font-medium mt-0.5" style={{ color: "var(--cv-muted)" }}>
                         {biz.subCategory}
                       </p>
                     </div>
 
                     {/* Rating Confiável */}
-                    <div className="flex items-center gap-1 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full shrink-0">
+                    <div
+                      className="flex items-center gap-1 px-2 py-0.5 rounded-full shrink-0"
+                      style={{
+                        background: "var(--cv-soft)",
+                        border: "1px solid var(--cv-line)",
+                      }}
+                    >
                       <Star className="w-3 h-3 text-amber-400 fill-amber-400" />
-                      <span className="text-xs font-bold text-white">{biz.rating.toFixed(1)}</span>
-                      <span className="text-[10px] text-slate-400">({biz.reviewsCount})</span>
+                      <span className="text-xs font-bold" style={{ color: "var(--cv-ink)" }}>
+                        {biz.rating.toFixed(1)}
+                      </span>
+                      <span className="text-[10px]" style={{ color: "var(--cv-muted)" }}>
+                        ({biz.reviewsCount})
+                      </span>
                     </div>
                   </div>
 
-                  <p className="text-xs text-slate-300 line-clamp-2 mt-1.5 leading-relaxed">
+                  <p className="text-xs line-clamp-2 mt-1.5 leading-relaxed" style={{ color: "var(--cv-muted)" }}>
                     {biz.shortDescription}
                   </p>
 
@@ -228,7 +265,12 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
                     {biz.tags.slice(0, 3).map((tag) => (
                       <span
                         key={tag}
-                        className="text-[9px] sm:text-[10px] font-medium text-slate-300 bg-white/5 border border-white/10 px-2 py-0.5 rounded-full"
+                        className="text-[9px] sm:text-[10px] font-medium px-2 py-0.5 rounded-full"
+                        style={{
+                          background: "var(--cv-soft)",
+                          border: "1px solid var(--cv-line)",
+                          color: "var(--cv-muted)",
+                        }}
                       >
                         {tag}
                       </span>
@@ -237,10 +279,13 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
                 </div>
 
                 {/* Rodapé com Preço & CTA Primário */}
-                <div className="pt-2.5 border-t border-white/10 flex items-center justify-between">
+                <div
+                  className="pt-2.5 flex items-center justify-between"
+                  style={{ borderTop: "1px solid var(--cv-line)" }}
+                >
                   <div className="text-xs">
-                    <span className="font-bold text-amber-300">{biz.priceLevel}</span>
-                    <span className="text-slate-400 text-[10px] sm:text-[11px] ml-1.5">
+                    <span className="font-bold text-amber-500">{biz.priceLevel}</span>
+                    <span className="text-[10px] sm:text-[11px] ml-1.5" style={{ color: "var(--cv-muted)" }}>
                       {biz.priceDescription.split("por")[0]}
                     </span>
                   </div>
@@ -253,10 +298,15 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
                         e.stopPropagation();
                         setStreetViewTarget(businessToGuidePlace(biz, userLoc.coords));
                       }}
-                      className="p-1.5 sm:p-2 rounded-xl bg-teal-500/10 hover:bg-teal-500/20 text-teal-300 border border-teal-500/20 transition active:scale-95 flex items-center gap-1 text-[11px] font-semibold"
+                      className="p-1.5 sm:p-2 rounded-xl transition active:scale-95 flex items-center gap-1 text-[11px] font-semibold"
+                      style={{
+                        background: "rgba(15, 163, 165, 0.1)",
+                        border: "1px solid rgba(15, 163, 165, 0.25)",
+                        color: "var(--cv-river)",
+                      }}
                       title="Explorar rua e ver fachada 360°"
                     >
-                      <Compass className="w-3.5 h-3.5 text-teal-400" />
+                      <Compass className="w-3.5 h-3.5 text-teal-500" />
                       <span className="hidden sm:inline">Fachada</span>
                     </button>
 
@@ -268,10 +318,15 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
                         if (onOpenMap) onOpenMap(biz);
                         else if (onOpenMapToBusiness) onOpenMapToBusiness(biz);
                       }}
-                      className="p-1.5 sm:p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 border border-white/10 transition active:scale-95 flex items-center gap-1 text-[11px] font-semibold"
+                      className="p-1.5 sm:p-2 rounded-xl transition active:scale-95 flex items-center gap-1 text-[11px] font-semibold"
+                      style={{
+                        background: "var(--cv-soft)",
+                        border: "1px solid var(--cv-line)",
+                        color: "var(--cv-muted)",
+                      }}
                       title="Ver traçado a pé no mapa"
                     >
-                      <Navigation className="w-3.5 h-3.5 text-sky-400" />
+                      <Navigation className="w-3.5 h-3.5 text-sky-500" />
                       <span className="hidden sm:inline">Rota</span>
                     </button>
 

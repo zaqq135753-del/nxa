@@ -36,14 +36,17 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
     <section className="cv-now-section px-4 mt-5">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full bg-amber-400/15 flex items-center justify-center text-amber-400">
+          <div className="w-6 h-6 rounded-full bg-amber-400/15 flex items-center justify-center text-amber-500">
             <Flame className="w-3.5 h-3.5 animate-pulse" />
           </div>
           <div>
-            <h2 className="text-xs sm:text-sm font-bold text-white uppercase tracking-wider leading-tight">
+            <h2
+              className="text-xs sm:text-sm font-bold uppercase tracking-wider leading-tight"
+              style={{ color: "var(--cv-ink)" }}
+            >
               Caraíva Agora
             </h2>
-            <p className="text-[10px] sm:text-[11px] text-slate-400">
+            <p className="text-[10px] sm:text-[11px]" style={{ color: "var(--cv-muted)" }}>
               Acontecendo ou começando em breve na vila
             </p>
           </div>
@@ -52,7 +55,7 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
         <button
           type="button"
           onClick={() => (onSeeAllNow ? onSeeAllNow() : onNavigateToNowTab?.())}
-          className="text-xs font-bold text-amber-400 flex items-center gap-0.5 hover:underline active:scale-95"
+          className="text-xs font-bold text-amber-500 flex items-center gap-0.5 hover:underline active:scale-95"
         >
           <span>Ver tudo</span>
           <ChevronRight className="w-3.5 h-3.5" />
@@ -65,10 +68,14 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
           <div
             key={item.id}
             onClick={() => handleAction(item)}
-            className="cv-now-card shrink-0 w-[230px] sm:w-[250px] rounded-2xl bg-[#111921] border border-white/10 shadow-lg hover:border-amber-400/40 transition-all active:scale-[0.98] snap-start overflow-hidden flex flex-col justify-between cursor-pointer group"
+            className="cv-now-card cd-card-3d shrink-0 w-[230px] sm:w-[250px] rounded-2xl shadow-md transition-all active:scale-[0.98] snap-start overflow-hidden flex flex-col justify-between cursor-pointer group"
+            style={{
+              background: "var(--cv-paper)",
+              border: "1px solid var(--cv-line)",
+            }}
           >
             {/* Imagem com Tag de Urgência */}
-            <div className="relative h-28 w-full overflow-hidden">
+            <div className="relative h-28 w-full overflow-hidden bg-slate-900">
               <img
                 src={item.image}
                 alt={item.title}
@@ -76,7 +83,7 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
                 decoding="async"
                 className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#111921] via-black/30 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
 
               {/* Tag de Urgência / Status */}
               <div className="absolute top-2 left-2 flex items-center gap-1.5">
@@ -86,7 +93,7 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
               </div>
 
               {/* Distância a pé */}
-              <div className="absolute bottom-2 left-2 flex items-center gap-1 text-[10px] text-white/90 font-medium bg-black/40 backdrop-blur-md px-1.5 py-0.5 rounded-md">
+              <div className="absolute bottom-2 left-2 flex items-center gap-1 text-[10px] font-medium bg-black/50 backdrop-blur-md px-1.5 py-0.5 rounded-md" style={{ color: "#FFFFFF" }}>
                 <MapPin className="w-3 h-3 text-amber-400" />
                 <span>{item.distanceTime}</span>
               </div>
@@ -95,22 +102,37 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
             {/* Conteúdo do Card */}
             <div className="p-3 flex-1 flex flex-col justify-between">
               <div>
-                <h3 className="text-xs font-bold text-white line-clamp-1 group-hover:text-amber-300 transition-colors">
+                <h3
+                  className="text-xs font-bold line-clamp-1 group-hover:text-amber-500 transition-colors"
+                  style={{ color: "var(--cv-ink)" }}
+                >
                   {item.title}
                 </h3>
-                <p className="text-[11px] text-slate-300 line-clamp-2 mt-1 leading-snug">
+                <p
+                  className="text-[11px] line-clamp-2 mt-1 leading-snug"
+                  style={{ color: "var(--cv-muted)" }}
+                >
                   {item.subtitle}
                 </p>
               </div>
 
-              <div className="mt-2.5 pt-2 border-t border-white/10 flex items-center justify-between">
-                <div className="flex items-center gap-1 text-[10px] font-semibold text-cyan-300">
+              <div
+                className="mt-2.5 pt-2 flex items-center justify-between"
+                style={{ borderTop: "1px solid var(--cv-line)" }}
+              >
+                <div
+                  className="flex items-center gap-1 text-[10px] font-semibold"
+                  style={{ color: "var(--cv-river)" }}
+                >
                   <Clock className="w-3 h-3" />
                   <span>{item.timeWindow}</span>
                 </div>
 
-                <span className="text-[11px] font-bold text-amber-300 flex items-center gap-0.5">
-                  {item.ctaType === "whatsapp" && <MessageCircle className="w-3 h-3 text-emerald-400" />}
+                <span
+                  className="text-[11px] font-bold flex items-center gap-0.5"
+                  style={{ color: "var(--cv-gold)" }}
+                >
+                  {item.ctaType === "whatsapp" && <MessageCircle className="w-3 h-3 text-emerald-500" />}
                   <span>{item.cta}</span>
                   <ChevronRight className="w-3 h-3" />
                 </span>

@@ -162,27 +162,45 @@
    21ST.DEV FLOATING DOCK & SPRING ANIMATION SYSTEM
    ========================================================================== */
 
-/* Floating Island Dock */
+/* Floating Island Dock com adaptação dinâmica de tema */
 .caraiva-guide .cd-floating-dock {
-  background: rgba(13, 40, 52, 0.88) !important;
+  background: var(--cv-glass) !important;
   backdrop-filter: blur(28px) saturate(180%) !important;
   -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
-  border: 1px solid rgba(255, 255, 255, 0.16) !important;
-  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+  border: 1px solid var(--cv-line) !important;
+  box-shadow: 0 16px 36px -4px var(--cv-shadow), 0 0 0 1px var(--cv-line) !important;
   border-radius: 30px !important;
   padding: 6px 10px !important;
-  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1) !important;
+  transition: background-color 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease !important;
 }
 
-/* Itens de navegação com física de mola */
+.caraiva-guide[data-theme="light"] .cd-floating-dock {
+  background: rgba(255, 253, 247, 0.94) !important;
+  border-color: rgba(220, 227, 213, 0.95) !important;
+  box-shadow: 0 16px 36px -4px rgba(32, 67, 56, 0.18), 0 0 0 1px rgba(255, 255, 255, 0.8) !important;
+}
+
+.caraiva-guide[data-theme="dark"] .cd-floating-dock {
+  background: rgba(16, 40, 42, 0.92) !important;
+  border-color: rgba(255, 255, 255, 0.14) !important;
+  box-shadow: 0 16px 36px -4px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Itens de navegação com física de mola e cores harmonizadas */
 .caraiva-guide .cd-dock-btn {
-  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease !important;
+  color: var(--cv-muted) !important;
+  transition: transform 0.22s cubic-bezier(0.34, 1.56, 0.64, 1), color 0.2s ease, background-color 0.2s ease !important;
   transform-origin: center bottom;
 }
 
 .caraiva-guide .cd-dock-btn:hover {
   transform: translateY(-3px) scale(1.05);
-  color: #FFFFFF !important;
+  color: var(--cv-ink) !important;
+}
+
+.caraiva-guide .cd-dock-btn[aria-current="page"] {
+  background: var(--cv-active) !important;
+  color: var(--cv-ink) !important;
 }
 
 .caraiva-guide .cd-dock-btn:active {
@@ -220,12 +238,12 @@
 }
 
 .caraiva-guide .cd-ai-orb-ring svg {
-  background: #0D2834;
+  background: var(--cv-paper) !important;
   border-radius: 50%;
   width: 100%;
   height: 100%;
   padding: 10px;
-  color: #38BDF8;
+  color: var(--cv-river) !important;
 }
 
 @keyframes cd-orb-pulse {

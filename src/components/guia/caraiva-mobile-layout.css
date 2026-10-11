@@ -19,17 +19,15 @@
   .caraiva-guide.caraiva-guide .cv-guide-explore { padding-inline: 16px; }
   .caraiva-guide.caraiva-guide .caraiva-header-inner { padding-inline: 16px; gap: 8px; }
   .caraiva-guide.caraiva-guide .caraiva-header-actions { gap: 6px; flex-shrink: 0; }
-  .caraiva-guide.caraiva-guide .caraiva-content .overflow-x-auto,
   .caraiva-guide.caraiva-guide .cv-search-ideas {
     flex-wrap: wrap; overflow-x: visible; max-width: 100%; margin-inline: 0;
   }
-  .caraiva-guide.caraiva-guide .caraiva-content .overflow-x-auto > * { max-width: 100%; }
   .caraiva-guide.caraiva-guide .cv-home-intentions section > div:last-child {
-    display: grid; grid-template-columns: repeat(3,minmax(0,1fr));
-    gap: 8px; margin-inline: 0; padding-inline: 0; overflow: visible;
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px; margin-inline: 0; padding-inline: 0;
   }
   .caraiva-guide.caraiva-guide .cv-home-intentions section > div:last-child > button {
-    width: 100%; min-width: 0; white-space: normal;
+    width: 100%; min-width: 0;
   }
   .caraiva-guide.caraiva-guide .cv-explore-place { width: 100%; }
   .caraiva-guide.caraiva-guide .cv-explore-place p { display: block; overflow: visible; }
