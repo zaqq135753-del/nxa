@@ -6,8 +6,6 @@ import {
   Camera,
   ChevronDown,
   ChevronUp,
-  Receipt,
-  Radio,
 } from "lucide-react";
 import { CARAIVA_BUSINESSES, type Business, type BusinessCategory, type NowActivity } from "../data/caraivaDigitalData";
 import { asset } from "../lib/asset";
@@ -359,57 +357,6 @@ export const GuiaCaraivaApp: React.FC = () => {
                 selectedIntention={null}
                 onSelectIntention={handleIntentionSelect} 
               />
-            </div>
-
-            {/* Inovação: Mesa Digital & Comanda Transparente (NFC / QR / 3D) */}
-            <div className="max-w-4xl mx-auto px-4 sm:px-6">
-              <div
-                onClick={() => {
-                  const defaultBiz = CARAIVA_BUSINESSES.find(b => b.id === "boteco-do-para") || CARAIVA_BUSINESSES[0];
-                  handleOpenBusinessModal(defaultBiz, "conta");
-                }}
-                className="group relative cursor-pointer overflow-hidden rounded-3xl p-4 sm:p-5 transition-all duration-300 hover:scale-[1.01] active:scale-[0.99] border shadow-2xl"
-                style={{
-                  background: "linear-gradient(135deg, rgba(245, 158, 11, 0.15) 0%, rgba(14, 165, 233, 0.10) 50%, rgba(20, 184, 166, 0.12) 100%)",
-                  borderColor: "rgba(245, 158, 11, 0.35)",
-                  backdropFilter: "blur(14px)",
-                }}
-              >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                  <div className="flex items-start sm:items-center gap-3.5">
-                    <div className="relative w-12 h-12 rounded-2xl bg-gradient-to-tr from-amber-500 to-amber-300 flex items-center justify-center text-slate-950 font-black shadow-lg shadow-amber-500/30 shrink-0 group-hover:rotate-6 transition-transform">
-                      <Radio className="w-6 h-6 animate-pulse" />
-                      <span className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full bg-emerald-500 border-2 border-slate-900 animate-ping" />
-                    </div>
-                    <div>
-                      <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-amber-400/20 text-amber-300 border border-amber-400/30">
-                          Tecnologia de Mesa • NFC & 3D
-                        </span>
-                        <span className="text-[11px] text-emerald-400 font-bold flex items-center gap-1">
-                          ● Mesa 07 Conectada
-                        </span>
-                      </div>
-                      <h4 className="text-sm font-extrabold text-white mt-1 group-hover:text-amber-300 transition-colors">
-                        Na mesa em Caraíva? Aproxime o celular para identificar
-                      </h4>
-                      <p className="text-xs text-slate-300 line-clamp-1 mt-0.5">
-                        Extrato rodada a rodada, divisão por pessoa sem calculadora, 10% opcional transparente e PIX em 1 toque.
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-2 self-end sm:self-center shrink-0">
-                    <button
-                      type="button"
-                      className="px-3.5 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-slate-950 font-black text-xs flex items-center gap-1.5 shadow-lg shadow-amber-400/25 active:scale-95 transition-all"
-                    >
-                      <Receipt className="w-4 h-4" />
-                      <span>Ver Comanda Digital</span>
-                    </button>
-                  </div>
-                </div>
-              </div>
             </div>
 
             {/* Destaques em Alta com Cards 3D Ricos */}
