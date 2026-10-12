@@ -10,6 +10,7 @@ import "./live-map.css";
 import "./cartoon-map.css";
 import { GuideMapSelection } from "./GuideMapSelection";
 
+const Cartoon3DMap = lazy(() => import("./CaraivaCartoon3DMap"));
 const Open3DMap = lazy(() => import("./Open3DMap"));
 const Google2DMap = lazy(() => import("./Google2DMap"));
 const IllustratedMap = lazy(() => import("./IllustratedMap"));
@@ -76,7 +77,7 @@ export default function CaraivaLiveMap({
   const visible = useMemo(() => filterLiveMapPoints(points,filters),[points,filters]);
   const selected = visible.find(point => point.business.id === selectedId);
   const activeFilterCount = Number(filters.category !== "todos") + Number(filters.openOnly) + Number(filters.nearbyOnly) + Number(filters.maxPrice < 4);
-  const modeLabel = mode === "3d" ? "Google 3D" : mode === "2d" ? "Satélite" : "Ilustrado";
+  const modeLabel = mode === "3d" ? "Cartoon 3D" : (mode === "2d" || mode === "satellite") ? "Satélite" : "Ilustrado";
   useEffect(()=>{const element=root.current,toolbar=element?.querySelector<HTMLElement>('.clm-toolbar');if(!element||!toolbar)return;const observer=new ResizeObserver(()=>element.style.setProperty('--clm-toolbar-height',toolbar.getBoundingClientRect().height+'px'));observer.observe(toolbar);return()=>observer.disconnect();},[]);
   useEffect(() => {
     if (!filtersOpen) return;
@@ -141,11 +142,11 @@ export default function CaraivaLiveMap({
     onReady,
     onError,
   };
-  const Engine = mode === "3d" ? Open3DMap : mode === "2d" ? Google2DMap : IllustratedMap;
+  const Engine = mode === "3d" ? Cartoon3DMap : mode === "2d" ? (isGoogleMapsConfigured() ? Google2DMap : Open3DMap) : IllustratedMap;
 
   const modeControls = (<div className="clm-modes" role="group" aria-label="Base do mapa">
-          <button type="button" aria-pressed={mode === "3d"} title={capabilities.webgl ? "Vista Aérea 3D com Satélite e Relevo de Alta Definição" : "Modo 3D acelerado"} onClick={() => changeMode("3d")}>Satélite 3D</button>
-          <button type="button" aria-pressed={mode === "2d"} onClick={() => changeMode("2d")}>Satélite 2D</button>
+          <button type="button" aria-pressed={mode === "3d"} title={capabilities.webgl ? "Vila 3D Cartoon Modelada com Casas Coloridas, Ruas de Areia, Rio e Mar" : "Modo 3D"} onClick={() => changeMode("3d")}>Cartoon 3D</button>
+          <button type="button" aria-pressed={mode === "2d" || mode === "satellite"} onClick={() => changeMode("2d")}>Satélite</button>
           <button type="button" aria-pressed={mode === "illustrated"} onClick={() => changeMode("illustrated")}>Ilustrado</button>
         </div>);
   const filterControls = <><div className="clm-filter-row" role="group" aria-label="Categorias do Live Map">
@@ -190,6 +191,14 @@ export default function CaraivaLiveMap({
       <div className="clm-sheet-info"><strong>Sobre este mapa</strong><p>{loading ? "Carregando base…" : mode === "3d" ? "Visão 3D" : mode === "2d" ? "Mapa 2D" : "Mapa ilustrado · posições aproximadas"}</p><p>{location.isLocating ? "Buscando sua localização…" : location.error || (location.isDefault ? "Referência: centro da vila · GPS não localizado" : "GPS ativo · distâncias e tempos estimados em linha reta")}</p><p>Dados do cadastro · confirme informações e disponibilidade no local.</p></div></div>
       <footer><button type="button" className="clm-sheet-clear" onClick={() => setFilters(previous => ({...DEFAULT_MAP_FILTERS,query:previous.query}))}>Limpar filtros</button><button type="button" className="clm-sheet-apply" onClick={() => setFiltersOpen(false)}>Ver {visible.length} {visible.length === 1 ? "lugar" : "lugares"}</button></footer>
     </dialog>}
-    {selected && <GuideMapSelection illustrated={mode === "illustrated"} point={selected} onClose={()=>setSelectedId(undefined)} onOpen={onOpenBusiness?()=>onOpenBusiness(selected.business):undefined} onStartRoute={onStartRoute}/>}
+    {selected && (!activeRouteCoordinates || activeRouteCoordinates.length === 0) && (
+      <GuideMapSelection
+        illustrated={mode === "illustrated"}
+        point={selected}
+        onClose={() => setSelectedId(undefined)}
+        onOpen={onOpenBusiness ? () => onOpenBusiness(selected.business) : undefined}
+        onStartRoute={onStartRoute}
+      />
+    )}
   </section>;
 }

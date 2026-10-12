@@ -227,6 +227,7 @@ export const GuiaCaraivaApp: React.FC = () => {
   };
 
   const handleStartRoute = (business: Business) => {
+    setMapFocusBusiness(null);
     setRouteBusiness(business);
   };
 
@@ -630,7 +631,7 @@ export const GuiaCaraivaApp: React.FC = () => {
           <React.Suspense fallback={<GuideLoadingScene/>}>
             <CaraivaLiveMap
               businesses={CARAIVA_BUSINESSES}
-              selectedBusiness={mapFocusBusiness}
+              selectedBusiness={routeBusiness ? null : mapFocusBusiness}
               onSelectBusiness={setMapFocusBusiness}
               onOpenBusiness={handleOpenBusinessModal}
               onStartRoute={handleStartRoute}

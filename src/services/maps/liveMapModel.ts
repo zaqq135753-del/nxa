@@ -3,7 +3,7 @@ import { calculateHaversineDistanceMeters, estimateWalkingMinutes } from "./geol
 import type { LatLngLiteral } from "./types";
 
 export type LiveMapCategory = "todos" | "para_mim" | "comer" | "agora" | "praias" | "passeios" | "hospedar";
-export type LiveMapMode = "3d" | "2d" | "illustrated";
+export type LiveMapMode = "3d" | "2d" | "illustrated" | "satellite";
 export interface LiveMapFilters { category: LiveMapCategory; query: string; openOnly: boolean; nearbyOnly: boolean; maxPrice: number }
 export interface LiveMapPoint {
   business: Business; position: LatLngLiteral; open: boolean; statusSource: "snapshot"; recommended: boolean; partner: boolean;
