@@ -1,0 +1,563 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg-void: #030508;
+    --bg-card: #090d16;
+    --bg-card-hover: #0f1524;
+    --neon-emerald: #00f59b;
+    --neon-amber: #ffb800;
+    --hyper-violet: #a855f7;
+    --electric-cyan: #00e5ff;
+    --crimson-alert: #ff3366;
+  }
+
+  body {
+    background-color: #030508;
+    color: #f1f5f9;
+    font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    overflow-x: hidden;
+  }
+
+  .font-mono-numbers {
+    font-family: 'Space Grotesk', monospace;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Micro-grade dot grid pattern espacial */
+.dot-grid {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+/* ======================================================== */
+/* 🍏 APPLE STUDIO TITANIUM / WARM EDITORIAL PAPER THEME     */
+/* ======================================================== */
+/* ======================================================== */
+/* 🍏 APPLE STUDIO TITANIUM / WARM EDITORIAL THEME (ULTRA HD)*/
+/* ======================================================== */
+.theme-light {
+  --bg-void: #eef0f4;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --neon-emerald: #059669;
+  --neon-amber: #d97706;
+  --hyper-violet: #4f46e5;
+  --electric-cyan: #0284c7;
+  --crimson-alert: #dc2626;
+  background-color: #eef0f4 !important;
+  color: #0f172a !important;
+}
+
+/* Fundo micro-texturado estilo papel técnico fosco, sem ofuscamento */
+.theme-light .dot-grid {
+  background-image: radial-gradient(rgba(15, 23, 42, 0.08) 1px, transparent 1px) !important;
+  background-size: 20px 20px !important;
+}
+
+/* Desativação de orbes neon brilhantes no tema claro para não causar estresse visual */
+.theme-light .animate-orb-1,
+.theme-light .animate-orb-2,
+.theme-light .animate-orb-3 {
+  opacity: 0.12 !important;
+  filter: blur(160px) saturate(50%) !important;
+}
+
+/* 1. PAINÉIS PRINCIPAIS (Clean Glass & Card Surfaces) */
+.theme-light .glass-panel {
+  background: rgba(255, 255, 255, 0.94) !important;
+  backdrop-filter: blur(28px) saturate(180%) !important;
+  -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
+  border: 1px solid #e2e8f0 !important;
+  color: #0f172a !important;
+  box-shadow: 
+    0 1px 3px 0 rgba(15, 23, 42, 0.04),
+    0 4px 16px -2px rgba(15, 23, 42, 0.06),
+    inset 0 1px 0 0 rgba(255, 255, 255, 1) !important;
+}
+
+.theme-light .glass-panel-elevated {
+  background: #ffffff !important;
+  backdrop-filter: blur(32px) !important;
+  -webkit-backdrop-filter: blur(32px) !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 
+    0 4px 6px -1px rgba(15, 23, 42, 0.03),
+    0 10px 24px -3px rgba(15, 23, 42, 0.07),
+    inset 0 1px 0 0 rgba(255, 255, 255, 1) !important;
+}
+
+/* 2. TRANSFORMAÇÃO DE TODOS OS CARDS ESCUROS EM CARDS CLAROS E ELEGANTES */
+.theme-light .bg-\[\#081119\],
+.theme-light .bg-\[\#140D1C\],
+.theme-light .bg-\[\#150D0D\],
+.theme-light .bg-\[\#061510\],
+.theme-light .bg-\[\#0b1522\],
+.theme-light .bg-\[\#120E1E\],
+.theme-light .bg-\[\#081512\],
+.theme-light .bg-\[\#151108\],
+.theme-light .bg-\[\#160B0B\],
+.theme-light .bg-\[\#141008\],
+.theme-light .bg-\[\#091715\],
+.theme-light .bg-\[\#160D20\],
+.theme-light .bg-\[\#0B0F17\],
+.theme-light .bg-\[\#0D111A\],
+.theme-light .bg-\[\#160A0A\],
+.theme-light .bg-\[\#14120A\],
+.theme-light .bg-\[\#090D15\],
+.theme-light .bg-\[\#080C14\],
+.theme-light .bg-\[\#130E14\],
+.theme-light .bg-\[\#0B1416\],
+.theme-light .bg-\[\#160D12\],
+.theme-light .bg-\[\#18110D\],
+.theme-light .bg-\[\#141208\],
+.theme-light .bg-\[\#09151F\],
+.theme-light .bg-\[\#061711\],
+.theme-light .bg-\[\#101322\],
+.theme-light .bg-\[\#180D11\],
+.theme-light .bg-\[\#09111c\],
+.theme-light .bg-\[\#08121f\],
+.theme-light .bg-\[\#0D131F\] {
+  background: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+  box-shadow: 0 2px 8px -1px rgba(15, 23, 42, 0.05) !important;
+}
+
+/* 3. DRE KPI CARDS ESPECÍFICOS NO TEMA CLARO */
+.theme-light .bg-\[\#081119\] {
+  background: #f0fdf4 !important;
+  border: 1.5px solid #86efac !important;
+}
+.theme-light .bg-\[\#081119\] .text-white {
+  color: #0f172a !important;
+}
+
+.theme-light .bg-\[\#140D1C\] {
+  background: #faf5ff !important;
+  border: 1.5px solid #d8b4fe !important;
+}
+.theme-light .bg-\[\#140D1C\] p {
+  color: #6d28d9 !important;
+}
+
+.theme-light .bg-\[\#150D0D\] {
+  background: #fef2f2 !important;
+  border: 1.5px solid #fca5a5 !important;
+}
+.theme-light .bg-\[\#150D0D\] p {
+  color: #b91c1c !important;
+}
+
+.theme-light .bg-\[\#061510\] {
+  background: #ecfdf5 !important;
+  border: 1.5px solid #34d399 !important;
+  box-shadow: 0 4px 16px -2px rgba(16, 185, 129, 0.15) !important;
+}
+.theme-light .bg-\[\#061510\] p {
+  color: #047857 !important;
+}
+
+/* 4. GARÇONS: CENTRAL DE CHAMADOS & SIMULADOR DE RATEIO */
+.theme-light .bg-\[\#0b1522\] {
+  background: #f0f9ff !important;
+  border: 1.5px solid #7dd3fc !important;
+}
+
+.theme-light .bg-\[\#120E1E\] {
+  background: #faf5ff !important;
+  border: 1.5px solid #d8b4fe !important;
+}
+.theme-light .bg-\[\#120E1E\] p.font-mono-numbers {
+  color: #0f172a !important;
+}
+
+.theme-light .bg-\[\#081512\] {
+  background: #f0fdf4 !important;
+  border: 1.5px solid #86efac !important;
+}
+.theme-light .bg-\[\#081512\] p.font-mono-numbers {
+  color: #047857 !important;
+}
+
+.theme-light .bg-\[\#151108\] {
+  background: #fffbeb !important;
+  border: 1.5px solid #fde68a !important;
+}
+.theme-light .bg-\[\#151108\] p.font-mono-numbers {
+  color: #b45309 !important;
+}
+
+/* 5. PÓDIO DE AVALIAÇÃO DOS GARÇONS NO TEMA CLARO */
+.theme-light div[class*="from-[#1A1608]"] {
+  background: #fffbeb !important;
+  border: 1.5px solid #fcd34d !important;
+  box-shadow: 0 6px 20px -3px rgba(245, 158, 11, 0.15) !important;
+}
+.theme-light div[class*="from-[#1A1608]"] .text-white {
+  color: #0f172a !important;
+}
+
+.theme-light div[class*="from-[#11131E]"] {
+  background: #f8fafc !important;
+  border: 1.5px solid #cbd5e1 !important;
+  box-shadow: 0 6px 20px -3px rgba(100, 116, 139, 0.12) !important;
+}
+.theme-light div[class*="from-[#11131E]"] .text-white {
+  color: #0f172a !important;
+}
+
+.theme-light div[class*="from-[#191114]"] {
+  background: #fff7ed !important;
+  border: 1.5px solid #fdba74 !important;
+  box-shadow: 0 6px 20px -3px rgba(234, 88, 12, 0.12) !important;
+}
+.theme-light div[class*="from-[#191114]"] .text-white {
+  color: #0f172a !important;
+}
+
+/* 6. MESAS & SALÃO CARDS */
+.theme-light .bg-\[\#160B0B\] {
+  background: #fff5f5 !important;
+  border: 1.5px solid #fca5a5 !important;
+}
+
+.theme-light .bg-\[\#141008\] {
+  background: #fffdf5 !important;
+  border: 1.5px solid #fcd34d !important;
+}
+
+.theme-light .bg-\[\#091715\] {
+  background: #f0fdf4 !important;
+  border: 1.5px solid #86efac !important;
+}
+
+.theme-light .bg-\[\#160D20\] {
+  background: #faf5ff !important;
+  border: 1.5px solid #d8b4fe !important;
+}
+
+.theme-light .bg-\[\#0B0F17\] {
+  background: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+}
+
+/* Sub-caixas dentro dos cards (Garçom, Pago, Pendente, Pódio stats, etc.) */
+.theme-light .bg-black\/20,
+.theme-light .bg-black\/30,
+.theme-light .bg-black\/40,
+.theme-light .bg-black\/50,
+.theme-light .bg-black\/60 {
+  background-color: #f8fafc !important;
+  border-color: #e2e8f0 !important;
+}
+
+.theme-light .bg-white\/5,
+.theme-light .bg-white\/10 {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+/* 7. CONTRASTE DE FONTES & TIPOGRAFIA WCAG AAA (Sem campos apagados) */
+.theme-light .text-white {
+  color: #0f172a !important;
+}
+
+.theme-light .text-slate-100 {
+  color: #0f172a !important;
+}
+
+.theme-light .text-slate-200 {
+  color: #1e293b !important;
+}
+
+.theme-light .text-slate-300 {
+  color: #334155 !important;
+}
+
+.theme-light .text-slate-400 {
+  color: #475569 !important;
+  font-weight: 500;
+}
+
+.theme-light .text-slate-500 {
+  color: #475569 !important;
+}
+
+/* Cores de status escuras, ricas e nítidas no tema claro */
+.theme-light .text-emerald-300,
+.theme-light .text-emerald-400 {
+  color: #047857 !important;
+  font-weight: 700;
+}
+
+.theme-light .text-cyan-200,
+.theme-light .text-cyan-300,
+.theme-light .text-cyan-400 {
+  color: #0369a1 !important;
+  font-weight: 700;
+}
+
+.theme-light .text-amber-200,
+.theme-light .text-amber-300,
+.theme-light .text-amber-400,
+.theme-light .text-yellow-300,
+.theme-light .text-yellow-400 {
+  color: #b45309 !important;
+  font-weight: 700;
+}
+
+.theme-light .text-purple-300,
+.theme-light .text-purple-400 {
+  color: #6d28d9 !important;
+  font-weight: 700;
+}
+
+.theme-light .text-red-300,
+.theme-light .text-red-400,
+.theme-light .text-rose-300,
+.theme-light .text-rose-400 {
+  color: #b91c1c !important;
+  font-weight: 700;
+}
+
+/* 8. BADGES E PÍLULAS DE STATUS (Contraste Perfeito) */
+.theme-light .bg-emerald-500\/20,
+.theme-light .bg-emerald-500\/15,
+.theme-light .bg-emerald-500\/10 {
+  background-color: #d1fae5 !important;
+  border-color: #a7f3d0 !important;
+  color: #065f46 !important;
+  font-weight: 700 !important;
+}
+
+.theme-light .bg-amber-500\/20,
+.theme-light .bg-amber-500\/15,
+.theme-light .bg-amber-500\/10 {
+  background-color: #fef3c7 !important;
+  border-color: #fde68a !important;
+  color: #92400e !important;
+  font-weight: 700 !important;
+}
+
+.theme-light .bg-purple-500\/20,
+.theme-light .bg-purple-500\/15,
+.theme-light .bg-purple-500\/10 {
+  background-color: #ede9fe !important;
+  border-color: #ddd6fe !important;
+  color: #5b21b6 !important;
+  font-weight: 700 !important;
+}
+
+.theme-light .bg-cyan-500\/20,
+.theme-light .bg-cyan-500\/15,
+.theme-light .bg-cyan-500\/10 {
+  background-color: #e0f2fe !important;
+  border-color: #bae6fd !important;
+  color: #075985 !important;
+  font-weight: 700 !important;
+}
+
+.theme-light .bg-red-500\/20,
+.theme-light .bg-red-500\/15,
+.theme-light .bg-red-500\/10,
+.theme-light .bg-rose-500\/20 {
+  background-color: #fee2e2 !important;
+  border-color: #fca5a5 !important;
+  color: #991b1b !important;
+  font-weight: 700 !important;
+}
+
+/* 9. BOTÕES SÓLIDOS (Manter texto branco ou preto com contraste nítido) */
+.theme-light button.bg-purple-600,
+.theme-light button.bg-purple-600 *,
+.theme-light button.bg-purple-700,
+.theme-light button.bg-purple-700 *,
+.theme-light .bg-purple-600,
+.theme-light .bg-purple-600 span,
+.theme-light button.bg-emerald-600,
+.theme-light button.bg-emerald-600 *,
+.theme-light button.bg-red-600,
+.theme-light button.bg-red-600 *,
+.theme-light button.bg-blue-600,
+.theme-light button.bg-blue-600 *,
+.theme-light button.bg-indigo-600,
+.theme-light button.bg-indigo-600 * {
+  color: #ffffff !important;
+}
+
+.theme-light button.bg-emerald-500,
+.theme-light button.bg-emerald-500 *,
+.theme-light .bg-emerald-500,
+.theme-light .bg-emerald-500 * {
+  color: #022c22 !important;
+}
+
+.theme-light button.bg-amber-400,
+.theme-light button.bg-amber-400 *,
+.theme-light button.bg-yellow-400,
+.theme-light button.bg-yellow-400 * {
+  color: #451a03 !important;
+}
+
+/* 10. INPUTS, FORMULÁRIOS & SELETORES */
+.theme-light input,
+.theme-light select,
+.theme-light textarea {
+  background-color: #ffffff !important;
+  border: 1px solid #cbd5e1 !important;
+  color: #0f172a !important;
+}
+
+.theme-light input::placeholder,
+.theme-light textarea::placeholder {
+  color: #94a3b8 !important;
+}
+
+.theme-light select option {
+  background-color: #ffffff !important;
+  color: #0f172a !important;
+}
+
+/* 11. BARRAS DE PROGRESSO */
+.theme-light .bg-slate-900 {
+  background-color: #e2e8f0 !important;
+}
+
+/* 12. SUAVIZAÇÃO DE GLOWS */
+.theme-light .glow-emerald {
+  box-shadow: 0 4px 16px -2px rgba(5, 150, 105, 0.12) !important;
+}
+.theme-light .glow-amber {
+  box-shadow: 0 4px 16px -2px rgba(217, 119, 6, 0.12) !important;
+}
+.theme-light .glow-violet {
+  box-shadow: 0 4px 16px -2px rgba(79, 70, 229, 0.12) !important;
+}
+.theme-light .glow-cyan {
+  box-shadow: 0 4px 16px -2px rgba(2, 132, 199, 0.12) !important;
+}
+
+
+/* Ocultar barra de rolagem mantendo o scroll funcional */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Scrollbar refinada, translúcida e discreta quando necessária */
+::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 9999px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+/* Glassmorphism de alta fidelidade com refração Apple */
+.glass-panel {
+  background: rgba(10, 14, 23, 0.72);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 4px 24px -2px rgba(0, 0, 0, 0.45), inset 0 1px 1px 0 rgba(255, 255, 255, 0.06);
+}
+
+.glass-panel-elevated {
+  background: rgba(14, 19, 32, 0.84);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 12px 40px -4px rgba(0, 0, 0, 0.65), inset 0 1px 1px 0 rgba(255, 255, 255, 0.09);
+}
+
+.glow-emerald {
+  box-shadow: 0 0 28px -4px rgba(0, 245, 155, 0.3);
+}
+
+.glow-amber {
+  box-shadow: 0 0 28px -4px rgba(255, 184, 0, 0.3);
+}
+
+.glow-violet {
+  box-shadow: 0 0 28px -4px rgba(168, 85, 247, 0.32);
+}
+
+.glow-cyan {
+  box-shadow: 0 0 28px -4px rgba(0, 229, 255, 0.3);
+}
+
+/* Animações e Orbes Ambientais */
+@keyframes orb-float-1 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(45px, -35px) scale(1.12); }
+  100% { transform: translate(-25px, 20px) scale(0.95); }
+}
+
+@keyframes orb-float-2 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(-40px, 30px) scale(1.08); }
+  100% { transform: translate(35px, -25px) scale(0.92); }
+}
+
+@keyframes orb-float-3 {
+  0% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(30px, 40px) scale(1.1); }
+  100% { transform: translate(-35px, -20px) scale(0.96); }
+}
+
+.animate-orb-1 {
+  animation: orb-float-1 20s ease-in-out infinite alternate;
+}
+.animate-orb-2 {
+  animation: orb-float-2 25s ease-in-out infinite alternate;
+}
+.animate-orb-3 {
+  animation: orb-float-3 22s ease-in-out infinite alternate;
+}
+
+@keyframes pulse-subtle {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.85; transform: scale(0.99); }
+}
+
+.animate-subtle {
+  animation: pulse-subtle 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+/* Anel biométrico e radar de pagamento */
+@keyframes biometric-pulse {
+  0% { transform: scale(0.94); opacity: 0.9; }
+  50% { transform: scale(1.08); opacity: 0.45; }
+  100% { transform: scale(0.94); opacity: 0.9; }
+}
+
+.animate-biometric-pulse {
+  animation: biometric-pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes scan-beam {
+  0% { transform: translateY(-100%); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(100%); opacity: 0; }
+}
+
+.animate-scan-beam {
+  animation: scan-beam 1.8s ease-in-out infinite;
+}
