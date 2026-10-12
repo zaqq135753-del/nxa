@@ -10,7 +10,7 @@ import "./live-map.css";
 import "./cartoon-map.css";
 import { GuideMapSelection } from "./GuideMapSelection";
 
-const Google3DMap = lazy(() => import("./Google3DMap"));
+const Open3DMap = lazy(() => import("./Open3DMap"));
 const Google2DMap = lazy(() => import("./Google2DMap"));
 const IllustratedMap = lazy(() => import("./IllustratedMap"));
 const categories: {id: LiveMapCategory; label: string}[] = [
@@ -107,18 +107,18 @@ export default function CaraivaLiveMap({businesses,selectedBusiness,onSelectBusi
   },[onSelectBusiness]);
   const changeMode = (next:LiveMapMode) => {
     if (next === mode) { setFiltersOpen(false); return; }
-    if (next !== "illustrated" && !isGoogleMapsConfigured()) {
-      setNotice("Google Maps não configurado nesta publicação. Configure VITE_GOOGLE_MAPS_API_KEY na Vercel e autorize caraiva.digital no Google Cloud.");
+    if (next === "2d" && !isGoogleMapsConfigured()) {
+      setNotice("Google Maps 2D requer chave configurada.");
       setFiltersOpen(false); return;
     }
     setLoading(true); setNotice(""); setMode(next); setFiltersOpen(false); setListOpen(false);
   };
   const camera = (change:Omit<MapCameraCommand,"id">) => setCommand(previous => ({id:previous.id+1,...change}));
   const engineProps = {points:visible,selectedId,userPosition,command,onSelect:choose,onReady,onError};
-  const Engine = mode === "3d" ? Google3DMap : mode === "2d" ? Google2DMap : IllustratedMap;
+  const Engine = mode === "3d" ? Open3DMap : mode === "2d" ? Google2DMap : IllustratedMap;
 
   const modeControls = (<div className="clm-modes" role="group" aria-label="Base do mapa">
-          <button type="button" aria-pressed={mode === "3d"} title={capabilities.webgl ? "3D da plataforma Google, quando disponível" : "Seu navegador pode usar o modo 2D caso não libere aceleração gráfica"} onClick={() => changeMode("3d")}>Google 3D</button>
+          <button type="button" aria-pressed={mode === "3d"} title={capabilities.webgl ? "Vista Aérea 3D com Satélite e Relevo de Alta Definição" : "Modo 3D acelerado"} onClick={() => changeMode("3d")}>Satélite 3D</button>
           <button type="button" aria-pressed={mode === "2d"} onClick={() => changeMode("2d")}>Satélite 2D</button>
           <button type="button" aria-pressed={mode === "illustrated"} onClick={() => changeMode("illustrated")}>Ilustrado</button>
         </div>);
