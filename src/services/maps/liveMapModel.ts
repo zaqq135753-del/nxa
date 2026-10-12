@@ -10,10 +10,27 @@ export interface LiveMapPoint {
   events: EventItem[]; distanceMeters?: number; estimatedWalkingMinutes?: number;
 }
 export interface MapCluster { id: string; points: LiveMapPoint[]; position: LatLngLiteral; x: number; y: number }
-export interface MapCameraCommand { id: number; center?: LatLngLiteral; zoomBy?: number; reset?: boolean }
+export interface MapCameraCommand {
+  id: number;
+  center?: LatLngLiteral;
+  zoomBy?: number;
+  reset?: boolean;
+  povCamera?: {
+    coords: LatLngLiteral;
+    bearing: number;
+    pitch: number;
+    zoom: number;
+  };
+}
 export interface LiveMapEngineProps {
-  points: LiveMapPoint[]; selectedId?: string; userPosition?: LatLngLiteral; command: MapCameraCommand;
-  onSelect: (point: LiveMapPoint) => void; onReady: () => void; onError: (reason: string) => void;
+  points: LiveMapPoint[];
+  selectedId?: string;
+  userPosition?: LatLngLiteral;
+  command: MapCameraCommand;
+  activeRouteCoordinates?: LatLngLiteral[];
+  onSelect: (point: LiveMapPoint) => void;
+  onReady: () => void;
+  onError: (reason: string) => void;
 }
 export const DEFAULT_MAP_FILTERS: LiveMapFilters = { category: "todos", query: "", openOnly: false, nearbyOnly: false, maxPrice: 4 };
 export const normalizeMapQuery = (value: string) => value.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLocaleLowerCase("pt-BR").trim();

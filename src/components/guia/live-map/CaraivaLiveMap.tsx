@@ -37,11 +37,25 @@ class EngineBoundary extends Component<{children:ReactNode;onError:(reason:strin
   render() { return this.state.failed ? <p className="clm-loading">A base do mapa está indisponível.</p> : this.props.children; }
 }
 
-export default function CaraivaLiveMap({businesses,selectedBusiness,onSelectBusiness,onOpenBusiness,onHome}: {
-  businesses:Business[];selectedBusiness?:Business|null;onSelectBusiness?:(business:Business)=>void;onOpenBusiness?:(business:Business)=>void;onHome:()=>void;
+export default function CaraivaLiveMap({
+  businesses,
+  selectedBusiness,
+  onSelectBusiness,
+  onOpenBusiness,
+  onHome,
+  activeRouteCoordinates,
+  externalCommand,
+}: {
+  businesses: Business[];
+  selectedBusiness?: Business | null;
+  onSelectBusiness?: (business: Business) => void;
+  onOpenBusiness?: (business: Business) => void;
+  onHome: () => void;
+  activeRouteCoordinates?: import("../../../services/maps/types").LatLngLiteral[];
+  externalCommand?: MapCameraCommand;
 }) {
   const [capabilities] = useState(detectCapabilities);
-  const [mode,setMode] = useState<LiveMapMode>("illustrated");
+  const [mode, setMode] = useState<LiveMapMode>("3d");
   const [filters,setFilters] = useState(DEFAULT_MAP_FILTERS);
   const [selectedId,setSelectedId] = useState<string|undefined>(selectedBusiness?.id);
   const [favorites,setFavorites] = useState(getFavorites);
@@ -113,8 +127,18 @@ export default function CaraivaLiveMap({businesses,selectedBusiness,onSelectBusi
     }
     setLoading(true); setNotice(""); setMode(next); setFiltersOpen(false); setListOpen(false);
   };
-  const camera = (change:Omit<MapCameraCommand,"id">) => setCommand(previous => ({id:previous.id+1,...change}));
-  const engineProps = {points:visible,selectedId,userPosition,command,onSelect:choose,onReady,onError};
+  const effectiveCommand = externalCommand || command;
+  const camera = (change: Omit<MapCameraCommand, "id">) => setCommand((previous) => ({ id: previous.id + 1, ...change }));
+  const engineProps = {
+    points: visible,
+    selectedId,
+    userPosition,
+    command: effectiveCommand,
+    activeRouteCoordinates,
+    onSelect: choose,
+    onReady,
+    onError,
+  };
   const Engine = mode === "3d" ? Open3DMap : mode === "2d" ? Google2DMap : IllustratedMap;
 
   const modeControls = (<div className="clm-modes" role="group" aria-label="Base do mapa">

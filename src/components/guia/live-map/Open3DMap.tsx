@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Map, Marker } from "maplibre-gl";
+import { Map, Marker, type GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { type LiveMapEngineProps } from "../../../services/maps/liveMapModel";
 import { CARAIVA_CENTER_COORDS } from "../../../services/maps/types";
@@ -114,6 +114,73 @@ export default function Open3DMap(props: LiveMapEngineProps) {
     }
   }, [props.points, props.selectedId, props.userPosition]);
 
+  // Suporte a Polilinha da Rota Ativa
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map || !map.isStyleLoaded()) return;
+
+    const sourceId = "caraiva-active-route";
+    const layerId = "caraiva-active-route-line";
+    const glowLayerId = "caraiva-active-route-glow";
+
+    if (!props.activeRouteCoordinates || props.activeRouteCoordinates.length < 2) {
+      if (map.getLayer(layerId)) map.removeLayer(layerId);
+      if (map.getLayer(glowLayerId)) map.removeLayer(glowLayerId);
+      if (map.getSource(sourceId)) map.removeSource(sourceId);
+      return;
+    }
+
+    const geojson: GeoJSON.Feature<GeoJSON.LineString> = {
+      type: "Feature",
+      properties: {},
+      geometry: {
+        type: "LineString",
+        coordinates: props.activeRouteCoordinates.map((c) => [c.lng, c.lat]),
+      },
+    };
+
+    if (map.getSource(sourceId)) {
+      (map.getSource(sourceId) as GeoJSONSource).setData(geojson);
+    } else {
+      map.addSource(sourceId, {
+        type: "geojson",
+        data: geojson,
+      });
+
+      // Brilho exterior da rota (glow neon)
+      map.addLayer({
+        id: glowLayerId,
+        type: "line",
+        source: sourceId,
+        layout: {
+          "line-join": "round",
+          "line-cap": "round",
+        },
+        paint: {
+          "line-color": "#14B8A6",
+          "line-width": 8,
+          "line-opacity": 0.45,
+        },
+      });
+
+      // Linha principal da rota (areia dourada/turquesa)
+      map.addLayer({
+        id: layerId,
+        type: "line",
+        source: sourceId,
+        layout: {
+          "line-join": "round",
+          "line-cap": "round",
+        },
+        paint: {
+          "line-color": "#F59E0B",
+          "line-width": 4,
+          "line-opacity": 0.95,
+        },
+      });
+    }
+  }, [props.activeRouteCoordinates]);
+
   // Voo suave de câmera ao selecionar um ponto
   useEffect(() => {
     const map = mapRef.current;
@@ -131,12 +198,22 @@ export default function Open3DMap(props: LiveMapEngineProps) {
     }
   }, [props.selectedId, props.points]);
 
-  // Comandos de zoom / reset externos
+  // Comandos de câmera externos (Reset, Zoom e Câmera POV em 1ª Pessoa)
   useEffect(() => {
     const map = mapRef.current;
     if (!map) return;
 
-    if (props.command.reset) {
+    if (props.command.povCamera) {
+      const { coords, bearing, pitch, zoom } = props.command.povCamera;
+      map.flyTo({
+        center: [coords.lng, coords.lat],
+        bearing,
+        pitch,
+        zoom,
+        duration: 800,
+        essential: true,
+      });
+    } else if (props.command.reset) {
       map.flyTo({
         center: [CARAIVA_CENTER_COORDS.lng, CARAIVA_CENTER_COORDS.lat],
         zoom: 15.6,

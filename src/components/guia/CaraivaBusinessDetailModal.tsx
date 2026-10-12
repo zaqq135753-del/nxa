@@ -20,6 +20,7 @@ import {
   Palette,
   Anchor,
   Compass,
+  Footprints,
 } from "lucide-react";
 import type { Business, EventItem, OfferItem } from "../../data/caraivaDigitalData";
 import { CARAIVA_EVENTS, CARAIVA_OFFERS, claimBusinessProfile } from "../../data/caraivaDigitalData";
@@ -46,6 +47,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
   business,
   onClose,
   onOpenMap,
+  onStartRoute,
   initialTab,
 }) => {
   const [detailTab, setDetailTab] = useState<"visao-geral" | "cardapio" | "vitrine" | "reserva">(initialTab || "visao-geral");
@@ -613,13 +615,26 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             <div className="sticky bottom-0 p-3 sm:p-4 bg-[#080d12]/95 backdrop-blur-xl border-t border-white/10 flex items-center gap-2 z-30 flex-wrap sm:flex-nowrap">
               <button
                 onClick={() => {
+                  if (onStartRoute) onStartRoute(business);
+                  else if (onOpenMap) onOpenMap(business);
+                  onClose();
+                }}
+                className="flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-400 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-teal-500/20 active:scale-98"
+                title="Traçar rota a pé na areia com modo POV"
+              >
+                <Footprints className="w-4 h-4 text-slate-950" />
+                <span>Rota a Pé</span>
+              </button>
+
+              <button
+                onClick={() => {
                   if (onOpenMap) onOpenMap(business);
                   onClose();
                 }}
                 className="flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-white/10 active:scale-98"
               >
                 <Navigation className="w-4 h-4 text-sky-400" />
-                <span>Mapa</span>
+                <span>Mapa 3D</span>
               </button>
 
               <button

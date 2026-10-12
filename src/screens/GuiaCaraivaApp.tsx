@@ -29,9 +29,12 @@ import { BusinessCard3D } from "../components/guia/home/BusinessCard3D";
 import { CaraivaAgoraScreen } from "../components/guia/CaraivaAgoraScreen";
 const CaraivaLiveMap = React.lazy(() => import("../components/guia/live-map/CaraivaLiveMap"));
 import { CaraivaBusinessDetailModal } from "../components/guia/CaraivaBusinessDetailModal";
+import { CaraivaWalkingRouteModal } from "../components/guia/CaraivaWalkingRouteModal";
 import { CaraivaSavedScreen } from "../components/guia/CaraivaSavedScreen";
 import { CaraivaConciergeAgent } from "../components/guia/concierge/CaraivaConciergeAgent";
 import { PartnerPremiumDashboard } from "../components/partner/PartnerPremiumDashboard";
+import type { MapCameraCommand } from "../services/maps/liveMapModel";
+import type { LatLngLiteral } from "../services/maps/types";
 
 import { CaraivaLivingHeader } from "../components/guia/CaraivaLivingHeader";
 import { CaraivaDock } from "../components/guia/CaraivaDock";
@@ -141,6 +144,11 @@ export const GuiaCaraivaApp: React.FC = () => {
   const [favoritesCount, setFavoritesCount] = useState<number>(() => getFavorites().length);
   const [isTrendingExpanded, setIsTrendingExpanded] = useState(false);
 
+  // Sistema de Rotas Pedonais & POV
+  const [routeBusiness, setRouteBusiness] = useState<Business | null>(null);
+  const [activeRoutePath, setActiveRoutePath] = useState<LatLngLiteral[]>([]);
+  const [externalMapCommand, setExternalMapCommand] = useState<MapCameraCommand | undefined>(undefined);
+
   useGuideMotion(activeTab);
   useGuideViewport();
   const moment = useCaraivaMoment();
@@ -216,6 +224,10 @@ export const GuiaCaraivaApp: React.FC = () => {
   const handleOpenMapWithBusiness = (business: Business) => {
     setMapFocusBusiness(business);
     setActiveTab("mapa");
+  };
+
+  const handleStartRoute = (business: Business) => {
+    setRouteBusiness(business);
   };
 
   const handleIntentionSelect = (intentionId: string) => {
@@ -404,7 +416,7 @@ export const GuiaCaraivaApp: React.FC = () => {
                     key={b.id}
                     business={b}
                     onSelect={handleOpenBusinessModal}
-                    onOpenMap={handleOpenMapWithBusiness}
+                    onOpenMap={handleStartRoute}
                     onToggleFavorite={(id, name) => {
                       const next = toggleFavorite(id, name);
                       setFavoritesCount(getFavorites().length);
@@ -430,7 +442,7 @@ export const GuiaCaraivaApp: React.FC = () => {
               <CaraivaNearYouSection
                 preferredInterests={visitorInterests}
                 onSelectBusiness={handleOpenBusinessModal}
-                onOpenMap={handleOpenMapWithBusiness}
+                onOpenMap={handleStartRoute}
               />
             </div>
 
@@ -616,8 +628,15 @@ export const GuiaCaraivaApp: React.FC = () => {
         {/* 4. CARAÍVA LIVE MAP — FOUNDATION */}
         {activeTab === "mapa" && (
           <React.Suspense fallback={<GuideLoadingScene/>}>
-            <CaraivaLiveMap businesses={CARAIVA_BUSINESSES} selectedBusiness={mapFocusBusiness}
-              onSelectBusiness={setMapFocusBusiness} onOpenBusiness={handleOpenBusinessModal} onHome={() => navigateGuide("inicio")} />
+            <CaraivaLiveMap
+              businesses={CARAIVA_BUSINESSES}
+              selectedBusiness={mapFocusBusiness}
+              onSelectBusiness={setMapFocusBusiness}
+              onOpenBusiness={handleOpenBusinessModal}
+              onHome={() => navigateGuide("inicio")}
+              activeRouteCoordinates={activeRoutePath}
+              externalCommand={externalMapCommand}
+            />
           </React.Suspense>
         )}
         {/* 5. ABA SALVOS (MINHA CARAÍVA) */}
@@ -654,6 +673,32 @@ export const GuiaCaraivaApp: React.FC = () => {
         initialTab={businessInitialTab}
         onClose={() => setSelectedBusiness(null)}
         onOpenMap={handleOpenMapWithBusiness}
+        onStartRoute={handleStartRoute}
+      />
+
+      {/* MODAL: NAVEGAÇÃO PEDONAL & SIMULADOR POV 3D */}
+      <CaraivaWalkingRouteModal
+        business={routeBusiness}
+        isOpen={Boolean(routeBusiness)}
+        onClose={() => {
+          setRouteBusiness(null);
+          setActiveRoutePath([]);
+          setExternalMapCommand(undefined);
+        }}
+        onUpdatePovCamera={(camera) => {
+          setActiveTab("mapa");
+          setExternalMapCommand({
+            id: Date.now(),
+            povCamera: camera,
+          });
+        }}
+        onClearPovRoute={() => {
+          setActiveRoutePath([]);
+          setExternalMapCommand(undefined);
+        }}
+        onSetRoutePath={(coords) => {
+          setActiveRoutePath(coords);
+        }}
       />
 
       {/* MODAL: TÁBUA DE MARÉS, CLIMA & RADAR IA */}
