@@ -45,6 +45,7 @@ export default function CaraivaLiveMap({
   onHome,
   activeRouteCoordinates,
   externalCommand,
+  onStartRoute,
 }: {
   businesses: Business[];
   selectedBusiness?: Business | null;
@@ -53,6 +54,7 @@ export default function CaraivaLiveMap({
   onHome: () => void;
   activeRouteCoordinates?: import("../../../services/maps/types").LatLngLiteral[];
   externalCommand?: MapCameraCommand;
+  onStartRoute?: (business: Business) => void;
 }) {
   const [capabilities] = useState(detectCapabilities);
   const [mode, setMode] = useState<LiveMapMode>("3d");
@@ -188,6 +190,6 @@ export default function CaraivaLiveMap({
       <div className="clm-sheet-info"><strong>Sobre este mapa</strong><p>{loading ? "Carregando base…" : mode === "3d" ? "Visão 3D" : mode === "2d" ? "Mapa 2D" : "Mapa ilustrado · posições aproximadas"}</p><p>{location.isLocating ? "Buscando sua localização…" : location.error || (location.isDefault ? "Referência: centro da vila · GPS não localizado" : "GPS ativo · distâncias e tempos estimados em linha reta")}</p><p>Dados do cadastro · confirme informações e disponibilidade no local.</p></div></div>
       <footer><button type="button" className="clm-sheet-clear" onClick={() => setFilters(previous => ({...DEFAULT_MAP_FILTERS,query:previous.query}))}>Limpar filtros</button><button type="button" className="clm-sheet-apply" onClick={() => setFiltersOpen(false)}>Ver {visible.length} {visible.length === 1 ? "lugar" : "lugares"}</button></footer>
     </dialog>}
-    {selected && <GuideMapSelection illustrated={mode === "illustrated"} point={selected} onClose={()=>setSelectedId(undefined)} onOpen={onOpenBusiness?()=>onOpenBusiness(selected.business):undefined}/>}
+    {selected && <GuideMapSelection illustrated={mode === "illustrated"} point={selected} onClose={()=>setSelectedId(undefined)} onOpen={onOpenBusiness?()=>onOpenBusiness(selected.business):undefined} onStartRoute={onStartRoute}/>}
   </section>;
 }

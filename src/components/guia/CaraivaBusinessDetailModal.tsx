@@ -346,11 +346,12 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             </div>
           </div>
 
-          {/* Tabs do Estabelecimento: Visão Geral, Cardápio/Vitrine e Reservas */}
+          {/* Tabs do Estabelecimento: Visão Geral, Cardápio/Vitrine (se aplicável) e Reservas */}
           {(() => {
             const isFood = business.category === "restaurantes" || business.category === "bares" || business.category === "cafes";
             const currentCatalog = getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory);
-            const showcaseTabLabel = isFood ? "🍽️ Cardápio" : currentCatalog.tabLabel;
+            const hasShowcase = isFood || Boolean(currentCatalog);
+            const showcaseTabLabel = isFood ? "🍽️ Cardápio" : currentCatalog?.tabLabel || "🛍️ Vitrine";
             const businessCartCount = cartItems.filter(i => i.businessId === business.id).reduce((acc, i) => acc + i.quantity, 0);
 
             return (
@@ -366,22 +367,24 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                   Visão Geral
                 </button>
 
-                {/* Aba de Cardápio (se restaurante) ou Vitrine/Catálogo (se mercado, tattoo, passeios, etc) */}
-                <button
-                  onClick={() => setDetailTab(isFood ? "cardapio" : "vitrine")}
-                  className={`flex-1 min-w-[90px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap relative ${
-                    (detailTab === "cardapio" || detailTab === "vitrine")
-                      ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
-                      : "text-slate-300 hover:text-white"
-                  }`}
-                >
-                  <span>{showcaseTabLabel}</span>
-                  {businessCartCount > 0 && (
-                    <span className="ml-1 px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-black text-[10px]">
-                      {businessCartCount}
-                    </span>
-                  )}
-                </button>
+                {/* Aba de Cardápio (se restaurante) ou Vitrine (se mercado, artes, passeios) — NÃO aparece em pousadas! */}
+                {hasShowcase && (
+                  <button
+                    onClick={() => setDetailTab(isFood ? "cardapio" : "vitrine")}
+                    className={`flex-1 min-w-[90px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap relative ${
+                      (detailTab === "cardapio" || detailTab === "vitrine")
+                        ? "bg-teal-500 text-white shadow-lg shadow-teal-500/25"
+                        : "text-slate-300 hover:text-white"
+                    }`}
+                  >
+                    <span>{showcaseTabLabel}</span>
+                    {businessCartCount > 0 && (
+                      <span className="ml-1 px-1.5 py-0.2 rounded-full bg-amber-400 text-slate-950 font-black text-[10px]">
+                        {businessCartCount}
+                      </span>
+                    )}
+                  </button>
+                )}
 
                 <button
                   onClick={() => setDetailTab("reserva")}
@@ -411,12 +414,18 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
 
           {detailTab === "vitrine" && (
             <div className="pt-2">
-              <CaraivaBusinessShowcaseTab
-                catalog={getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory)}
-                businessName={business.name}
-                cartItems={cartItems}
-                onOpenCartModal={() => setIsCartModalOpen(true)}
-              />
+              {(() => {
+                const catalog = getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory);
+                if (!catalog) return null;
+                return (
+                  <CaraivaBusinessShowcaseTab
+                    catalog={catalog}
+                    businessName={business.name}
+                    cartItems={cartItems}
+                    onOpenCartModal={() => setIsCartModalOpen(true)}
+                  />
+                );
+              })()}
             </div>
           )}
 
@@ -635,6 +644,8 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
           const businessCartCount = businessCartItems.reduce((acc, i) => acc + i.quantity, 0);
           const businessCartTotal = businessCartItems.reduce((acc, i) => acc + (i.product?.price || 0) * i.quantity, 0);
           const isFood = business.category === "restaurantes" || business.category === "bares" || business.category === "cafes";
+          const currentCatalog = getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory);
+          const hasShowcase = isFood || Boolean(currentCatalog);
 
           return (
             <div className="sticky bottom-0 p-3 sm:p-4 bg-[#080d12]/95 backdrop-blur-xl border-t border-white/10 flex items-center gap-2.5 z-30">
@@ -688,25 +699,41 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                 <button
                   type="button"
                   onClick={() => {
-                    if (detailTab === "cardapio" || detailTab === "vitrine") {
-                      setIsCartModalOpen(true);
+                    if (business.category === "hospedagens") {
+                      setDetailTab("reserva");
+                    } else if (hasShowcase) {
+                      if (detailTab === "cardapio" || detailTab === "vitrine") {
+                        setIsCartModalOpen(true);
+                      } else {
+                        setDetailTab(isFood ? "cardapio" : "vitrine");
+                      }
                     } else {
-                      setDetailTab(isFood ? "cardapio" : "vitrine");
+                      setDetailTab("reserva");
                     }
                   }}
                   className="flex-1 min-w-0 py-3 px-3.5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 active:scale-98 transition-all cursor-pointer"
                 >
-                  {detailTab === "cardapio" || detailTab === "vitrine" ? (
+                  {business.category === "hospedagens" ? (
+                    <>
+                      <Calendar className="w-4 h-4 shrink-0 text-slate-950" />
+                      <span className="truncate">Reservar Hospedagem</span>
+                    </>
+                  ) : detailTab === "cardapio" || detailTab === "vitrine" ? (
                     <>
                       <ShoppingBag className="w-4 h-4 shrink-0 fill-slate-950" />
                       <span className="truncate">Ver Sacola</span>
                     </>
-                  ) : (
+                  ) : hasShowcase ? (
                     <>
                       <Sparkles className="w-4 h-4 shrink-0 fill-slate-950" />
                       <span className="truncate">
-                        {isFood ? "Ver Cardápio & Pedir" : "Explorar Serviços"}
+                        {isFood ? "Ver Cardápio & Pedir" : "Explorar Produtos & Serviços"}
                       </span>
+                    </>
+                  ) : (
+                    <>
+                      <Calendar className="w-4 h-4 shrink-0 text-slate-950" />
+                      <span className="truncate">Consultar Reservas</span>
                     </>
                   )}
                 </button>

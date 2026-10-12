@@ -129,7 +129,7 @@ export default function Open3DMap(props: LiveMapEngineProps) {
             ],
             tileSize: 256,
             attribution: "Esri World Imagery",
-            maxzoom: 19,
+            maxzoom: 17,
           },
         },
         layers: [
@@ -138,11 +138,13 @@ export default function Open3DMap(props: LiveMapEngineProps) {
             type: "raster",
             source: "esri-satellite",
             minzoom: 0,
-            maxzoom: 19,
+            maxzoom: 22,
           },
         ],
       },
       center: [CARAIVA_CENTER_COORDS.lng, CARAIVA_CENTER_COORDS.lat],
+      maxZoom: 19,
+      minZoom: 11,
       zoom: 15.6,
       pitch: 58, // Ângulo 3D inclinado cinematográfico
       bearing: 25, // Rotação da câmera para ver rio, restinga e mar

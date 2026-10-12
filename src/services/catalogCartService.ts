@@ -301,18 +301,21 @@ export const CARAIVA_NICHED_CATALOGS: Record<string, BusinessCatalog> = {
   },
 };
 
-/**
- * Retorna o catálogo adequado ao nicho do estabelecimento
- */
-export function getBusinessCatalog(businessId: string, category: string, subCategory?: string): BusinessCatalog {
-  // Se for mercado / conveniência / bebidas / hortifruti
+export function getBusinessCatalog(businessId: string, category: string, subCategory?: string): BusinessCatalog | null {
+  // Pousadas, hotéis, casas de aluguel e pontos turísticos NÃO vendem produtos/conveniência
+  if (category === 'hospedagens' || category === 'pontos' || category === 'praias') {
+    return null;
+  }
+
+  // Se for mercado / conveniência / bebidas / hortifruti / mercearia
   const isConvenience = 
     category === 'lojas' || 
     category === 'conveniencia' || 
     subCategory?.toLowerCase().includes('mercado') ||
     subCategory?.toLowerCase().includes('hortifruti') ||
     subCategory?.toLowerCase().includes('bebida') ||
-    subCategory?.toLowerCase().includes('deposito');
+    subCategory?.toLowerCase().includes('deposito') ||
+    subCategory?.toLowerCase().includes('mercearia');
 
   if (isConvenience) {
     return { ...CARAIVA_NICHED_CATALOGS['conveniencia-padrao'], businessId };
@@ -323,7 +326,8 @@ export function getBusinessCatalog(businessId: string, category: string, subCate
     subCategory?.toLowerCase().includes('tattoo') ||
     subCategory?.toLowerCase().includes('tatuagem') ||
     subCategory?.toLowerCase().includes('atelier') ||
-    subCategory?.toLowerCase().includes('arte');
+    subCategory?.toLowerCase().includes('arte') ||
+    subCategory?.toLowerCase().includes('artesanato');
 
   if (isTattooOrArt) {
     return { ...CARAIVA_NICHED_CATALOGS['tatuagem-padrao'], businessId };
@@ -335,8 +339,12 @@ export function getBusinessCatalog(businessId: string, category: string, subCate
     return { ...CARAIVA_NICHED_CATALOGS['passeios-padrao'], businessId };
   }
 
-  // Default para lojas em geral
-  return { ...CARAIVA_NICHED_CATALOGS['conveniencia-padrao'], businessId };
+  // Se for qualquer outra loja
+  if (category === 'lojas') {
+    return { ...CARAIVA_NICHED_CATALOGS['conveniencia-padrao'], businessId };
+  }
+
+  return null;
 }
 
 // ----------------------------------------------------

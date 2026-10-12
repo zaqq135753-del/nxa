@@ -633,6 +633,7 @@ export const GuiaCaraivaApp: React.FC = () => {
               selectedBusiness={mapFocusBusiness}
               onSelectBusiness={setMapFocusBusiness}
               onOpenBusiness={handleOpenBusinessModal}
+              onStartRoute={handleStartRoute}
               onHome={() => navigateGuide("inicio")}
               activeRouteCoordinates={activeRoutePath}
               externalCommand={externalMapCommand}
