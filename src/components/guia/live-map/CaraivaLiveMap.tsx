@@ -77,7 +77,7 @@ export default function CaraivaLiveMap({
   const visible = useMemo(() => filterLiveMapPoints(points,filters),[points,filters]);
   const selected = visible.find(point => point.business.id === selectedId);
   const activeFilterCount = Number(filters.category !== "todos") + Number(filters.openOnly) + Number(filters.nearbyOnly) + Number(filters.maxPrice < 4);
-  const modeLabel = mode === "3d" ? "Cartoon 3D" : (mode === "2d" || mode === "satellite") ? "Satélite" : "Ilustrado";
+  const modeLabel = mode === "3d" ? "Satélite 3D 4K" : mode === "2d" ? "Google 2D" : mode === "satellite" ? "Cartoon 3D" : "Ilustrado";
   useEffect(()=>{const element=root.current,toolbar=element?.querySelector<HTMLElement>('.clm-toolbar');if(!element||!toolbar)return;const observer=new ResizeObserver(()=>element.style.setProperty('--clm-toolbar-height',toolbar.getBoundingClientRect().height+'px'));observer.observe(toolbar);return()=>observer.disconnect();},[]);
   useEffect(() => {
     if (!filtersOpen) return;
@@ -142,11 +142,12 @@ export default function CaraivaLiveMap({
     onReady,
     onError,
   };
-  const Engine = mode === "3d" ? Cartoon3DMap : mode === "2d" ? (isGoogleMapsConfigured() ? Google2DMap : Open3DMap) : IllustratedMap;
+  const Engine = mode === "3d" ? Open3DMap : mode === "2d" ? (isGoogleMapsConfigured() ? Google2DMap : Open3DMap) : mode === "satellite" ? Cartoon3DMap : IllustratedMap;
 
   const modeControls = (<div className="clm-modes" role="group" aria-label="Base do mapa">
-          <button type="button" aria-pressed={mode === "3d"} title={capabilities.webgl ? "Vila 3D Cartoon Modelada com Casas Coloridas, Ruas de Areia, Rio e Mar" : "Modo 3D"} onClick={() => changeMode("3d")}>Cartoon 3D</button>
-          <button type="button" aria-pressed={mode === "2d" || mode === "satellite"} onClick={() => changeMode("2d")}>Satélite</button>
+          <button type="button" aria-pressed={mode === "3d"} title={capabilities.webgl ? "Satélite 3D Ultra Realista 4K com Relevo e Imagens de Alta Definição" : "Satélite 3D"} onClick={() => changeMode("3d")}>Satélite 3D 4K</button>
+          <button type="button" aria-pressed={mode === "2d"} onClick={() => changeMode("2d")}>Google 2D</button>
+          <button type="button" aria-pressed={mode === "satellite"} title="Vila 3D Cartoon Modelada" onClick={() => changeMode("satellite")}>Cartoon 3D</button>
           <button type="button" aria-pressed={mode === "illustrated"} onClick={() => changeMode("illustrated")}>Ilustrado</button>
         </div>);
   const filterControls = <><div className="clm-filter-row" role="group" aria-label="Categorias do Live Map">

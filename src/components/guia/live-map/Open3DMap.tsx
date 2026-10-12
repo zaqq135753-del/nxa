@@ -122,21 +122,24 @@ export default function Open3DMap(props: LiveMapEngineProps) {
       style: {
         version: 8,
         sources: {
-          "esri-satellite": {
+          "satellite-4k": {
             type: "raster",
             tiles: [
-              "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+              "https://mt0.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+              "https://mt1.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+              "https://mt2.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
+              "https://mt3.google.com/vt/lyrs=s&x={x}&y={y}&z={z}",
             ],
             tileSize: 256,
-            attribution: "Esri World Imagery",
-            maxzoom: 17,
+            attribution: "Google Satellite 4K Imagery",
+            maxzoom: 21,
           },
         },
         layers: [
           {
-            id: "esri-satellite-layer",
+            id: "satellite-4k-layer",
             type: "raster",
-            source: "esri-satellite",
+            source: "satellite-4k",
             minzoom: 0,
             maxzoom: 22,
           },
