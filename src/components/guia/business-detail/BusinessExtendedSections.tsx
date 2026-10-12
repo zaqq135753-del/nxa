@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Clock, Calendar, Check, Plus, ShoppingBag } from 'lucide-react';
+import { Clock, Calendar, Check, Plus, ShoppingBag, LayoutGrid, List } from 'lucide-react';
 import type { MenuItemDetail, BusinessScheduleInfo } from '../../../data/caraivaExtendedProfiles';
 import { addToCart, type CatalogProduct } from '../../../services/catalogCartService';
 import { SafeBusinessImage } from '../SafeBusinessImage';
@@ -20,6 +20,7 @@ export const BusinessMenuTab: React.FC<BusinessMenuTabProps> = ({
 }) => {
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
   const [addedItemId, setAddedItemId] = useState<string | null>(null);
+  const [viewMode, setViewMode] = useState<'compact' | 'grid'>('compact');
 
   const categories = [
     { id: 'todos', label: 'Tudo' },
@@ -34,7 +35,6 @@ export const BusinessMenuTab: React.FC<BusinessMenuTabProps> = ({
     : menuItems.filter((i) => i.category === selectedCategory);
 
   const handleAddToCart = (item: MenuItemDetail) => {
-    // Converte preço formatado "R$ 68,00" para número float
     const numericPrice = parseFloat(
       item.price.replace('R$', '').replace('.', '').replace(',', '.').trim()
     ) || 50;
@@ -57,149 +57,193 @@ export const BusinessMenuTab: React.FC<BusinessMenuTabProps> = ({
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {/* Filtros em Pílula */}
-      <div style={{ display: 'flex', gap: 8, overflowX: 'auto', paddingBottom: 6, scrollbarWidth: 'none' }}>
-        {categories.map((cat) => {
-          const active = selectedCategory === cat.id;
-          return (
-            <button
-              key={cat.id}
-              onClick={() => setSelectedCategory(cat.id)}
-              style={{
-                padding: '8px 16px',
-                borderRadius: 9999,
-                fontSize: 13,
-                fontWeight: 600,
-                border: active ? '1px solid #14B8A6' : '1px solid rgba(13,40,52,0.1)',
-                background: active ? '#14B8A6' : 'white',
-                color: active ? '#FFFFFF' : '#0D2834',
-                cursor: 'pointer',
-                whiteSpace: 'nowrap',
-                transition: 'all 0.2s ease',
-              }}
-            >
-              {cat.label}
-            </button>
-          );
-        })}
+    <div className="space-y-3">
+      {/* Barra de Filtros e Alternância de Visualização */}
+      <div className="flex items-center justify-between gap-2">
+        <div className="flex items-center gap-1.5 overflow-x-auto pb-1 no-scrollbar select-none text-[12px] font-semibold flex-1">
+          {categories.map((cat) => {
+            const active = selectedCategory === cat.id;
+            return (
+              <button
+                key={cat.id}
+                onClick={() => setSelectedCategory(cat.id)}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
+                  active
+                    ? 'bg-emerald-500 text-slate-950 shadow-sm font-bold'
+                    : 'bg-white/5 text-slate-300 hover:text-white border border-white/10'
+                }`}
+              >
+                {cat.label}
+              </button>
+            );
+          })}
+        </div>
+
+        {/* Toggle Compact vs Grid */}
+        <div className="flex items-center p-1 rounded-xl bg-white/5 border border-white/10 shrink-0">
+          <button
+            type="button"
+            onClick={() => setViewMode('compact')}
+            className={`p-1.5 rounded-lg transition cursor-pointer ${
+              viewMode === 'compact' ? 'bg-amber-400 text-slate-950 shadow-xs' : 'text-slate-400 hover:text-white'
+            }`}
+            title="Lista Compacta (Ver Mais)"
+          >
+            <List className="w-3.5 h-3.5" />
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode('grid')}
+            className={`p-1.5 rounded-lg transition cursor-pointer ${
+              viewMode === 'grid' ? 'bg-amber-400 text-slate-950 shadow-xs' : 'text-slate-400 hover:text-white'
+            }`}
+            title="Grid Visual com Fotos"
+          >
+            <LayoutGrid className="w-3.5 h-3.5" />
+          </button>
+        </div>
       </div>
 
-      {/* Grid de Pratos com visual 3D e detalhes */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-        {filteredItems.map((item) => (
-          <div
-            key={item.id}
-            className="cd-card-3d"
-            style={{
-              display: 'flex',
-              gap: 14,
-              padding: 14,
-              background: '#FFFFFF',
-              borderRadius: 20,
-              border: '1px solid rgba(13,40,52,0.06)',
-              boxShadow: '0 4px 16px rgba(13,40,52,0.05)',
-              alignItems: 'center',
-            }}
-          >
-            {item.image && (
-              <div style={{ position: 'relative', width: 92, height: 92, flexShrink: 0, borderRadius: 16, overflow: 'hidden' }}>
-                <SafeBusinessImage
-                  src={item.image}
-                  alt={item.name}
-                  category="gastronomia"
-                  fallbackSeed={item.name}
-                  style={{ width: '100%', height: '100%', objectFit: 'cover' }}
-                  loading="lazy"
-                />
-              </div>
-            )}
-            
-            <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 4 }}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: 6, flexWrap: 'wrap' }}>
-                <h4 style={{ margin: 0, fontSize: 15, fontWeight: 700, color: '#0D2834' }}>
-                  {item.name}
-                </h4>
-                {item.badge && (
-                  <span
-                    style={{
-                      fontSize: 10,
-                      fontWeight: 700,
-                      padding: '2px 8px',
-                      borderRadius: 9999,
-                      background: item.badge === 'Mais Pedido' ? '#FEF3C7' : '#E0F2FE',
-                      color: item.badge === 'Mais Pedido' ? '#B45309' : '#0369A1',
-                    }}
-                  >
-                    {item.badge}
-                  </span>
-                )}
-              </div>
-              <p style={{ margin: 0, fontSize: 12, color: '#64748B', lineHeight: 1.35, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-                {item.description}
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
-                <span style={{ fontSize: 15, fontWeight: 800, color: '#0D2834' }}>
-                  {item.price}
-                </span>
+      {/* Contador de itens */}
+      <div className="flex items-center justify-between text-[11px] text-slate-400 px-1">
+        <span>Mostrando {filteredItems.length} opções do cardápio</span>
+        <span className="text-amber-400/90 font-medium">Toque para adicionar à sacola</span>
+      </div>
+
+      {/* Renderização: Lista Compacta (Padrão Otimizado para Ver Mais Itens) */}
+      {viewMode === 'compact' ? (
+        <div className="space-y-2">
+          {filteredItems.map((item) => {
+            const isAdded = addedItemId === item.id;
+            return (
+              <div
+                key={item.id}
+                className="p-2 sm:p-2.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 transition-all flex items-center justify-between gap-3 group"
+              >
+                {/* Miniatura Foto do Prato */}
+                <div className="relative w-14 h-14 sm:w-16 sm:h-16 rounded-xl overflow-hidden shrink-0 bg-slate-900 border border-white/10">
+                  <SafeBusinessImage
+                    src={item.image}
+                    alt={item.name}
+                    category="gastronomia"
+                    fallbackSeed={item.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    loading="lazy"
+                  />
+                  {item.badge && (
+                    <span className="absolute bottom-0 inset-x-0 bg-black/80 backdrop-blur-xs text-[8px] text-center font-bold text-amber-300 py-0.5 truncate px-1">
+                      {item.badge}
+                    </span>
+                  )}
+                </div>
+
+                {/* Dados Compactos do Prato */}
+                <div className="flex-1 min-w-0 pr-1">
+                  <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-amber-300 transition-colors truncate">
+                    {item.name}
+                  </h4>
+                  <p className="text-[11px] text-slate-400 line-clamp-1 mt-0.5 leading-snug">
+                    {item.description}
+                  </p>
+                  <div className="flex items-center gap-2 mt-1">
+                    <span className="text-xs sm:text-sm font-extrabold text-amber-400">
+                      {item.price}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Botão Compacto Adicionar à Sacola */}
                 <button
                   type="button"
                   onClick={() => handleAddToCart(item)}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: 6,
-                    padding: '8px 14px',
-                    borderRadius: 14,
-                    border: 'none',
-                    background: addedItemId === item.id ? '#14B8A6' : '#F59E0B',
-                    color: addedItemId === item.id ? '#FFFFFF' : '#0B131E',
-                    fontSize: 12,
-                    fontWeight: 800,
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 12px rgba(245, 158, 11, 0.25)',
-                    transition: 'all 0.2s ease',
-                  }}
+                  className={`px-3 py-2 rounded-xl font-black text-xs flex items-center gap-1 shrink-0 transition-all active:scale-95 cursor-pointer shadow-sm ${
+                    isAdded
+                      ? 'bg-emerald-500 text-slate-950 font-bold'
+                      : 'bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950'
+                  }`}
+                  title="Adicionar à sacola"
                 >
-                  {addedItemId === item.id ? (
+                  {isAdded ? (
                     <>
-                      <Check size={14} />
-                      Adicionado!
+                      <Check className="w-3.5 h-3.5" />
+                      <span className="hidden sm:inline">Adicionado</span>
                     </>
                   ) : (
                     <>
-                      <Plus size={14} />
-                      + Sacola
+                      <Plus className="w-3.5 h-3.5" />
+                      <span>Sacola</span>
                     </>
                   )}
                 </button>
               </div>
-            </div>
-          </div>
-        ))}
-      </div>
+            );
+          })}
+        </div>
+      ) : (
+        /* Renderização: Grid Visual com Fotos (2 Colunas em Desktop / Mobile) */
+        <div className="grid grid-cols-2 gap-2.5 sm:gap-3">
+          {filteredItems.map((item) => {
+            const isAdded = addedItemId === item.id;
+            return (
+              <div
+                key={item.id}
+                className="p-2 sm:p-2.5 rounded-2xl bg-white/[0.04] hover:bg-white/[0.07] border border-white/10 hover:border-white/20 transition-all flex flex-col justify-between group"
+              >
+                <div>
+                  <div className="relative w-full h-24 sm:h-28 rounded-xl overflow-hidden bg-slate-900 border border-white/10 mb-2">
+                    <SafeBusinessImage
+                      src={item.image}
+                      alt={item.name}
+                      category="gastronomia"
+                      fallbackSeed={item.name}
+                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                      loading="lazy"
+                    />
+                    {item.badge && (
+                      <span className="absolute top-1.5 left-1.5 bg-black/75 backdrop-blur-xs text-[9px] font-bold text-amber-300 px-2 py-0.5 rounded-full border border-amber-400/30">
+                        {item.badge}
+                      </span>
+                    )}
+                  </div>
 
+                  <h4 className="text-xs sm:text-sm font-bold text-white group-hover:text-amber-300 transition-colors line-clamp-1">
+                    {item.name}
+                  </h4>
+                  <p className="text-[10px] sm:text-[11px] text-slate-400 line-clamp-2 mt-0.5 leading-snug">
+                    {item.description}
+                  </p>
+                </div>
+
+                <div className="flex items-center justify-between gap-1 mt-2.5 pt-2 border-t border-white/5">
+                  <span className="text-xs sm:text-sm font-extrabold text-amber-400">
+                    {item.price}
+                  </span>
+                  <button
+                    type="button"
+                    onClick={() => handleAddToCart(item)}
+                    className={`p-1.5 sm:px-2.5 sm:py-1.5 rounded-lg font-black text-[11px] flex items-center gap-1 transition-all active:scale-95 cursor-pointer ${
+                      isAdded
+                        ? 'bg-emerald-500 text-slate-950 font-bold'
+                        : 'bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 text-slate-950'
+                    }`}
+                  >
+                    {isAdded ? <Check className="w-3 h-3" /> : <Plus className="w-3 h-3" />}
+                    <span className="hidden sm:inline">{isAdded ? 'Salvo' : '+'}</span>
+                  </button>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
       {onOpenCartModal && (
-        <div style={{ marginTop: 8, display: 'flex', justifyContent: 'center' }}>
+        <div className="pt-2 flex justify-center">
           <button
             type="button"
             onClick={onOpenCartModal}
-            style={{
-              display: 'flex',
-              alignItems: 'center',
-              gap: 8,
-              padding: '10px 18px',
-              borderRadius: 14,
-              border: '1px solid rgba(20, 184, 166, 0.3)',
-              background: 'rgba(20, 184, 166, 0.1)',
-              color: '#0D9488',
-              fontSize: 13,
-              fontWeight: 700,
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border border-teal-500/30 bg-teal-500/10 text-teal-300 hover:text-white text-xs font-bold transition-all cursor-pointer"
           >
-            <ShoppingBag size={16} />
+            <ShoppingBag className="w-3.5 h-3.5" />
             <span>Ver Sacola & Finalizar Pedido</span>
           </button>
         </div>

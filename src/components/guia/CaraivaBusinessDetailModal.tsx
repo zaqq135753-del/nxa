@@ -681,12 +681,22 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
               ) : (
                 <button
                   type="button"
-                  onClick={() => setDetailTab(isFood ? "cardapio" : "vitrine")}
+                  onClick={() => {
+                    if (detailTab === "cardapio" || detailTab === "vitrine") {
+                      setIsCartModalOpen(true);
+                    } else {
+                      setDetailTab(isFood ? "cardapio" : "vitrine");
+                    }
+                  }}
                   className="w-full sm:w-auto sm:flex-[2] py-2.5 sm:py-3 px-3 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 active:scale-98 transition-all"
                 >
                   <Sparkles className="w-4 h-4 shrink-0 fill-slate-950" />
                   <span className="truncate">
-                    {isFood ? "Ver Cardápio & Pedir" : "Explorar Produtos & Serviços"}
+                    {detailTab === "cardapio" || detailTab === "vitrine"
+                      ? "Ver Sacola do Turista"
+                      : isFood
+                      ? "Ver Cardápio & Pedir"
+                      : "Explorar Produtos & Serviços"}
                   </span>
                 </button>
               )}
