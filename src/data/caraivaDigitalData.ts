@@ -381,14 +381,14 @@ export const CARAIVA_BUSINESSES: Business[] = [
     ],
     tags: ["bar", "petiscos", "beira-rio", "drinks", "pôr do sol", "pastel de arraia"],
     cover_image:
-      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80",
+      "https://mapadacachaca.com.br/wp-content/uploads/2024/05/boteco-do-para-fachada-1024x768-optimized.jpg",
     heroImage:
-      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80",
+      "https://mapadacachaca.com.br/wp-content/uploads/2024/05/boteco-do-para-fachada-1024x768-optimized.jpg",
     gallery: [
-      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80",
-      "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=800&q=80",
+      "https://ogimg.infoglobo.com.br/in/24236650-dfa-1a6/FT1086A/boeco.jpg",
+      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
     ],
-    reference_media_url: "https://ogimg.infoglobo.com.br/in/24236650-dfa-1a6/FT1086A/boeco.jpg",
+    reference_media_url: "https://mapadacachaca.com.br/wp-content/uploads/2024/05/boteco-do-para-fachada-1024x768-optimized.jpg",
     media_status: "public_reference",
     cta_type: "whatsapp",
     ctaType: "whatsapp",
