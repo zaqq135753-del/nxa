@@ -20,6 +20,14 @@ export interface MapCameraCommand {
     bearing: number;
     pitch: number;
     zoom: number;
+    mode?: "first_person" | "third_person";
+    isWalking?: boolean;
+  };
+  activeAvatar?: {
+    coords: LatLngLiteral;
+    bearing: number;
+    isWalking?: boolean;
+    mode?: "first_person" | "third_person";
   };
 }
 export interface LiveMapEngineProps {
@@ -28,6 +36,12 @@ export interface LiveMapEngineProps {
   userPosition?: LatLngLiteral;
   command: MapCameraCommand;
   activeRouteCoordinates?: LatLngLiteral[];
+  activeAvatar?: {
+    coords: LatLngLiteral;
+    bearing: number;
+    isWalking?: boolean;
+    mode?: "first_person" | "third_person";
+  };
   onSelect: (point: LiveMapPoint) => void;
   onReady: () => void;
   onError: (reason: string) => void;

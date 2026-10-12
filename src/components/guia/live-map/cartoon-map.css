@@ -62,3 +62,192 @@
 .caraiva-guide.caraiva-guide .caraiva-live-map .clm-selection-note{grid-column:1/-1;color:var(--cv-muted);font-size:9px;line-height:1.5;margin:0}@media(max-width:1023px){.caraiva-guide.caraiva-guide .caraiva-live-map[data-selected=true] .clm-illustration-credit{display:none}}
 
 .caraiva-guide.caraiva-guide .caraiva-live-map .clm-selection-close,.caraiva-guide.caraiva-guide .caraiva-live-map .clm-selection-save{width:44px;height:44px;min-width:44px;min-height:44px}.caraiva-guide.caraiva-guide .caraiva-live-map .clm-selection-save{top:61px}.caraiva-guide.caraiva-guide .caraiva-live-map .clm-selection-copy{padding-right:32px}
+
+/* ==========================================================================
+   CARAÍVA CARTOON ANIMATED AVATAR (Nativo / Turista Pé na Areia 3D)
+   ========================================================================== */
+.caraiva-avatar-marker-wrapper {
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  transform: translate(-50%, -100%);
+  user-select: none;
+  z-index: 50;
+  transition: opacity 0.35s ease;
+}
+
+.caraiva-avatar-marker-wrapper[data-mode="first_person"] {
+  opacity: 0.35;
+}
+
+.caraiva-avatar-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 9px;
+  border-radius: 9999px;
+  background: rgba(12, 23, 29, 0.94);
+  border: 1px solid rgba(20, 184, 166, 0.45);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.5), 0 0 10px rgba(20, 184, 166, 0.25);
+  color: #f8fafc;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  margin-bottom: 2px;
+  backdrop-filter: blur(8px);
+}
+
+.caraiva-avatar-badge .badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 8px #10b981;
+}
+
+.caraiva-avatar-character {
+  position: relative;
+  width: 48px;
+  height: 68px;
+  transform-origin: bottom center;
+  filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.4));
+  transition: transform 0.15s ease-out;
+}
+
+.caraiva-avatar-character.is-walking {
+  animation: caraiva-avatar-bob 0.52s infinite ease-in-out;
+}
+
+.caraiva-avatar-character.is-idle {
+  animation: caraiva-avatar-idle 1.8s infinite ease-in-out;
+}
+
+.caraiva-avatar-ground {
+  position: relative;
+  width: 58px;
+  height: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: -10px;
+}
+
+.caraiva-avatar-shadow {
+  position: absolute;
+  width: 40px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(ellipse at center, rgba(15, 23, 42, 0.75) 0%, rgba(15, 23, 42, 0) 75%);
+}
+
+.caraiva-avatar-character.is-walking ~ .caraiva-avatar-ground .caraiva-avatar-shadow {
+  animation: caraiva-shadow-pulse 0.52s infinite ease-in-out;
+}
+
+.caraiva-avatar-heading-cone {
+  position: absolute;
+  width: 48px;
+  height: 48px;
+  top: -13px;
+  left: 5px;
+  pointer-events: none;
+  transform-origin: center center;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.caraiva-sand-puffs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.sand-puff {
+  position: absolute;
+  bottom: 6px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #fde047;
+  opacity: 0;
+}
+
+.sand-puff.sand-left {
+  left: 14px;
+}
+
+.sand-puff.sand-right {
+  right: 14px;
+}
+
+.caraiva-avatar-character.is-walking ~ .caraiva-avatar-ground .sand-puff.sand-left {
+  animation: caraiva-sand-puff-left 0.52s infinite ease-out;
+}
+
+.caraiva-avatar-character.is-walking ~ .caraiva-avatar-ground .sand-puff.sand-right {
+  animation: caraiva-sand-puff-right 0.52s infinite 0.26s ease-out;
+}
+
+@keyframes caraiva-avatar-bob {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  25% {
+    transform: translateY(-8px) rotate(-3.5deg);
+  }
+  50% {
+    transform: translateY(-1px) rotate(0deg);
+  }
+  75% {
+    transform: translateY(-8px) rotate(3.5deg);
+  }
+}
+
+@keyframes caraiva-avatar-idle {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+@keyframes caraiva-shadow-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.75;
+  }
+  25%, 75% {
+    transform: scale(0.72);
+    opacity: 0.35;
+  }
+  50% {
+    transform: scale(0.95);
+    opacity: 0.65;
+  }
+}
+
+@keyframes caraiva-sand-puff-left {
+  0% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(-12px, -6px) scale(1.4);
+    opacity: 0;
+  }
+}
+
+@keyframes caraiva-sand-puff-right {
+  0% {
+    transform: translate(0, 0) scale(0.5);
+    opacity: 0.85;
+  }
+  100% {
+    transform: translate(12px, -6px) scale(1.4);
+    opacity: 0;
+  }
+}
+

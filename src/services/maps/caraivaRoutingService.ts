@@ -10,13 +10,33 @@ export interface RouteLandmark {
   icon: string; // emoji ou identificador
 }
 
+export type ManeuverType =
+  | 'depart'
+  | 'straight'
+  | 'turn_left'
+  | 'turn_right'
+  | 'slight_left'
+  | 'slight_right'
+  | 'arrive';
+
+export interface RouteAISense {
+  sandType: 'Areia Batida Firme' | 'Areia Fofa Tradicional' | 'Beira da Restinga';
+  tideRelevance: string;
+  footwearTip: string;
+  nativeTip: string;
+}
+
 export interface RouteStepPOV {
   instruction: string;
+  maneuver: ManeuverType;
+  maneuverText: string;
+  streetName: string;
   landmarkNear?: string;
   tip: string;
   distanceMeters: number;
   coords: LatLngLiteral;
   heading: number; // Ângulo para a câmera olhar (0 = Norte, 90 = Leste)
+  aiSense: RouteAISense;
 }
 
 export interface VillageRoute {
@@ -28,6 +48,13 @@ export interface VillageRoute {
   formattedDistance: string;
   pathCoordinates: LatLngLiteral[]; // Linha completa da rota para desenhar no mapa
   steps: RouteStepPOV[];
+  isOfflineCapable: boolean;
+  aiSenseSummary: {
+    recommendedFootwear: string;
+    sandCondition: string;
+    bestTideWindow: string;
+    nativeSecret: string;
+  };
 }
 
 // 1. Marcos Principais da Vila de Caraíva (Nós de Partida e Referência)
@@ -254,7 +281,7 @@ export function calculateVillageWalkingRoute(
     totalMeters += calculateHaversineDistanceMeters(fullCoordinates[i], fullCoordinates[i + 1]);
   }
 
-  // Gera os passos interativos POV com instruções locais de Caraíva
+  // Gera os passos interativos POV com instruções locais de Caraíva e manobras modernas estilo Waze/Maps
   const steps: RouteStepPOV[] = [];
 
   for (let i = 0; i < fullCoordinates.length - 1; i++) {
@@ -262,6 +289,43 @@ export function calculateVillageWalkingRoute(
     const to = fullCoordinates[i + 1];
     const segDist = calculateHaversineDistanceMeters(from, to);
     const heading = calculateBearing(from, to);
+
+    const currentNode = i > 0 && i - 1 < nodePath.length ? nodePath[i - 1] : null;
+    const streetName = currentNode ? currentNode.name : (i === 0 ? origin.name : 'Rua da Praia de Areia');
+
+    let maneuver: ManeuverType = 'straight';
+    let maneuverText = 'Siga em frente pela rua de areia';
+
+    if (i === 0) {
+      maneuver = 'depart';
+      maneuverText = `Inicie sua caminhada saindo de ${origin.name}`;
+    } else {
+      const prevFrom = fullCoordinates[i - 1];
+      const prevHeading = calculateBearing(prevFrom, from);
+      const angleDiff = ((heading - prevHeading + 540) % 360) - 180;
+
+      if (i === fullCoordinates.length - 2) {
+        maneuver = 'arrive';
+        maneuverText = `Chegando em ${destinationBusiness.name}`;
+      } else if (angleDiff > 35) {
+        maneuver = 'turn_right';
+        const refLandmark = currentNode?.name.includes('Igreja') ? 'na amendoeira da igreja' : 'à direita na curva de areia';
+        maneuverText = `Vire à direita ${refLandmark}`;
+      } else if (angleDiff < -35) {
+        maneuver = 'turn_left';
+        const refLandmark = currentNode?.name.includes('Rio') ? 'no beco do beira-rio' : 'à esquerda na trilha de areia';
+        maneuverText = `Vire à esquerda ${refLandmark}`;
+      } else if (angleDiff > 12) {
+        maneuver = 'slight_right';
+        maneuverText = 'Mantenha-se à direita na bifurcação de areia';
+      } else if (angleDiff < -12) {
+        maneuver = 'slight_left';
+        maneuverText = 'Mantenha-se à esquerda na bifurcação de areia';
+      } else {
+        maneuver = 'straight';
+        maneuverText = `Siga reto por ${streetName}`;
+      }
+    }
 
     let instruction = '';
     let tip = '';
@@ -275,27 +339,66 @@ export function calculateVillageWalkingRoute(
         ? `Referência local: ${destinationBusiness.locationReference}`
         : 'Procure pela placa decorativa de madeira nativa.';
     } else {
-      const currentNode = nodePath[i - 1];
-      instruction = `Siga por ${currentNode ? currentNode.name : 'pelas ruas de areia da vila'}`;
-      tip = 'Observe as casas coloridas e os coqueirais à sua volta.';
+      instruction = `${maneuverText} (${streetName})`;
+      tip = 'Observe as casas coloridas, amendoeiras e coqueirais à sua volta.';
     }
+
+    // Caraíva AI Sense (Análise contextual inteligente de maré, areia e calçado)
+    const isBeach = streetName.toLowerCase().includes('praia') || streetName.toLowerCase().includes('mar') || streetName.toLowerCase().includes('barra');
+    const isRiver = streetName.toLowerCase().includes('porto') || streetName.toLowerCase().includes('rio');
+
+    const aiSense: RouteAISense = isBeach
+      ? {
+          sandType: 'Areia Batida Firme',
+          tideRelevance: 'Maré baixa amplia a faixa de areia batida à beira-mar',
+          footwearTip: 'Ideal pé descalço na areia fresca e brisa litorânea',
+          nativeTip: 'A brisa vinda do mar alivia o calor da caminhada.',
+        }
+      : isRiver
+      ? {
+          sandType: 'Beira da Restinga',
+          tideRelevance: 'Fluxo calmo do Rio Caraíva acompanhando a maré',
+          footwearTip: 'Chinelo ou descalço atento a raízes de amendoeiras',
+          nativeTip: 'Visual histórico do ancoradouro dos barqueiros nativos.',
+        }
+      : {
+          sandType: 'Areia Fofa Tradicional',
+          tideRelevance: 'Trajeto no coração histórico protegido da maré',
+          footwearTip: 'Pé descalço massageia os pés na areia morna da vila',
+          nativeTip: 'Caminhe no ritmo desacelerado; à noite a luz das estrelas guia o caminho.',
+        };
 
     steps.push({
       instruction,
+      maneuver,
+      maneuverText,
+      streetName,
+      landmarkNear: currentNode?.name,
       tip,
       distanceMeters: segDist,
       coords: from,
       heading,
+      aiSense,
     });
   }
 
   // Passo final de chegada
   steps.push({
     instruction: `Você chegou a ${destinationBusiness.name}! 🏝️`,
+    maneuver: 'arrive',
+    maneuverText: `Chegada: ${destinationBusiness.name}`,
+    streetName: destinationBusiness.address || destinationBusiness.name,
+    landmarkNear: destinationBusiness.locationReference,
     tip: 'Desfrute da hospitalidade e do ritmo desacelerado de Caraíva.',
     distanceMeters: 0,
     coords: destCoords,
     heading: steps.length > 0 ? steps[steps.length - 1].heading : 0,
+    aiSense: {
+      sandType: 'Areia Batida Firme',
+      tideRelevance: 'Destino acessível em qualquer maré',
+      footwearTip: 'Pé na areia livre e relaxado',
+      nativeTip: 'Viva a magia de Caraíva sem pressa.',
+    },
   });
 
   const walkingMinutes = estimateWalkingMinutes(totalMeters);
@@ -309,5 +412,12 @@ export function calculateVillageWalkingRoute(
     formattedDistance: formatDistance(totalMeters),
     pathCoordinates: fullCoordinates,
     steps,
+    isOfflineCapable: true,
+    aiSenseSummary: {
+      recommendedFootwear: 'Pé na areia ou chinelo de dedo',
+      sandCondition: totalMeters > 280 ? 'Mista: areia fofa no centrinho e firme perto da praia' : 'Areia tradicional de Caraíva',
+      bestTideWindow: 'Maré baixa recomendada para trecho de praia; vila transitável 24h',
+      nativeSecret: 'Ruas 100% de areia sem carros nem asfalto - Caraíva se vive a pé e sob as estrelas.',
+    },
   };
 }

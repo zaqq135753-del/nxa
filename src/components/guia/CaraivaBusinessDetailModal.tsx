@@ -11,7 +11,6 @@ import {
   Sparkles,
   ChevronLeft,
   ChevronRight,
-  Plus,
   Check,
   CreditCard,
   CheckCircle2,
@@ -21,6 +20,8 @@ import {
   Anchor,
   Compass,
   Footprints,
+  ShoppingBag,
+  Trash2,
 } from "lucide-react";
 import type { Business, EventItem, OfferItem } from "../../data/caraivaDigitalData";
 import { CARAIVA_EVENTS, CARAIVA_OFFERS, claimBusinessProfile } from "../../data/caraivaDigitalData";
@@ -32,7 +33,7 @@ import { getBusinessProfileDetail } from "../../data/caraivaExtendedProfiles";
 import { BusinessMenuTab, BusinessBookingTab } from "./business-detail/BusinessExtendedSections";
 import { CaraivaBusinessShowcaseTab } from "./business-detail/CaraivaBusinessShowcaseTab";
 import { CaraivaCartCheckoutModal } from "./business-detail/CaraivaCartCheckoutModal";
-import { getBusinessCatalog, getCartItems, type CartItem } from "../../services/catalogCartService";
+import { getBusinessCatalog, getCartItems, clearCartForBusiness, type CartItem } from "../../services/catalogCartService";
 import { SafeBusinessImage } from "./SafeBusinessImage";
 
 interface CaraivaBusinessDetailModalProps {
@@ -185,6 +186,17 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
           
           <div className="pointer-events-auto flex items-center gap-2">
             <button
+              onClick={handleAddToItinerary}
+              className={`p-2.5 rounded-full backdrop-blur-md border transition-all shadow-lg active:scale-95 ${
+                addedToDay 
+                  ? "bg-emerald-500/30 text-emerald-300 border-emerald-500/50" 
+                  : "bg-black/60 text-white/90 hover:text-white hover:bg-black/80 border-white/10"
+              }`}
+              title={addedToDay ? "Adicionado ao itinerário!" : "Adicionar ao itinerário (+ Dia)"}
+            >
+              {addedToDay ? <Check className="w-4 h-4 text-emerald-400" /> : <Calendar className="w-4 h-4 text-amber-300" />}
+            </button>
+            <button
               onClick={handleShare}
               className="p-2.5 rounded-full bg-black/60 backdrop-blur-md text-white/90 hover:text-white hover:bg-black/80 border border-white/10 transition-all shadow-lg active:scale-95"
               title="Compartilhar"
@@ -257,6 +269,19 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             <ShieldCheck className="w-3.5 h-3.5 text-amber-400" />
             <span>Dados Públicos Verificados</span>
           </div>
+
+          {/* Fachada 360° disponível sobre a foto */}
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setIsStreetViewOpen(true);
+            }}
+            className="absolute bottom-3 right-3 z-10 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-900/80 hover:bg-slate-900 backdrop-blur-md text-teal-300 border border-teal-500/30 text-[11px] font-semibold shadow-lg transition-all active:scale-95 cursor-pointer"
+            title="Abrir Fachada 360°"
+          >
+            <Compass className="w-3.5 h-3.5 text-teal-400" />
+            <span>360°</span>
+          </button>
         </div>
 
         {/* Content Body */}
@@ -612,72 +637,53 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
           const isFood = business.category === "restaurantes" || business.category === "bares" || business.category === "cafes";
 
           return (
-            <div className="sticky bottom-0 p-3 sm:p-4 bg-[#080d12]/95 backdrop-blur-xl border-t border-white/10 flex items-center gap-2 z-30 flex-wrap sm:flex-nowrap">
+            <div className="sticky bottom-0 p-3 sm:p-4 bg-[#080d12]/95 backdrop-blur-xl border-t border-white/10 flex items-center gap-2.5 z-30">
+              {/* Botão 'Rota a Pé' com ícone de passos */}
               <button
+                type="button"
                 onClick={() => {
                   if (onStartRoute) onStartRoute(business);
                   else if (onOpenMap) onOpenMap(business);
                   onClose();
                 }}
-                className="flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-400 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 transition-all shadow-md shadow-teal-500/20 active:scale-98"
+                className="py-3 px-3.5 sm:px-4 rounded-2xl bg-white/[0.07] hover:bg-white/[0.12] text-teal-300 hover:text-white font-bold text-xs sm:text-sm flex items-center justify-center gap-2 border border-teal-500/30 hover:border-teal-400/50 transition-all shadow-md active:scale-98 shrink-0 cursor-pointer"
                 title="Traçar rota a pé na areia com modo POV"
               >
-                <Footprints className="w-4 h-4 text-slate-950" />
-                <span>Rota a Pé</span>
+                <Footprints className="w-4 h-4 text-teal-400 shrink-0" />
+                <span className="whitespace-nowrap">Rota a Pé</span>
               </button>
 
-              <button
-                onClick={() => {
-                  if (onOpenMap) onOpenMap(business);
-                  onClose();
-                }}
-                className="flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-white/10 active:scale-98"
-              >
-                <Navigation className="w-4 h-4 text-sky-400" />
-                <span>Mapa 3D</span>
-              </button>
-
-              <button
-                onClick={() => setIsStreetViewOpen(true)}
-                className="flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl bg-teal-500/15 hover:bg-teal-500/25 text-teal-300 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-teal-500/30 active:scale-98"
-              >
-                <Compass className="w-4 h-4 text-teal-400" />
-                <span>Fachada 360°</span>
-              </button>
-
-              <button
-                onClick={handleAddToItinerary}
-                className="flex-1 py-2.5 sm:py-3 px-2 sm:px-3 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 font-semibold text-xs flex items-center justify-center gap-1.5 transition-colors border border-white/10 active:scale-98"
-              >
-                {addedToDay ? (
-                  <>
-                    <Check className="w-4 h-4 text-emerald-400" />
-                    <span className="text-emerald-300">Salvo!</span>
-                  </>
-                ) : (
-                  <>
-                    <Plus className="w-4 h-4 text-amber-400" />
-                    <span>+ Dia</span>
-                  </>
-                )}
-              </button>
-
+              {/* Botão principal dinâmico */}
               {businessCartCount > 0 ? (
-                <button
-                  type="button"
-                  onClick={() => setIsCartModalOpen(true)}
-                  className="w-full sm:w-auto sm:flex-[2.5] py-2.5 sm:py-3 px-3 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-between gap-2 shadow-lg shadow-amber-500/25 active:scale-98 transition-all animate-pulse"
-                >
-                  <div className="flex items-center gap-1.5 truncate">
-                    <span className="px-1.5 py-0.5 rounded-full bg-slate-950 text-amber-400 text-[11px] font-black">
-                      {businessCartCount}
+                <div className="flex-1 min-w-0 flex items-center gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setIsCartModalOpen(true)}
+                    className="flex-1 min-w-0 py-3 px-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-amber-500 to-amber-400 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-between gap-2 shadow-lg shadow-amber-500/25 active:scale-98 transition-all cursor-pointer"
+                  >
+                    <div className="flex items-center gap-1.5 truncate">
+                      <ShoppingBag className="w-4 h-4 shrink-0" />
+                      <span className="truncate">Sacola</span>
+                      <span className="px-1.5 py-0.5 rounded-full bg-slate-950 text-amber-400 text-[11px] font-black shrink-0">
+                        {businessCartCount}
+                      </span>
+                    </div>
+                    <span className="text-xs font-black bg-slate-950/20 px-2 py-0.5 rounded-lg shrink-0">
+                      R$ {businessCartTotal.toFixed(2)}
                     </span>
-                    <span className="truncate">Ver Sacola do Turista</span>
-                  </div>
-                  <span className="text-xs font-black bg-slate-950/15 px-2 py-0.5 rounded-md shrink-0">
-                    R$ {businessCartTotal.toFixed(2)}
-                  </span>
-                </button>
+                  </button>
+
+                  {/* Botão secundário discreto para 'Limpar Sacola' */}
+                  <button
+                    type="button"
+                    onClick={() => clearCartForBusiness(business.id)}
+                    className="p-3 rounded-2xl bg-white/5 hover:bg-rose-500/20 text-slate-400 hover:text-rose-300 border border-white/10 hover:border-rose-500/30 transition-all shrink-0 active:scale-95 cursor-pointer"
+                    title="Limpar sacola deste comércio"
+                    aria-label="Limpar Sacola"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                </div>
               ) : (
                 <button
                   type="button"
@@ -688,16 +694,21 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                       setDetailTab(isFood ? "cardapio" : "vitrine");
                     }
                   }}
-                  className="w-full sm:w-auto sm:flex-[2] py-2.5 sm:py-3 px-3 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 active:scale-98 transition-all"
+                  className="flex-1 min-w-0 py-3 px-3.5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 active:scale-98 transition-all cursor-pointer"
                 >
-                  <Sparkles className="w-4 h-4 shrink-0 fill-slate-950" />
-                  <span className="truncate">
-                    {detailTab === "cardapio" || detailTab === "vitrine"
-                      ? "Ver Sacola do Turista"
-                      : isFood
-                      ? "Ver Cardápio & Pedir"
-                      : "Explorar Produtos & Serviços"}
-                  </span>
+                  {detailTab === "cardapio" || detailTab === "vitrine" ? (
+                    <>
+                      <ShoppingBag className="w-4 h-4 shrink-0 fill-slate-950" />
+                      <span className="truncate">Ver Sacola</span>
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 shrink-0 fill-slate-950" />
+                      <span className="truncate">
+                        {isFood ? "Ver Cardápio & Pedir" : "Explorar Serviços"}
+                      </span>
+                    </>
+                  )}
                 </button>
               )}
             </div>

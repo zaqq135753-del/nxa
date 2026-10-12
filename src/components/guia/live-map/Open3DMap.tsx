@@ -1,14 +1,115 @@
 import { useEffect, useRef } from "react";
 import { Map, Marker, type GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
+import "./cartoon-map.css";
 import { type LiveMapEngineProps } from "../../../services/maps/liveMapModel";
 import { CARAIVA_CENTER_COORDS } from "../../../services/maps/types";
 import { orbSvg } from "./mapOrb";
+
+function renderCaraivaAvatarSvg(): string {
+  return `
+    <svg width="48" height="68" viewBox="0 0 48 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Mochila de Aventura (Nas costas) -->
+      <rect x="7" y="27" width="10" height="15" rx="3.5" fill="#EA580C" stroke="#C2410C" stroke-width="1.2"/>
+      <rect x="9" y="32" width="6" height="3" rx="1" fill="#FDE047"/>
+      <path d="M12 24 C10 21 8 26 8 30" stroke="#C2410C" stroke-width="2" stroke-linecap="round"/>
+
+      <!-- Braço Esquerdo -->
+      <path d="M13 28 L9 39" stroke="#D97706" stroke-width="4" stroke-linecap="round"/>
+
+      <!-- Bermuda de Praia Tropical -->
+      <rect x="15" y="39" width="18" height="12" rx="2" fill="#2563EB"/>
+      <line x1="24" y1="39" x2="24" y2="51" stroke="#1D4ED8" stroke-width="1.5"/>
+
+      <!-- Camisa Floral / Linho Tropical -->
+      <path d="M13 25 C13 23 35 23 35 25 L37 40 L11 40 Z" fill="#0D9488"/>
+      <!-- Estampa Floral e Palmeira da Bahia -->
+      <circle cx="18" cy="29" r="1.5" fill="#FDE047"/>
+      <circle cx="28" cy="31" r="1.5" fill="#FDE047"/>
+      <circle cx="22" cy="35" r="1.5" fill="#FDE047"/>
+      <path d="M22 28 Q25 32 24 36" stroke="#5EEAD4" stroke-width="1" stroke-linecap="round"/>
+      <!-- Gola V / Colar de Sementes Nativo -->
+      <polygon points="21,24 27,24 24,30" fill="#F59E0B"/>
+      <circle cx="24" cy="31" r="1" fill="#92400E"/>
+
+      <!-- Braço Direito (Acenando/Caminhando) -->
+      <path d="M35 28 L39 38" stroke="#D97706" stroke-width="4" stroke-linecap="round"/>
+
+      <!-- Pernas & Pés na Areia (Descalço / Sandália) -->
+      <path d="M19 50 L19 61 L16 63" stroke="#D97706" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M29 50 L29 61 L32 63" stroke="#D97706" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"/>
+      <!-- Tiras do Chinelo de Praia nos pés -->
+      <line x1="16" y1="62" x2="19" y2="61" stroke="#E11D48" stroke-width="1.5" stroke-linecap="round"/>
+      <line x1="29" y1="61" x2="32" y2="62" stroke="#E11D48" stroke-width="1.5" stroke-linecap="round"/>
+
+      <!-- Cabeça & Rosto Bronzeado -->
+      <circle cx="24" cy="18" r="8" fill="#F59E0B"/>
+      <!-- Sorriso Amigável -->
+      <path d="M21 21 Q24 24 27 21" stroke="#78350F" stroke-width="1.4" stroke-linecap="round" fill="none"/>
+      <!-- Óculos de Sol Estiloso -->
+      <rect x="17" y="15" width="5.5" height="4" rx="1.5" fill="#0F172A"/>
+      <rect x="25.5" y="15" width="5.5" height="4" rx="1.5" fill="#0F172A"/>
+      <line x1="22.5" y1="16.5" x2="25.5" y2="16.5" stroke="#0F172A" stroke-width="1.5"/>
+      <line x1="18" y1="16" x2="20.5" y2="16" stroke="#38BDF8" stroke-width="0.9" stroke-linecap="round"/>
+      <line x1="26.5" y1="16" x2="29" y2="16" stroke="#38BDF8" stroke-width="0.9" stroke-linecap="round"/>
+
+      <!-- Chapéu de Palha Tradicional de Caraíva -->
+      <!-- Copa do Chapéu -->
+      <path d="M16 12 C16 4 32 4 32 12 Z" fill="#EAB308" stroke="#CA8A04" stroke-width="1.2"/>
+      <path d="M19 6 L29 6" stroke="#CA8A04" stroke-width="0.8" stroke-dasharray="1.5,1.5"/>
+      <path d="M18 9 L30 9" stroke="#CA8A04" stroke-width="0.8" stroke-dasharray="1.5,1.5"/>
+      <!-- Fita do Chapéu Verde-Água / Turquesa -->
+      <path d="M16 11.5 C20 10.5 28 10.5 32 11.5" stroke="#0D9488" stroke-width="2.5" fill="none"/>
+      <!-- Folhinha Nativa no Chapéu -->
+      <path d="M30 9 Q34 6 36 8" stroke="#16A34A" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <!-- Aba Larga Curvada de Palha Trançada -->
+      <ellipse cx="24" cy="12.5" rx="19" ry="5.5" fill="#FDE047" stroke="#CA8A04" stroke-width="1.2"/>
+      <path d="M8 12.5 Q24 16 40 12.5" stroke="#CA8A04" stroke-width="0.8"/>
+    </svg>
+  `;
+}
+
+function renderAvatarGroundHtml(bearing: number): string {
+  return `
+    <div class="caraiva-avatar-ground">
+      <div class="caraiva-avatar-shadow"></div>
+      <div class="caraiva-avatar-heading-cone" style="transform: rotate(${Math.round(bearing)}deg)">
+        <svg width="48" height="48" viewBox="0 0 48 48" fill="none">
+          <polygon points="24,4 31,21 24,16 17,21" fill="#14B8A6" opacity="0.95" filter="drop-shadow(0 0 6px #14B8A6)"/>
+          <circle cx="24" cy="24" r="11" stroke="#14B8A6" stroke-width="1.5" stroke-dasharray="3,3" opacity="0.6"/>
+        </svg>
+      </div>
+      <div class="caraiva-sand-puffs">
+        <span class="sand-puff sand-left"></span>
+        <span class="sand-puff sand-right"></span>
+      </div>
+    </div>
+  `;
+}
+
+function createAvatarContent(options: {
+  bearing: number;
+  isWalking: boolean;
+  label?: string;
+}): string {
+  const { bearing, isWalking, label = "🚶 Nativo de Caraíva" } = options;
+  return `
+    <div class="caraiva-avatar-badge">
+      <span class="badge-dot"></span>
+      <span>${label}</span>
+    </div>
+    <div class="caraiva-avatar-character ${isWalking ? "is-walking" : "is-idle"}">
+      ${renderCaraivaAvatarSvg()}
+    </div>
+    ${renderAvatarGroundHtml(bearing)}
+  `;
+}
 
 export default function Open3DMap(props: LiveMapEngineProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<Map | null>(null);
   const markersRef = useRef<Marker[]>([]);
+  const avatarMarkerRef = useRef<Marker | null>(null);
   const callbacks = useRef(props);
   callbacks.current = props;
 
@@ -59,6 +160,10 @@ export default function Open3DMap(props: LiveMapEngineProps) {
     });
 
     return () => {
+      if (avatarMarkerRef.current) {
+        avatarMarkerRef.current.remove();
+        avatarMarkerRef.current = null;
+      }
       map.remove();
       mapRef.current = null;
     };
@@ -180,6 +285,65 @@ export default function Open3DMap(props: LiveMapEngineProps) {
       });
     }
   }, [props.activeRouteCoordinates]);
+
+  // Avatar Cartoon Animado de Caraíva (caminhando fisicamente pelas ruas de areia na rota ativa)
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!map) return;
+
+    const pov = props.command.povCamera;
+    const active = props.activeAvatar;
+    const coords =
+      active?.coords ||
+      pov?.coords ||
+      (props.activeRouteCoordinates && props.activeRouteCoordinates.length > 0
+        ? props.activeRouteCoordinates[0]
+        : null);
+
+    if (!coords) {
+      if (avatarMarkerRef.current) {
+        avatarMarkerRef.current.remove();
+        avatarMarkerRef.current = null;
+      }
+      return;
+    }
+
+    const bearing = active?.bearing ?? pov?.bearing ?? 0;
+    const isWalking = Boolean(
+      active?.isWalking ?? pov?.isWalking ?? (props.command.povCamera !== undefined || (props.activeRouteCoordinates && props.activeRouteCoordinates.length > 0))
+    );
+    const mode = active?.mode ?? pov?.mode ?? "third_person";
+    const label =
+      mode === "first_person"
+        ? "👁️ 1ª Pessoa (Pé na Areia)"
+        : "🚶 Nativo de Caraíva";
+
+    if (!avatarMarkerRef.current) {
+      const el = document.createElement("div");
+      el.className = "caraiva-avatar-marker-wrapper";
+      el.setAttribute("data-mode", mode);
+      el.innerHTML = createAvatarContent({ bearing, isWalking, label });
+
+      const marker = new Marker({
+        element: el,
+        anchor: "bottom",
+      })
+        .setLngLat([coords.lng, coords.lat])
+        .addTo(map);
+
+      avatarMarkerRef.current = marker;
+    } else {
+      const marker = avatarMarkerRef.current;
+      marker.setLngLat([coords.lng, coords.lat]);
+      const el = marker.getElement();
+      el.setAttribute("data-mode", mode);
+      el.innerHTML = createAvatarContent({ bearing, isWalking, label });
+    }
+  }, [
+    props.command.povCamera,
+    props.activeAvatar,
+    props.activeRouteCoordinates,
+  ]);
 
   // Voo suave de câmera ao selecionar um ponto
   useEffect(() => {

@@ -51,9 +51,11 @@ export const BusinessMenuTab: React.FC<BusinessMenuTabProps> = ({
       badge: item.badge as any,
     };
 
-    addToCart(catalogProd, businessId, businessName, 'gastronomia');
-    setAddedItemId(item.id);
-    setTimeout(() => setAddedItemId(null), 1800);
+    const success = addToCart(catalogProd, businessId, businessName, 'gastronomia');
+    if (success) {
+      setAddedItemId(item.id);
+      setTimeout(() => setAddedItemId(null), 1800);
+    }
   };
 
   return (

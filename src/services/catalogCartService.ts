@@ -363,8 +363,60 @@ export function saveCartItems(items: CartItem[]): void {
   }
 }
 
-export function addToCart(product: CatalogProduct, businessId: string, businessName: string, niche: BusinessNiche): void {
+export function getDifferentBusinessInCart(businessId: string): { businessId: string; businessName: string; count: number } | null {
   const current = getCartItems();
+  const different = current.filter((i) => i.businessId !== businessId);
+  if (different.length === 0) return null;
+  const count = different.reduce((acc, i) => acc + i.quantity, 0);
+  return {
+    businessId: different[0].businessId,
+    businessName: different[0].businessName || 'outro comércio',
+    count,
+  };
+}
+
+export interface AddToCartOptions {
+  forceReplace?: boolean;
+}
+
+export function addToCart(
+  product: CatalogProduct,
+  businessId: string,
+  businessName: string,
+  niche: BusinessNiche,
+  options?: AddToCartOptions
+): boolean {
+  let current = getCartItems();
+  const conflict = getDifferentBusinessInCart(businessId);
+
+  // Previne mistura de comércios diferentes na mesma sacola
+  if (conflict) {
+    if (!options?.forceReplace) {
+      const confirmReplace = typeof window !== 'undefined' && window.confirm
+        ? window.confirm(
+            `Sua sacola já contém ${conflict.count} item(ns) de "${conflict.businessName}".\n\nDeseja esvaziar a sacola anterior e iniciar um novo pedido em "${businessName}"?`
+          )
+        : true;
+
+      if (!confirmReplace) {
+        return false;
+      }
+    }
+
+    // Esvazia os itens do outro estabelecimento para manter o pedido exclusivo
+    current = [];
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('caraiva:cart-swapped', {
+          detail: {
+            previousBusinessName: conflict.businessName,
+            newBusinessName: businessName,
+          },
+        })
+      );
+    }
+  }
+
   const existingIdx = current.findIndex(
     (i) => i.product.id === product.id && i.businessId === businessId
   );
@@ -382,6 +434,7 @@ export function addToCart(product: CatalogProduct, businessId: string, businessN
   }
 
   saveCartItems(current);
+  return true;
 }
 
 export function updateCartQuantity(productId: string, businessId: string, delta: number): void {
@@ -397,6 +450,12 @@ export function updateCartQuantity(productId: string, businessId: string, delta:
     }
     saveCartItems(current);
   }
+}
+
+export function clearCartForBusiness(businessId: string): void {
+  const current = getCartItems();
+  const remaining = current.filter((i) => i.businessId !== businessId);
+  saveCartItems(remaining);
 }
 
 export function clearCart(): void {

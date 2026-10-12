@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import {
   X,
-  Compass,
   Footprints,
   MapPin,
   Play,
@@ -9,6 +8,14 @@ import {
   ChevronRight,
   ChevronLeft,
   ExternalLink,
+  WifiOff,
+  CornerUpRight,
+  CornerUpLeft,
+  ArrowUp,
+  Sparkles,
+  ShieldCheck,
+  Eye,
+  UserCheck,
 } from "lucide-react";
 import { type Business } from "../../data/caraivaDigitalData";
 import {
@@ -16,7 +23,9 @@ import {
   calculateVillageWalkingRoute,
   type VillageRoute,
   type RouteLandmark,
+  type ManeuverType,
 } from "../../services/maps/caraivaRoutingService";
+import { formatDistance } from "../../services/maps/geolocation";
 import { type LatLngLiteral } from "../../services/maps/types";
 
 interface CaraivaWalkingRouteModalProps {
@@ -28,6 +37,8 @@ interface CaraivaWalkingRouteModalProps {
     bearing: number;
     pitch: number;
     zoom: number;
+    mode?: "first_person" | "third_person";
+    isWalking?: boolean;
   }) => void;
   onClearPovRoute?: () => void;
   onSetRoutePath?: (coords: LatLngLiteral[]) => void;
@@ -44,8 +55,10 @@ export const CaraivaWalkingRouteModal: React.FC<CaraivaWalkingRouteModalProps> =
   const [selectedOrigin, setSelectedOrigin] = useState<RouteLandmark>(CARAIVA_KEY_ORIGINS[0]);
   const [route, setRoute] = useState<VillageRoute | null>(null);
   const [isPovMode, setIsPovMode] = useState<boolean>(false);
+  const [povPerspective, setPovPerspective] = useState<"first_person" | "third_person">("third_person");
   const [currentStepIndex, setCurrentStepIndex] = useState<number>(0);
   const [isPlayingAutoWalk, setIsPlayingAutoWalk] = useState<boolean>(false);
+  const [showAiSenseDetails, setShowAiSenseDetails] = useState<boolean>(false);
 
   // Recalcula a rota sempre que a origem ou o estabelecimento mudar
   useEffect(() => {
@@ -62,9 +75,9 @@ export const CaraivaWalkingRouteModal: React.FC<CaraivaWalkingRouteModalProps> =
     if (onSetRoutePath) {
       onSetRoutePath(r.pathCoordinates);
     }
-  }, [business, selectedOrigin, isOpen]);
+  }, [business, selectedOrigin, isOpen, onSetRoutePath]);
 
-  // Atualiza a câmera POV quando o passo muda
+  // Atualiza a câmera POV quando o passo ou perspectiva muda
   useEffect(() => {
     if (!isPovMode || !route || !onUpdatePovCamera) return;
 
@@ -73,11 +86,13 @@ export const CaraivaWalkingRouteModal: React.FC<CaraivaWalkingRouteModalProps> =
       onUpdatePovCamera({
         coords: step.coords,
         bearing: step.heading,
-        pitch: 74, // Ângulo rente ao chão (altura dos olhos do pedestre)
-        zoom: 18.2, // Zoom imersivo na rua de areia
+        pitch: povPerspective === "third_person" ? 58 : 76,
+        zoom: povPerspective === "third_person" ? 17.4 : 18.4,
+        mode: povPerspective,
+        isWalking: isPlayingAutoWalk,
       });
     }
-  }, [isPovMode, currentStepIndex, route]);
+  }, [isPovMode, currentStepIndex, route, povPerspective, isPlayingAutoWalk, onUpdatePovCamera]);
 
   // Auto-walk (simulação contínua do trajeto passo a passo)
   useEffect(() => {
@@ -97,12 +112,23 @@ export const CaraivaWalkingRouteModal: React.FC<CaraivaWalkingRouteModalProps> =
     return () => clearInterval(timer);
   }, [isPlayingAutoWalk, route, isPovMode]);
 
-  const handleTogglePovMode = () => {
-    const next = !isPovMode;
-    setIsPovMode(next);
-    if (!next) {
-      setIsPlayingAutoWalk(false);
+  // Distância e tempo dinâmico restantes a partir do passo atual
+  const remainingDistanceMeters = useMemo(() => {
+    if (!route) return 0;
+    let sum = 0;
+    for (let i = currentStepIndex; i < route.steps.length; i++) {
+      sum += route.steps[i].distanceMeters;
     }
+    return sum;
+  }, [route, currentStepIndex]);
+
+  const remainingWalkingMinutes = useMemo(() => {
+    return Math.max(1, Math.ceil(remainingDistanceMeters / 65));
+  }, [remainingDistanceMeters]);
+
+  const handleStartPov = (perspective: "first_person" | "third_person") => {
+    setPovPerspective(perspective);
+    setIsPovMode(true);
   };
 
   const handleClose = () => {
@@ -116,6 +142,24 @@ export const CaraivaWalkingRouteModal: React.FC<CaraivaWalkingRouteModalProps> =
 
   const currentStep = route.steps[currentStepIndex];
 
+  // Helper para ícone da manobra (estilo Waze/Maps)
+  const renderManeuverIcon = (maneuver: ManeuverType) => {
+    switch (maneuver) {
+      case "turn_right":
+      case "slight_right":
+        return <CornerUpRight className="w-6 h-6 text-emerald-300 shrink-0" />;
+      case "turn_left":
+      case "slight_left":
+        return <CornerUpLeft className="w-6 h-6 text-emerald-300 shrink-0" />;
+      case "arrive":
+        return <MapPin className="w-6 h-6 text-amber-300 shrink-0" />;
+      case "depart":
+      case "straight":
+      default:
+        return <ArrowUp className="w-6 h-6 text-teal-300 shrink-0" />;
+    }
+  };
+
   return (
     <div
       className={`fixed inset-0 z-50 flex items-end sm:items-center justify-center transition-all ${
@@ -124,58 +168,143 @@ export const CaraivaWalkingRouteModal: React.FC<CaraivaWalkingRouteModalProps> =
           : "bg-black/75 backdrop-blur-md p-0 sm:p-4 animate-in fade-in"
       }`}
     >
-      {/* 1. MODO POV MINIMALISTA (HUD DE PRIMEIRA PESSOA SOBREPOSTO AO MAPA 3D) */}
+      {/* 1. MODO POV MINIMALISTA (HUD ESTILO WAZE / GOOGLE MAPS SOBREPOSTO AO MAPA 3D) */}
       {isPovMode ? (
-        <div className="pointer-events-auto w-full max-w-lg mx-auto p-4 sm:p-6 mb-24 sm:mb-8">
+        <div className="pointer-events-auto w-full max-w-xl mx-auto p-3 sm:p-5 mb-20 sm:mb-8 flex flex-col gap-2.5">
+          {/* BANNER SUPERIOR ESTILO WAZE / UBER / GOOGLE MAPS MODERNO */}
           <div
-            className="p-4 sm:p-5 rounded-3xl border shadow-2xl backdrop-blur-xl animate-in slide-in-from-bottom-6 duration-300"
+            className="p-3.5 sm:p-4 rounded-3xl border shadow-2xl backdrop-blur-xl animate-in slide-in-from-top-4 duration-300 space-y-3"
             style={{
-              background: "rgba(12, 23, 29, 0.92)",
-              borderColor: "rgba(20, 184, 166, 0.35)",
-              boxShadow: "0 20px 50px rgba(0, 0, 0, 0.6), 0 0 25px rgba(20, 184, 166, 0.2)",
+              background: "rgba(10, 20, 26, 0.94)",
+              borderColor: "rgba(20, 184, 166, 0.4)",
+              boxShadow: "0 20px 50px rgba(0, 0, 0, 0.7), 0 0 25px rgba(20, 184, 166, 0.2)",
             }}
           >
-            {/* Top Bar do POV */}
-            <div className="flex items-center justify-between pb-3 border-b border-white/10 text-xs text-white">
-              <div className="flex items-center gap-2">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping" />
-                <span className="font-extrabold uppercase tracking-wider text-teal-300 flex items-center gap-1">
-                  <Compass className="w-4 h-4 text-teal-400" /> Visão POV (1ª Pessoa)
+            {/* Linha de Status Offline & Controles de Perspectiva */}
+            <div className="flex items-center justify-between pb-2.5 border-b border-white/10 text-xs">
+              {/* Badge Modo Offline Ativo */}
+              <div
+                className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/15 border border-emerald-400/30 text-emerald-300 font-bold text-[10px]"
+                title="Grafo pedonal de Caraíva processado localmente no dispositivo. Funciona 100% offline."
+              >
+                <WifiOff className="w-3.5 h-3.5 text-emerald-400 shrink-0" />
+                <span className="flex items-center gap-1">
+                  Modo Offline Ativo <span className="inline-block w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 </span>
               </div>
+
+              {/* Seletor de Visão: 1ª Pessoa vs 3ª Pessoa (Avatar) */}
+              <div className="flex items-center gap-1 bg-white/[0.06] p-0.5 rounded-xl border border-white/10">
+                <button
+                  type="button"
+                  onClick={() => setPovPerspective("third_person")}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-all ${
+                    povPerspective === "third_person"
+                      ? "bg-teal-500 text-slate-950 shadow-md font-black"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                  title="Visão em 3ª pessoa seguindo o avatar cartoon"
+                >
+                  <UserCheck className="w-3 h-3" />
+                  <span>3ª Pessoa</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setPovPerspective("first_person")}
+                  className={`px-2.5 py-1 rounded-lg text-[10px] font-bold flex items-center gap-1 transition-all ${
+                    povPerspective === "first_person"
+                      ? "bg-teal-500 text-slate-950 shadow-md font-black"
+                      : "text-slate-300 hover:text-white"
+                  }`}
+                  title="Visão rente ao chão na areia"
+                >
+                  <Eye className="w-3 h-3" />
+                  <span>1ª Pessoa</span>
+                </button>
+              </div>
+
               <button
                 type="button"
-                onClick={handleTogglePovMode}
-                className="px-3 py-1 rounded-full bg-white/10 hover:bg-white/20 text-slate-200 font-bold text-[11px] transition-colors"
+                onClick={() => setIsPovMode(false)}
+                className="p-1 rounded-full text-slate-400 hover:text-white hover:bg-white/10 transition-colors"
+                title="Voltar à visão geral"
               >
-                Voltar à Visão Geral ✕
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Instrução do Passo Atual */}
-            <div className="py-3.5 space-y-1">
-              <div className="flex items-center justify-between text-[11px] text-amber-400 font-bold">
-                <span>
-                  Passo {currentStepIndex + 1} de {route.steps.length}
-                </span>
-                <span>Direção: {Math.round(currentStep.heading)}°</span>
+            {/* Manobra em Destaque Waze-Style */}
+            <div className="flex items-center gap-3">
+              <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-teal-500 to-emerald-600 flex items-center justify-center shadow-lg shadow-teal-500/25 shrink-0 border border-teal-300/30">
+                {renderManeuverIcon(currentStep.maneuver)}
               </div>
-              <h3 className="text-base sm:text-lg font-black text-white leading-snug">
-                {currentStep.instruction}
-              </h3>
-              <p className="text-xs text-slate-300 leading-relaxed italic bg-white/[0.04] p-2.5 rounded-xl border border-white/5">
-                💡 {currentStep.tip}
-              </p>
+              <div className="min-w-0 flex-1">
+                <div className="flex items-baseline gap-2">
+                  <span className="text-emerald-400 font-extrabold text-lg sm:text-xl tracking-tight">
+                    {currentStep.distanceMeters > 0 ? `Em ${currentStep.distanceMeters}m` : "No Destino"}
+                  </span>
+                  <span className="text-slate-400 text-[11px] truncate">
+                    {currentStep.streetName}
+                  </span>
+                </div>
+                <h3 className="text-white font-black text-sm sm:text-base leading-snug truncate">
+                  {currentStep.maneuverText}
+                </h3>
+              </div>
+              <div className="text-right shrink-0">
+                <p className="text-amber-400 font-black text-sm sm:text-base">
+                  {formatDistance(remainingDistanceMeters)}
+                </p>
+                <p className="text-[10px] text-teal-300 font-bold flex items-center gap-1 justify-end">
+                  <Footprints className="w-3 h-3" /> ~{remainingWalkingMinutes} min
+                </p>
+              </div>
             </div>
 
-            {/* Controles de Caminhada na Areia */}
-            <div className="pt-2 flex items-center justify-between gap-2">
+            {/* CARAÍVA AI SENSE: Badge Inteligente de Contexto (Dica do Guia Nativo) */}
+            <div className="rounded-2xl bg-white/[0.04] border border-teal-500/20 p-2.5 space-y-1.5">
+              <div className="flex items-center justify-between text-[11px]">
+                <div className="flex items-center gap-1.5 font-black text-teal-300 uppercase tracking-wider">
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400 animate-pulse" />
+                  <span>Caraíva AI Sense · Dica do Guia Nativo</span>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setShowAiSenseDetails((prev) => !prev)}
+                  className="text-[10px] text-slate-400 hover:text-teal-300 underline font-semibold"
+                >
+                  {showAiSenseDetails ? "Ocultar" : "Ver Dica Completa"}
+                </button>
+              </div>
+
+              {/* Badges de Contexto Rápido */}
+              <div className="flex flex-wrap items-center gap-1.5 text-[10px]">
+                <span className="px-2 py-0.5 rounded-full bg-amber-400/15 border border-amber-400/30 text-amber-300 font-bold">
+                  🏖️ {currentStep.aiSense.sandType}
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-teal-400/15 border border-teal-400/30 text-teal-300 font-bold">
+                  🌊 {currentStep.aiSense.tideRelevance}
+                </span>
+                <span className="px-2 py-0.5 rounded-full bg-sky-400/15 border border-sky-400/30 text-sky-300 font-bold">
+                  🦶 {currentStep.aiSense.footwearTip}
+                </span>
+              </div>
+
+              {showAiSenseDetails && (
+                <p className="text-[11px] text-slate-200 leading-relaxed italic pt-1 border-t border-white/5 animate-in fade-in">
+                  💡 {currentStep.aiSense.nativeTip}
+                </p>
+              )}
+            </div>
+
+            {/* Barra de Progresso e Controles de Passos */}
+            <div className="pt-1 flex items-center justify-between gap-2">
               <div className="flex items-center gap-1.5">
                 <button
                   type="button"
                   onClick={() => setCurrentStepIndex((prev) => Math.max(0, prev - 1))}
                   disabled={currentStepIndex === 0}
-                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-95"
+                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-95 cursor-pointer"
                   title="Passo Anterior"
                 >
                   <ChevronLeft className="w-4 h-4" />
@@ -184,7 +313,7 @@ export const CaraivaWalkingRouteModal: React.FC<CaraivaWalkingRouteModalProps> =
                 <button
                   type="button"
                   onClick={() => setIsPlayingAutoWalk((prev) => !prev)}
-                  className={`px-3.5 py-2.5 rounded-xl font-bold text-xs flex items-center gap-1.5 transition-all shadow-md active:scale-95 ${
+                  className={`px-3.5 py-2.5 rounded-xl font-black text-xs flex items-center gap-1.5 transition-all shadow-md active:scale-95 cursor-pointer ${
                     isPlayingAutoWalk
                       ? "bg-amber-400 text-slate-950 shadow-amber-400/25"
                       : "bg-teal-500 text-slate-950 shadow-teal-500/25"
@@ -209,42 +338,57 @@ export const CaraivaWalkingRouteModal: React.FC<CaraivaWalkingRouteModalProps> =
                     setCurrentStepIndex((prev) => Math.min(route.steps.length - 1, prev + 1))
                   }
                   disabled={currentStepIndex === route.steps.length - 1}
-                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-95"
+                  className="p-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white disabled:opacity-30 disabled:pointer-events-none transition-all active:scale-95 cursor-pointer"
                   title="Próximo Passo"
                 >
                   <ChevronRight className="w-4 h-4" />
                 </button>
               </div>
 
-              <div className="text-right text-[11px] text-slate-300 font-semibold">
-                <div>{route.formattedDistance}</div>
-                <div className="text-teal-400">~{route.totalWalkingMinutes} min na areia</div>
+              {/* Indicador de Passo */}
+              <div className="text-right text-[11px] text-slate-400 font-semibold">
+                <span>
+                  Passo {currentStepIndex + 1} de {route.steps.length}
+                </span>
+                <div className="w-20 bg-white/10 h-1 rounded-full mt-1 overflow-hidden">
+                  <div
+                    className="bg-teal-400 h-full rounded-full transition-all duration-300"
+                    style={{
+                      width: `${((currentStepIndex + 1) / route.steps.length) * 100}%`,
+                    }}
+                  />
+                </div>
               </div>
             </div>
           </div>
         </div>
       ) : (
-        /* 2. MODAL PADRÃO DE SELEÇÃO E RESUMO DA ROTA */
+        /* 2. MODAL PADRÃO DE SELEÇÃO E RESUMO DA ROTA (TELA CHEIA / VISÃO GERAL) */
         <div
-          className="relative w-full max-w-xl bg-[#0c141a] text-slate-100 rounded-t-3xl sm:rounded-3xl border border-white/10 shadow-2xl p-5 sm:p-6 space-y-5 max-h-[88vh] overflow-y-auto no-scrollbar"
+          className="relative w-full max-w-xl bg-[#0c141a] text-slate-100 rounded-t-3xl sm:rounded-3xl border border-white/10 shadow-2xl p-5 sm:p-6 space-y-4 max-h-[90vh] overflow-y-auto no-scrollbar"
           onClick={(e) => e.stopPropagation()}
         >
-          {/* Header */}
+          {/* Header com Status Offline */}
           <div className="flex items-center justify-between pb-3 border-b border-white/10">
-            <div className="flex items-center gap-2">
-              <div className="w-9 h-9 rounded-2xl bg-amber-400 text-slate-950 flex items-center justify-center font-bold shadow-md shadow-amber-400/20">
+            <div className="flex items-center gap-2.5">
+              <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-500 text-slate-950 flex items-center justify-center font-bold shadow-md shadow-amber-400/20">
                 <Footprints className="w-5 h-5" />
               </div>
               <div>
                 <h2 className="text-base sm:text-lg font-black text-white font-serif">
                   Rota a Pé para {business.name}
                 </h2>
-                <p className="text-xs text-slate-400">Navegador Pedonal da Vila de Caraíva</p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-xs text-slate-400">Navegador Pedonal de Caraíva</span>
+                  <span className="inline-flex items-center gap-1 text-[10px] text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-400/20 font-bold">
+                    <ShieldCheck className="w-3 h-3" /> 100% Offline
+                  </span>
+                </div>
               </div>
             </div>
             <button
               onClick={handleClose}
-              className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 transition-colors"
+              className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-slate-300 transition-colors cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -292,12 +436,33 @@ export const CaraivaWalkingRouteModal: React.FC<CaraivaWalkingRouteModalProps> =
             </div>
           </div>
 
+          {/* Análise Inteligente de IA (Caraíva AI Sense Resumo Geral) */}
+          <div className="p-3.5 rounded-2xl bg-teal-500/10 border border-teal-400/25 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-black text-teal-300 uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+              <span>Caraíva AI Sense · Análise do Trajeto</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-[11px]">
+              <div className="bg-white/[0.04] p-2 rounded-xl border border-white/5">
+                <span className="text-[10px] text-slate-400 uppercase font-bold block">Calçado Ideal:</span>
+                <span className="text-amber-300 font-bold">{route.aiSenseSummary.recommendedFootwear}</span>
+              </div>
+              <div className="bg-white/[0.04] p-2 rounded-xl border border-white/5">
+                <span className="text-[10px] text-slate-400 uppercase font-bold block">Tipo de Areia:</span>
+                <span className="text-teal-300 font-bold">{route.aiSenseSummary.sandCondition}</span>
+              </div>
+            </div>
+            <p className="text-[11px] text-slate-300 leading-relaxed italic bg-black/20 p-2 rounded-xl border border-white/5">
+              🌴 {route.aiSenseSummary.nativeSecret}
+            </p>
+          </div>
+
           {/* Passo a Passo Descritivo com Referências Locais */}
-          <div className="space-y-2.5">
+          <div className="space-y-2">
             <h4 className="text-xs font-bold uppercase tracking-wider text-slate-300">
               Trajeto Recomendado pela Areia:
             </h4>
-            <div className="space-y-2 max-h-48 overflow-y-auto pr-1 no-scrollbar">
+            <div className="space-y-2 max-h-40 overflow-y-auto pr-1 no-scrollbar">
               {route.steps.map((st, idx) => (
                 <div
                   key={idx}
@@ -315,24 +480,35 @@ export const CaraivaWalkingRouteModal: React.FC<CaraivaWalkingRouteModalProps> =
             </div>
           </div>
 
-          {/* Ações: Iniciar POV ou Abrir Google Maps Externo */}
-          <div className="pt-2 flex items-center gap-2.5 flex-col sm:flex-row">
-            <button
-              type="button"
-              onClick={handleTogglePovMode}
-              className="w-full sm:flex-1 py-3 px-4 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 active:scale-98 transition-all cursor-pointer"
-            >
-              <Compass className="w-4 h-4 fill-slate-950" />
-              <span>Iniciar Modo POV (1ª Pessoa) 🚶‍♂️</span>
-            </button>
+          {/* Ações: Iniciar POV em 3ª Pessoa (com Avatar Cartoon) ou 1ª Pessoa */}
+          <div className="pt-2 flex flex-col gap-2">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <button
+                type="button"
+                onClick={() => handleStartPov("third_person")}
+                className="py-3 px-3 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-400 text-slate-950 font-black text-xs flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 active:scale-98 transition-all cursor-pointer"
+              >
+                <UserCheck className="w-4 h-4 fill-slate-950" />
+                <span>Iniciar em 3ª Pessoa (Avatar) 🏃‍♂️</span>
+              </button>
+
+              <button
+                type="button"
+                onClick={() => handleStartPov("first_person")}
+                className="py-3 px-3 rounded-xl bg-teal-600/30 hover:bg-teal-600/40 text-teal-200 border border-teal-400/30 font-bold text-xs flex items-center justify-center gap-2 active:scale-98 transition-all cursor-pointer"
+              >
+                <Eye className="w-4 h-4" />
+                <span>Iniciar em 1ª Pessoa 👁️</span>
+              </button>
+            </div>
 
             <a
               href={`https://www.google.com/maps/dir/?api=1&origin=${selectedOrigin.coords.lat},${selectedOrigin.coords.lng}&destination=${business.latitude},${business.longitude}&travelmode=walking`}
               target="_blank"
               rel="noopener noreferrer"
-              className="w-full sm:w-auto py-3 px-4 rounded-xl bg-white/10 hover:bg-white/15 text-slate-200 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors border border-white/10"
+              className="w-full py-2.5 px-4 rounded-xl bg-white/[0.05] hover:bg-white/10 text-slate-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors border border-white/10"
             >
-              <span>Google Maps</span>
+              <span>Abrir no Google Maps Externo</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
