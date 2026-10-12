@@ -278,9 +278,9 @@ export const CARAIVA_BUSINESSES: Business[] = [
       "reservas",
     ],
     cover_image:
-      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1200&q=80",
     heroImage:
-      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
@@ -381,9 +381,9 @@ export const CARAIVA_BUSINESSES: Business[] = [
     ],
     tags: ["bar", "petiscos", "beira-rio", "drinks", "pôr do sol", "pastel de arraia"],
     cover_image:
-      "https://mapadacachaca.com.br/wp-content/uploads/2024/05/boteco-do-para-fachada-1024x768-optimized.jpg",
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=80",
     heroImage:
-      "https://mapadacachaca.com.br/wp-content/uploads/2024/05/boteco-do-para-fachada-1024x768-optimized.jpg",
+      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://ogimg.infoglobo.com.br/in/24236650-dfa-1a6/FT1086A/boeco.jpg",
       "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
@@ -483,9 +483,9 @@ export const CARAIVA_BUSINESSES: Business[] = [
     ],
     tags: ["vegetariano", "arte", "café", "almoço", "cultura local", "torta de cacau"],
     cover_image:
-      "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1200&q=80",
     heroImage:
-      "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&w=800&q=80",
@@ -965,9 +965,9 @@ export const CARAIVA_BUSINESSES: Business[] = [
     ],
     tags: ["hostel", "casas de temporada", "pé na areia", "aldeia xandó", "integração tamikuá"],
     cover_image:
-      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80",
     heroImage:
-      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1555854877-bab0e564b8d5?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1499793983690-e29da59ef1c2?auto=format&fit=crop&w=800&q=80",
@@ -1472,9 +1472,9 @@ export const CARAIVA_BUSINESSES: Business[] = [
     ],
     tags: ["moqueca", "baiana", "dendê", "frutos do mar", "almoço", "areia"],
     cover_image:
-      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=1200&q=80",
     heroImage:
-      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80",
@@ -1563,9 +1563,9 @@ export const CARAIVA_BUSINESSES: Business[] = [
     ],
     tags: ["drinks", "música ao vivo", "noite", "amigos", "petiscos", "cerveja"],
     cover_image:
-      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=1200&q=80",
     heroImage:
-      "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1527529482837-4698179dc6ce?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=800&q=80",
@@ -1650,9 +1650,9 @@ export const CARAIVA_BUSINESSES: Business[] = [
     ],
     tags: ["forró", "dança", "música raiz", "noite", "cultura brasileira"],
     cover_image:
-      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80",
     heroImage:
-      "https://images.unsplash.com/photo-1516450360452-9312f5e86fc7?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1492684223066-81342ee5ff30?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?auto=format&fit=crop&w=800&q=80",
@@ -1723,9 +1723,9 @@ export const CARAIVA_BUSINESSES: Business[] = [
     ],
     tags: ["boutique", "charme", "café colonial", "romântico", "casal"],
     cover_image:
-      "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80",
     heroImage:
-      "https://images.unsplash.com/photo-1582719508461-905c673771fd?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1520250497591-112f2f40a3f4?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1566073771259-6a8506099945?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80",
@@ -1796,9 +1796,9 @@ export const CARAIVA_BUSINESSES: Business[] = [
     ],
     tags: ["pé na areia", "piscina", "praia", "vista para o mar", "casal", "luxo rústico"],
     cover_image:
-      "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1200&q=80",
     heroImage:
-      "https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1584132967334-10e028bd69f7?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1540541338287-41700207dee6?auto=format&fit=crop&w=800&q=80",
@@ -1872,9 +1872,9 @@ export const CARAIVA_BUSINESSES: Business[] = [
     ],
     tags: ["história", "igreja", "iphan", "patrimônio", "fotografia", "cultura"],
     cover_image:
-      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1200&q=80",
     heroImage:
-      "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1519817650390-64a93db51149?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1510414842594-a61752af3192?auto=format&fit=crop&w=800&q=80",
     ],
@@ -1922,7 +1922,7 @@ export const CARAIVA_ATTRACTIONS: TouristAttraction[] = [
     longitude: -39.1462,
     coordinates: { x: 50, y: 8 },
     cover_image:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1510414842594-a61752af3192?auto=format&fit=crop&w=800&q=80",
       "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=800&q=80",
@@ -1954,7 +1954,7 @@ export const CARAIVA_ATTRACTIONS: TouristAttraction[] = [
     longitude: -39.1505,
     coordinates: { x: 15, y: 35 },
     cover_image:
-      "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1473448912268-2022ce9509d8?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
     ],
@@ -1984,7 +1984,7 @@ export const CARAIVA_ATTRACTIONS: TouristAttraction[] = [
     longitude: -39.144,
     coordinates: { x: 75, y: 40 },
     cover_image:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1519046904884-53103b34b206?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1510414842594-a61752af3192?auto=format&fit=crop&w=800&q=80",
     ],
@@ -2014,7 +2014,7 @@ export const CARAIVA_ATTRACTIONS: TouristAttraction[] = [
     longitude: -39.1382,
     coordinates: { x: 78, y: 10 },
     cover_image:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1509233725247-49e657c54213?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1510414842594-a61752af3192?auto=format&fit=crop&w=800&q=80",
     ],
@@ -2044,7 +2044,7 @@ export const CARAIVA_ATTRACTIONS: TouristAttraction[] = [
     longitude: -39.1245,
     coordinates: { x: 85, y: 4 },
     cover_image:
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
     ],
@@ -2074,7 +2074,7 @@ export const CARAIVA_ATTRACTIONS: TouristAttraction[] = [
     longitude: -39.128,
     coordinates: { x: 40, y: 95 },
     cover_image:
-      "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1505118380757-91f5f5632de0?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=800&q=80",
     ],
@@ -2104,7 +2104,7 @@ export const CARAIVA_ATTRACTIONS: TouristAttraction[] = [
     longitude: -39.175,
     coordinates: { x: 12, y: 65 },
     cover_image:
-      "https://images.unsplash.com/photo-1544551763-46a013bb70d5?auto=format&fit=crop&w=1200&q=80",
+      "https://images.unsplash.com/photo-1518709268805-4e9042af9f23?auto=format&fit=crop&w=1200&q=80",
     gallery: [
       "https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80",
     ],
@@ -2234,7 +2234,7 @@ export const CARAIVA_NOW_ACTIVITIES: NowActivity[] = [
     availableSpots: "Mesas na areia disponíveis",
     cta: "Reservar Mesa",
     ctaType: "reservar",
-    image: "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
+    image: "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=800&q=80",
     is_demo: false,
   },
   {

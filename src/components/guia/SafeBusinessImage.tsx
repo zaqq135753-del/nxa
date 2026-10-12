@@ -13,6 +13,15 @@ const LOCAL_CARAIVA_PHOTOS = [
 ];
 
 export function getCategoryFallbackPhoto(category?: string, seedStr?: string): string {
+  if (seedStr) {
+    let hash = 0;
+    for (let i = 0; i < seedStr.length; i++) {
+      hash = (hash << 5) - hash + seedStr.charCodeAt(i);
+      hash |= 0;
+    }
+    const idx = Math.abs(hash) % LOCAL_CARAIVA_PHOTOS.length;
+    return LOCAL_CARAIVA_PHOTOS[idx];
+  }
   const c = (category || '').toLowerCase();
   if (c.includes('hospedagem') || c.includes('pousada')) {
     return asset('assets/caraiva-photos/caraiva-09-640.webp');
@@ -23,16 +32,7 @@ export function getCategoryFallbackPhoto(category?: string, seedStr?: string): s
   if (c.includes('praia') || c.includes('passeio') || c.includes('natureza')) {
     return asset('assets/caraiva-photos/caraiva-02-640.webp');
   }
-  if (seedStr) {
-    let hash = 0;
-    for (let i = 0; i < seedStr.length; i++) {
-      hash = (hash << 5) - hash + seedStr.charCodeAt(i);
-      hash |= 0;
-    }
-    const idx = Math.abs(hash) % LOCAL_CARAIVA_PHOTOS.length;
-    return LOCAL_CARAIVA_PHOTOS[idx];
-  }
-  return asset('assets/caraiva-photos/caraiva-09-640.webp');
+  return asset('assets/caraiva-photos/caraiva-07-640.webp');
 }
 
 export interface SafeBusinessImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
@@ -75,7 +75,7 @@ export const SafeBusinessImage: React.FC<SafeBusinessImageProps> = ({
       onError={handleError}
       loading="lazy"
       decoding="async"
-      crossOrigin="anonymous"
+      referrerPolicy="no-referrer"
       {...rest}
     />
   );
