@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect, useCallback } from "react";
-import { Camera, X, Sparkles, RotateCcw, Share2, Trophy, Compass } from "lucide-react";
+import { Camera, X, Sparkles, RotateCcw, Share2, MessageCircle, Trophy } from "lucide-react";
 import { analyzeCaraivaPhoto, type PhotoAnalysisResult } from "../../services/caraivaAiService";
 
 interface MultimodalCameraModalProps {
@@ -7,7 +7,6 @@ interface MultimodalCameraModalProps {
   onClose: () => void;
   onShowToast: (msg: string) => void;
   onPostCreatedStory?: (story: { caption: string; image: string; stickerText: string }) => void;
-  onOpenBusiness?: (name: string) => void;
 }
 
 export const MultimodalCameraModal: React.FC<MultimodalCameraModalProps> = React.memo(({
@@ -15,7 +14,6 @@ export const MultimodalCameraModal: React.FC<MultimodalCameraModalProps> = React
   onClose,
   onShowToast,
   onPostCreatedStory,
-  onOpenBusiness,
 }) => {
   const [capturedImage, setCapturedImage] = useState<string | null>(null);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
@@ -286,14 +284,12 @@ export const MultimodalCameraModal: React.FC<MultimodalCameraModalProps> = React
                     </div>
                     <button
                       onClick={() => {
-                        const matchedName = analysisResult.matchedSpot?.name;
-                        if (matchedName && onOpenBusiness) onOpenBusiness(matchedName);
-                        else onShowToast("Este local ainda não possui um perfil de negócio no guia.");
+                        onShowToast("Benefício associado ao local reconhecido. Consulte o perfil no Guia para continuar.");
                       }}
                       className="py-1.5 px-3 bg-[#1C3F38] text-white rounded-xl text-xs font-bold flex items-center gap-1 shadow caraiva-press-3d"
                     >
-                      <Compass className="w-3.5 h-3.5 text-emerald-300" />
-                      <span>Ver no guia</span>
+                      <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+                      <span>Ver no Guia</span>
                     </button>
                   </div>
                 )}

@@ -66,7 +66,7 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
 
     setSubmittedOrder(payload);
 
-    // Grava o pedido no histórico local do turista e simula envio direto ao aplicativo do comércio
+    // Nesta versão demonstrativa, o pedido fica apenas no histórico local deste aparelho.
     try {
       const existingOrders = JSON.parse(localStorage.getItem('caraiva_orders_history') || '[]');
       existingOrders.unshift(payload);
@@ -139,7 +139,7 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
         {/* Conteúdo com Scroll */}
         <div className="p-4 overflow-y-auto space-y-4 flex-1">
           {submittedOrder ? (
-            /* TELA DE SUCESSO & TRANSMISSÃO DO PEDIDO */
+            /* Confirmação local do pedido de demonstração */
             <div className="text-center py-6 space-y-4">
               <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 mx-auto flex items-center justify-center">
                 <CheckCircle2 className="w-10 h-10 animate-bounce" />
@@ -147,13 +147,13 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
 
               <div>
                 <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">
-                  Pedido #{submittedOrder.orderId} Transmitido
+                  Pedido #{submittedOrder.orderId} salvo neste aparelho
                 </span>
                 <h3 className="text-lg font-black text-white mt-2" style={{ color: 'var(--cv-ink)' }}>
-                  Enviado para o Painel do Comércio!
+                  Pedido registrado no Caraíva Digital
                 </h3>
                 <p className="text-xs max-w-sm mx-auto mt-1" style={{ color: 'var(--cv-muted)' }}>
-                  Os itens foram transmitidos via protocolo unificado. O comerciante já pode aceitar, separar o estoque e iniciar a entrega.
+                  O pedido está salvo neste navegador para demonstração. Ele ainda não foi sincronizado com o painel do estabelecimento nem enviado para preparo ou entrega.
                 </p>
               </div>
 
@@ -163,7 +163,7 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
                 style={{ background: 'var(--cv-soft)', borderColor: 'var(--cv-line)' }}
               >
                 <div className="flex items-center justify-between">
-                  <span className="font-bold text-amber-500">Payload para o seu App de Gestão</span>
+                  <span className="font-bold text-amber-500">Dados locais do pedido</span>
                   <button
                     type="button"
                     onClick={handleCopyOrderPayload}

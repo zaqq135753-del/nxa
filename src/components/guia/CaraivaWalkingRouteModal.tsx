@@ -500,8 +500,6 @@ export const CaraivaWalkingRouteModal: React.FC<CaraivaWalkingRouteModalProps> =
                 <span>Iniciar em 1ª Pessoa 👁️</span>
               </button>
             </div>
-
-            
           </div>
         </div>
       )}

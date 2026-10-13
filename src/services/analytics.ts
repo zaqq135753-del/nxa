@@ -1,14 +1,12 @@
 /**
- * Caraíva Digital — Centralized Analytics & WhatsApp Attribution Service
+ * Caraíva Digital — Analytics for in-app business actions
  * Rastreia conversões reais para provar ROI aos estabelecimentos locais de Caraíva.
  */
 
 export type AnalyticsEventType =
   | "business_impression"
   | "business_view"
-  | "business_whatsapp_click" // legado
   | "business_action_started"
-  | "business_action_submitted"
   | "business_route_click"
   | "business_booking_click"
   | "offer_view"
@@ -90,21 +88,26 @@ export function trackEvent(
   }
 }
 
-/**
- * Compatibilidade para integrações antigas: registra a intenção dentro do guia
- * e não abre aplicativos nem URLs externos.
- */
-export function openBusinessWhatsApp(
-  business: { id: string; name: string; whatsappNumber?: string; whatsapp?: string },
+/** Opens the selected business profile inside Caraíva Digital. Never leaves the app. */
+export function openBusinessInApp(
+  business: { id: string; name: string; category?: string; ctaType?: string },
   source: string = "business_page",
-  _customMessage?: string
+  action: string = "open_internal_business_profile"
 ): void {
   trackEvent("business_action_started", {
     businessId: business.id,
     businessName: business.name,
     source,
-    metadata: { action: "internal_profile" },
+    metadata: { action },
   });
+  const foodCategory = ["restaurantes", "bares", "cafes"].includes(business.category || "");
+  const bookableCategory = ["hospedagens", "passeios", "noite"].includes(business.category || "");
+  const initialTab = foodCategory
+    ? business.ctaType === "reservar" ? "reserva" : "cardapio"
+    : bookableCategory ? "reserva" : business.category === "lojas" ? "vitrine" : "visao-geral";
+  window.dispatchEvent(new CustomEvent("caraiva:open-business-profile", {
+    detail: { businessId: business.id, initialTab },
+  }));
 }
 
 /**
@@ -113,7 +116,7 @@ export function openBusinessWhatsApp(
 export interface BusinessStats {
   impressions: number;
   profileViews: number;
-  whatsappClicks: number;
+  inAppActions: number;
   routeClicks: number;
   bookingClicks: number;
   favorites: number;
@@ -126,13 +129,13 @@ export function getBusinessStats(businessId: string): BusinessStats {
 
   const impressions = bizEvents.filter((e) => e.eventType === "business_impression").length;
   const profileViews = bizEvents.filter((e) => e.eventType === "business_view").length;
-  const whatsappClicks = bizEvents.filter((e) => e.eventType === "business_whatsapp_click").length;
+  const inAppActions = bizEvents.filter((e) => e.eventType === "business_action_started").length;
   const routeClicks = bizEvents.filter((e) => e.eventType === "business_route_click").length;
   const bookingClicks = bizEvents.filter((e) => e.eventType === "business_booking_click").length;
   const favorites = bizEvents.filter((e) => e.eventType === "favorite_added").length;
 
   const recentClicks = bizEvents
-    .filter((e) => e.eventType === "business_whatsapp_click")
+    .filter((e) => e.eventType === "business_action_started")
     .map((e) => ({ timestamp: e.timestamp, source: e.source }))
     .slice(-5)
     .reverse();
@@ -141,7 +144,7 @@ export function getBusinessStats(businessId: string): BusinessStats {
   return {
     impressions: impressions + 420,
     profileViews: profileViews + 185,
-    whatsappClicks: whatsappClicks + 34,
+    inAppActions: inAppActions + 34,
     routeClicks: routeClicks + 28,
     bookingClicks: bookingClicks + 12,
     favorites: favorites + 47,

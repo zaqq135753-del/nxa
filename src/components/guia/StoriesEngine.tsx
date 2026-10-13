@@ -15,6 +15,7 @@ export interface GuiaStory {
   likes: number;
   category?: StoryCategory;
   spotId?: string;
+  whatsappNumber?: string;
 }
 
 interface StoriesEngineProps {
@@ -22,7 +23,7 @@ interface StoriesEngineProps {
   activeStory: GuiaStory | null;
   onSelectStory: (story: GuiaStory | null) => void;
   onOpenPostModal: () => void;
-  onSaveToGuide: (story?: GuiaStory) => void;
+  onShareToInstagram: (story?: GuiaStory) => void;
   onShowToast: (msg: string) => void;
   onSelectSpotByName?: (spotName: string) => void;
 }
@@ -34,7 +35,7 @@ export const StoriesEngine: React.FC<StoriesEngineProps> = React.memo(({
   activeStory,
   onSelectStory,
   onOpenPostModal,
-  onSaveToGuide,
+  onShareToInstagram,
   onShowToast,
   onSelectSpotByName,
 }) => {
@@ -312,17 +313,6 @@ export const StoriesEngine: React.FC<StoriesEngineProps> = React.memo(({
                   <Compass className="w-3.5 h-3.5 text-sun" />
                   <span>Ver Detalhes</span>
                 </button>
-
-                <button
-                  onClick={() => {
-                    onSelectSpotByName?.(activeStory.location.split(",")[0]);
-                    onSelectStory(null);
-                  }}
-                  className="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-lg transition active:scale-95"
-                >
-                  <Compass className="w-3.5 h-3.5" />
-                  <span>Continuar no app</span>
-                </button>
               </div>
 
               {/* Micro-hint de swipe vertical */}
@@ -332,7 +322,7 @@ export const StoriesEngine: React.FC<StoriesEngineProps> = React.memo(({
               </div>
             </div>
 
-            {/* BOTTOM BAR: Interaction, Like & in-app save */}
+            {/* BOTTOM BAR: Interaction, Like & Instagram Share */}
             <div className="relative z-10 p-4 space-y-3">
               <div className="flex items-center gap-2">
                 {/* Reply Input */}
@@ -365,15 +355,15 @@ export const StoriesEngine: React.FC<StoriesEngineProps> = React.memo(({
                   <Heart className={`w-5 h-5 ${isLiked[activeStory.id] ? "fill-white" : ""}`} />
                 </button>
 
-                {/* Ação dentro do guia */}
+                {/* Instagram Share */}
                 <button
-                  onClick={() => onSaveToGuide(activeStory)}
+                  onClick={() => onShareToInstagram(activeStory)}
                   className="bg-white text-night font-bold text-xs px-3.5 py-2.5 rounded-full shadow-2xl flex items-center gap-2 hover:bg-zinc-100 transition shrink-0 active:scale-95"
                 >
                   <span className="text-sm">📸</span>
                   <span className="leading-tight text-left">
-                    <span className="block text-[10px] text-zinc-600 font-normal">Guardar no</span>
-                    <strong className="block text-[11px] font-extrabold text-coral -mt-0.5">Guia</strong>
+                    <span className="block text-[10px] text-zinc-600 font-normal">Compartilhar</span>
+                    <strong className="block text-[11px] font-extrabold text-coral -mt-0.5">Stories</strong>
                   </span>
                 </button>
               </div>

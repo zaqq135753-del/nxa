@@ -1,7 +1,7 @@
 import React from "react";
 import { Flame, Clock, MapPin, ChevronRight } from "lucide-react";
 import { CARAIVA_NOW_ACTIVITIES, CARAIVA_BUSINESSES, type NowActivity, type Business } from "../../data/caraivaDigitalData";
-import { trackEvent } from "../../services/analytics";
+import { openBusinessInApp, trackEvent } from "../../services/analytics";
 import { SafeBusinessImage } from "./SafeBusinessImage";
 
 export interface CaraivaNowSectionProps {
@@ -23,6 +23,13 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
     });
 
     const biz = CARAIVA_BUSINESSES.find((b) => b.id === activity.business_id);
+    if (activity.ctaType === "whatsapp" || activity.ctaType === "reservar" || activity.ctaType === "passeio") {
+      if (biz) {
+        openBusinessInApp(biz, "home_now_card");
+        return;
+      }
+    }
+
     if (biz) onSelectBusiness(biz);
   };
 

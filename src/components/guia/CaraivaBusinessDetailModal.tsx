@@ -84,7 +84,8 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
       setAddedToDay(false);
       setIsClaimModalOpen(false);
       setClaimSubmitted(false);
-      setDetailTab(initialTab === "reserva" && !["restaurantes", "bares", "cafes"].includes(business.category) ? "visao-geral" : initialTab || "visao-geral");
+      const reservableCategories = ["restaurantes", "bares", "cafes", "hospedagens", "passeios"];
+      setDetailTab(initialTab === "reserva" && !reservableCategories.includes(business.category) ? "visao-geral" : initialTab || "visao-geral");
       trackEvent("business_view", {
         businessId: business.id,
         businessName: business.name,
@@ -343,6 +344,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             const isFood = business.category === "restaurantes" || business.category === "bares" || business.category === "cafes";
             const currentCatalog = getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory);
             const hasShowcase = isFood || Boolean(currentCatalog);
+            const canRequestBooking = isFood || ["hospedagens", "passeios", "noite"].includes(business.category);
             const showcaseTabLabel = isFood ? "🍽️ Cardápio" : currentCatalog?.tabLabel || "🛍️ Vitrine";
             const businessCartCount = cartItems.filter(i => i.businessId === business.id).reduce((acc, i) => acc + i.quantity, 0);
 
@@ -377,8 +379,9 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                     )}
                   </button>
                 )}
-                {isFood && (
-<button
+                {canRequestBooking && (
+
+                <button
                   onClick={() => setDetailTab("reserva")}
                   className={`flex-1 min-w-[80px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
                     detailTab === "reserva"
@@ -386,7 +389,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                       : "text-slate-300 hover:text-white"
                   }`}
                 >
-                  📅 Reservas
+                  📅 {isFood ? "Reservas" : business.category === "hospedagens" ? "Hospedagem" : business.category === "noite" ? "Ingressos" : "Passeios"}
                 </button>
                 )}
               </div>
@@ -399,6 +402,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                 businessId={business.id}
                 businessName={business.name}
                 menuItems={getBusinessProfileDetail(business.slug || business.id, business.name).menuItems}
+                whatsappNumber={business.whatsapp}
                 onOpenCartModal={() => setIsCartModalOpen(true)}
               />
             </div>
@@ -421,12 +425,14 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             </div>
           )}
 
-          {detailTab === "reserva" && ["restaurantes", "bares", "cafes"].includes(business.category) && (
+          {detailTab === "reserva" && ["restaurantes", "bares", "cafes", "hospedagens", "passeios", "noite"].includes(business.category) && (
             <div className="pt-2">
               <BusinessBookingTab
+                businessId={business.id}
                 businessName={business.name}
+                businessCategory={business.category}
                 schedule={getBusinessProfileDetail(business.slug || business.id, business.name).schedule}
-              />
+                />
             </div>
           )}
 
@@ -604,7 +610,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
               <span>Verificado em: {business.data_source?.verified_at || business.verified_at || "28/09/2026"}</span>
             </div>
             <p className="text-[11px] text-slate-400">
-              Fonte de referência: {business.data_source?.provider || "Consulta pública"}. Os dados desta ficha são apresentados dentro do Caraíva Digital.
+              Fonte primária: {business.data_source?.provider || "Consulta pública"}.
             </p>
             <p className="text-[10px] text-slate-500 italic">
               "Visualização demonstrativa — informações sujeitas a confirmação pelo estabelecimento."
@@ -687,7 +693,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                   type="button"
                   onClick={() => {
                     if (business.category === "hospedagens") {
-                      setDetailTab("reserva");
+                      setDetailTab("visao-geral");
                     } else if (hasShowcase) {
                       if (detailTab === "cardapio" || detailTab === "vitrine") {
                         setIsCartModalOpen(true);
@@ -695,7 +701,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                         setDetailTab(isFood ? "cardapio" : "vitrine");
                       }
                     } else {
-                      setDetailTab("reserva");
+                      setDetailTab("visao-geral");
                     }
                   }}
                   className="flex-1 min-w-0 py-3 px-3.5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 active:scale-98 transition-all cursor-pointer"
@@ -750,7 +756,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                 <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-semibold space-y-1 text-center animate-in zoom-in-95">
                   <CheckCircle2 className="w-6 h-6 mx-auto mb-1 text-emerald-400" />
                   <p className="text-sm font-bold text-white">Solicitação enviada com sucesso!</p>
-                  <p className="text-slate-300">Sua solicitação foi registrada neste dispositivo e ficará disponível para análise no portal do estabelecimento após a integração.</p>
+                  <p className="text-slate-300">A solicitação ficará registrada para análise dentro do Caraíva Digital.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmitClaim} className="space-y-3">
@@ -768,7 +774,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[11px] text-slate-400 block mb-1">Telefone para contato</label>
+                      <label className="text-[11px] text-slate-400 block mb-1">WhatsApp Comercial</label>
                       <input
                         type="tel"
                         required

@@ -20,6 +20,7 @@ import {
   removeFromItinerary,
   type ItineraryItem,
 } from "../../services/favoritesService";
+import { openBusinessInApp } from "../../services/analytics";
 import { SafeBusinessImage } from "./SafeBusinessImage";
 
 interface CaraivaSavedScreenProps {
@@ -81,7 +82,8 @@ export const CaraivaSavedScreen: React.FC<CaraivaSavedScreenProps> = ({
     const shareText = `🌴 Meu Dia em Caraíva:\n\n${text}\n\nCriado com Caraíva Digital ✨`;
 
     try {
-      await navigator.clipboard?.writeText(shareText);
+      if (!navigator.clipboard) return;
+      await navigator.clipboard.writeText(shareText);
       setShared(true);
       setTimeout(() => setShared(false), 2000);
     } catch {
@@ -244,10 +246,15 @@ export const CaraivaSavedScreen: React.FC<CaraivaSavedScreenProps> = ({
                           </button>
 
                           <button
-                            onClick={() => onSelectBusiness(business)}
+                            onClick={() =>
+                              openBusinessInApp(
+                                business,
+                                "itinerary_cta"
+                              )
+                            }
                             className="px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-emerald-500/20"
                           >
-                            <span>Reservar ou pedir no app</span>
+                            <span>Ver perfil no app</span>
                           </button>
                         </div>
                       )}
@@ -329,10 +336,15 @@ export const CaraivaSavedScreen: React.FC<CaraivaSavedScreenProps> = ({
                         Ver Detalhes
                       </button>
                       <button
-                        onClick={() => onSelectBusiness(b)}
+                        onClick={() =>
+                          openBusinessInApp(
+                            b,
+                            "favorites_card"
+                          )
+                        }
                         className="px-3 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold text-xs transition-colors border border-emerald-500/30"
                       >
-                        Acessar no app
+                        Abrir no app
                       </button>
                     </div>
                   </div>

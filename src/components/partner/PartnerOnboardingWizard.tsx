@@ -14,7 +14,6 @@ import {
   Plus,
   Trash2,
   Upload,
-  Globe,
   Instagram,
   ShieldCheck,
   Smartphone,
@@ -172,10 +171,10 @@ export const PartnerOnboardingWizard: React.FC<PartnerOnboardingWizardProps> = (
           dietaryFlags: ["sem-gluten"],
         },
       ],
-      primaryCtaLabel: "Falar no WhatsApp",
-      primaryCtaCustomMessage: "Olá! Encontrei vocês no Caraíva Digital e gostaria de informações e reservas.",
+      primaryCtaLabel: "Acessar no app",
+      primaryCtaCustomMessage: "",
       secondaryCtaLabel: "Ver Cardápio Completo",
-      secondaryCtaUrl: "https://instagram.com",
+      secondaryCtaUrl: "",
       ...initialDraft,
     };
   });
@@ -921,13 +920,13 @@ export const PartnerOnboardingWizard: React.FC<PartnerOnboardingWizardProps> = (
                     6. Chamada para Ação (Conversão dos Turistas)
                   </h2>
                   <p className="text-xs sm:text-sm text-slate-400">
-                    Configure os botões que os turistas usarão para entrar em contato ou fazer reservas imediatamente.
+                    O Caraíva Digital direciona cada perfil para a função certa dentro do aplicativo.
                   </p>
                 </div>
 
                 <div className="p-5 rounded-2xl bg-white/[0.03] border border-emerald-500/30 space-y-4">
                   <div className="flex items-center gap-2 text-emerald-400 font-bold text-xs uppercase tracking-wider">
-                    <MessageCircle className="w-4 h-4" /> Botão Principal (WhatsApp Direto)
+                    <MessageCircle className="w-4 h-4" /> Ação principal dentro do app
                   </div>
 
                   <div className="space-y-1.5">
@@ -936,52 +935,18 @@ export const PartnerOnboardingWizard: React.FC<PartnerOnboardingWizardProps> = (
                       type="text"
                       value={draft.primaryCtaLabel}
                       onChange={(e) => updateDraft((d) => ({ ...d, primaryCtaLabel: e.target.value }))}
-                      placeholder="Ex: Falar no WhatsApp com o Gerente"
+                      placeholder="Ex: Reservar mesa no app"
                       className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/15 text-xs text-white"
                     />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="text-xs font-semibold text-slate-300">
-                      Mensagem Automática Pré-configurada ao Abrir o WhatsApp
-                    </label>
-                    <textarea
-                      rows={3}
-                      value={draft.primaryCtaCustomMessage}
-                      onChange={(e) => updateDraft((d) => ({ ...d, primaryCtaCustomMessage: e.target.value }))}
-                      placeholder="Ex: Olá! Vi o perfil de vocês no Guia Caraíva Digital e gostaria de saber sobre mesas disponíveis hoje."
-                      className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/15 text-xs text-white leading-relaxed"
-                    />
+                    <p className="text-xs text-slate-400">Pedidos, cardápio, reservas, hospedagem, passeios e vitrines abrem dentro do Caraíva Digital. Links externos não são usados como ações do perfil.</p>
                   </div>
                 </div>
 
                 <div className="p-5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-4">
-                  <div className="flex items-center gap-2 text-slate-300 font-bold text-xs uppercase tracking-wider">
-                    <Globe className="w-4 h-4 text-sky-400" /> Botão Secundário (Opcional: Cardápio ou Reservas)
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1">Texto do Botão</label>
-                      <input
-                        type="text"
-                        value={draft.secondaryCtaLabel || ""}
-                        onChange={(e) => updateDraft((d) => ({ ...d, secondaryCtaLabel: e.target.value }))}
-                        placeholder="Ex: Cardápio Digital / Instagram"
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/15 text-xs text-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="text-xs font-semibold text-slate-300 block mb-1">Link de Destino (URL)</label>
-                      <input
-                        type="url"
-                        value={draft.secondaryCtaUrl || ""}
-                        onChange={(e) => updateDraft((d) => ({ ...d, secondaryCtaUrl: e.target.value }))}
-                        placeholder="https://meucardapio.com.br"
-                        className="w-full px-4 py-2.5 rounded-xl bg-slate-900 border border-white/15 text-xs text-white"
-                      />
-                    </div>
-                  </div>
+                  <div className="text-xs text-slate-400">O fluxo secundário será exibido dentro do perfil conforme o nicho. Esta ficha não aceita URL de WhatsApp, Instagram ou site externo.</div>
                 </div>
               </div>
             )}
@@ -1062,7 +1027,7 @@ export const PartnerOnboardingWizard: React.FC<PartnerOnboardingWizardProps> = (
                         <div className="pt-2">
                           <div className="w-full py-2.5 rounded-xl bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow-lg shadow-emerald-500/20">
                             <MessageCircle className="w-4 h-4" />
-                            <span>{draft.primaryCtaLabel || "Falar no WhatsApp"}</span>
+                            <span>{draft.primaryCtaLabel || "Acessar no app"}</span>
                           </div>
                         </div>
 

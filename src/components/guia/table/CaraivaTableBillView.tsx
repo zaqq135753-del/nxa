@@ -15,13 +15,12 @@ import {
   UtensilsCrossed,
 } from 'lucide-react';
 import { getTableBill, type TableBillData } from '../../../services/tableBillService';
-import { openBusinessWhatsApp } from '../../../services/analytics';
+import { openBusinessInApp } from '../../../services/analytics';
 
 interface CaraivaTableBillViewProps {
   businessId: string;
   businessName: string;
   tableNumber?: string;
-  whatsappNumber?: string;
   onOpenMenu?: () => void;
   onOpenOnboarding?: () => void;
   onClose?: () => void;
@@ -31,7 +30,6 @@ export const CaraivaTableBillView: React.FC<CaraivaTableBillViewProps> = ({
   businessId,
   businessName,
   tableNumber = 'Mesa 07',
-  whatsappNumber = '5573999990000',
   onOpenMenu,
   onOpenOnboarding,
 }) => {
@@ -86,17 +84,10 @@ export const CaraivaTableBillView: React.FC<CaraivaTableBillViewProps> = ({
   };
 
   const handleCallWaiter = (action: 'conta' | 'maquininha' | 'atendimento') => {
-    const actionText =
-      action === 'conta'
-        ? `Olá! Estamos na *${bill.tableNumber}* (${bill.locationArea}) e gostaríamos de fechar a conta. Total: *R$ ${grandTotal.toFixed(2)}* (via PIX/Cartão).`
-        : action === 'maquininha'
-        ? `Olá! Na *${bill.tableNumber}*, por favor, poderiam trazer a maquininha de cartão? Total da mesa: *R$ ${grandTotal.toFixed(2)}*.`
-        : `Olá! Precisamos de auxílio do garçom na *${bill.tableNumber}*, por favor!`;
-
-    openBusinessWhatsApp(
-      { id: businessId, name: businessName, whatsappNumber },
+    openBusinessInApp(
+      { id: businessId, name: businessName },
       'table_bill_action',
-      actionText
+      `table_${action}`
     );
   };
 
@@ -495,7 +486,7 @@ export const CaraivaTableBillView: React.FC<CaraivaTableBillViewProps> = ({
           className="p-3 rounded-2xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 shadow-md shadow-amber-400/20 transition active:scale-95 cursor-pointer"
         >
           <MessageCircle className="w-4 h-4 text-slate-950" />
-          <span>Fechar via WhatsApp</span>
+          <span>Solicitar no app</span>
         </button>
       </div>
 

@@ -16,11 +16,29 @@ import {
   Calendar,
   Edit3,
   ShieldCheck,
+  ShoppingBag,
+  CalendarCheck2,
 } from "lucide-react";
 import { CARAIVA_BUSINESSES } from "../../data/caraivaDigitalData";
 import { getBusinessStats, type BusinessStats } from "../../services/analytics";
 import { generateQrSvgDataUri } from "../../services/partnerOnboardingService";
 import { MerchantSetup } from "../partner/MerchantSetup";
+import type { VillageOrderPayload } from "../../services/catalogCartService";
+
+interface LocalReservationRequest {
+  id: string;
+  businessId: string;
+  businessName: string;
+  businessCategory: string;
+  kind: string;
+  date: string;
+  checkoutDate?: string;
+  time: string;
+  people: number;
+  notes?: string;
+  status: string;
+  createdAt: string;
+}
 
 interface CaraivaMerchantPanelProps {
   initialBusinessId?: string;
@@ -32,11 +50,13 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
   onBackToGuide,
 }) => {
   const [selectedBizId, setSelectedBizId] = useState(initialBusinessId);
-  const [activeTab, setActiveTab] = useState<"dashboard" | "profile" | "offers" | "events" | "qrcode">("dashboard");
+  const [activeTab, setActiveTab] = useState<"dashboard" | "inbox" | "profile" | "offers" | "events" | "qrcode">("dashboard");
   const [statsPeriod, setStatsPeriod] = useState<"7d" | "30d" | "temporada">("30d");
   const [stats, setStats] = useState<BusinessStats | null>(null);
   const [isLiveOpen, setIsLiveOpen] = useState(true);
   const [showEditWizard, setShowEditWizard] = useState(false);
+  const [localReservations, setLocalReservations] = useState<LocalReservationRequest[]>([]);
+  const [localOrders, setLocalOrders] = useState<VillageOrderPayload[]>([]);
 
   // Flash offer state
   const [offerCreated, setOfferCreated] = useState(false);
@@ -65,6 +85,32 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
     };
   }, [selectedBizId]);
 
+  useEffect(() => {
+    const refreshLocalRequests = () => {
+      try {
+        const reservations = JSON.parse(localStorage.getItem("caraiva-reservation-requests-v1") || "[]");
+        const orders = JSON.parse(localStorage.getItem("caraiva_orders_history") || "[]");
+        setLocalReservations(Array.isArray(reservations) ? reservations : []);
+        setLocalOrders(Array.isArray(orders) ? orders : []);
+      } catch {
+        setLocalReservations([]);
+        setLocalOrders([]);
+      }
+    };
+    refreshLocalRequests();
+    window.addEventListener("caraiva:reservation-request-created", refreshLocalRequests);
+    window.addEventListener("caraiva:order-submitted", refreshLocalRequests);
+    window.addEventListener("storage", refreshLocalRequests);
+    return () => {
+      window.removeEventListener("caraiva:reservation-request-created", refreshLocalRequests);
+      window.removeEventListener("caraiva:order-submitted", refreshLocalRequests);
+      window.removeEventListener("storage", refreshLocalRequests);
+    };
+  }, [selectedBizId]);
+
+  const businessReservations = localReservations.filter((request) => request.businessId === selectedBizId);
+  const businessOrders = localOrders.filter((order) => order.businessId === selectedBizId);
+
   const handlePublishOffer = (e: React.FormEvent) => {
     e.preventDefault();
     if (!offerTitle) return;
@@ -89,16 +135,16 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
   // Metrics calculation
   const impressions = stats?.impressions || 0;
   const profileViews = stats?.profileViews || 0;
-  const whatsappClicks = stats?.whatsappClicks || 0;
+  const inAppActions = stats?.inAppActions || 0;
   const routesSaved = (stats?.routeClicks || 0) + (stats?.favorites || 0);
 
   // Real CTR calculation
   const ctr = impressions > 0 ? ((profileViews / impressions) * 100).toFixed(1) : "0.0";
-  const convRate = profileViews > 0 ? ((whatsappClicks / profileViews) * 100).toFixed(1) : "0.0";
+  const convRate = profileViews > 0 ? ((inAppActions / profileViews) * 100).toFixed(1) : "0.0";
 
   // ROI estimate (only if there are actual clicks)
   const ticketMedio = (currentBusiness.category as string) === "hospedagens" ? 480 : 165;
-  const estimatedRevenue = whatsappClicks * ticketMedio;
+  const estimatedRevenue = inAppActions * ticketMedio;
 
   // QR 2 (Turista / Mesa) URL
   const publicPlaceUrl = `${window.location.origin}/guia?place=${currentBusiness.id}`;
@@ -181,6 +227,19 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
           >
             <Award className="w-3.5 h-3.5" />
             <span>Meu Perfil Oficial</span>
+          </button>
+
+          <button
+            onClick={() => setActiveTab("inbox")}
+            className={`py-2.5 sm:py-3 border-b-2 flex items-center gap-1.5 transition-all whitespace-nowrap ${
+              activeTab === "inbox"
+                ? "border-amber-400 text-amber-300"
+                : "border-transparent text-slate-400 hover:text-slate-200"
+            }`}
+          >
+            <ShoppingBag className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Pedidos & Reservas</span>
+            {(businessOrders.length + businessReservations.length) > 0 && <span className="rounded-full bg-amber-400 px-1.5 text-[9px] font-black text-slate-950">{businessOrders.length + businessReservations.length}</span>}
           </button>
 
           <button
@@ -305,8 +364,8 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
                       : "Sem conversões registradas"}
                   </h3>
                   <p className="text-[11px] sm:text-xs text-slate-300 mt-0.5 leading-snug">
-                    {whatsappClicks > 0
-                      ? `${whatsappClicks} conversões rastreadas (Ticket médio R$ ${ticketMedio}).`
+                    {inAppActions > 0
+                      ? `${inAppActions} ações iniciadas no app (Ticket médio R$ ${ticketMedio}).`
                       : "Compartilhe seu link ou posicione o QR code nas mesas para converter turistas."}
                   </p>
                 </div>
@@ -345,11 +404,11 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
 
               <div className="p-3.5 sm:p-5 rounded-xl sm:rounded-2xl bg-white/[0.03] border border-emerald-500/30 bg-emerald-500/[0.02] space-y-1">
                 <div className="flex items-center justify-between text-emerald-400">
-                  <span className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold">Leads WhatsApp</span>
+                  <span className="text-[10px] sm:text-xs uppercase tracking-wider font-semibold">Ações no app</span>
                   <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
                 </div>
                 <p className="text-xl sm:text-2xl md:text-3xl font-extrabold text-emerald-400">
-                  {whatsappClicks}
+                  {inAppActions}
                 </p>
                 <p className="text-[10px] sm:text-[11px] text-emerald-300/80">Contatos diretos</p>
               </div>
@@ -382,10 +441,10 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
                 <div className="p-8 text-center rounded-2xl bg-white/[0.01] border border-white/5 space-y-2">
                   <MessageCircle className="w-8 h-8 text-slate-500 mx-auto" />
                   <p className="text-xs text-slate-400 font-medium">
-                    Nenhum clique no WhatsApp registrado nas últimas horas.
+                    Nenhuma ação dentro do app registrada nas últimas horas.
                   </p>
                   <p className="text-[11px] text-slate-500">
-                    Turistas que clicarem no botão "Falar no WhatsApp" ou escanearem seu QR Code aparecerão aqui instantaneamente.
+                    As ações iniciadas no perfil e os acessos pelo QR Code aparecerão aqui.
                   </p>
                 </div>
               ) : (
@@ -398,7 +457,7 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
                       <div className="flex items-center gap-2">
                         <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
                         <div>
-                          <p className="font-semibold text-white">Lead Direto WhatsApp</p>
+                          <p className="font-semibold text-white">Ação iniciada no app</p>
                           <p className="text-[10px] text-slate-400">Origem: {click.source}</p>
                         </div>
                       </div>
@@ -413,6 +472,34 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
                 </div>
               )}
             </div>
+          </div>
+        )}
+
+        {activeTab === "inbox" && (
+          <div className="space-y-5">
+            <div className="rounded-2xl border border-amber-300/20 bg-amber-300/5 p-3 text-xs leading-relaxed text-amber-100">
+              Caixa local de demonstração: os registros aparecem neste navegador e não são sincronizados com outros aparelhos nem enviados ao estabelecimento.
+            </div>
+            <section className="space-y-3">
+              <h3 className="flex items-center gap-2 text-sm font-bold text-white"><CalendarCheck2 className="h-4 w-4 text-sky-300"/> Reservas e consultas ({businessReservations.length})</h3>
+              {businessReservations.length === 0 ? <p className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-xs text-slate-400">Nenhuma reserva local para {currentBusiness.name}.</p> : businessReservations.map((request) => (
+                <article key={request.id} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-xs text-slate-200">
+                  <div className="flex flex-wrap items-center justify-between gap-2"><strong>{request.kind === "hospedagem" ? "Consulta de hospedagem" : request.kind === "passeio" ? "Consulta de passeio" : "Reserva de mesa"}</strong><span className="rounded-full bg-amber-400/15 px-2 py-1 text-amber-200">{request.status}</span></div>
+                  <p className="mt-2">{request.date}{request.checkoutDate ? ` — ${request.checkoutDate}` : ""} · {request.time} · {request.people} pessoa(s)</p>
+                  {request.notes && <p className="mt-1 text-slate-400">{request.notes}</p>}
+                </article>
+              ))}
+            </section>
+            <section className="space-y-3">
+              <h3 className="flex items-center gap-2 text-sm font-bold text-white"><ShoppingBag className="h-4 w-4 text-emerald-300"/> Pedidos ({businessOrders.length})</h3>
+              {businessOrders.length === 0 ? <p className="rounded-2xl border border-white/10 bg-white/[0.03] p-5 text-xs text-slate-400">Nenhum pedido local para {currentBusiness.name}.</p> : businessOrders.map((order) => (
+                <article key={order.orderId} className="rounded-2xl border border-white/10 bg-white/[0.03] p-4 text-xs text-slate-200">
+                  <div className="flex flex-wrap items-center justify-between gap-2"><strong>Pedido #{order.orderId}</strong><strong className="text-amber-300">R$ {order.totalAmount.toFixed(2)}</strong></div>
+                  <p className="mt-2">{order.items.map((item) => `${item.quantity}× ${item.name}`).join(" · ")}</p>
+                  <p className="mt-1 text-slate-400">{order.destinationDetail} · {order.paymentMethod} · {new Date(order.createdAt).toLocaleString("pt-BR")}</p>
+                </article>
+              ))}
+            </section>
           </div>
         )}
 
@@ -612,7 +699,7 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
                   Cartaz Imprimível para Mesas & Balcão
                 </h3>
                 <p className="text-xs text-slate-300 max-w-xl">
-                  Coloque este QR code impresso nas mesas ou no balcão da sua pousada/restaurante. Ao escanear, o turista abre diretamente seu cardápio, fotos e WhatsApp sem precisar digitar nada.
+                  Coloque este QR code impresso nas mesas ou no balcão da sua pousada/restaurante. Ao escanear, o turista abre diretamente o perfil, o cardápio e as opções de pedido/reserva no Caraíva Digital.
                 </p>
               </div>
 
@@ -654,7 +741,7 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
                     Aponte a câmera do celular
                   </p>
                   <p className="text-xs text-slate-600 leading-snug">
-                    Cardápio • Fotos & Ambiente • Pedidos pelo Caraíva Digital
+                    Perfil • Cardápio do dia • Pedidos e reservas no aplicativo
                   </p>
                 </div>
 

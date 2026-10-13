@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
 import { Clock, MapPin, ChevronRight, Sparkles } from "lucide-react";
 import { CARAIVA_NOW_ACTIVITIES, CARAIVA_EVENTS, CARAIVA_BUSINESSES, type NowActivity, type Business } from "../../data/caraivaDigitalData";
-import { trackEvent } from "../../services/analytics";
+import { openBusinessInApp, trackEvent } from "../../services/analytics";
 import { SafeBusinessImage } from "./SafeBusinessImage";
 
 export interface CaraivaAgoraScreenProps {
@@ -43,6 +43,14 @@ export const CaraivaAgoraScreen: React.FC<CaraivaAgoraScreenProps> = ({
       source: "agora_screen",
     });
 
+    if (activity.ctaType === "whatsapp" || activity.ctaType === "reservar" || activity.ctaType === "passeio") {
+      const biz = CARAIVA_BUSINESSES.find((b) => b.id === activity.business_id);
+      if (biz) {
+        openBusinessInApp(biz, "agora_screen_cta");
+        return;
+      }
+    }
+
     const biz = CARAIVA_BUSINESSES.find((b) => b.id === activity.business_id);
     if (activity.ctaType === "rota") {
       if (biz && onOpenMapToBusiness) onOpenMapToBusiness(biz);
@@ -50,7 +58,7 @@ export const CaraivaAgoraScreen: React.FC<CaraivaAgoraScreenProps> = ({
     }
 
     if (biz) onSelectBusiness(biz);
-    else onSelectNowActivity?.(activity);
+    if (onSelectNowActivity) onSelectNowActivity(activity);
   };
 
   return (
@@ -209,7 +217,7 @@ export const CaraivaAgoraScreen: React.FC<CaraivaAgoraScreenProps> = ({
                 type="button"
                 onClick={() => {
                   const biz = CARAIVA_BUSINESSES.find((b) => b.id === evt.business_id);
-                  if (biz) onSelectBusiness(biz);
+                  if (biz) openBusinessInApp(biz, "agora_events_highlight");
                 }}
                 className="px-3 py-1.5 rounded-xl bg-[#261B12] text-white font-bold text-[11px] flex items-center gap-1 shrink-0 active:scale-95"
               >

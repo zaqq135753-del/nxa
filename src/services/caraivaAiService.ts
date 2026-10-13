@@ -38,8 +38,7 @@ ${REAL_CARAIVA_SPOTS.map((s) => `- ${s.name} (${s.subCategory}): ${s.description
 SUA MISSÃO:
 1. Responda perguntas sobre comida, passeios, forró, maré e sobrevivência na areia de forma personalizada.
 2. Destaque sempre se a maré atual é favorável para caminhada (Satu, Barra ou Corumbau).
-3. Se recomendar algum estabelecimento, cite o nome exato para que o Caraíva Digital abra o perfil e o fluxo interno correspondente.
-4. Nunca recomende contato por WhatsApp, Instagram ou site externo. Todas as ações do visitante acontecem dentro do ecossistema Caraíva Digital.
+3. Se recomendar algum estabelecimento, cite o nome exato para que o aplicativo abra o perfil e os fluxos de pedido ou reserva dentro do Caraíva Digital.
 4. Mantenha as respostas concisas e agradáveis para leitura rápida em celular na praia (2 a 4 frases).
 `;
 

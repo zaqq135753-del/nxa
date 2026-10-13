@@ -255,38 +255,56 @@ export const BusinessMenuTab: React.FC<BusinessMenuTabProps> = ({
 };
 
 interface BusinessBookingTabProps {
+  businessId?: string;
   businessName: string;
+  businessCategory?: string;
   schedule: BusinessScheduleInfo;
 }
 
-export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({
-  businessName,
-  schedule,
-}) => {
+export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({ businessId, businessName, businessCategory = "restaurantes", schedule }) => {
   const [peopleCount, setPeopleCount] = useState(2);
   const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split('T')[0]);
+  const [checkoutDate, setCheckoutDate] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow.toISOString().split('T')[0];
+  });
   const [selectedTime, setSelectedTime] = useState('19:30');
   const [notes, setNotes] = useState('');
   const [bookingSubmitted, setBookingSubmitted] = useState(false);
 
-  const timeSlots = ['12:30', '13:30', '19:00', '19:30', '20:00', '20:30', '21:00'];
+  const isLodging = businessCategory === "hospedagens";
+  const isTour = businessCategory === "passeios";
+  const isEvent = businessCategory === "noite";
+  const bookingTitle = isLodging ? "Consultar hospedagem" : isTour ? "Reservar passeio" : isEvent ? "Consultar ingresso" : "Reservar mesa";
+  const dateLabel = isLodging ? "Check-in" : isTour ? "Data do passeio" : isEvent ? "Data do evento" : "Data desejada";
+  const peopleLabel = isLodging ? "Número de hóspedes" : isTour ? "Número de viajantes" : isEvent ? "Número de ingressos" : "Número de pessoas";
+  const timeSlots = isTour ? ['08:00', '09:00', '10:00', '13:00', '14:00', '15:00'] : isEvent ? ['20:00', '21:00', '22:00', '22:30', '23:00'] : ['12:30', '13:30', '19:00', '19:30', '20:00', '20:30', '21:00'];
 
   const handleConfirmBooking = () => {
     const request = {
-      id: `cd-${Date.now().toString(36).toUpperCase()}`,
+      id: 'reservation-' + Date.now(),
+      businessId,
       businessName,
-      action: "reservation",
+      businessCategory,
+      kind: isLodging ? 'hospedagem' : isTour ? 'passeio' : isEvent ? 'evento' : 'restaurante',
+      date: selectedDate,
+      checkoutDate: isLodging ? checkoutDate : undefined,
+      time: selectedTime,
+      people: peopleCount,
+      notes: notes.trim(),
+      status: 'pending',
       createdAt: new Date().toISOString(),
-      details: { date: selectedDate, time: selectedTime, people: peopleCount, notes },
-      demo: true,
     };
     try {
-      const requests = JSON.parse(localStorage.getItem("caraiva_internal_requests") || "[]");
-      localStorage.setItem("caraiva_internal_requests", JSON.stringify([...requests, request].slice(-100)));
+      const key = 'caraiva-reservation-requests-v1';
+      const current = JSON.parse(localStorage.getItem(key) || '[]');
+      localStorage.setItem(key, JSON.stringify([request, ...current]));
+      window.dispatchEvent(new CustomEvent('caraiva:reservation-request-created', { detail: request }));
+      setBookingSubmitted(true);
     } catch {
-      // Mantém a confirmação local se o navegador bloquear o armazenamento.
+      setBookingSubmitted(false);
     }
-    setBookingSubmitted(true);
   };
 
   return (
@@ -336,7 +354,7 @@ export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({
         </div>
       </div>
 
-      {/* Reserva dentro do Caraíva Digital */}
+      {/* Solicitação de reserva dentro do Caraíva Digital */}
       <div
         className="cd-glass-card"
         style={{
@@ -350,14 +368,14 @@ export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <Calendar size={18} color="#0FA3A5" />
           <h4 style={{ margin: 0, fontSize: 16, fontWeight: 700, color: '#0D2834' }}>
-            Agendar / Reservar Mesa
+            {bookingTitle}
           </h4>
         </div>
 
         {/* Quantidade de Pessoas */}
         <div>
           <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#475569', marginBottom: 6 }}>
-            Número de Pessoas
+            {peopleLabel}
           </label>
           <div style={{ display: 'flex', gap: 8 }}>
             {[1, 2, 4, 6, 8].map((num) => (
@@ -386,7 +404,7 @@ export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({
         {/* Data */}
         <div>
           <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#475569', marginBottom: 6 }}>
-            Data Desejada
+            {dateLabel}
           </label>
           <input
             type="date"
@@ -403,6 +421,21 @@ export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({
             }}
           />
         </div>
+
+        {isLodging && (
+          <div>
+            <label style={{ display: 'block', fontSize: 12, fontWeight: 700, color: '#475569', marginBottom: 6 }}>
+              Check-out
+            </label>
+            <input
+              type="date"
+              value={checkoutDate}
+              min={selectedDate}
+              onChange={(e) => setCheckoutDate(e.target.value)}
+              style={{ width: '100%', padding: '10px 14px', borderRadius: 14, border: '1px solid #CBD5E1', background: '#FFFFFF', color: '#0F172A', fontSize: 13 }}
+            />
+          </div>
+        )}
 
         {/* Horários */}
         <div>
@@ -454,9 +487,8 @@ export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({
           />
         </div>
 
-        {bookingSubmitted && <p role="status" style={{ margin: 0, padding: 12, borderRadius: 12, background: "#CCFBF1", color: "#0F766E", fontSize: 12, fontWeight: 700 }}>Solicitação salva neste dispositivo em modo de demonstração. A integração com disponibilidade e o envio ao estabelecimento ainda serão conectados.</p>}
-
         {/* Botão de Envio de Reserva */}
+        {bookingSubmitted && <p role="status" style={{ margin: 0, padding: 12, borderRadius: 12, background: "#CCFBF1", color: "#0F766E", fontSize: 12, fontWeight: 700 }}>Solicitação salva neste dispositivo em modo de demonstração. A confirmação de disponibilidade e o envio ao estabelecimento ainda serão integrados.</p>}
         <button
           onClick={handleConfirmBooking}
           disabled={bookingSubmitted}

@@ -3,6 +3,7 @@ import {
   X,
   Compass,
   Navigation,
+  MessageCircle,
   MapPin,
   AlertTriangle,
   RotateCw,
@@ -10,7 +11,7 @@ import {
 import { type GuidePlace } from "../../services/maps/types";
 import { findNearestStreetView } from "../../services/maps/streetView";
 import { loadGoogleMaps } from "../../services/maps/googleMapsLoader";
-import { trackEvent } from "../../services/analytics";
+import { trackEvent, openBusinessInApp } from "../../services/analytics";
 
 interface StreetViewModalProps {
   place: GuidePlace | null;
@@ -222,18 +223,6 @@ export const StreetViewModal: React.FC<StreetViewModalProps> = ({
                 </p>
               </div>
             </div>
-
-            <div className="max-w-lg mx-auto w-full pt-4">
-              <button
-                type="button"
-                onClick={() => { if (onStartRoute) { onStartRoute(place); onClose(); } }}
-                disabled={!onStartRoute}
-                className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 disabled:opacity-50 text-white text-xs font-semibold flex items-center justify-center gap-2 border border-white/10 transition-all"
-              >
-                <Navigation className="w-3.5 h-3.5 text-teal-300" />
-                <span>Traçar rota no mapa do guia</span>
-              </button>
-            </div>
           </div>
         )}
       </div>
@@ -259,6 +248,18 @@ export const StreetViewModal: React.FC<StreetViewModalProps> = ({
             </button>
           )}
 
+          <button
+              onClick={() =>
+                openBusinessInApp(
+                  { id: place.id, name: place.name },
+                  "streetview_modal"
+                )
+              }
+              className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
+            >
+              <MessageCircle className="w-4 h-4 fill-slate-950" />
+              <span className="hidden sm:inline">Ver perfil no app</span>
+            </button>
         </div>
       </div>
     </div>

@@ -131,7 +131,7 @@ export class MockConciergeProvider implements ConciergeProvider {
           description: "O momento mais clássico da vila no final da tarde.",
           estimatedCost: "R$ 60",
           distanceTime: "2 min a pé",
-          ctaLabel: "Abrir no app",
+          ctaLabel: "Ver opções no app",
         },
       ],
     };
