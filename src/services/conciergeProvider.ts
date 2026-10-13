@@ -14,7 +14,6 @@ export interface ConciergeStep {
   estimatedCost: string;
   distanceTime: string;
   ctaLabel: string;
-  whatsappMessage: string;
 }
 
 export interface ConciergePlan {
@@ -66,7 +65,6 @@ export class MockConciergeProvider implements ConciergeProvider {
             estimatedCost: "R$ 78 (2 drinks + 1 pastel)",
             distanceTime: "2 min a pé da foz",
             ctaLabel: "Ver no Mapa",
-            whatsappMessage: "Olá! Gostaria de reservar uma mesa romântica no deck para o pôr do sol.",
           },
           {
             time: "20:30",
@@ -76,7 +74,6 @@ export class MockConciergeProvider implements ConciergeProvider {
             estimatedCost: "R$ 190 (Pizza + Vinho)",
             distanceTime: "3 min a pé",
             ctaLabel: "Reservar Mesa",
-            whatsappMessage: "Olá! Vi pelo Concierge do Caraíva Digital e gostaria de reservar uma mesa romântica no deck.",
           },
         ],
       };
@@ -97,7 +94,6 @@ export class MockConciergeProvider implements ConciergeProvider {
             estimatedCost: "R$ 85",
             distanceTime: "3 min a pé",
             ctaLabel: "Reservar Mesa",
-            whatsappMessage: "Olá! Gostaria de reservar uma mesa para o jantar antes do forró.",
           },
           {
             time: "23:00",
@@ -107,7 +103,6 @@ export class MockConciergeProvider implements ConciergeProvider {
             estimatedCost: "R$ 60 (Ingresso) + R$ 30 (Consumo)",
             distanceTime: "6 min a pé",
             ctaLabel: "Garantir Ingresso",
-            whatsappMessage: "Olá! Gostaria de comprar meu ingresso antecipado para o forró de hoje.",
           },
         ],
       };
@@ -128,7 +123,6 @@ export class MockConciergeProvider implements ConciergeProvider {
           estimatedCost: "R$ 45",
           distanceTime: "4 min a pé",
           ctaLabel: "Ver no Guia",
-          whatsappMessage: "Olá! Gostaria de saber os sabores de torta do dia na Duca.",
         },
         {
           time: "17:00",
@@ -137,8 +131,7 @@ export class MockConciergeProvider implements ConciergeProvider {
           description: "O momento mais clássico da vila no final da tarde.",
           estimatedCost: "R$ 60",
           distanceTime: "2 min a pé",
-          ctaLabel: "Chamar WhatsApp",
-          whatsappMessage: "Olá! Gostaria de conferir mesas disponíveis para o pôr do sol.",
+          ctaLabel: "Abrir no app",
         },
       ],
     };

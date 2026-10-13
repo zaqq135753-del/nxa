@@ -257,25 +257,36 @@ export const BusinessMenuTab: React.FC<BusinessMenuTabProps> = ({
 interface BusinessBookingTabProps {
   businessName: string;
   schedule: BusinessScheduleInfo;
-  whatsappNumber?: string;
 }
 
 export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({
   businessName,
   schedule,
-  whatsappNumber = '5573999990000',
 }) => {
   const [peopleCount, setPeopleCount] = useState(2);
   const [selectedDate, setSelectedDate] = useState(() => new Date().toISOString().split('T')[0]);
   const [selectedTime, setSelectedTime] = useState('19:30');
   const [notes, setNotes] = useState('');
+  const [bookingSubmitted, setBookingSubmitted] = useState(false);
 
   const timeSlots = ['12:30', '13:30', '19:00', '19:30', '20:00', '20:30', '21:00'];
 
   const handleConfirmBooking = () => {
-    const formattedDate = selectedDate.split('-').reverse().join('/');
-    const message = `Olá! Gostaria de solicitar uma reserva em *${businessName}* via *Caraíva Digital* 🌴:\n\n📅 Data: *${formattedDate}*\n⏰ Horário: *${selectedTime}*\n👥 Pessoas: *${peopleCount}*\n${notes ? `📝 Obs: ${notes}\n` : ''}\nPoderiam confirmar a disponibilidade?`;
-    window.open(`https://wa.me/${whatsappNumber}?text=${encodeURIComponent(message)}`, '_blank');
+    const request = {
+      id: `cd-${Date.now().toString(36).toUpperCase()}`,
+      businessName,
+      action: "reservation",
+      createdAt: new Date().toISOString(),
+      details: { date: selectedDate, time: selectedTime, people: peopleCount, notes },
+      demo: true,
+    };
+    try {
+      const requests = JSON.parse(localStorage.getItem("caraiva_internal_requests") || "[]");
+      localStorage.setItem("caraiva_internal_requests", JSON.stringify([...requests, request].slice(-100)));
+    } catch {
+      // Mantém a confirmação local se o navegador bloquear o armazenamento.
+    }
+    setBookingSubmitted(true);
   };
 
   return (
@@ -325,7 +336,7 @@ export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({
         </div>
       </div>
 
-      {/* Formulário de Reserva Direta via WhatsApp */}
+      {/* Reserva dentro do Caraíva Digital */}
       <div
         className="cd-glass-card"
         style={{
@@ -443,9 +454,12 @@ export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({
           />
         </div>
 
+        {bookingSubmitted && <p role="status" style={{ margin: 0, padding: 12, borderRadius: 12, background: "#CCFBF1", color: "#0F766E", fontSize: 12, fontWeight: 700 }}>Solicitação salva neste dispositivo em modo de demonstração. A integração com disponibilidade e o envio ao estabelecimento ainda serão conectados.</p>}
+
         {/* Botão de Envio de Reserva */}
         <button
           onClick={handleConfirmBooking}
+          disabled={bookingSubmitted}
           className="cd-btn-tactile"
           style={{
             marginTop: 6,
@@ -466,7 +480,7 @@ export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({
           }}
         >
           <Check size={18} />
-          Solicitar Reserva via WhatsApp
+          {bookingSubmitted ? "Solicitação registrada" : "Continuar no Caraíva Digital"}
         </button>
       </div>
     </div>

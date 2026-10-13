@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   CalendarPlus,
   Loader2,
-  Send,
   HelpCircle,
 } from "lucide-react";
 import {
@@ -20,7 +19,6 @@ import {
   type ConciergeQuery,
 } from "../../services/conciergeProvider";
 import { addToItinerary } from "../../services/favoritesService";
-import { openBusinessWhatsApp } from "../../services/analytics";
 import type { Business } from "../../data/caraivaDigitalData";
 
 import { asset } from "../../lib/asset";
@@ -285,17 +283,11 @@ export const CaraivaConciergeScreen: React.FC<CaraivaConciergeScreenProps> = ({
                 {step.business && (
                   <div className="flex items-center gap-2 shrink-0">
                     <button
-                      onClick={() =>
-                        openBusinessWhatsApp(
-                          step.business!,
-                          "concierge_plan",
-                          step.whatsappMessage
-                        )
-                      }
+                      onClick={() => onSelectBusiness?.(step.business!)}
                       className="px-3.5 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 text-xs font-bold border border-emerald-500/30 flex items-center gap-1.5 transition-colors"
                     >
-                      <Send className="w-3 h-3" />
-                      <span>{step.ctaLabel}</span>
+                      <Compass className="w-3 h-3" />
+                      <span>Abrir no app</span>
                     </button>
                   </div>
                 )}

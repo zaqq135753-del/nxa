@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from "react";
-import { Clock, MapPin, ChevronRight, MessageCircle, Sparkles } from "lucide-react";
+import { Clock, MapPin, ChevronRight, Sparkles } from "lucide-react";
 import { CARAIVA_NOW_ACTIVITIES, CARAIVA_EVENTS, CARAIVA_BUSINESSES, type NowActivity, type Business } from "../../data/caraivaDigitalData";
-import { openBusinessWhatsApp, trackEvent } from "../../services/analytics";
+import { trackEvent } from "../../services/analytics";
 import { SafeBusinessImage } from "./SafeBusinessImage";
 
 export interface CaraivaAgoraScreenProps {
@@ -43,14 +43,6 @@ export const CaraivaAgoraScreen: React.FC<CaraivaAgoraScreenProps> = ({
       source: "agora_screen",
     });
 
-    if (activity.ctaType === "whatsapp" || activity.ctaType === "reservar" || activity.ctaType === "passeio") {
-      const biz = CARAIVA_BUSINESSES.find((b) => b.id === activity.business_id);
-      if (biz) {
-        openBusinessWhatsApp(biz, "agora_screen_cta", `Olá! Vi "${activity.title}" no Caraíva Agora e gostaria de confirmar!`);
-        return;
-      }
-    }
-
     const biz = CARAIVA_BUSINESSES.find((b) => b.id === activity.business_id);
     if (activity.ctaType === "rota") {
       if (biz && onOpenMapToBusiness) onOpenMapToBusiness(biz);
@@ -58,7 +50,7 @@ export const CaraivaAgoraScreen: React.FC<CaraivaAgoraScreenProps> = ({
     }
 
     if (biz) onSelectBusiness(biz);
-    if (onSelectNowActivity) onSelectNowActivity(activity);
+    else onSelectNowActivity?.(activity);
   };
 
   return (
@@ -181,7 +173,6 @@ export const CaraivaAgoraScreen: React.FC<CaraivaAgoraScreenProps> = ({
                 </div>
 
                 <span className="font-bold text-[#C25B2E] flex items-center gap-1 text-xs">
-                  {act.ctaType === "whatsapp" && <MessageCircle className="w-3 h-3 text-emerald-600" />}
                   <span>{act.cta}</span>
                   <ChevronRight className="w-3.5 h-3.5" />
                 </span>
@@ -218,7 +209,7 @@ export const CaraivaAgoraScreen: React.FC<CaraivaAgoraScreenProps> = ({
                 type="button"
                 onClick={() => {
                   const biz = CARAIVA_BUSINESSES.find((b) => b.id === evt.business_id);
-                  if (biz) openBusinessWhatsApp(biz, "agora_events_highlight");
+                  if (biz) onSelectBusiness(biz);
                 }}
                 className="px-3 py-1.5 rounded-xl bg-[#261B12] text-white font-bold text-[11px] flex items-center gap-1 shrink-0 active:scale-95"
               >

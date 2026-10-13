@@ -3,16 +3,14 @@ import {
   X,
   Compass,
   Navigation,
-  MessageCircle,
   MapPin,
   AlertTriangle,
   RotateCw,
-  ExternalLink,
 } from "lucide-react";
 import { type GuidePlace } from "../../services/maps/types";
 import { findNearestStreetView } from "../../services/maps/streetView";
 import { loadGoogleMaps } from "../../services/maps/googleMapsLoader";
-import { trackEvent, openBusinessWhatsApp } from "../../services/analytics";
+import { trackEvent } from "../../services/analytics";
 
 interface StreetViewModalProps {
   place: GuidePlace | null;
@@ -226,15 +224,15 @@ export const StreetViewModal: React.FC<StreetViewModalProps> = ({
             </div>
 
             <div className="max-w-lg mx-auto w-full pt-4">
-              <a
-                href={`https://www.google.com/maps/search/?api=1&query=${place.latitude},${place.longitude}`}
-                target="_blank"
-                rel="noreferrer"
-                className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 text-white text-xs font-semibold flex items-center justify-center gap-2 border border-white/10 transition-all"
+              <button
+                type="button"
+                onClick={() => { if (onStartRoute) { onStartRoute(place); onClose(); } }}
+                disabled={!onStartRoute}
+                className="w-full py-3 rounded-xl bg-white/10 hover:bg-white/15 disabled:opacity-50 text-white text-xs font-semibold flex items-center justify-center gap-2 border border-white/10 transition-all"
               >
-                <span>Ver no Google Maps Externo</span>
-                <ExternalLink className="w-3.5 h-3.5 text-slate-300" />
-              </a>
+                <Navigation className="w-3.5 h-3.5 text-teal-300" />
+                <span>Traçar rota no mapa do guia</span>
+              </button>
             </div>
           </div>
         )}
@@ -261,21 +259,6 @@ export const StreetViewModal: React.FC<StreetViewModalProps> = ({
             </button>
           )}
 
-          {place.whatsapp && (
-            <button
-              onClick={() =>
-                openBusinessWhatsApp(
-                  { id: place.id, name: place.name, whatsapp: place.whatsapp },
-                  "streetview_modal",
-                  `Olá! Estou explorando ${place.name} pelo Guia Caraíva e gostaria de mais informações.`
-                )
-              }
-              className="px-4 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-bold text-xs flex items-center justify-center gap-1.5 shadow-lg shadow-emerald-500/20 active:scale-95 transition-all"
-            >
-              <MessageCircle className="w-4 h-4 fill-slate-950" />
-              <span className="hidden sm:inline">WhatsApp</span>
-            </button>
-          )}
         </div>
       </div>
     </div>

@@ -6,7 +6,9 @@
 export type AnalyticsEventType =
   | "business_impression"
   | "business_view"
-  | "business_whatsapp_click"
+  | "business_whatsapp_click" // legado
+  | "business_action_started"
+  | "business_action_submitted"
   | "business_route_click"
   | "business_booking_click"
   | "offer_view"
@@ -89,34 +91,20 @@ export function trackEvent(
 }
 
 /**
- * Abertura de WhatsApp com Rastreamento de Conversão Obrigatório
- * Salva o clique no estabelecimento e abre o link do WhatsApp formatado.
+ * Compatibilidade para integrações antigas: registra a intenção dentro do guia
+ * e não abre aplicativos nem URLs externos.
  */
 export function openBusinessWhatsApp(
   business: { id: string; name: string; whatsappNumber?: string; whatsapp?: string },
   source: string = "business_page",
-  customMessage?: string
+  _customMessage?: string
 ): void {
-  const number = business.whatsapp || business.whatsappNumber || "5573999999999";
-
-  // 1. Rastrear o clique
-  trackEvent("business_whatsapp_click", {
+  trackEvent("business_action_started", {
     businessId: business.id,
     businessName: business.name,
     source,
-    metadata: {
-      whatsappNumber: number,
-      messagePrefix: customMessage ? customMessage.substring(0, 30) : "padrao",
-    },
+    metadata: { action: "internal_profile" },
   });
-
-  // 2. Formatar mensagem amigável
-  const defaultText = `Olá! Vi o ${business.name} no Caraíva Digital e gostaria de mais informações! ✨`;
-  const text = customMessage || defaultText;
-  const url = `https://wa.me/${number}?text=${encodeURIComponent(text)}`;
-
-  // 3. Abrir janela
-  window.open(url, "_blank", "noopener,noreferrer");
 }
 
 /**

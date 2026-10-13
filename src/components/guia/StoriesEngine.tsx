@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { Camera, MapPin, X, Heart, Send, Compass, MessageCircle, ChevronUp } from "lucide-react";
+import { Camera, MapPin, X, Heart, Send, Compass, ChevronUp } from "lucide-react";
 
 export type StoryCategory = "Agora" | "Praia" | "Comer" | "Beber" | "Noite" | "Passeios";
 
@@ -15,7 +15,6 @@ export interface GuiaStory {
   likes: number;
   category?: StoryCategory;
   spotId?: string;
-  whatsappNumber?: string;
 }
 
 interface StoriesEngineProps {
@@ -23,7 +22,7 @@ interface StoriesEngineProps {
   activeStory: GuiaStory | null;
   onSelectStory: (story: GuiaStory | null) => void;
   onOpenPostModal: () => void;
-  onShareToInstagram: (story?: GuiaStory) => void;
+  onSaveToGuide: (story?: GuiaStory) => void;
   onShowToast: (msg: string) => void;
   onSelectSpotByName?: (spotName: string) => void;
 }
@@ -35,7 +34,7 @@ export const StoriesEngine: React.FC<StoriesEngineProps> = React.memo(({
   activeStory,
   onSelectStory,
   onOpenPostModal,
-  onShareToInstagram,
+  onSaveToGuide,
   onShowToast,
   onSelectSpotByName,
 }) => {
@@ -314,17 +313,16 @@ export const StoriesEngine: React.FC<StoriesEngineProps> = React.memo(({
                   <span>Ver Detalhes</span>
                 </button>
 
-                {activeStory.whatsappNumber && (
-                  <a
-                    href={`https://wa.me/${activeStory.whatsappNumber}?text=Ol%C3%A1,%20vi%20o%20story%20no%20Guia%20Cara%C3%ADva!`}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-lg transition active:scale-95"
-                  >
-                    <MessageCircle className="w-3.5 h-3.5" />
-                    <span>Reservar</span>
-                  </a>
-                )}
+                <button
+                  onClick={() => {
+                    onSelectSpotByName?.(activeStory.location.split(",")[0]);
+                    onSelectStory(null);
+                  }}
+                  className="bg-emerald-600 hover:bg-emerald-500 text-white px-3.5 py-1.5 rounded-full text-xs font-semibold flex items-center gap-1.5 shadow-lg transition active:scale-95"
+                >
+                  <Compass className="w-3.5 h-3.5" />
+                  <span>Continuar no app</span>
+                </button>
               </div>
 
               {/* Micro-hint de swipe vertical */}
@@ -334,7 +332,7 @@ export const StoriesEngine: React.FC<StoriesEngineProps> = React.memo(({
               </div>
             </div>
 
-            {/* BOTTOM BAR: Interaction, Like & Instagram Share */}
+            {/* BOTTOM BAR: Interaction, Like & in-app save */}
             <div className="relative z-10 p-4 space-y-3">
               <div className="flex items-center gap-2">
                 {/* Reply Input */}
@@ -367,15 +365,15 @@ export const StoriesEngine: React.FC<StoriesEngineProps> = React.memo(({
                   <Heart className={`w-5 h-5 ${isLiked[activeStory.id] ? "fill-white" : ""}`} />
                 </button>
 
-                {/* Instagram Share */}
+                {/* Ação dentro do guia */}
                 <button
-                  onClick={() => onShareToInstagram(activeStory)}
+                  onClick={() => onSaveToGuide(activeStory)}
                   className="bg-white text-night font-bold text-xs px-3.5 py-2.5 rounded-full shadow-2xl flex items-center gap-2 hover:bg-zinc-100 transition shrink-0 active:scale-95"
                 >
                   <span className="text-sm">📸</span>
                   <span className="leading-tight text-left">
-                    <span className="block text-[10px] text-zinc-600 font-normal">Compartilhar</span>
-                    <strong className="block text-[11px] font-extrabold text-coral -mt-0.5">Stories</strong>
+                    <span className="block text-[10px] text-zinc-600 font-normal">Guardar no</span>
+                    <strong className="block text-[11px] font-extrabold text-coral -mt-0.5">Guia</strong>
                   </span>
                 </button>
               </div>

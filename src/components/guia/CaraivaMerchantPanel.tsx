@@ -654,7 +654,7 @@ export const CaraivaMerchantPanel: React.FC<CaraivaMerchantPanelProps> = ({
                     Aponte a câmera do celular
                   </p>
                   <p className="text-xs text-slate-600 leading-snug">
-                    Cardápio do dia • Fotos & Ambiente • Contato direto via WhatsApp
+                    Cardápio • Fotos & Ambiente • Pedidos pelo Caraíva Digital
                   </p>
                 </div>
 

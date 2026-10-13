@@ -2,7 +2,6 @@ import React, { useState, useMemo, useRef } from "react";
 import {
   Star,
   MapPin,
-  MessageCircle,
   Heart,
   Navigation,
   ChevronRight,
@@ -15,7 +14,6 @@ import {
   List,
 } from "lucide-react";
 import { CARAIVA_BUSINESSES, type Business } from "../../data/caraivaDigitalData";
-import { openBusinessWhatsApp } from "../../services/analytics";
 import { isFavorite, toggleFavorite } from "../../services/favoritesService";
 import { useUserLocation, calculateHaversineDistanceMeters } from "../../services/maps/geolocation";
 import { businessToGuidePlace } from "../../services/maps/places";
@@ -94,10 +92,6 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
 
   const handleCtaClick = (e: React.MouseEvent, biz: Business) => {
     e.stopPropagation();
-    if (biz.ctaType === "whatsapp" || biz.ctaType === "reservar" || biz.ctaType === "passeio") {
-      openBusinessWhatsApp(biz, "near_you_card");
-      return;
-    }
     if (biz.ctaType === "rota") {
       if (onOpenMap) onOpenMap(biz);
       else if (onOpenMapToBusiness) onOpenMapToBusiness(biz);
@@ -491,8 +485,7 @@ export const CaraivaNearYouSection: React.FC<CaraivaNearYouSectionProps> = ({
                         onClick={(e) => handleCtaClick(e, biz)}
                         className="px-3 py-1.5 rounded-xl bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-bold text-xs flex items-center gap-1 shadow-md shadow-amber-400/20 transition active:scale-95"
                       >
-                        {biz.ctaType === "whatsapp" && <MessageCircle className="w-3 h-3 text-slate-950" />}
-                        <span>{biz.ctaLabel || "Conhecer"}</span>
+                          <span>{biz.ctaLabel || "Conhecer"}</span>
                         <ChevronRight className="w-3 h-3" />
                       </button>
                     </div>

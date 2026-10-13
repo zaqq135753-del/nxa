@@ -20,7 +20,6 @@ import {
   removeFromItinerary,
   type ItineraryItem,
 } from "../../services/favoritesService";
-import { openBusinessWhatsApp } from "../../services/analytics";
 import { SafeBusinessImage } from "./SafeBusinessImage";
 
 interface CaraivaSavedScreenProps {
@@ -81,16 +80,12 @@ export const CaraivaSavedScreen: React.FC<CaraivaSavedScreenProps> = ({
       .join("\n");
     const shareText = `🌴 Meu Dia em Caraíva:\n\n${text}\n\nCriado com Caraíva Digital ✨`;
 
-    if (navigator.share) {
-      try {
-        await navigator.share({ title: "Meu Dia em Caraíva", text: shareText });
-      } catch {
-        // dismissed
-      }
-    } else {
-      navigator.clipboard?.writeText(shareText);
+    try {
+      await navigator.clipboard?.writeText(shareText);
       setShared(true);
       setTimeout(() => setShared(false), 2000);
+    } catch {
+      setShared(false);
     }
   };
 
@@ -249,16 +244,10 @@ export const CaraivaSavedScreen: React.FC<CaraivaSavedScreenProps> = ({
                           </button>
 
                           <button
-                            onClick={() =>
-                              openBusinessWhatsApp(
-                                business,
-                                "itinerary_cta",
-                                `Olá! Tenho uma parada planejada no ${business.name} para o meu dia em Caraíva.`
-                              )
-                            }
+                            onClick={() => onSelectBusiness(business)}
                             className="px-3 py-1.5 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 text-xs font-semibold flex items-center gap-1.5 transition-colors border border-emerald-500/20"
                           >
-                            <span>WhatsApp</span>
+                            <span>Reservar ou pedir no app</span>
                           </button>
                         </div>
                       )}
@@ -340,16 +329,10 @@ export const CaraivaSavedScreen: React.FC<CaraivaSavedScreenProps> = ({
                         Ver Detalhes
                       </button>
                       <button
-                        onClick={() =>
-                          openBusinessWhatsApp(
-                            b,
-                            "favorites_card",
-                            `Olá! Salvei o ${b.name} nos meus favoritos do Caraíva Digital e gostaria de falar com vocês.`
-                          )
-                        }
+                        onClick={() => onSelectBusiness(b)}
                         className="px-3 py-2 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 font-semibold text-xs transition-colors border border-emerald-500/30"
                       >
-                        WhatsApp
+                        Acessar no app
                       </button>
                     </div>
                   </div>

@@ -7,7 +7,6 @@ import {
   Pause,
   ChevronRight,
   ChevronLeft,
-  ExternalLink,
   WifiOff,
   CornerUpRight,
   CornerUpLeft,
@@ -502,15 +501,7 @@ export const CaraivaWalkingRouteModal: React.FC<CaraivaWalkingRouteModalProps> =
               </button>
             </div>
 
-            <a
-              href={`https://www.google.com/maps/dir/?api=1&origin=${selectedOrigin.coords.lat},${selectedOrigin.coords.lng}&destination=${business.latitude},${business.longitude}&travelmode=walking`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full py-2.5 px-4 rounded-xl bg-white/[0.05] hover:bg-white/10 text-slate-300 font-bold text-xs flex items-center justify-center gap-1.5 transition-colors border border-white/10"
-            >
-              <span>Abrir no Google Maps Externo</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
+            
           </div>
         </div>
       )}

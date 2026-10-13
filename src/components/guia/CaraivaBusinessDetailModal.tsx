@@ -133,20 +133,12 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
       text: `Conheça ${business.name} em Caraíva: ${business.shortDescription}`,
       url: window.location.href,
     };
-    if (navigator.share) {
-      try {
-        await navigator.share(shareData);
-      } catch {
-        // dismissed
-      }
-    } else {
-      try {
-        if (!navigator.clipboard) return;
-        await navigator.clipboard.writeText(window.location.href);
-        setCopiedLink(true);
-        setTimeout(() => setCopiedLink(false), 2000);
-      } catch { /* Clipboard permission may be denied; keep the profile usable. */ }
-    }
+    try {
+      if (!navigator.clipboard) return;
+      await navigator.clipboard.writeText(shareData.url);
+      setCopiedLink(true);
+      setTimeout(() => setCopiedLink(false), 2000);
+    } catch { /* Clipboard permission may be denied; keep the profile usable. */ }
   };
 
   const handleSubmitClaim = (e: React.FormEvent) => {
@@ -406,7 +398,6 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                 businessId={business.id}
                 businessName={business.name}
                 menuItems={getBusinessProfileDetail(business.slug || business.id, business.name).menuItems}
-                whatsappNumber={business.whatsapp}
                 onOpenCartModal={() => setIsCartModalOpen(true)}
               />
             </div>
@@ -434,7 +425,6 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
               <BusinessBookingTab
                 businessName={business.name}
                 schedule={getBusinessProfileDetail(business.slug || business.id, business.name).schedule}
-                whatsappNumber={business.whatsapp}
               />
             </div>
           )}
@@ -613,11 +603,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
               <span>Verificado em: {business.data_source?.verified_at || business.verified_at || "28/09/2026"}</span>
             </div>
             <p className="text-[11px] text-slate-400">
-              Fonte primária: {business.data_source?.provider || "Consulta pública externa"}. {business.data_source?.url && (
-                <a href={business.data_source.url} target="_blank" rel="noreferrer" className="text-amber-400 hover:underline">
-                  Ver fonte pública ↗
-                </a>
-              )}
+              Fonte de referência: {business.data_source?.provider || "Consulta pública"}. Os dados desta ficha são apresentados dentro do Caraíva Digital.
             </p>
             <p className="text-[10px] text-slate-500 italic">
               "Visualização demonstrativa — informações sujeitas a confirmação pelo estabelecimento."
@@ -763,7 +749,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                 <div className="p-4 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-emerald-300 text-xs font-semibold space-y-1 text-center animate-in zoom-in-95">
                   <CheckCircle2 className="w-6 h-6 mx-auto mb-1 text-emerald-400" />
                   <p className="text-sm font-bold text-white">Solicitação enviada com sucesso!</p>
-                  <p className="text-slate-300">Nossa equipe entrará em contato via WhatsApp para liberar suas credenciais.</p>
+                  <p className="text-slate-300">Sua solicitação foi registrada neste dispositivo e ficará disponível para análise no portal do estabelecimento após a integração.</p>
                 </div>
               ) : (
                 <form onSubmit={handleSubmitClaim} className="space-y-3">
@@ -781,7 +767,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
 
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="text-[11px] text-slate-400 block mb-1">WhatsApp Comercial</label>
+                      <label className="text-[11px] text-slate-400 block mb-1">Telefone para contato</label>
                       <input
                         type="tel"
                         required

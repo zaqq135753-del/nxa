@@ -71,7 +71,6 @@ const HD_CARAIVA_STORIES: GuiaStory[] = [
     caption: "@julia no Pôr do Sol",
     likes: 84,
     category: "Comer",
-    whatsappNumber: "5573999991001",
   },
   {
     id: "st-2",
@@ -108,7 +107,6 @@ const HD_CARAIVA_STORIES: GuiaStory[] = [
     caption: "@forro.ourico na Areia",
     likes: 195,
     category: "Noite",
-    whatsappNumber: "5573999991004",
   },
 ];
 
@@ -718,6 +716,11 @@ export const GuiaCaraivaApp: React.FC = () => {
         isOpen={isCameraModalOpen}
         onClose={() => setIsCameraModalOpen(false)}
         onShowToast={showToast}
+        onOpenBusiness={(name) => {
+          const business = CARAIVA_BUSINESSES.find((item) => item.name.toLowerCase().includes(name.toLowerCase()));
+          if (business) { setIsCameraModalOpen(false); setSelectedBusiness(business); }
+          else showToast("Este local ainda não tem perfil de negócio no guia.");
+        }}
         onPostCreatedStory={(story) => {
           const newStory: GuiaStory = {
             id: `st-${Date.now()}`,

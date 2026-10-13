@@ -1,7 +1,7 @@
 import React from "react";
-import { Flame, Clock, MapPin, ChevronRight, MessageCircle } from "lucide-react";
+import { Flame, Clock, MapPin, ChevronRight } from "lucide-react";
 import { CARAIVA_NOW_ACTIVITIES, CARAIVA_BUSINESSES, type NowActivity, type Business } from "../../data/caraivaDigitalData";
-import { openBusinessWhatsApp, trackEvent } from "../../services/analytics";
+import { trackEvent } from "../../services/analytics";
 import { SafeBusinessImage } from "./SafeBusinessImage";
 
 export interface CaraivaNowSectionProps {
@@ -23,13 +23,6 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
     });
 
     const biz = CARAIVA_BUSINESSES.find((b) => b.id === activity.business_id);
-    if (activity.ctaType === "whatsapp" || activity.ctaType === "reservar" || activity.ctaType === "passeio") {
-      if (biz) {
-        openBusinessWhatsApp(biz, "home_now_card", `Olá! Vi o destaque "${activity.title}" no Caraíva Agora e gostaria de informações!`);
-        return;
-      }
-    }
-
     if (biz) onSelectBusiness(biz);
   };
 
@@ -135,7 +128,6 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
                   className="text-[11px] font-bold flex items-center gap-0.5"
                   style={{ color: "var(--cv-gold)" }}
                 >
-                  {item.ctaType === "whatsapp" && <MessageCircle className="w-3 h-3 text-emerald-500" />}
                   <span>{item.cta}</span>
                   <ChevronRight className="w-3 h-3" />
                 </span>
