@@ -1,0 +1,9 @@
+{
+  "name": "Caraíva Digital",
+  "short_name": "Caraíva",
+  "start_url": "/turista",
+  "display": "standalone",
+  "background_color": "#0A0D0B",
+  "theme_color": "#0A0D0B",
+  "icons": []
+}

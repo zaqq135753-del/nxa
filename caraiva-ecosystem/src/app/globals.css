@@ -1,0 +1,88 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root { 
+  color-scheme: dark; 
+}
+
+/* UI/UX Pro Max: Touch optimization & typography smoothing */
+html {
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+body { 
+  @apply bg-noite-900 text-areia-50 antialiased; 
+  text-rendering: optimizeLegibility;
+}
+
+@layer components {
+  /* Cards com glassmorphism sutil e contorno refinado */
+  .card { 
+    @apply rounded-2xl border border-white/[.08] bg-white/[.03] shadow-glow backdrop-blur-md transition-all duration-200; 
+  }
+  
+  /* Botões com touch target mínimo de 44px (WCAG / UI UX Pro Max) */
+  .btn { 
+    @apply inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2.5 text-sm font-semibold transition active:scale-[.98] disabled:opacity-40 disabled:cursor-not-allowed select-none; 
+    min-height: 44px;
+    touch-action: manipulation;
+  }
+  
+  .btn-primary { 
+    @apply btn bg-coral-400 text-noite-900 hover:bg-coral-500 shadow-md; 
+  }
+  
+  .btn-ghost { 
+    @apply btn border border-white/10 text-areia-100 hover:bg-white/5; 
+  }
+  
+  /* Badges compactos com padding confortável */
+  .chip { 
+    @apply inline-flex items-center gap-1.5 rounded-full border border-white/10 px-3 py-1 text-xs text-areia-200 bg-white/[0.02]; 
+  }
+  
+  /* Labels em caixa alta com espaçamento tipográfico equilibrado */
+  .label { 
+    @apply text-[11px] uppercase tracking-[.18em] text-areia-300/80 font-medium; 
+  }
+  
+  /* Inputs com altura confortável e foco acessível */
+  .input { 
+    @apply w-full rounded-xl border border-white/10 bg-black/40 px-3.5 py-2.5 text-sm outline-none placeholder:text-areia-300/40 focus:border-coral-400 focus:ring-1 focus:ring-coral-400 transition; 
+    min-height: 44px;
+  }
+}
+
+/* Background gradient ambiente com profundidade de Caraíva */
+.grain::before {
+  content: ""; 
+  position: fixed; 
+  inset: 0; 
+  pointer-events: none; 
+  z-index: 0; 
+  opacity: .5;
+  background: radial-gradient(1200px 600px at 10% -10%, rgba(42,111,81,.35), transparent 60%),
+              radial-gradient(900px 500px at 110% 10%, rgba(31,133,151,.25), transparent 60%),
+              radial-gradient(800px 500px at 50% 120%, rgba(240,138,93,.15), transparent 60%);
+}
+
+/* Otimização mobile: Momentum scroll e ocultar scrollbars horizontais */
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Safe areas para iPhone e aparelhos com notch / barra de navegação */
+.pb-safe {
+  padding-bottom: max(1.25rem, env(safe-area-inset-bottom));
+}
+.pt-safe {
+  padding-top: max(0.75rem, env(safe-area-inset-top));
+}
+
