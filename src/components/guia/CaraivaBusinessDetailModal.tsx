@@ -84,7 +84,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
       setAddedToDay(false);
       setIsClaimModalOpen(false);
       setClaimSubmitted(false);
-      setDetailTab(initialTab || "visao-geral");
+      setDetailTab(initialTab === "reserva" && !["restaurantes", "bares", "cafes"].includes(business.category) ? "visao-geral" : initialTab || "visao-geral");
       trackEvent("business_view", {
         businessId: business.id,
         businessName: business.name,
@@ -377,8 +377,8 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                     )}
                   </button>
                 )}
-
-                <button
+                {isFood && (
+<button
                   onClick={() => setDetailTab("reserva")}
                   className={`flex-1 min-w-[80px] py-2 px-2 rounded-xl text-xs font-bold transition-all text-center whitespace-nowrap ${
                     detailTab === "reserva"
@@ -388,6 +388,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                 >
                   📅 Reservas
                 </button>
+                )}
               </div>
             );
           })()}
@@ -420,7 +421,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             </div>
           )}
 
-          {detailTab === "reserva" && (
+          {detailTab === "reserva" && ["restaurantes", "bares", "cafes"].includes(business.category) && (
             <div className="pt-2">
               <BusinessBookingTab
                 businessName={business.name}
@@ -719,7 +720,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                   ) : (
                     <>
                       <Calendar className="w-4 h-4 shrink-0 text-slate-950" />
-                      <span className="truncate">Consultar Reservas</span>
+                      <span className="truncate">Ver Detalhes</span>
                     </>
                   )}
                 </button>
