@@ -92,7 +92,10 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
         source: "business_modal",
       });
     }
-  }, [business, initialTab]);
+  // Business records can be rebuilt by callers when their data refreshes. Resetting
+  // the selected tab on object identity changes unmounts the booking/menu form and
+  // discards anything the visitor has typed. The business id is the stable identity.
+  }, [business?.id, initialTab]);
 
   if (!business) return null;
 
