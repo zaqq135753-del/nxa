@@ -7,7 +7,6 @@ import {
   MapPin, 
   User, 
   CheckCircle2, 
-  Phone, 
   Plus, 
   Check, 
   AlertCircle, 
@@ -201,14 +200,13 @@ export default function ServicosBusinessPage() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <a
-                        href="https://wa.me/5573999999999?text=Ol%C3%A1%20Lucas,%20aqui%20%C3%A9%20a%20Luiza%20do%20Espa%C3%A7o%20Bem-Estar%20Cara%C3%ADva.%20Estou%20confirmando%20sua%20massagem%20das%2014h."
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-emerald-300 hover:bg-emerald-500/10"
+                      <button
+                        type="button"
+                        onClick={() => setSimulatedNotice("Atendimento selecionado na agenda interna. A comunicação com o cliente permanece dentro do Caraíva Business.")}
+                        className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-mata-200 hover:bg-white/10"
                       >
-                        <Phone size={14} /> WhatsApp
-                      </a>
+                        <Calendar size={14} /> Ver na agenda
+                      </button>
                       <button
                         onClick={() => alert("Atendimento iniciado! O restante (R$ 90,00) será faturado após a sessão.")}
                         className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-mata-600 px-4 py-2 text-xs font-semibold text-white hover:bg-mata-500 active:scale-95"
@@ -244,14 +242,13 @@ export default function ServicosBusinessPage() {
                     </div>
 
                     <div className="flex items-center gap-2">
-                      <a
-                        href="https://wa.me/5573999999999"
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-emerald-300 hover:bg-emerald-500/10"
+                      <button
+                        type="button"
+                        onClick={() => setSimulatedNotice("Aula selecionada na agenda interna. A comunicação com o cliente permanece dentro do Caraíva Business.")}
+                        className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-medium text-mata-200 hover:bg-white/10"
                       >
-                        <Phone size={14} /> WhatsApp
-                      </a>
+                        <Calendar size={14} /> Ver na agenda
+                      </button>
                       <button
                         onClick={() => alert("Check-in de equipamento registrado!")}
                         className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-areia-200 hover:bg-white/10"
@@ -290,7 +287,7 @@ export default function ServicosBusinessPage() {
                       <div className="flex items-center gap-2">
                         {!b.checkedIn ? (
                           <button
-                            onClick={() => checkIn(b.id)}
+                            onClick={() => checkIn(b.id, { kind: "servico", refIds: services.filter(s => s.establishmentId === estId).map(s => s.id), allowSimulation: true })}
                             className="inline-flex min-h-[44px] items-center gap-1.5 rounded-xl bg-mata-600 px-4 py-2 text-xs font-semibold text-white hover:bg-mata-500"
                           >
                             <Check size={14} /> Concluir Atendimento

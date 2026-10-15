@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>TapTable AI OS - Estudo de Viabilidade Econômica, Precificação e Plano de Expansão</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap');
+
+  @page {
+    size: A4;
+    margin: 14mm 14mm 16mm 14mm;
+    @bottom-right {
+      content: counter(page);
+      font-size: 9pt;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #64748b;
+    }
+  }
+
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #0f172a;
+    background-color: #ffffff;
+    line-height: 1.5;
+    font-size: 10pt;
+  }
+
+  .page-break {
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .avoid-break {
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* Header Cover / Banner */
+  .cover-header {
+    background: linear-gradient(135deg, #090d16 0%, #0f172a 60%, #1e1b4b 100%);
+    color: #ffffff;
+    padding: 28px 24px;
+    border-radius: 12px;
+    margin-bottom: 22px;
+    border-left: 6px solid #10b981;
+  }
+
+  .badge-tag {
+    display: inline-block;
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-bottom: 10px;
+  }
+
+  h1 {
+    font-size: 20pt;
+    font-weight: 800;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    margin-bottom: 6px;
+    color: #ffffff;
+  }
+
+  .subtitle {
+    font-size: 10.5pt;
+    color: #94a3b8;
+    font-weight: 400;
+  }
+
+  .meta-bar {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+    padding-top: 14px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 8.5pt;
+    color: #cbd5e1;
+  }
+
+  /* Section Styling */
+  h2 {
+    font-size: 13pt;
+    font-weight: 800;
+    color: #0f172a;
+    margin-top: 18px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 5px;
+  }
+
+  h2 span.num {
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 9pt;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 6px;
+  }
+
+  h3 {
+    font-size: 11pt;
+    font-weight: 700;
+    color: #1e293b;
+    margin-top: 12px;
+    margin-bottom: 6px;
+  }
+
+  p {
+    margin-bottom: 8px;
+    color: #334155;
+    text-align: justify;
+  }
+
+  /* Tables */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0 16px 0;
+    font-size: 8.5pt;
+  }
+
+  th {
+    background: #0f172a;
+    color: #ffffff;
+    font-weight: 700;
+    text-align: left;
+    padding: 7px 10px;
+    border: 1px solid #1e293b;
+  }
+
+  td {
+    padding: 6.5px 10px;
+    border: 1px solid #e2e8f0;
+    color: #334155;
+  }
+
+  tr:nth-child(even) td {
+    background-color: #f8fafc;
+  }
+
+  .highlight-row td {
+    background-color: #ecfdf5 !important;
+    font-weight: 600;
+    color: #065f46;
+  }
+
+  /* Cards Grid */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 10px 0;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 10px;
+    margin: 10px 0;
+  }
+
+  .card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  }
+
+  .card-header {
+    font-weight: 700;
+    font-size: 9.5pt;
+    color: #0f172a;
+    margin-bottom: 4px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .card-value {
+    font-size: 14pt;
+    font-weight: 800;
+    color: #059669;
+    margin: 4px 0;
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  .card-desc {
+    font-size: 8pt;
+    color: #64748b;
+    line-height: 1.3;
+  }
+
+  /* Callout Box */
+  .callout {
+    background: #f0fdf4;
+    border-left: 4px solid #10b981;
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-size: 8.5pt;
+  }
+
+  .callout-title {
+    font-weight: 700;
+    color: #065f46;
+    margin-bottom: 3px;
+  }
+
+  .callout-body {
+    color: #047857;
+  }
+
+  .callout-accent {
+    background: #f8fafc;
+    border-left: 4px solid #6366f1;
+    padding: 10px 14px;
+    border-radius: 0 8px 8px 0;
+    margin: 12px 0;
+    font-size: 8.5pt;
+  }
+
+  .callout-accent .callout-title {
+    color: #3730a3;
+  }
+
+  .callout-accent .callout-body {
+    color: #4338ca;
+  }
+
+  ul, ol {
+    margin-left: 18px;
+    margin-bottom: 8px;
+    font-size: 8.5pt;
+    color: #334155;
+  }
+
+  li {
+    margin-bottom: 3px;
+  }
+
+  .tag {
+    display: inline-block;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-size: 7.5pt;
+    font-weight: 600;
+  }
+
+  .tag-green { background: #dcfce7; color: #15803d; }
+  .tag-blue { background: #e0f2fe; color: #0369a1; }
+  .tag-amber { background: #fef3c7; color: #b45309; }
+  .tag-purple { background: #f3e8ff; color: #7e22ce; }
+
+  .footer-note {
+    font-size: 7.5pt;
+    color: #94a3b8;
+    text-align: center;
+    margin-top: 18px;
+    padding-top: 8px;
+    border-top: 1px solid #e2e8f0;
+  }
+</style>
+</head>
+<body>
+
+<!-- CAPA / CABEÇALHO EXECUTIVO -->
+<div class="cover-header">
+  <div class="badge-tag">Documento Confidencial de Estratégia & Expansão • 2026 / 2027</div>
+  <h1>TAPTABLE AI OS: PLANO DE NEGÓCIOS & EXPANSÃO NACIONAL</h1>
+  <div class="subtitle">Estudo Metrificado de Mercado, Benchmark Competitivo, Modelagem Financeira e Estrutura Organizacional</div>
+  <div class="meta-bar">
+    <div><strong>Origem Sandbox:</strong> Lagoa Santa, MG</div>
+    <div><strong>Expansão Primária:</strong> Belo Horizonte (Lourdes / Savassi)</div>
+    <div><strong>Mercado:</strong> Food Service & Hospitality Tech</div>
+    <div><strong>Data:</strong> Outubro / 2026</div>
+  </div>
+</div>
+
+<!-- SEÇÃO 1: BENCHMARK NACIONAL -->
+<h2><span class="num">01</span> Panorama Competitivo & Posicionamento Nacional</h2>
+<p>
+O mercado brasileiro de alimentação fora do lar movimenta anualmente mais de <strong>R$ 240 bilhões</strong> (Abrasel). Apesar da alta densidade de estabelecimentos, a experiência na mesa física permanece analógica e marcada por gargalos operacionais crônicos: demora no atendimento, garçons sobrecarregados e filas de até 25 minutos para fechar a conta na maquininha.
+</p>
+
+<table class="avoid-break">
+  <thead>
+    <tr>
+      <th style="width: 18%;">Player</th>
+      <th style="width: 25%;">Modelo de Cobrança</th>
+      <th style="width: 27%;">Proposta de Valor</th>
+      <th style="width: 30%;">Vulnerabilidades Críticas</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Goomer na Mesa</strong></td>
+      <td>R$ 199 a R$ 499/mês + Setup R$ 500</td>
+      <td>Cardápio QR Code adesivado em mesa para auto-atendimento.</td>
+      <td>Adesivos de papel deterioram; sem split bill avançado; não trava pagamento duplo de itens; UX fria.</td>
+    </tr>
+    <tr>
+      <td><strong>Anota AI / Saipos</strong></td>
+      <td>R$ 220 a R$ 650/mês</td>
+      <td>Robôs de WhatsApp e gestão de pedidos voltados a Delivery.</td>
+      <td>Totalmente ineficazes para salão/mesa física. O salão vira uma extensão desajeitada do delivery.</td>
+    </tr>
+    <tr>
+      <td><strong>Totvs Chef / Linx Degust</strong></td>
+      <td>R$ 2.000 a R$ 6.000 (setup) + R$ 600 a R$ 1.800/mês</td>
+      <td>ERP corporativo tradicional para grandes redes e franquias.</td>
+      <td>Sistemas pesados dos anos 2000, exigem computadores dedicados de caixa, sem experiência digital para o cliente.</td>
+    </tr>
+    <tr>
+      <td><strong>Zig (ZigPay)</strong></td>
+      <td>3% a 7% sobre todo o faturamento ou aluguel de terminais</td>
+      <td>Cashless e fichas digitais para grandes eventos e baladas.</td>
+      <td>Inadequado para restaurantes e gastrobares de mesa, pois impõe cartão RFID físico que gera fila na entrada e saída.</td>
+    </tr>
+    <tr>
+      <td><strong>Sunday / Toast POS</strong> <em>(EUA/Europa)</em></td>
+      <td>US$ 60 a US$ 150/mês + 1% de transação</td>
+      <td>NFC na mesa, pagamento em 10 segundos, gorjeta rápida. Sunday avaliada em <strong>US$ 140M</strong>.</td>
+      <td><strong>Não atuam no Brasil</strong> e desconhecem as peculiaridades do Pix, NFC-e SEFAZ e garçom CLT/10%.</td>
+    </tr>
+    <tr class="highlight-row">
+      <td><strong>TAPTABLE AI OS</strong><br><span class="tag tag-green">Nosso Produto</span></td>
+      <td><strong>R$ 497 a R$ 1.200 (Setup)</strong><br><strong>+ R$ 389 a R$ 980/mês (SaaS)</strong><br>+ 0,79% sobre Pix da mesa</td>
+      <td><strong>Hardware de Luxo Black Piano NFC + PWA sem download + Split Bill + Garçom com Propósito + DRE/CMV em tempo real.</strong></td>
+      <td><strong>Vantagem Absoluta:</strong> Une hardware estético que agrega valor ao salão, elimina 100% da fila de fechamento de conta e entrega dados fiscais em tempo real.</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- SEÇÃO 2: PRECIFICAÇÃO E PLANOS -->
+<h2><span class="num">02</span> Arquitetura de Planos e Fontes de Monetização</h2>
+
+<div class="grid-3 avoid-break">
+  <div class="card">
+    <div class="card-header">
+      <span>Plano Salão Ágil</span>
+      <span class="tag tag-blue">Até 15 Mesas</span>
+    </div>
+    <div class="card-value">R$ 389<span style="font-size: 8pt; font-weight: normal; color: #64748b;">/mês</span></div>
+    <div class="card-desc">
+      • Comanda Viva PWA Instantânea<br>
+      • KDS Cozinha & Bar com SLA<br>
+      • Chamado de Garçom com propósito<br>
+      • Checkout Pix Dinâmico na mesa<br>
+      <strong>Setup: R$ 890 (Kit 15 Placas)</strong>
+    </div>
+  </div>
+
+  <div class="card" style="border: 2px solid #10b981; background: #fafdfb;">
+    <div class="card-header">
+      <span>Gastrobar Pro</span>
+      <span class="tag tag-green">O Mais Vendido</span>
+    </div>
+    <div class="card-value">R$ 590<span style="font-size: 8pt; font-weight: normal; color: #64748b;">/mês</span></div>
+    <div class="card-desc">
+      • Tudo do Ágil + <strong>Split Bill Avançado</strong><br>
+      • Pódio Garçons & Rateio Regra 10%<br>
+      • Trava Anti-Duplicidade de Pagamento<br>
+      • Gestão de Estoque & Alerta CMV<br>
+      <strong>Setup: R$ 1.190 (Kit 25 Placas)</strong>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header">
+      <span>Enterprise 360°</span>
+      <span class="tag tag-purple">Redes / Grandes</span>
+    </div>
+    <div class="card-value">R$ 980<span style="font-size: 8pt; font-weight: normal; color: #64748b;">/mês</span></div>
+    <div class="card-desc">
+      • Tudo do Pro + <strong>DRE em Tempo Real</strong><br>
+      • Sincronização Fiscal SEFAZ NFC-e<br>
+      • Sommelier IA com Upsell automático<br>
+      • Relatórios Executivos & Suporte VIP<br>
+      <strong>Setup: R$ 1.800 (Kit 40+ Placas)</strong>
+    </div>
+  </div>
+</div>
+
+<div class="callout avoid-break">
+  <div class="callout-title">💰 O Motor de Lucro Oculto: Alavanca Fintech de Take-Rate (0,79% sobre Pix)</div>
+  <div class="callout-body">
+    Um gastrobar médio em BH fatura R$ 140.000/mês. Se R$ 80.000 forem transacionados direto na mesa pelo TapTable via Pix a uma taxa de 0,79%, o estabelecimento economiza quase 65% em comparação com as taxas de cartão das maquininhas tradicionais (2% a 3,5%), e gera para a nossa startup <strong>R$ 632,00 extras todos os meses</strong>. Somado ao SaaS (R$ 590), o <strong>faturamento total por bar atinge R$ 1.222,00/mês</strong>.
+  </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- SEÇÃO 3: METRIFICAÇÃO DE RECEITA POR ESCALA (X CLIENTES) -->
+<h2><span class="num">03</span> Projeções de Escala e Métricas Financeiras (X Clientes)</h2>
+<p>
+Simulação considerando um <strong>Ticket Médio Mensal de R$ 680</strong> (R$ 540 de assinatura SaaS ponderada + R$ 140 de take-rate transacional conservador) e <strong>Setup Médio de R$ 990</strong> (Kit com placas de acrílico gravadas a laser).
+</p>
+
+<table class="avoid-break">
+  <thead>
+    <tr>
+      <th>Base de Clientes (X)</th>
+      <th>MRR (Mensal)</th>
+      <th>ARR (Anual)</th>
+      <th>Receita de Setup (Acumulada)</th>
+      <th>Valuation Estimado (Multiples 6x-8x ARR)</th>
+      <th>Estágio & Geografia Alvo</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>5 Bares</strong></td>
+      <td>R$ 3.400 / mês</td>
+      <td>R$ 40.800 / ano</td>
+      <td>R$ 4.950</td>
+      <td>R$ 250.000 (Pré-seed)</td>
+      <td>Piloto Orla da Lagoa Central (Lagoa Santa MG)</td>
+    </tr>
+    <tr>
+      <td><strong>15 Bares</strong></td>
+      <td>R$ 10.200 / mês</td>
+      <td>R$ 122.400 / ano</td>
+      <td>R$ 14.850</td>
+      <td>R$ 800.000 a R$ 1,0 M</td>
+      <td>Domínio Lagoa Santa + Vetor Norte / Vespasiano</td>
+    </tr>
+    <tr>
+      <td><strong>50 Bares</strong></td>
+      <td>R$ 34.000 / mês</td>
+      <td>R$ 408.000 / ano</td>
+      <td>R$ 49.500</td>
+      <td>R$ 2,5 M a R$ 3,2 M</td>
+      <td>Entrada agressiva em BH: Lourdes e Savassi</td>
+    </tr>
+    <tr class="highlight-row">
+      <td><strong>100 Bares</strong></td>
+      <td>R$ 68.000 / mês</td>
+      <td>R$ 816.000 / ano</td>
+      <td>R$ 99.000</td>
+      <td><strong>R$ 5,0 M a R$ 6,5 M</strong></td>
+      <td>Consolidação dos principais gastrobares da Grande BH</td>
+    </tr>
+    <tr>
+      <td><strong>250 Bares</strong></td>
+      <td>R$ 170.000 / mês</td>
+      <td>R$ 2.040.000 / ano</td>
+      <td>R$ 247.500</td>
+      <td>R$ 12,0 M a R$ 16,0 M</td>
+      <td>Expansão Regional: BH + Nova Lima + Cidades Históricas</td>
+    </tr>
+    <tr>
+      <td><strong>500 Bares</strong></td>
+      <td>R$ 340.000 / mês</td>
+      <td>R$ 4.080.000 / ano</td>
+      <td>R$ 495.000</td>
+      <td><strong>R$ 24,0 M a R$ 32,0 M</strong></td>
+      <td>Scale-up Nacional (SP Capital, RJ e Litoral Turístico)</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- SEÇÃO 4: ESTRUTURA ORGANIZACIONAL E FOLHA SALARIAL -->
+<h2><span class="num">04</span> Estrutura de Equipe, Cargos e Salários por Fase</h2>
+<p>
+Para manter a operação ágil, enxuta e altamente lucrativa, a contratação deve acompanhar os marcos de clientes (Milestones) evitando o aumento prematuro de custos fixos:
+</p>
+
+<div class="avoid-break">
+  <h3>Fase 1: Fundação & Piloto (0 a 15 Bares - Lagoa Santa)</h3>
+  <p>Operação liderada pelos fundadores com apoio pontual terceirizado.</p>
+  <table>
+    <thead>
+      <tr>
+        <th>Função</th>
+        <th>Modelo</th>
+        <th>Salário / Remuneração</th>
+        <th>Responsabilidades Principais</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>CEO / Vendas (Fundador)</strong></td>
+        <td>Pró-labore</td>
+        <td>R$ 3.000 a R$ 4.500</td>
+        <td>Visitas presenciais aos donos de bar, fechamento de contratos e relacionamento.</td>
+      </tr>
+      <tr>
+        <td><strong>CTO / Produto (Fundador/Tech Lead)</strong></td>
+        <td>Pró-labore</td>
+        <td>R$ 3.500 a R$ 5.000</td>
+        <td>Manutenção do código, melhorias no PWA, estabilidade e servidor.</td>
+      </tr>
+      <tr>
+        <td><strong>Técnico de Instalação & Setup (Freela)</strong></td>
+        <td>Por demanda</td>
+        <td>R$ 150 por implantação</td>
+        <td>Fixação das placas na mesa, testes de leitura NFC e configuração da rede Wi-Fi.</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><strong>Custo Fixo Mensal Estimado:</strong> ~R$ 7.000 a R$ 9.500/mês.</p>
+</div>
+
+<div class="avoid-break" style="margin-top: 10px;">
+  <h3>Fase 2: Tração & Entrada em BH (16 a 50 Bares - R$ 34k MRR)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Cargo</th>
+        <th>Quantidade</th>
+        <th>Salário Base (CLT/PJ)</th>
+        <th>Comissão / Variável</th>
+        <th>Custo Total Mensal</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Closer Comercial (Inside/Field Sales)</strong></td>
+        <td>1 profissional</td>
+        <td>R$ 2.800 (Fixo CLT)</td>
+        <td>R$ 250 por contrato fechado</td>
+        <td>~R$ 4.500 a R$ 5.300</td>
+      </tr>
+      <tr>
+        <td><strong>Customer Success & Suporte (Turno Noturno)</strong></td>
+        <td>1 profissional</td>
+        <td>R$ 2.400 (CLT) + Adic. Noturno</td>
+        <td>Bônus por retenção (Churn < 2%)</td>
+        <td>~R$ 3.200 a R$ 3.600</td>
+      </tr>
+      <tr>
+        <td><strong>Desenvolvedor Fullstack Pleno</strong></td>
+        <td>1 profissional</td>
+        <td>R$ 6.000 (PJ)</td>
+        <td>Stock Options (0.5% vest)</td>
+        <td>R$ 6.000</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><strong>Custo de Folha Mensal da Fase 2:</strong> ~R$ 14.000 a R$ 16.000/mês (Totalmente coberta pelo MRR de R$ 34k).</p>
+</div>
+
+<div class="avoid-break" style="margin-top: 10px;">
+  <h3>Fase 3: Consolidação & Escala (50 a 100+ Bares - R$ 68k+ MRR)</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Cargo</th>
+        <th>Quantidade</th>
+        <th>Faixa Salarial</th>
+        <th>Modelo</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Gerente de Vendas (Head of Sales)</strong></td>
+        <td>1</td>
+        <td>R$ 5.500 + 2% sobre faturamento de novos setups</td>
+        <td>CLT / PJ</td>
+      </tr>
+      <tr>
+        <td><strong>Executivos de Contas (SDR + Closer)</strong></td>
+        <td>2</td>
+        <td>R$ 2.600 fixo + R$ 200 por contrato</td>
+        <td>CLT</td>
+      </tr>
+      <tr>
+        <td><strong>Analistas de CS & Suporte Operacional (Escala 12x36)</strong></td>
+        <td>2</td>
+        <td>R$ 2.500 + adicional noturno</td>
+        <td>CLT</td>
+      </tr>
+      <tr>
+        <td><strong>Engenheiro de Software Sênior (Backend/Fintech)</strong></td>
+        <td>1</td>
+        <td>R$ 10.000 a R$ 12.000</td>
+        <td>PJ + Equity</td>
+      </tr>
+      <tr>
+        <td><strong>Designer de Produto & Hardware (UI/UX)</strong></td>
+        <td>1</td>
+        <td>R$ 4.500 a R$ 5.500</td>
+        <td>PJ</td>
+      </tr>
+    </tbody>
+  </table>
+  <p><strong>Custo de Folha Mensal da Fase 3:</strong> ~R$ 32.000 a R$ 38.000/mês. <strong>Margem Líquida da Operação: > 45%.</strong></p>
+</div>
+
+<div class="page-break"></div>
+
+<!-- SEÇÃO 5: ROTEIRO DE EVOLUÇÃO E GTM (LAGOA SANTA -> BH -> BRASIL) -->
+<h2><span class="num">05</span> Estratégia de Entrada no Mercado (Go-To-Market)</h2>
+
+<div class="callout-accent avoid-break">
+  <div class="callout-title">📍 Etapa 1: A "Bolha de Validação" em Lagoa Santa (Meses 1 a 3)</div>
+  <div class="callout-body">
+    • <strong>Alvos Imediatos:</strong> 4 a 6 bares na orla da Lagoa Central com alto movimento de chopp e porções.<br>
+    • <strong>Oferta Irrecusável de Lançamento:</strong> Setup a preço de custo (R$ 497) e primeiro mês com garantia total de satisfação: <em>"Se o TapTable não liberar suas mesas 15 minutos mais rápido e não economizar tempo de garçom, retiramos o sistema e devolvemos seu dinheiro"</em>.<br>
+    • <strong>Resultado Esperado:</strong> Primeiros vídeos de clientes encostando o celular na placa preta, feedback de garçons elogiando o fim do estresse de fechar conta e primeiros R$ 3.500 de MRR.
+  </div>
+</div>
+
+<div class="callout-accent avoid-break" style="border-left-color: #0ea5e9;">
+  <div class="callout-title" style="color: #0369a1;">🏙️ Etapa 2: A Invasão dos Polos de Belo Horizonte (Meses 4 a 9)</div>
+  <div class="callout-body" style="color: #0284c7;">
+    • <strong>Territórios Primários:</strong> Lourdes (bares de vinho e coquetelaria), Savassi (público jovem universitário e executivo) e Rua Alberto Cintra / Santa Tereza (volume brutal de chopp e mesas de rua).<br>
+    • <strong>Abordagem Comercial:</strong> Venda baseada em dados reais coletados em Lagoa Santa: <em>"Apresentamos um caso real com métricas comprovadas de redução de 18 min para 45s no fechamento de conta e aumento de 12% no ticket médio através do Upsell da comanda viva"</em>.<br>
+    • <strong>Meta:</strong> Atingir 50 estabelecimentos ativos (R$ 34.000 MRR) e ponto de equilíbrio financeiro (Breakeven).
+  </div>
+</div>
+
+<div class="callout-accent avoid-break" style="border-left-color: #10b981;">
+  <div class="callout-title" style="color: #065f46;">🇧🇷 Etapa 3: Sinergia Caraíva.digital & Escala Nacional (Mês 10 em diante)</div>
+  <div class="callout-body" style="color: #047857;">
+    • <strong>Hospitality & Turismo:</strong> O módulo de Caraíva funciona como chancela de prestígio e vitrine para beach clubs de Trancoso, Arraial d'Ajuda, Ilhabela e Florianópolis.<br>
+    • <strong>Modelo de Franquia / Parceiros Regionais:</strong> Concessão de representação comercial para profissionais locais de automação comercial e revendas de PDV.<br>
+    • <strong>Alvo de Aquisição Estratégica:</strong> Consolidação de 250 a 500 estabelecimentos, preparando a empresa para rodada de Series A ou M&A (aquisição por Stone, Totvs ou iFood).
+  </div>
+</div>
+
+<div class="footer-note">
+  TapTable AI OS • Documento elaborado para planejamento estratégico e validação econômica • Belo Horizonte / Lagoa Santa • 2026
+</div>
+
+</body>
+</html>

@@ -86,3 +86,7 @@ body {
   padding-top: max(0.75rem, env(safe-area-inset-top));
 }
 
+.safe-top {
+  padding-top: env(safe-area-inset-top);
+}
+

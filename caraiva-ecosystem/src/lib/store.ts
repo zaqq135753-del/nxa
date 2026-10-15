@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState, useCallback } from "react";
 import type { Split } from "./pricing";
+import { canCheckIn, bookedSeats } from "./businessRules";
 import { 
   products as initialProducts, 
   rooms as initialRooms, 
@@ -46,6 +47,7 @@ export interface Booking {
 }
 
 interface State { 
+  version: 3;
   orders: Order[]; 
   bookings: Booking[];
   products: Product[];
@@ -58,6 +60,7 @@ interface State {
 const KEY = "caraiva-demo-v2";
 
 const defaultState: State = { 
+  version: 3,
   orders: [], 
   bookings: [],
   products: initialProducts,
@@ -74,13 +77,15 @@ const read = (): State => {
     if (!raw) return defaultState;
     const parsed = JSON.parse(raw) as Partial<State>;
     return {
+      version: 3,
       orders: parsed.orders ?? defaultState.orders,
       bookings: parsed.bookings ?? defaultState.bookings,
-      products: parsed.products?.length ? parsed.products : defaultState.products,
-      rooms: parsed.rooms?.length ? parsed.rooms : defaultState.rooms,
-      tours: parsed.tours?.length ? parsed.tours : defaultState.tours,
-      services: parsed.services?.length ? parsed.services : defaultState.services,
-      retailItems: parsed.retailItems?.length ? parsed.retailItems : defaultState.retailItems,
+      products: parsed.products ?? defaultState.products,
+      rooms: parsed.rooms ?? defaultState.rooms,
+      tours: (parsed.tours ?? defaultState.tours).map(t => parsed.version === 3 ? t :
+        { ...t, booked: Math.max(0, t.booked - bookedSeats(t.id, parsed.bookings ?? [])) }),
+      services: parsed.services ?? defaultState.services,
+      retailItems: parsed.retailItems ?? defaultState.retailItems,
     };
   } catch { 
     return defaultState; 
@@ -113,11 +118,12 @@ export function useStore() {
 
   // --- PEDIDOS & RESERVAS ---
   const addOrder = useCallback((o: Omit<Order, "id" | "createdAt" | "status">) => {
-    const order: Order = { ...o, id: `#${Math.floor(100 + Math.random() * 900)}`, createdAt: Date.now(), status: "novo" };
+    const order: Order = { ...o, id: `CV-${crypto.randomUUID()}`, createdAt: Date.now(), status: "novo" };
     const s = read(); 
 
     // Baixa automática de estoque
     const updatedProducts = s.products.map((prod) => {
+      if (prod.establishmentId !== o.establishmentId) return prod;
       const item = o.items.find((i) => i.name.toLowerCase() === prod.name.toLowerCase());
       if (!item || prod.stock === undefined) return prod;
       const nextStock = Math.max(0, prod.stock - item.qty);
@@ -172,27 +178,20 @@ export function useStore() {
   }, []);
 
   const addBooking = useCallback((b: Omit<Booking, "id" | "createdAt">) => {
-    const booking: Booking = { ...b, id: `CD-${Math.random().toString(36).slice(2, 7).toUpperCase()}`, createdAt: Date.now() };
+    const booking: Booking = { ...b, id: `CD-${crypto.randomUUID().toUpperCase()}`, createdAt: Date.now() };
     const s = read(); 
-
-    let updatedTours = s.tours;
-    if (b.kind === "passeio" && b.seats) {
-      updatedTours = s.tours.map((t) =>
-        t.id === b.refId ? { ...t, booked: (t.booked || 0) + (b.seats ?? 0) } : t
-      );
-    }
 
     write({ 
       ...s, 
       bookings: [booking, ...s.bookings],
-      tours: updatedTours 
     }); 
     return booking;
   }, []);
 
-  const checkIn = useCallback((id: string) => {
+  const checkIn = useCallback((id: string, scope: { kind: BookingKind; refIds: readonly string[]; allowSimulation?: boolean }) => {
     const s = read(); 
     const found = s.bookings.find((b) => b.id === id.trim().toUpperCase());
+    if (!found || !canCheckIn(found, scope)) return null;
     if (found) {
       write({ ...s, bookings: s.bookings.map((b) => (b.id === found.id ? { ...b, checkedIn: true } : b)) });
     }

@@ -24,23 +24,16 @@ import { PlaqueStrategyHub } from "@/components/PlaqueStrategyHub";
 export default function LojaBusinessPage() {
   const estId = "loja-pataxo";
   const est = byId(establishments, estId) || establishments[0];
-  const { orders } = useStore();
+  const { orders, retailItems: inventoryItems, updateRetailItem } = useStore();
   const [tab, setTab] = useState<"estoque" | "encomendas" | "financeiro" | "placa">("estoque");
-  const [items, setItems] = useState<RetailItem[]>(retailItems);
+  const items = inventoryItems.filter(item => item.establishmentId === estId);
   const [filterCategory, setFilterCategory] = useState<string>("all");
   const [notice, setNotice] = useState<string | null>(null);
 
   // Controle de estoque rápido (+ / -)
   const adjustStock = (id: string, delta: number) => {
-    setItems((prev) =>
-      prev.map((item) => {
-        if (item.id === id) {
-          const nextStock = Math.max(0, item.stock + delta);
-          return { ...item, stock: nextStock };
-        }
-        return item;
-      })
-    );
+    const item = items.find(item => item.id === id);
+    if (item) updateRetailItem(id, { stock: Math.max(0, item.stock + delta) });
   };
 
   const filteredItems = filterCategory === "all" ? items : items.filter((i) => i.category === filterCategory);

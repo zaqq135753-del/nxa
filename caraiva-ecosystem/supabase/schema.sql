@@ -1,4 +1,6 @@
 -- Caraíva Digital · schema inicial (Supabase/Postgres)
+-- LEGADO: proposta anterior. O projeto crvi.dg usa as migrações cd_ de migrations/.
+-- Não aplicar este arquivo sobre o projeto conectado.
 -- Espelha src/lib/data.ts e src/lib/store.ts. Valores monetários em centavos.
 
 create type niche as enum ('delivery', 'hospitality', 'tours', 'services', 'retail');

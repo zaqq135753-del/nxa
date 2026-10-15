@@ -355,7 +355,7 @@ export default function EntregadorAppPage() {
               <CheckCircle2 size={36} className="mx-auto text-emerald-400 mb-2" />
               <h3 className="text-sm font-bold text-white">Nenhuma corrida pendente no momento</h3>
               <p className="text-xs text-slate-400 mt-1">
-                Você está online na areia. Quando uma pousada ou turista pedir no Caraíva Digital, seu celular vai apitar!
+                Esta tela demonstra as corridas. O envio de pedidos do domínio público ao painel do entregador será ativado junto da integração de produção.
               </p>
             </div>
           )}

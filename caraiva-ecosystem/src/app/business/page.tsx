@@ -22,7 +22,6 @@ import { useStore } from "@/lib/store";
 import { Card3D } from "@/components/ui/Card3D";
 import { SpotlightCard } from "@/components/ui/SpotlightCard";
 import { NumberTicker } from "@/components/ui/NumberTicker";
-import { ShimmerButton } from "@/components/ui/ShimmerButton";
 import { TextShimmer } from "@/components/ui/TextShimmer";
 
 export default function BusinessHubPage() {
@@ -36,11 +35,11 @@ export default function BusinessHubPage() {
 
   // Consolidação de métricas em tempo real
   const totalStockItems = products.reduce((acc, p) => acc + (p.stock || 0), 0);
-  const outOfStockCount = products.filter((p) => (p.stock || 0) === 0).length;
+  const outOfStockCount = products.filter((p) => p.stock === 0).length;
   const availableRooms = rooms.filter((r) => r.available !== false).length;
   const lastMinuteRooms = rooms.filter((r) => Boolean(r.lastMinute)).length;
   const pendingOrders = orders.filter((o) => o.status === "novo" || o.status === "preparando").length;
-  const totalRevenue = orders.reduce((acc, o) => acc + (o.split?.gross || 0), 0) + 
+  const totalRevenue = orders.filter(o => o.status !== "recusado").reduce((acc, o) => acc + (o.split?.merchant || 0), 0) +
                        bookings.reduce((acc, b) => acc + (b.split?.merchant || 0), 0);
 
   const businessNiches = [
@@ -60,7 +59,7 @@ export default function BusinessHubPage() {
       subtitle: "Cardápio Ao Vivo, KDS & Pedidos",
       href: "/business/delivery",
       icon: UtensilsCrossed,
-      badge: `${products.filter(p => p.establishmentId === "rest-silva").length} itens no menu`,
+      badge: `${products.filter(p => p.establishmentId === "rest-rio").length} itens no menu`,
       color: "from-coral-500/20 to-coral-900/30",
       accent: "text-coral-400",
       border: "border-coral-500/30",
@@ -135,9 +134,9 @@ export default function BusinessHubPage() {
   ];
 
   return (
-    <div className="space-y-8 animate-fade-in">
+    <div className="min-w-0 space-y-5 animate-fade-in sm:space-y-8">
       {/* Hero Header B2B */}
-      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-6">
+      <header className="flex min-w-0 flex-col items-start justify-between gap-3 border-b border-white/10 pb-4 sm:flex-row sm:items-end sm:gap-4 sm:pb-6">
         <div>
           <div className="flex items-center gap-2">
             <span className="chip border-mata-400/40 text-mata-400 font-bold text-[11px] uppercase tracking-wider">
@@ -148,25 +147,17 @@ export default function BusinessHubPage() {
           <h1 className="mt-2 font-display text-3xl sm:text-4xl text-areia-50">
             Caraíva Business OS
           </h1>
-          <p className="text-sm text-areia-300 mt-1 max-w-2xl">
-            Gestão centralizada e reativa de estoque, quartos, vagas e faturamento com sincronização instantânea para os turistas no <strong>Caraíva Digital</strong> e <strong>Na Areia Delivery</strong>.
+          <p className="mt-1 max-w-2xl text-sm text-areia-300">
+            Organize pedidos, estoque, hospedagens, passeios e serviços recebidos pela vitrine pública do Caraíva Digital.
           </p>
-        </div>
-
-        <div className="flex items-center gap-3">
-          <Link href="/turista">
-            <ShimmerButton className="text-xs">
-              Alternar para App do Turista →
-            </ShimmerButton>
-          </Link>
         </div>
       </header>
 
       {/* KPI Cards Reativos com NumberTicker e SpotlightCard */}
-      <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <SpotlightCard className="p-4" spotlightColor="rgba(52, 211, 153, 0.15)">
+      <section className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:grid-cols-4">
+        <SpotlightCard className="min-w-0 p-3 sm:p-4" spotlightColor="rgba(52, 211, 153, 0.15)">
           <div className="flex items-center justify-between">
-            <p className="text-xs font-semibold uppercase tracking-wider text-areia-300">Valores ilustrativos · Pix não conectado</p>
+            <p className="text-[10px] font-semibold uppercase tracking-wide text-areia-300 sm:text-xs sm:tracking-wider">Valores ilustrativos</p>
             <div className="h-8 w-8 rounded-xl bg-mata-500/10 grid place-items-center text-mata-400">
               <DollarSign size={16} />
             </div>
@@ -175,11 +166,11 @@ export default function BusinessHubPage() {
             <NumberTicker value={Math.round(totalRevenue / 100)} formatter={(v) => `R$ ${v.toLocaleString("pt-BR")}`} />
           </p>
           <p className="mt-1 text-[11px] text-mata-400 flex items-center gap-1">
-            <TrendingUp size={12} /> Repasse D+0 direto na conta jurídica
+            <TrendingUp size={12} /> Pagamentos ainda não conectados
           </p>
         </SpotlightCard>
 
-        <SpotlightCard className="p-4" spotlightColor="rgba(244, 114, 182, 0.15)">
+        <SpotlightCard className="min-w-0 p-3 sm:p-4" spotlightColor="rgba(244, 114, 182, 0.15)">
           <div className="flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-wider text-areia-300">Produtos em Estoque</p>
             <div className="h-8 w-8 rounded-xl bg-coral-500/10 grid place-items-center text-coral-400">
@@ -202,7 +193,7 @@ export default function BusinessHubPage() {
           </p>
         </SpotlightCard>
 
-        <SpotlightCard className="p-4" spotlightColor="rgba(56, 189, 248, 0.15)">
+        <SpotlightCard className="min-w-0 p-3 sm:p-4" spotlightColor="rgba(56, 189, 248, 0.15)">
           <div className="flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-wider text-areia-300">Quartos Disponíveis</p>
             <div className="h-8 w-8 rounded-xl bg-rio-500/10 grid place-items-center text-rio-400">
@@ -217,7 +208,7 @@ export default function BusinessHubPage() {
           </p>
         </SpotlightCard>
 
-        <SpotlightCard className="p-4" spotlightColor="rgba(251, 191, 36, 0.15)">
+        <SpotlightCard className="min-w-0 p-3 sm:p-4" spotlightColor="rgba(251, 191, 36, 0.15)">
           <div className="flex items-center justify-between">
             <p className="text-xs font-semibold uppercase tracking-wider text-areia-300">Pedidos & Vagas</p>
             <div className="h-8 w-8 rounded-xl bg-amber-500/10 grid place-items-center text-amber-400">
@@ -234,36 +225,36 @@ export default function BusinessHubPage() {
       </section>
 
       {/* Seletor de Módulos Operacionais com Efeito 3D Card */}
-      <section className="space-y-4">
+      <section className="min-w-0 space-y-3 sm:space-y-4">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="font-display text-xl text-areia-50">Verticais de Negócio de Caraíva</h2>
-            <p className="text-xs text-areia-300">Selecione o segmento para gerenciar estoque, pedidos, quartos e emitir placas físicas QR/NFC</p>
+            <p className="max-w-2xl text-xs text-areia-300">Acesse o perfil operacional de cada tipo de negócio para acompanhar as atividades que chegam pelo guia público.</p>
           </div>
           <span className="text-xs text-mata-400 font-semibold hidden sm:inline">
-            8 módulos totalmente ativos
+            8 áreas demonstrativas
           </span>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid min-w-0 gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
           {businessNiches.map((niche) => {
             const Icon = niche.icon;
             return (
               <Card3D key={niche.href} depth={14}>
                 <Link
                   href={niche.href}
-                  className={`block h-full card p-5 bg-gradient-to-br ${niche.color} border ${niche.border} hover:border-areia-100/40 transition group`}
+                  className={`block min-h-full min-w-0 rounded-2xl border bg-gradient-to-br p-4 transition group hover:border-areia-100/40 active:scale-[.99] sm:p-5 ${niche.color} ${niche.border}`}
                 >
                   <div className="flex items-center justify-between">
                     <div className={`p-2.5 rounded-xl bg-black/40 ring-1 ring-white/10 ${niche.accent}`}>
                       <Icon size={20} />
                     </div>
-                    <span className="chip text-[10px] bg-black/40 border-white/10 text-areia-200">
+                    <span className="max-w-[70%] truncate rounded-full border border-white/10 bg-black/40 px-2 py-1 text-right text-[10px] text-areia-200 sm:max-w-none">
                       {niche.badge}
                     </span>
                   </div>
 
-                  <h3 className="mt-4 font-display text-lg font-bold text-areia-50 group-hover:text-areia-100 transition">
+                  <h3 className="mt-3 font-display text-base font-bold text-areia-50 transition group-hover:text-areia-100 sm:mt-4 sm:text-lg">
                     {niche.title}
                   </h3>
                   <p className="text-xs text-areia-300 mt-1 line-clamp-2">
@@ -284,30 +275,26 @@ export default function BusinessHubPage() {
       </section>
 
       {/* Destaque da Estratégia de Placas Físicas & Sincronização */}
-      <section className="card p-6 bg-gradient-to-r from-rio-950/40 via-noite-900 to-mata-950/40 border-rio-500/30">
-        <div className="flex flex-wrap items-center justify-between gap-6">
-          <div className="space-y-2 max-w-2xl">
+      <section className="card border-rio-500/30 bg-gradient-to-r from-rio-950/40 via-noite-900 to-mata-950/40 p-4 sm:p-6">
+        <div className="flex flex-col items-start justify-between gap-4 sm:flex-row sm:items-center sm:gap-6">
+          <div className="max-w-2xl space-y-2">
             <span className="chip border-rio-400/30 text-rio-300 font-bold text-[10px]">
               TECNOLOGIA DE PONTA A PONTA
             </span>
             <h3 className="font-display text-2xl text-areia-50">
-              <TextShimmer>Como Dono de Negócio e Turista se conectam em tempo real?</TextShimmer>
+              <TextShimmer>Da vitrine pública à operação do negócio</TextShimmer>
             </h3>
             <p className="text-xs text-areia-300 leading-relaxed">
-              Nesta demonstração, você percorre os fluxos de gestão e de turista no mesmo navegador. Para compartilhar estoque, reservas e status entre pessoas, falta conectar banco, autenticação e provedor de pagamento.
+              O painel representa a operação que recebe pedidos e reservas originados em <strong>caraiva.digital</strong>. A sincronização entre usuários depende da conexão do banco de dados e dos serviços de produção.
             </p>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-3">
-            <Link href="/turista/delivery">
-              <button className="btn-primary min-h-[44px] text-xs px-4">
-                Testar Pedido no Na Areia
-              </button>
-            </Link>
-            <Link href="/tag/flor-q04">
-              <button className="btn-ghost min-h-[44px] text-xs px-4 border-white/10">
-                Ver Placa Quarto #04
-              </button>
+          <div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row sm:gap-3">
+            <a href="https://caraiva.digital" target="_blank" rel="noreferrer" className="btn-primary w-full px-4 text-xs sm:w-auto">
+              Abrir vitrine pública <ArrowRight size={14} />
+            </a>
+            <Link href="/business/delivery" className="btn-ghost w-full border-white/10 px-4 text-xs sm:w-auto">
+              Ver pedidos
             </Link>
           </div>
         </div>

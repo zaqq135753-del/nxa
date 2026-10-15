@@ -35,7 +35,7 @@ export default function PasseiosOps() {
   const myTours = tours.filter((t) => t.establishmentId === opId);
 
   function validate() {
-    const b = checkIn(code);
+    const b = checkIn(code, { kind: "passeio", refIds: myTours.map(t => t.id), allowSimulation: true });
     setResult(
       b && b.kind === "passeio" && myTours.some((t) => t.id === b.refId)
         ? { ok: true, text: `✓ Código de demonstração ${b.id} válido. Nenhum pagamento Pix foi verificado.` }

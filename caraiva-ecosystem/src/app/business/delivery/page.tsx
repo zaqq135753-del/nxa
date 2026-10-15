@@ -211,10 +211,10 @@ export default function DeliveryDashboard() {
       {activeTab === "operacao" && (
         <div className="space-y-6 animate-rise">
           {!mine.length && (
-            <div className="card p-4 text-xs text-areia-300 flex items-center justify-between gap-4 border-coral-400/30 bg-coral-500/[0.03]">
-              <p>💡 Abra <strong>/turista/delivery</strong> em outra aba ou no celular e faça um pedido de teste — ele tocará aqui imediatamente.</p>
-              <a href="/turista/delivery" target="_blank" className="btn-primary min-h-[44px] text-xs px-3 shrink-0">
-                Fazer Pedido Teste
+            <div className="card flex flex-col items-stretch justify-between gap-3 border-coral-400/30 bg-coral-500/[0.03] p-4 text-xs text-areia-300 sm:flex-row sm:items-center sm:gap-4">
+              <p className="min-w-0">Este painel usa dados de demonstração e ainda não recebe pedidos reais da vitrine pública. Consulte o site oficial em outra aba.</p>
+              <a href="https://caraiva.digital" target="_blank" rel="noreferrer" className="btn-primary min-h-[44px] w-full shrink-0 px-3 text-xs sm:w-auto">
+                Abrir vitrine
               </a>
             </div>
           )}

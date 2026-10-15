@@ -127,7 +127,7 @@ export default function FarmaciaDashboard() {
               <div className="flex items-center gap-2.5">
                 <ShieldAlert size={18} className="text-rio-400 shrink-0" />
                 <span>
-                  <strong>Plantão Ativo:</strong> Turistas são avisados que a porta está fechada, mas pedidos de emergência tocam com volume máximo no celular do plantonista.
+                  <strong>Plantão de demonstração:</strong> A integração para atualizar a disponibilidade na vitrine pública e alertar o plantonista ainda precisa ser conectada.
                 </span>
               </div>
               <span className="chip border-rio-400/30 text-rio-400 font-bold shrink-0">Taxa {brl(shiftFee)}</span>
@@ -141,7 +141,7 @@ export default function FarmaciaDashboard() {
               <div className="py-8 text-center text-areia-300/60 border border-dashed border-white/10 rounded-xl">
                 <Clock size={24} className="mx-auto mb-1.5 opacity-40" />
                 <p className="text-xs">Nenhum pedido de remédio no momento.</p>
-                <p className="text-[11px] mt-0.5">Faça um teste pedindo protetor ou remédio em <strong>/turista/delivery</strong>.</p>
+                <p className="mt-0.5 text-[11px]">Os pedidos desta tela são demonstrativos; a vitrine pública ainda não sincroniza com este painel.</p>
               </div>
             ) : (
               <div className="space-y-3">

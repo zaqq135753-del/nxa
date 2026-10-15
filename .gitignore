@@ -30,3 +30,6 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
+**/.next/
+**/*.tsbuildinfo
+**/supabase/.temp/

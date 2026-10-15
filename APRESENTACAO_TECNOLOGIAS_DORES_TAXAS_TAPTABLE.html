@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>TapTable AI OS - Master Pitch & Dossier de Soluções Tecnológicas, IA e Comparativo de Taxas</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap');
+
+  @page {
+    size: A4;
+    margin: 12mm 12mm 14mm 12mm;
+    @bottom-right {
+      content: "TapTable AI OS • Apresentação Executiva • " counter(page);
+      font-size: 8pt;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #64748b;
+    }
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: #0f172a;
+    background: #ffffff;
+    font-size: 9pt;
+    line-height: 1.45;
+  }
+
+  .page-break { page-break-after: always; break-after: page; }
+  .avoid-break { page-break-inside: avoid; break-inside: avoid; }
+
+  /* Hero Banner */
+  .hero-box {
+    background: linear-gradient(135deg, #020617 0%, #0f172a 50%, #1e1b4b 100%);
+    color: #ffffff;
+    padding: 24px 22px;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    border-left: 6px solid #10b981;
+  }
+
+  .badge-tech {
+    display: inline-block;
+    background: rgba(16, 185, 129, 0.2);
+    border: 1px solid rgba(16, 185, 129, 0.4);
+    color: #34d399;
+    font-size: 7.5pt;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    padding: 3px 8px;
+    border-radius: 20px;
+    margin-bottom: 8px;
+  }
+
+  h1 {
+    font-size: 18pt;
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 4px;
+    color: #ffffff;
+  }
+
+  .hero-desc {
+    font-size: 9.5pt;
+    color: #94a3b8;
+  }
+
+  .hero-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-top: 14px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .hero-stat {
+    font-size: 8pt;
+    color: #cbd5e1;
+  }
+  .hero-stat strong {
+    display: block;
+    font-size: 12pt;
+    font-family: 'JetBrains Mono', monospace;
+    color: #38bdf8;
+  }
+
+  /* Headers */
+  h2 {
+    font-size: 12pt;
+    font-weight: 800;
+    color: #0f172a;
+    margin-top: 14px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 4px;
+  }
+
+  h2 span.tag-pill {
+    background: #0f172a;
+    color: #38bdf8;
+    font-size: 8pt;
+    font-weight: 800;
+    padding: 2px 7px;
+    border-radius: 5px;
+  }
+
+  h3 {
+    font-size: 10pt;
+    font-weight: 700;
+    color: #1e293b;
+    margin-top: 10px;
+    margin-bottom: 4px;
+  }
+
+  p { margin-bottom: 6px; color: #334155; text-align: justify; }
+
+  /* Cards Grid */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin: 8px 0;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 8px 0;
+  }
+
+  .card-box {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 10px;
+  }
+
+  .card-box.active {
+    background: #f0fdf4;
+    border-color: #86efac;
+  }
+
+  .card-title {
+    font-weight: 700;
+    font-size: 9pt;
+    color: #0f172a;
+    margin-bottom: 3px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .card-text {
+    font-size: 8pt;
+    color: #475569;
+    line-height: 1.35;
+  }
+
+  /* Pain vs Solution Matrix */
+  .pain-sol-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 12px 0;
+    font-size: 8pt;
+  }
+  .pain-sol-table th {
+    background: #0f172a;
+    color: #ffffff;
+    padding: 6px 8px;
+    text-align: left;
+    font-weight: 700;
+  }
+  .pain-sol-table td {
+    padding: 6px 8px;
+    border: 1px solid #e2e8f0;
+    vertical-align: top;
+  }
+  .pain-sol-table tr:nth-child(even) td { background: #fafafa; }
+  .col-pain { width: 35%; color: #991b1b; background: #fff5f5; font-weight: 500; }
+  .col-sol { width: 45%; color: #065f46; background: #f0fdf4; font-weight: 600; }
+  .col-impact { width: 20%; color: #0369a1; font-weight: 700; text-align: center; }
+
+  /* Fee Comparison Table */
+  .fee-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 8px 0 12px 0;
+    font-size: 8pt;
+  }
+  .fee-table th {
+    background: #1e1b4b;
+    color: #ffffff;
+    padding: 6px 8px;
+    text-align: center;
+    font-weight: 700;
+  }
+  .fee-table td {
+    padding: 6px 8px;
+    border: 1px solid #e2e8f0;
+    text-align: center;
+  }
+  .fee-table tr:nth-child(even) td { background: #f8fafc; }
+  .fee-table .taptable-row td {
+    background: #ecfdf5 !important;
+    color: #065f46;
+    font-weight: 700;
+    border: 1px solid #a7f3d0;
+  }
+
+  /* Callout */
+  .callout-success {
+    background: #f0fdf4;
+    border-left: 4px solid #10b981;
+    padding: 8px 12px;
+    border-radius: 0 6px 6px 0;
+    margin: 8px 0;
+    font-size: 8pt;
+    color: #065f46;
+  }
+
+  .callout-blue {
+    background: #f0f9ff;
+    border-left: 4px solid #0284c7;
+    padding: 8px 12px;
+    border-radius: 0 6px 6px 0;
+    margin: 8px 0;
+    font-size: 8pt;
+    color: #0369a1;
+  }
+
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: 8pt; }
+  .badge { display: inline-block; padding: 1px 5px; border-radius: 4px; font-size: 7pt; font-weight: 700; }
+  .badge-red { background: #fee2e2; color: #991b1b; }
+  .badge-green { background: #dcfce7; color: #15803d; }
+  .badge-blue { background: #e0f2fe; color: #0369a1; }
+</style>
+</head>
+<body>
+
+<!-- HERO HEADER -->
+<div class="hero-box">
+  <div class="badge-tech">Dossiê de Apresentação Oficial • TapTable AI OS</div>
+  <h1>TAPTABLE AI OS: A REVOLUÇÃO INTELIGENTE NA MESA</h1>
+  <div class="hero-desc">Arquitetura Tecnológica, Inteligência Artificial, Solução de Dores Operacionais e Matriz Comparativa de Taxas</div>
+  <div class="hero-grid">
+    <div class="hero-stat"><strong>0s</strong>Tempo de Espera Fechamento</div>
+    <div class="hero-stat"><strong>-68%</strong>Custo de Taxas Transacionais</div>
+    <div class="hero-stat"><strong>+18%</strong>Aumento Médio Giro de Mesas</div>
+    <div class="hero-stat"><strong>100%</strong>Digital (Sem Download de App)</div>
+  </div>
+</div>
+
+<!-- SEÇÃO 1: TODAS AS TECNOLOGIAS E INTELIGÊNCIA EMBUTIDAS -->
+<h2><span class="tag-pill">TEC</span> 1. As Tecnologias e Inteligências Embarcadas no Produto</h2>
+<p>
+O TapTable AI OS não é um cardápio digital ou PDF estático. Trata-se de uma suíte completa de engenharia de software distribuída (Frontend PWA, Backend Concorrente, Hardware Físico IoT e Motores de IA) concebida para operar sem interrupções em ambientes de altíssimo volume.
+</p>
+
+<div class="grid-2 avoid-break">
+  <div class="card-box active">
+    <div class="card-title">📡 Hardware Placa Black Piano NFC + QR Dinâmico</div>
+    <div class="card-text">
+      • <strong>Chip NTAG213/216 de Grau Industrial:</strong> Alcance de leitura ultrarrápido (menos de 0,2s com aproximação de qualquer iPhone ou Android).<br>
+      • <strong>Acrílico Black Piano 4mm:</strong> Acabamento de luxo com corte e gravação a laser resistente a álcool, água e quedas acidentais.<br>
+      • <strong>Tokenização de Mesa Segura:</strong> Cada placa possui hash criptográfico único, impedindo que pedidos sejam forjados fora do bar.
+    </div>
+  </div>
+
+  <div class="card-box active">
+    <div class="card-title">⚡ Comanda Viva PWA & Concorrência Redis (WebSockets)</div>
+    <div class="card-text">
+      • <strong>Zero Download:</strong> Abre instantaneamente no Safari/Chrome sem instalar nada da App Store/Google Play.<br>
+      • <strong>Colaboração Multiusuário em Tempo Real:</strong> Todos os amigos na mesa veem os itens adicionados e quem consumiu o quê instantaneamente.<br>
+      • <strong>Trava Anti-Duplicidade (Race-Condition):</strong> Bloqueio temporário (90s) no backend quando alguém seleciona um item para pagar, impedindo pagamento duplo.
+    </div>
+  </div>
+
+  <div class="card-box active">
+    <div class="card-title">🧠 Sommelier & Garçom IA com Upsell Preditivo</div>
+    <div class="card-text">
+      • <strong>Recomendações Contextuais:</strong> O cliente pede uma carne e a IA sugere automaticamente a harmonização de vinho ou chopp artesanal.<br>
+      • <strong>Surge Pricing Reverso (Happy Hour Dinâmico):</strong> IA detecta horários ociosos no bar e dispara ofertas relâmpago de drinks com 1 toque na mesa.<br>
+      • <strong>One-Tap Reorder ("Mais Uma!"):</strong> Repetir a última rodada de Chopp/Drink com confirmação biométrica em 2 segundos.
+    </div>
+  </div>
+
+  <div class="card-box active">
+    <div class="card-title">🛎️ Smart Service Call (Chamar Garçom com Propósito)</div>
+    <div class="card-text">
+      • <strong>Fim do "Garçom!" no ar:</strong> O cliente escolhe com 1 clique o motivo do chamado: <em>"Gelo & Limão"</em>, <em>"Copos Limpos"</em>, <em>"Limpar Mesa"</em>, <em>"Chamar Gerente"</em>.<br>
+      • <strong>Eficiência de Passos:</strong> O garçom recebe a notificação no smartwatch/celular e já vai à mesa com o item na mão, cortando 50% dos passos.
+    </div>
+  </div>
+
+  <div class="card-box active">
+    <div class="card-title">🍳 KDS Cozinha & Bar Multi-Praça em Tempo Real</div>
+    <div class="card-text">
+      • <strong>Roteamento Inteligente:</strong> Drinks vão para a tela do Barman, petiscos vão para a Cozinha Quente e Chopps para a Copa de Chopp.<br>
+      • <strong>Alertas Visuais de SLA Pulsante:</strong> Pedidos com mais de 12 minutos mudam de cor e alertam a chefia para evitar atrasos na mesa.
+    </div>
+  </div>
+
+  <div class="card-box active">
+    <div class="card-title">📊 DRE Executivo em Tempo Real & NFC-e SEFAZ</div>
+    <div class="card-text">
+      • <strong>Lucro Líquido na Mesma Noite:</strong> O dono do bar vê faturamento bruto, CMV de insumos (29%) e margem líquida consolidada a cada fechamento.<br>
+      • <strong>Emissão Fiscal Automática:</strong> Conexão nativa com SEFAZ para emissão do cupom fiscal NFC-e com envio de XML/PDF no WhatsApp do cliente.
+    </div>
+  </div>
+</div>
+
+<div class="page-break"></div>
+
+<!-- SEÇÃO 2: DORES REAIS DO NICHO E COMO O TAPTABLE RESOLVE -->
+<h2><span class="tag-pill">DORES</span> 2. As Dores Crônicas do Setor Gastronômico e Nossas Soluções</h2>
+<p>
+A operação de um restaurante ou gastrobar tem margens apertadas e depende inteiramente de velocidade e experiência. Abaixo está a matriz de resolução das 7 maiores dores dos empresários gastronômicos:
+</p>
+
+<table class="pain-sol-table avoid-break">
+  <thead>
+    <tr>
+      <th>Dor Crônica do Bar / Restaurante</th>
+      <th>Como o TapTable AI OS Resolve</th>
+      <th>Impacto no Negócio</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td class="col-pain">
+        <strong>1. O Gargalo do Fechamento de Conta</strong><br>
+        Nas noites de sexta/sábado, os clientes esperam de 15 a 25 minutos para conseguir a maquininha de cartão. Clientes irritados e perda de giro de mesa.
+      </td>
+      <td class="col-sol">
+        <strong>Auto-Checkout Instantâneo na Mesa:</strong><br>
+        O cliente encosta o celular na placa NFC, clica em "Fechar Conta", confere o extrato e paga via Pix Dinâmico ou Apple Pay em 15 segundos.
+      </td>
+      <td class="col-impact"><span class="badge badge-green">-20 min</span> por mesa<br><strong>+15% a 25%</strong> giro de salão</td>
+    </tr>
+    <tr>
+      <td class="col-pain">
+        <strong>2. Divisão de Conta Caótica (Split Bill)</strong><br>
+        Grupos de 6 a 12 amigos discutindo quem bebeu o que, calculando parcelas no celular e exigindo que o garçom passe 8 cartões diferentes.
+      </td>
+      <td class="col-sol">
+        <strong>Split Matrix Automatizado:</strong><br>
+        Cada pessoa seleciona na tela do próprio celular o que consumiu ou escolhe "Dividir Igual". O sistema gera QR Pix individual para cada um pagar sua parte.
+      </td>
+      <td class="col-impact"><span class="badge badge-green">Fim do Constrangimento</span><br>Garçom livre de passar cartões</td>
+    </tr>
+    <tr>
+      <td class="col-pain">
+        <strong>3. Custo Abusivo das Maquininhas Tradicionais</strong><br>
+        Taxas de 2,2% a 3,8% no cartão de crédito + aluguel mensal de 4 a 8 maquininhas físicas (R$ 80 a R$ 140/cada) + taxa de antecipação D+0.
+      </td>
+      <td class="col-sol">
+        <strong>Ecossistema Pix na Mesa com 0,79%:</strong><br>
+        Liquidação instantânea (D+0) direto na conta do estabelecimento com taxa de apenas 0,79% e zero aluguel de aparelhos extras.
+      </td>
+      <td class="col-impact"><span class="badge badge-green">Economia de R$ 2.500</span> a R$ 4.200/mês em taxas</td>
+    </tr>
+    <tr>
+      <td class="col-pain">
+        <strong>4. Garçons Correndo Desorientados</strong><br>
+        Garçom vai até a mesa só para saber o que o cliente quer, volta ao balcão para pegar e volta à mesa de novo (3 viagens para 1 copo de gelo).
+      </td>
+      <td class="col-sol">
+        <strong>Chamado com Propósito Específico:</strong><br>
+        Notificação direta com o pedido exato na tela de apoio. O garçom faz 1 viagem só, já com a bandeja pronta.
+      </td>
+      <td class="col-impact"><span class="badge badge-green">-50% passos</span> da equipe<br>Garçom atende mais mesas</td>
+    </tr>
+    <tr>
+      <td class="col-pain">
+        <strong>5. Erros de Pedido e Desperdício na Cozinha</strong><br>
+        Garçom anota errado na comanda de papel ou digita errado no PDV ("sem cebola", ponto da carne). Cliente devolve o prato; prejuízo para o bar.
+      </td>
+      <td class="col-sol">
+        <strong>Digitação Direta pelo Próprio Cliente:</strong><br>
+        Personalização detalhada na tela da mesa com envio direto para o KDS da Cozinha, sem ruído de comunicação humana.
+      </td>
+      <td class="col-impact"><span class="badge badge-green">Zero devoluções</span> por erro de anotação</td>
+    </tr>
+    <tr>
+      <td class="col-pain">
+        <strong>6. Descontrole de Estoque e CMV Cego</strong><br>
+        O dono só descobre que o chopp deu prejuízo ou que faltou insumo caro semanas depois, quando fecha o mês com a contabilidade.
+      </td>
+      <td class="col-sol">
+        <strong>Abatimento Automático de Insumos & Alerta CMV:</strong><br>
+        A cada pedido confirmado, o estoque baixa a ficha técnica. Alerta vermelho se o CMV ultrapassar a meta de 30% na noite.
+      </td>
+      <td class="col-impact"><span class="badge badge-green">Controle em tempo real</span> de margem operacional</td>
+    </tr>
+    <tr>
+      <td class="col-pain">
+        <strong>7. QR Codes de Papel Amadores e Degradados</strong><br>
+        Adesivos colados que rasgam, descolam, mancham de gordura/cerveja e dão sensação de bar barato ou fast food decadente.
+      </td>
+      <td class="col-sol">
+        <strong>Placa Acrílica Black Piano Gravada a Laser:</strong><br>
+        Hardware elegante de 4mm com chip NFC embutido que eleva a percepção de valor do restaurante e vira objeto de design na mesa.
+      </td>
+      <td class="col-impact"><span class="badge badge-green">Percepção VIP</span> e durabilidade de anos</td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="page-break"></div>
+
+<!-- SEÇÃO 3: COMPARATIVO PROFUNDO DE TAXAS -->
+<h2><span class="tag-pill">TAXAS</span> 3. Matriz Comparativa de Taxas: Mercado Tradicional vs TapTable</h2>
+<p>
+A economia financeira gerada pelo TapTable é o principal fator de fechamento comercial imediato com proprietários de bares. Abaixo está a comparação detalhada de custos transacionais, prazos de recebimento e aluguéis de equipamentos:
+</p>
+
+<table class="fee-table avoid-break">
+  <thead>
+    <tr>
+      <th>Meio de Cobrança / Solução</th>
+      <th>Taxa Débito</th>
+      <th>Taxa Crédito à Vista</th>
+      <th>Taxa Pix</th>
+      <th>Prazo Recebimento</th>
+      <th>Aluguel Maquininhas</th>
+      <th>Custo Mensal Estimado (Bar R$ 120k/mês)</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><strong>Cielo / Rede Tradicional</strong></td>
+      <td>1,49% a 1,99%</td>
+      <td>3,19% a 4,49%</td>
+      <td>0,99% a 1,49%</td>
+      <td>D+30 (ou +2% antecipação)</td>
+      <td>R$ 99 a R$ 149 / terminal (6 un = R$ 700)</td>
+      <td><strong>R$ 3.800 a R$ 4.900 / mês</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Stone / PagBank</strong></td>
+      <td>1,25% a 1,60%</td>
+      <td>2,80% a 3,60%</td>
+      <td>0,80% a 1,19%</td>
+      <td>D+1 a D+14</td>
+      <td>R$ 69 a R$ 110 / terminal (6 un = R$ 500)</td>
+      <td><strong>R$ 3.100 a R$ 4.100 / mês</strong></td>
+    </tr>
+    <tr>
+      <td><strong>Goomer + Stone Integrada</strong></td>
+      <td>1,30% + R$ 399 SaaS</td>
+      <td>2,99% + R$ 399 SaaS</td>
+      <td>0,99%</td>
+      <td>D+1</td>
+      <td>Terminais de balcão</td>
+      <td><strong>R$ 3.400 / mês</strong> (incluindo SaaS)</td>
+    </tr>
+    <tr>
+      <td><strong>ZigPay / Cartão Cashless</strong></td>
+      <td>3,00% a 5,00%</td>
+      <td>4,50% a 7,00%</td>
+      <td>2,50% a 4,00%</td>
+      <td>D+2 a D+7</td>
+      <td>Taxa retida na fonte</td>
+      <td><strong>R$ 5.400 a R$ 7.200 / mês</strong></td>
+    </tr>
+    <tr class="taptable-row">
+      <td><strong>TAPTABLE AI OS<br><span class="badge badge-green">Nossa Solução</span></strong></td>
+      <td>Cartão opcional (via gateway)</td>
+      <td>Cartão opcional (via gateway)</td>
+      <td><strong>0,79% Fixo</strong></td>
+      <td><strong>D+0 (Segundos)</strong></td>
+      <td><strong>R$ 0 (Zero Aluguel de maquininha)</strong></td>
+      <td><strong>R$ 1.538 / mês</strong><br><em>(SaaS R$ 590 + Pix R$ 948)</em></td>
+    </tr>
+  </tbody>
+</table>
+
+<div class="callout-success avoid-break">
+  <strong>💡 Economia Real Líquida para o Dono do Bar:</strong><br>
+  Ao migrar 70% dos pagamentos de mesa da maquininha tradicional para o Pix TapTable em um faturamento de R$ 120.000/mês, o dono do bar <strong>economiza entre R$ 1.800,00 e R$ 2.600,00 TODOS OS MESES</strong> em taxas e aluguel de equipamentos. Ou seja, mesmo pagando a nossa assinatura mensal de R$ 590,00, ele ainda coloca <strong>mais de R$ 1.500,00 de lucro limpo no bolso</strong> todos os meses!
+</div>
+
+<!-- SEÇÃO 4: RESUMO DA PROPOSTA DE VALOR PITCH -->
+<h2><span class="tag-pill">PITCH</span> 4. O Roteiro de Apresentação Matador em 4 Passos</h2>
+
+<div class="grid-2 avoid-break">
+  <div class="card-box">
+    <div class="card-title">1. Abertura: O Diagnóstico do Gargalo</div>
+    <div class="card-text">
+      <em>"Você já reparou quantas mesas do seu bar passam 20 minutos esperando a maquininha de cartão na sexta-feira à noite? Enquanto essa mesa espera para pagar, tem fila lá fora desistindo de entrar. O TapTable elimina esse tempo para 15 segundos."</em>
+    </div>
+  </div>
+
+  <div class="card-box">
+    <div class="card-title">2. Demonstração Prática (O Momento Wow)</div>
+    <div class="card-text">
+      Coloque a Placa Black Piano na frente do dono do bar e peça para ele aproximar o iPhone ou Android dele. A comanda viva abre na hora com animação suave, ele clica em "Fechar", vê a divisão por pessoa e o QR Code Pix com confirmação instantânea.
+    </div>
+  </div>
+
+  <div class="card-box">
+    <div class="card-title">3. O Retorno Financeiro Irrecusável</div>
+    <div class="card-text">
+      <em>"Nosso sistema não é um custo para você. Se ele liberar 1 giro a mais em apenas 6 mesas na sua sexta e sábado, você ganha +R$ 2.000 no fim de semana. E você ainda economiza até R$ 2.000/mês em taxas e aluguel de maquininhas."</em>
+    </div>
+  </div>
+
+  <div class="card-box">
+    <div class="card-title">4. Fechamento de Risco Zero</div>
+    <div class="card-text">
+      <em>"Instalamos o kit de placas esta semana na sua casa. Se no primeiro mês seus garçons não elogiarem e suas mesas não rodarem mais rápido, retiramos as placas e devolvemos 100% do valor do setup."</em>
+    </div>
+  </div>
+</div>
+
+<div class="callout-blue avoid-break" style="text-align: center; margin-top: 14px;">
+  <strong>TapTable AI OS</strong> • O Sistema Operacional da Hospitalidade do Futuro • Documento Confidencial de Apresentação e Expansão • 2026
+</div>
+
+</body>
+</html>

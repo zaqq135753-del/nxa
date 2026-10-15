@@ -1,5 +1,19 @@
 # Caraíva Digital · Ecossistema (MVP de vendas)
 
+## Integração Supabase — 14/10/2026
+
+O painel central `/business` pode usar o banco compartilhado do projeto `crvi.dg`, organização nxacorp. Ative `NEXT_PUBLIC_CARAIVA_CLOUD=true` e configure a URL e a chave publicável conforme `.env.example`. O login do aplicativo é separado da conta do painel Supabase. O administrador aprovado recebe vínculos somente após confirmar seu e-mail.
+
+O Guia conectado está em `../caraiva-integration`, usando `VITE_CARAIVA_CLOUD=true`, `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY`. Na configuração local atual: Business em `http://localhost:3100/business`; Guia de teste em `http://127.0.0.1:3103/guia` (`npm run dev -- --mode cloud --port 3103`). Isso não altera o domínio público automaticamente.
+
+As tabelas atuais têm prefixo `cd_`; a fonte versionada são os arquivos em `supabase/migrations/`. Não reaplique `supabase/schema.sql`: é uma proposta antiga com outro modelo. As migrações foram aplicadas remotamente, e os nomes/versões locais estão alinhados ao histórico remoto. Os tipos dos clientes foram gerados do banco. As rotas comerciais exibem o painel conectado filtrado por nicho; os recursos especializados anteriores ficam preservados em uma seção identificada como demonstração. O entregador ainda usa a prévia anterior.
+
+Foram importados 18 perfis comerciais com os mesmos IDs do Guia, sem inventar estoque, preços ou disponibilidade. `accepting_orders` começa desativado. O proprietário precisa cadastrar as ofertas reais e ativar o recebimento. Pedidos e reservas passam pelo RPC transacional `cd_checkout`; usuários não podem confirmar pagamento ou conceder vínculos a si mesmos. O painel central possui catálogo e pedidos/reservas sincronizados. As telas especializadas descritas abaixo continuam como demonstração local; sua migração, TapTable e gateways de pagamento ainda não estão concluídos.
+
+Validação: `node --test tests/business-rules.test.cjs tests/supabase-public.test.cjs`; `npm run typecheck`; `npm run build`. Os testes SQL de estoque, idempotência, conflitos e RLS foram executados no projeto em transações revertidas, sem pedidos ou usuários de teste permanentes.
+
+## Demonstração anterior e módulos especializados
+
 Next.js 14 (App Router) + TypeScript + Tailwind. Esta versão é uma demonstração local: usa dados de exemplo no navegador e sincroniza apenas entre abas do mesmo navegador.
 
 > Não use como operação real: autenticação do lojista, banco compartilhado, pagamentos e confirmações por webhook ainda não estão conectados. O checkout apenas demonstra o fluxo e marca os registros como simulados.

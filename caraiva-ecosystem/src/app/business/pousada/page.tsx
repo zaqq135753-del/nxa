@@ -127,7 +127,7 @@ export default function PousadaPMS() {
       {activeTab === "pms" && (
         <div className="space-y-6 animate-rise">
           {/* Mapa de Ocupação de 14 Dias */}
-          <section className="card overflow-x-auto p-5">
+          <section className="card min-w-0 p-3 sm:overflow-x-auto sm:p-5">
             <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <p className="label font-bold text-areia-100">Grelha de Ocupação · Próximos {DAYS} dias</p>
@@ -143,7 +143,7 @@ export default function PousadaPMS() {
               </div>
             </div>
 
-            <table className="w-full min-w-[720px] border-separate border-spacing-1.5 text-xs">
+            <table className="hidden w-full min-w-[720px] border-separate border-spacing-1.5 text-xs sm:table">
               <thead>
                 <tr>
                   <th className="w-44 text-left font-normal text-areia-300/60 pb-2">Acomodação</th>
@@ -177,6 +177,40 @@ export default function PousadaPMS() {
                 ))}
               </tbody>
             </table>
+
+            <div className="space-y-3 sm:hidden" aria-label="Ocupação por acomodação nos próximos 14 dias">
+              {rooms.map((room) => (
+                <div key={room.id} className="min-w-0 rounded-xl border border-white/10 bg-black/10 p-3">
+                  <div className="mb-2 flex items-center justify-between gap-2">
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-semibold text-areia-100">{room.name}</p>
+                      <p className="text-[11px] text-areia-300">{brl(room.nightly)} / noite</p>
+                    </div>
+                    <span className="shrink-0 text-[10px] text-areia-400">Deslize para ver as datas</span>
+                  </div>
+                  <div className="scrollbar-none flex gap-1.5 overflow-x-auto pb-1 touch-pan-x">
+                    {days.map((day) => {
+                      const block = isBlocked(day, blocksOf(room.id));
+                      return (
+                        <div key={day} className="w-12 shrink-0 text-center">
+                          <span className="mb-1 block text-[9px] text-areia-400">
+                            {new Date(day + "T12:00").toLocaleDateString("pt-BR", { weekday: "short" }).replace(".", "")}
+                          </span>
+                          <span className="mb-1 block text-[10px] font-semibold text-areia-200">
+                            {new Date(day + "T12:00").toLocaleDateString("pt-BR", { day: "2-digit" })}
+                          </span>
+                          <span
+                            title={block ? `${block.source.toUpperCase()}: ${block.summary}` : "Disponível para reserva"}
+                            className={`block h-7 rounded-md ${block ? COLOR[block.source] : "border border-white/10 bg-white/[0.03]"}`}
+                            aria-label={`${day}: ${block ? "ocupado" : "disponível"}`}
+                          />
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
           </section>
 
           {/* Reservas Diretas Recentes do App (Com Hóspede e Logística de Balsa) */}
@@ -201,8 +235,8 @@ export default function PousadaPMS() {
                 </p>
               ) : (
                 bookings.filter((b) => b.kind === "quarto").map((b) => (
-                  <div key={b.id} className="p-3.5 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-between text-xs">
-                    <div>
+                  <div key={b.id} className="flex flex-col justify-between gap-3 rounded-2xl border border-white/10 bg-white/5 p-3.5 text-xs sm:flex-row sm:items-center">
+                    <div className="min-w-0">
                       <div className="flex items-center gap-2">
                         <span className="font-mono font-bold text-amber-300">{b.id}</span>
                         <span className="font-semibold text-white">{b.title}</span>
@@ -215,7 +249,7 @@ export default function PousadaPMS() {
                       </p>
                     </div>
 
-                    <div className="text-right">
+                    <div className="text-left sm:text-right">
                       <span className="font-display font-bold text-sm text-emerald-400">
                         {brl(b.split.gross)}
                       </span>
@@ -250,15 +284,15 @@ export default function PousadaPMS() {
                 {rooms.map((r) => <option key={r.id} value={r.id}>{r.name}</option>)}
               </select>
 
-              <div className="mt-2.5 flex gap-2">
+              <div className="mt-2.5 flex min-w-0 flex-col gap-2 sm:flex-row">
                 <input 
-                  className="input flex-1 text-xs" 
+                  className="input min-w-0 flex-1 text-xs"
                   placeholder="https://www.airbnb.com.br/calendar/ical/...ics" 
                   value={url} 
                   onChange={(e) => setUrl(e.target.value)} 
                 />
                 <button 
-                  className="btn-primary min-h-[44px] px-3.5 text-xs font-semibold" 
+                  className="btn-primary w-full px-3.5 text-xs font-semibold sm:w-auto"
                   onClick={importUrl} 
                   disabled={!url}
                 >

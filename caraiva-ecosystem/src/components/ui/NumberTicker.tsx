@@ -44,7 +44,7 @@ export function NumberTicker({
     return springValue.on("change", (latest) => {
       if (ref.current) {
         if (formatter) {
-          ref.current.textContent = formatter(latest);
+          ref.current.textContent = formatter(Number(latest.toFixed(decimalPlaces)));
         } else {
           ref.current.textContent = Intl.NumberFormat("pt-BR", {
             minimumFractionDigits: decimalPlaces,
@@ -59,6 +59,6 @@ export function NumberTicker({
     <span
       className={cn("inline-block tabular-nums tracking-wider", className)}
       ref={ref}
-    />
+    >{formatter ? formatter(value) : value.toLocaleString("pt-BR", { maximumFractionDigits: decimalPlaces })}</span>
   );
 }

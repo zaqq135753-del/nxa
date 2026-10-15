@@ -16,9 +16,10 @@ import {
 import { brl, byId, establishments, rooms, tours, services } from "@/lib/data";
 import { useStore, type Booking, type Order } from "@/lib/store";
 import { NumberTicker } from "@/components/ui/NumberTicker";
+import { paymentLabel } from "@/lib/businessRules";
 
 export function FinancialHub({ establishmentId }: { establishmentId: string }) {
-  const { orders, bookings } = useStore();
+  const { orders, bookings, rooms, tours, services } = useStore();
   const [filterType, setFilterType] = useState<"all" | "delivery" | "booking">("all");
   const [copied, setCopied] = useState(false);
 
@@ -44,7 +45,7 @@ export function FinancialHub({ establishmentId }: { establishmentId: string }) {
       platformFee: o.split.platform,
       courierFee: o.split.courier,
       net: o.split.merchant,
-      status: o.status === "entregue" ? "liquidado" : "em_processamento",
+      status: o.paymentStatus,
     })),
     ...myBookings.map((b) => ({
       id: b.id,
@@ -56,16 +57,17 @@ export function FinancialHub({ establishmentId }: { establishmentId: string }) {
       platformFee: b.split.platform,
       courierFee: b.split.courier,
       net: b.split.merchant,
-      status: "liquidado",
+      status: b.paymentStatus,
     })),
   ].sort((a, b) => b.id.localeCompare(a.id));
 
   const filtered = filterType === "all" ? allTx : allTx.filter((t) => t.kind === filterType);
 
-  const totalGross = allTx.reduce((s, x) => s + x.gross, 0);
-  const totalPlatformFee = allTx.reduce((s, x) => s + x.platformFee, 0);
-  const totalCourierFee = allTx.reduce((s, x) => s + x.courierFee, 0);
-  const totalNet = allTx.reduce((s, x) => s + x.net, 0);
+  const paidTx = allTx.filter(x => x.status === "paid");
+  const totalGross = paidTx.reduce((s, x) => s + x.gross, 0);
+  const totalPlatformFee = paidTx.reduce((s, x) => s + x.platformFee, 0);
+  const totalCourierFee = paidTx.reduce((s, x) => s + x.courierFee, 0);
+  const totalNet = paidTx.reduce((s, x) => s + x.net, 0);
 
   const copyPix = () => {
     if (est?.pixKey) {
@@ -131,7 +133,7 @@ export function FinancialHub({ establishmentId }: { establishmentId: string }) {
             <CheckCircle2 size={22} />
           </div>
           <div>
-            <p className="text-sm font-semibold">Chave Pix de Repasse Automático</p>
+            <p className="text-sm font-semibold">Chave Pix demonstrativa · repasse não conectado</p>
             <p className="text-xs text-areia-300 font-mono">{est?.pixKey || "chave-nao-configurada@pix"}</p>
           </div>
         </div>
@@ -143,7 +145,7 @@ export function FinancialHub({ establishmentId }: { establishmentId: string }) {
             <Copy size={14} /> {copied ? "Copiada!" : "Copiar Chave"}
           </button>
           <div className="chip border-mata-400/40 text-mata-400 text-xs py-1.5 px-3">
-            <span className="h-2 w-2 rounded-full bg-mata-400 animate-pulse mr-1" /> Split Instantâneo Ativo
+            Provedor de pagamento não conectado
           </div>
         </div>
       </div>
@@ -214,11 +216,11 @@ export function FinancialHub({ establishmentId }: { establishmentId: string }) {
                     <td className="py-3 px-2 text-right font-semibold text-mata-400">+{brl(tx.net)}</td>
                     <td className="py-3 px-2 text-center">
                       <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-medium ${
-                        tx.status === "liquidado" 
+                        tx.status === "paid"
                           ? "bg-mata-400/10 text-mata-400 border border-mata-400/30" 
                           : "bg-coral-400/10 text-coral-400 border border-coral-400/30"
                       }`}>
-                        {tx.status === "liquidado" ? "Liquidado Pix" : "Em preparo"}
+                        {paymentLabel(tx.status)}
                       </span>
                     </td>
                   </tr>
