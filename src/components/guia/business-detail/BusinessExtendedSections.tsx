@@ -3,6 +3,8 @@ import { Clock, Calendar, Check, Plus, ShoppingBag, LayoutGrid, List } from 'luc
 import type { MenuItemDetail, BusinessScheduleInfo } from '../../../data/caraivaExtendedProfiles';
 import { addToCart, type CatalogProduct } from '../../../services/catalogCartService';
 import { SafeBusinessImage } from '../SafeBusinessImage';
+import { cloudCheckoutEnabled } from '../../../services/ecosystemCloud';
+import { CloudCheckout } from './CloudCheckout';
 
 interface BusinessMenuTabProps {
   businessId?: string;
@@ -21,6 +23,7 @@ export const BusinessMenuTab: React.FC<BusinessMenuTabProps> = ({
   const [selectedCategory, setSelectedCategory] = useState<string>('todos');
   const [addedItemId, setAddedItemId] = useState<string | null>(null);
   const [viewMode, setViewMode] = useState<'compact' | 'grid'>('compact');
+  if (cloudCheckoutEnabled) return <CloudCheckout key={businessId} businessId={businessId} businessName={businessName}/>;
 
   const categories = [
     { id: 'todos', label: 'Tudo' },
@@ -272,6 +275,7 @@ export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({ business
   const [selectedTime, setSelectedTime] = useState('19:30');
   const [notes, setNotes] = useState('');
   const [bookingSubmitted, setBookingSubmitted] = useState(false);
+  if (cloudCheckoutEnabled && businessId) return <CloudCheckout key={businessId} businessId={businessId} businessName={businessName} mode={businessCategory}/>;
 
   const isLodging = businessCategory === "hospedagens";
   const isTour = businessCategory === "passeios";

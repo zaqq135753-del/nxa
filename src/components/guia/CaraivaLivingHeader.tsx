@@ -1,4 +1,5 @@
-import { Briefcase, Compass, Store, Volume2, VolumeX } from "lucide-react";
+import { Briefcase, ClipboardList, Compass, Store, Volume2, VolumeX } from "lucide-react";
+import { cloudCheckoutEnabled } from '../../services/ecosystemCloud';
 import { Link } from "react-router-dom";
 import type { CaraivaMoment } from "./useCaraivaMoment";
 import { GuideThemeButton } from "./GuideThemeButton";
@@ -24,6 +25,7 @@ export function CaraivaLivingHeader({ moment, audioActive, salesAdmin, onHome, o
           <span><strong>CARAÍVA <small>DIGITAL</small></strong><span className="caraiva-brand-caption">Viva a vila. No seu tempo.</span></span>
         </button>
         <div className="caraiva-header-actions">
+          {cloudCheckoutEnabled && <Link className="caraiva-icon-button" to="/guia/pedidos" aria-label="Meus pedidos e reservas" title="Meus pedidos"><ClipboardList size={19}/></Link>}
           <GuideThemeButton theme={theme} onToggle={onToggleTheme} />
           <button type="button" className="caraiva-icon-button" onClick={onAudio} aria-pressed={audioActive} aria-label={audioActive ? "Pausar som ambiente" : "Ativar som ambiente"} title="Som ambiente">
             {audioActive ? <Volume2 size={19} /> : <VolumeX size={19} />}

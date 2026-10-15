@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import { cloudCheckoutEnabled } from '../../../services/ecosystemCloud';
+import { CloudCheckout } from './CloudCheckout';
 import {
   X,
   ShoppingBag,
@@ -44,6 +46,7 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
   const [copiedLink, setCopiedLink] = useState(false);
 
   if (!isOpen) return null;
+  if (cloudCheckoutEnabled) return <div className="fixed inset-0 z-50 bg-black/80 flex items-end sm:items-center justify-center p-3"><div className="w-full max-w-lg"><CloudCheckout key={businessId} businessId={businessId} businessName={businessName} onClose={onClose}/></div></div>;
 
   // Itens deste comércio
   const currentItems = cartItems.filter((i) => i.businessId === businessId);

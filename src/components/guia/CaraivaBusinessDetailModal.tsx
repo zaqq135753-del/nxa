@@ -35,6 +35,8 @@ import { CaraivaBusinessShowcaseTab } from "./business-detail/CaraivaBusinessSho
 import { CaraivaCartCheckoutModal } from "./business-detail/CaraivaCartCheckoutModal";
 import { getBusinessCatalog, getCartItems, clearCartForBusiness, type CartItem } from "../../services/catalogCartService";
 import { SafeBusinessImage } from "./SafeBusinessImage";
+import { cloudCheckoutEnabled } from '../../services/ecosystemCloud';
+import { CloudCheckout } from './business-detail/CloudCheckout';
 
 interface CaraivaBusinessDetailModalProps {
   business: Business | null;
@@ -414,6 +416,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
           {detailTab === "vitrine" && (
             <div className="pt-2">
               {(() => {
+                if (cloudCheckoutEnabled) return <CloudCheckout key={business.id} businessId={business.id} businessName={business.name} mode={['hospedagens','passeios','noite'].includes(business.category)?business.category:'goods'}/>;
                 const catalog = getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory);
                 if (!catalog) return null;
                 return (

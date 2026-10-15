@@ -1,9 +1,11 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "framework": "vite",
-  "buildCommand": "npm run build",
+  "buildCommand": "node scripts/validate-cloud-env.mjs && npm run build -- --mode cloud",
   "outputDirectory": "dist",
   "rewrites": [
+    { "source": "/guia/pedidos", "destination": "/index.html" },
+    { "source": "/guia/checkout/:businessId", "destination": "/index.html" },
     {
       "source": "/parceiros/painel",
       "destination": "/index.html"
@@ -51,7 +53,7 @@
         },
         {
           "key": "Content-Security-Policy",
-          "value": "default-src 'self'; script-src 'self' https://maps.googleapis.com https://maps.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://maps.googleapis.com https://maps.gstatic.com https://*.googleapis.com; media-src 'self' blob:; worker-src 'self' blob:; frame-src https://www.google.com https://maps.google.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+          "value": "default-src 'self'; script-src 'self' https://maps.googleapis.com https://maps.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://maps.googleapis.com https://maps.gstatic.com https://*.googleapis.com https://*.google.com https://ixqmvogmjvgmafmbbgli.supabase.co wss://ixqmvogmjvgmafmbbgli.supabase.co; media-src 'self' blob:; worker-src 'self' blob:; frame-src https://www.google.com https://maps.google.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
         }
       ]
     }
