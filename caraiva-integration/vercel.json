@@ -7,11 +7,23 @@
     { "source": "/guia/pedidos", "destination": "/index.html" },
     { "source": "/guia/checkout/:businessId", "destination": "/index.html" },
     {
+      "source": "/business",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/business/",
+      "destination": "/index.html"
+    },
+    {
       "source": "/parceiros/painel",
       "destination": "/index.html"
     },
     {
       "source": "/parceiros/painel/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/parceiros/painel-classico",
       "destination": "/index.html"
     },
     {
