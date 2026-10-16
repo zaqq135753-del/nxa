@@ -77,6 +77,23 @@ Este repositório constrói o primeiro **Sistema Integrado de Destino Inteligent
   5. *Modo Híbrido:* Botão de alternância instantânea entre o Cockpit 3D Espacial e o Painel Clássico de Parceiros.
 * **Armadilhas Evitadas:** Uso de `as const` em arrays com propriedades opcionais resolvidas através de tipagem explícita `CockpitTabItem[]` sem tolerância a `any`. Clean up obrigatório de timers de toast via `useRef`.
 
+### ADR 007: Onboarding Mágico com Cartão NFC, QR Code Dinâmico e Construção Procedural 3D em Tempo Real
+* **Data:** 16/10/2026
+* **Contexto:** Superar a aversão de donos de estabelecimentos e pousadas de vilas turísticas a formulários burocráticos tradicionais, viabilizando uma entrada sem fricção em 3 etapas com alto valor visual percebido ("efeito UAU") ao ler um QR Code ou aproximar um cartão de madeira NFC.
+* **Decisão Tomada:** Criado o ecossistema `onboarding-magic` sob `src/components/partner/onboarding-magic/`:
+  1. `CaraivaNfcPresentationCard.tsx`: Cartão de apresentação em madeira nobre e dourado de Caraíva com QR Code dinâmico via `qrcode`, reflexo especular de sol da Bahia ao mover o mouse ou inclinar o celular, e simulação de pulso NFC com ondas táteis.
+  2. `CaraivaInstantOnboardingModal.tsx`: Fluxo sensorial em 3 passos rápidos (Nome & Categoria autêntica ➔ Prato Estrela ➔ WhatsApp & Chave Pix TapTable), dispensando burocracias na primeira impressão.
+  3. `CaraivaRealtimeWorldBuilder3D.tsx`: Motor procedural Three.js que ergue a casa colonial do parceiro em tempo real em 6 fases sincronizadas com barra de progresso e frases poéticas da vila:
+     - *Fase 1 (Areia):* Compactação e nivelamento da fundação na beira-rio.
+     - *Fase 2 (Adobe):* Elevação das paredes caiadas e vigas de eucalipto com escala Y interpolada.
+     - *Fase 3 (Telhado):* Assentamento das telhas de barro queimado em cascata e pintura das esquadrias na cor da categoria.
+     - *Fase 4 (Placa):* Entalhe da placa de madeira com o nome exato digitado pelo lojista via Canvas HTML5 gerado na hora como textura Three.js.
+     - *Fase 5 (Orb):* O Caraíva Living Orb desce do céu, toca a cumeeira e propaga um anel de choque dourado luminoso conectando o negócio ao ecossistema TapTable.
+     - *Fase 6 (Mergulho):* Câmera Three.js faz um drone dive-in atravessando a porta colonial.
+  4. `CaraivaBusinessLiveReveal.tsx`: Revelação imediata contendo o prato estrela flutuando em 2.5D/3D com vapor quente dinâmico, o display da Mesa 01 TapTable NFC pronto para pedidos sem garçom, e link público com botão de WhatsApp.
+  5. `CaraivaMagicOnboardingExperience.tsx`: Orquestrador mestre integrando as rotas `/apresentacao`, `/parceiros/cadastro`, `/parceiros/apresentacao` e banner sensorial nativo na Home do Guia Caraíva.
+* **Armadilhas Evitadas:** Descarte rigoroso de materiais, geometrias e CanvasTextures no unmount do Three.js para evitar memory leak em dispositivos móveis no calor da praia. Tipagem estrita com zero `any` e conformidade com TS6133.
+
 ---
 
 ## ⚠️ 4. ARMADILHAS EVITADAS & LIÇÕES APRENDIDAS (NÃO REPETIR)
@@ -98,7 +115,8 @@ Este repositório constrói o primeiro **Sistema Integrado de Destino Inteligent
 - [x] **Passo 4:** Criar a Tábua de Marés interativa com diagnóstico preditivo para travessia a pé (Satu & Corumbau) e Dark Luxury.
 - [x] **Passo 5:** Otimizar empacotamento com Vite code-splitting e PWA resilience (`manifest.webmanifest` + `sw.js`).
 - [x] **Passo 6:** Implementar o Cardápio Vivo com Comanda Flutuante (Bandeja na Areia), Sommelier IA da Maré e Reservas com Inteligência Solar (Pôr do Sol, Luau, Sombra de Amendoeira).
-- [ ] **Passo 7:** Renderizar loops de vídeo de pratos em Remotion para exibição no cardápio de mesas do TapTable.
+- [x] **Passo 7:** Criar o Ecossistema de Onboarding Mágico com Cartão NFC / QR Code e Construção Procedural 3D em Tempo Real da Casa Colonial na Areia (`onboarding-magic/` + Three.js + TapTable Mesa 01).
+- [ ] **Passo 8:** Renderizar loops de vídeo de pratos em Remotion para exibição no cardápio de mesas do TapTable.
 
 ---
 
