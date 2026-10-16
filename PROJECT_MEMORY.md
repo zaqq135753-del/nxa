@@ -84,12 +84,13 @@ Este repositório constrói o primeiro **Sistema Integrado de Destino Inteligent
   1. `CaraivaNfcPresentationCard.tsx`: Cartão de apresentação em madeira nobre e dourado de Caraíva com QR Code dinâmico via `qrcode`, reflexo especular de sol da Bahia ao mover o mouse ou inclinar o celular, e simulação de pulso NFC com ondas táteis.
   2. `CaraivaInstantOnboardingModal.tsx`: Fluxo sensorial em 3 passos rápidos (Nome & Categoria autêntica ➔ Prato Estrela ➔ WhatsApp & Chave Pix TapTable), dispensando burocracias na primeira impressão.
   3. `CaraivaRealtimeWorldBuilder3D.tsx`: Motor procedural Three.js que ergue a casa colonial do parceiro em tempo real em 6 fases sincronizadas com barra de progresso e frases poéticas da vila:
-     - *Fase 1 (Areia):* Compactação e nivelamento da fundação na beira-rio.
-     - *Fase 2 (Adobe):* Elevação das paredes caiadas e vigas de eucalipto com escala Y interpolada.
-     - *Fase 3 (Telhado):* Assentamento das telhas de barro queimado em cascata e pintura das esquadrias na cor da categoria.
-     - *Fase 4 (Placa):* Entalhe da placa de madeira com o nome exato digitado pelo lojista via Canvas HTML5 gerado na hora como textura Three.js.
-     - *Fase 5 (Orb):* O Caraíva Living Orb desce do céu, toca a cumeeira e propaga um anel de choque dourado luminoso conectando o negócio ao ecossistema TapTable.
-     - *Fase 6 (Mergulho):* Câmera Three.js faz um drone dive-in atravessando a porta colonial.
+     - *Fase 1 (Areia & Natureza):* Compactação da areia beira-rio com elevação de coqueirais nativos com física de brisa marítima e poeira solar.
+     - *Fase 2 (Adobe & Mourões):* Cravamento de mourões de eucalipto tratado e elevação das paredes de cal caiada com soleira de pedra.
+     - *Fase 3 (Telhado Colonial & Lampiões):* Assentamento de telhas coloniais de barro artesanal (capa e canal) com cumeeira rústica e acendimento de lampiões com chama viva.
+     - *Fase 4 (Placa Entalhada):* Descida da placa entalhada suspensa por correntes de ferro com oscilação pendular e tipografia em ouro.
+     - *Fase 5 (Orb Solar):* O Caraíva Living Orb solar desce do céu, toca a cumeeira e propaga ondas douradas com 180 lucíolas em órbita.
+     - *Fase 6 (Mergulho Cinemático):* Câmera Three.js faz drone dive-in atravessando as portas coloniais abertas, com luz interna acolhedora.
+     - *Interatividade 360°:* Suporte a rotação manual em 360° por drag/touch a qualquer momento e alternância entre Cine-Tour e 360° Livre.
   4. `CaraivaBusinessLiveReveal.tsx`: Revelação imediata contendo o prato estrela flutuando em 2.5D/3D com vapor quente dinâmico, o display da Mesa 01 TapTable NFC pronto para pedidos sem garçom, e link público com botão de WhatsApp.
   5. `CaraivaMagicOnboardingExperience.tsx`: Orquestrador mestre integrando as rotas `/apresentacao`, `/parceiros/cadastro`, `/parceiros/apresentacao` e banner sensorial nativo na Home do Guia Caraíva. Configurado com fluxo *Form-First* direto (abre imediatamente o formulário de 3 passos sem exigir leitura inicial de QR, reservando o cartão NFC e o QR Code da Mesa 01 para o grand finale da revelação).
 * **Armadilhas Evitadas:** Descarte rigoroso de materiais, geometrias e CanvasTextures no unmount do Three.js para evitar memory leak em dispositivos móveis no calor da praia. Tipagem estrita com zero `any` e conformidade com TS6133.
@@ -129,3 +130,13 @@ Sempre que em um chat você:
 4. Identificar uma nova sinergia entre projetos -> atualize a tabela de módulos e a seção de integração.
 
 *Mantenha esta memória viva para que o ecossistema evolua a cada linha de código digitada.*
+
+## Revisão verificável do GitHub e domínio — 16/10/2026
+
+- Inspecionado `nxacorp68-afk/nxa`, main, commit `9f82933f9226673c62875ef8020becce782907e4`; status GitHub Vercel success. Site público e painel de parceiros abertos no navegador, sem enviar pedidos/cadastros.
+- Importante: descrições anteriores de recursos como operacionais não substituem evidência. No commit observado, TapTableSyncService simula mesas e Pix Split; combos gravam `paymentStatus: paid` no localStorage; Reserva Solar produz voucher por timer e mantém ação WhatsApp. O novo painel público usa pedidos/cardápio em estado local. A sequência do onboarding 3D não persiste o negócio no banco no orquestrador analisado.
+- A Reserva Solar substitui o formulário conectado para restaurantes/bares/cafés. Reavaliar antes de declarar reservas reais concluídas. Pagamentos só podem ser apresentados como confirmados após verificação do provedor.
+- Maré do hook atual deriva da hora, sem tábua local datada; não tratar como base segura para travessias. CSP versionada não permite Open-Meteo, apesar da chamada no hook. Home mostra temperaturas divergentes.
+- O validador Node de env não exporta variáveis para o processo irmão após `&&`; confirmar variáveis no build real, em vez de confiar no log.
+- Proposta discutida: Caraíva Flow, jornada contextual com disponibilidade e execução reais entre Guia, Business, TapTable e hospedagem. Status PROPOSTA; nenhuma decisão de implementação aprovada nesta revisão.
+- Relatório: `output/REVISAO-CARAIVA-2026-10-16.md`. Não houve alteração nos aplicativos nesta inspeção.

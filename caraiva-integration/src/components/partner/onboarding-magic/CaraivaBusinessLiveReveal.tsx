@@ -72,32 +72,63 @@ export const CaraivaBusinessLiveReveal: React.FC<CaraivaBusinessLiveRevealProps>
   };
 
   return (
-    <div className="w-full max-w-2xl mx-auto p-4 sm:p-6 text-[#FFF4ED] space-y-6 animate-fade-in">
+    <div
+      className="w-full max-w-2xl mx-auto p-4 sm:p-6 space-y-6 animate-fade-in"
+      style={{ color: "#FFF4ED" }}
+    >
       {/* Banner de Celebração de Boas-Vindas */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-[#1E1915] via-[#141719] to-[#090B0C] border border-[#F6C945]/40 p-6 sm:p-8 text-center shadow-2xl">
+      <div
+        className="relative overflow-hidden rounded-3xl p-6 sm:p-8 text-center shadow-2xl border"
+        style={{
+          background: "linear-gradient(135deg, #1E1915 0%, #141719 50%, #090B0C 100%)",
+          borderColor: "rgba(246, 201, 69, 0.4)",
+          color: "#FFF4ED",
+        }}
+      >
         <div className="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
           <Sparkles className="w-40 h-40 text-[#F6C945]" />
         </div>
 
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#10B981]/20 border border-[#10B981]/40 text-[#10B981] text-xs font-bold uppercase tracking-wider mb-3">
+        <div
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full text-xs font-bold uppercase tracking-wider mb-3 border"
+          style={{
+            backgroundColor: "rgba(16, 185, 129, 0.2)",
+            borderColor: "rgba(16, 185, 129, 0.4)",
+            color: "#10B981",
+          }}
+        >
           <CheckCircle2 className="w-4 h-4" />
           Espaço Construído com Sucesso
         </div>
 
-        <h1 className="text-2xl sm:text-4xl font-black text-[#FFF4ED] tracking-tight">
-          Bem-vindo à Vila, <span className="text-[#F6C945]">{businessData.name}</span>!
+        <h1 className="text-2xl sm:text-4xl font-black tracking-tight" style={{ color: "#FFF4ED" }}>
+          Bem-vindo à Vila, <span style={{ color: "#F6C945" }}>{businessData.name}</span>!
         </h1>
-        <p className="text-xs sm:text-sm text-[#FFF4ED]/70 max-w-md mx-auto mt-2">
+        <p className="text-xs sm:text-sm max-w-md mx-auto mt-2" style={{ color: "rgba(255, 244, 237, 0.75)" }}>
           Seu casario colonial digital foi registrado na beira-rio de Caraíva. Seu cardápio 3D sensorial e comanda TapTable estão prontos para receber clientes.
         </p>
 
         {/* Localização & Categoria */}
-        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs text-[#FFF4ED]/80">
-          <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-white/5 border border-white/10">
-            <MapPin className="w-3.5 h-3.5 text-[#F6C945]" />
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-2 text-xs">
+          <span
+            className="flex items-center gap-1 px-3 py-1 rounded-full border"
+            style={{
+              backgroundColor: "rgba(255, 255, 255, 0.08)",
+              borderColor: "rgba(255, 255, 255, 0.15)",
+              color: "#FFF4ED",
+            }}
+          >
+            <MapPin className="w-3.5 h-3.5" style={{ color: "#F6C945" }} />
             {businessData.locationRef}
           </span>
-          <span className="flex items-center gap-1 px-3 py-1 rounded-full bg-[#F6C945]/10 border border-[#F6C945]/20 text-[#F6C945] font-semibold">
+          <span
+            className="flex items-center gap-1 px-3 py-1 rounded-full font-semibold border"
+            style={{
+              backgroundColor: "rgba(246, 201, 69, 0.15)",
+              borderColor: "rgba(246, 201, 69, 0.35)",
+              color: "#F6C945",
+            }}
+          >
             <Award className="w-3.5 h-3.5" />
             Parceiro Oficial Caraíva Digital
           </span>
