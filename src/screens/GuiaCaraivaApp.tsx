@@ -6,6 +6,7 @@ import {
   Camera,
   ChevronDown,
   ChevronUp,
+  ArrowRight,
 } from "lucide-react";
 import { CARAIVA_BUSINESSES, type Business, type BusinessCategory, type NowActivity } from "../data/caraivaDigitalData";
 import { asset } from "../lib/asset";
@@ -34,6 +35,7 @@ import { CaraivaWalkingRouteModal } from "../components/guia/CaraivaWalkingRoute
 import { CaraivaSavedScreen } from "../components/guia/CaraivaSavedScreen";
 import { CaraivaConciergeAgent } from "../components/guia/concierge/CaraivaConciergeAgent";
 import { PartnerPremiumDashboard } from "../components/partner/PartnerPremiumDashboard";
+import { CaraivaMagicOnboardingExperience } from "../components/partner/onboarding-magic";
 import type { MapCameraCommand } from "../services/maps/liveMapModel";
 import type { LatLngLiteral } from "../services/maps/types";
 
@@ -124,6 +126,7 @@ export const GuiaCaraivaApp: React.FC = () => {
   const visitorName = useMemo(readGuideGreeting, [welcomeRevision]);
   const visitorInterests = useMemo(readGuideInterests, [welcomeRevision]);
   const [activeTab, setActiveTab] = useState<GuiaTab>("inicio");
+  const [isMagicOnboardingOpen, setIsMagicOnboardingOpen] = useState(false);
   const [conciergeRequest, setConciergeRequest] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState<BusinessCategory | "todos">("todos");
@@ -508,6 +511,40 @@ export const GuiaCaraivaApp: React.FC = () => {
                 </span>
               </button>
             </div>
+
+            {/* Onboarding Mágico NFC & QR Code para Comerciantes */}
+            <div className="max-w-4xl mx-auto px-4 sm:px-6">
+              <div
+                onClick={() => setIsMagicOnboardingOpen(true)}
+                className="w-full p-5 rounded-3xl cursor-pointer bg-gradient-to-r from-[#1E1915] via-[#141719] to-[#090B0C] border border-[#F6C945]/40 shadow-xl hover:border-[#F6C945] transition-all group flex flex-col sm:flex-row items-center justify-between gap-4"
+              >
+                <div className="flex items-center gap-3.5">
+                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#F6C945] to-[#D97706] text-[#090B0C] flex items-center justify-center font-black text-xl shadow-lg shadow-[#F6C945]/30 group-hover:scale-105 transition-transform">
+                    🏛️
+                  </div>
+                  <div>
+                    <div className="inline-flex items-center gap-1.5 text-[10px] uppercase font-bold tracking-wider text-[#F6C945]">
+                      <Sparkles className="w-3 h-3" />
+                      Espaço do Comerciante & Pousadeiro
+                    </div>
+                    <h3 className="text-sm sm:text-base font-bold text-[#FFF4ED]">
+                      Desperte seu Estabelecimento em 3D ao Vivo
+                    </h3>
+                    <p className="text-xs text-[#FFF4ED]/60">
+                      Apresentação com cartão de madeira NFC e construção procedural do seu casario na areia.
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  className="px-4 py-2.5 rounded-xl bg-[#F6C945] text-[#090B0C] font-bold text-xs flex items-center gap-2 group-hover:brightness-110 active:scale-95 transition-all shadow-md shrink-0"
+                >
+                  <span>Experimentar Onboarding</span>
+                  <ArrowRight className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
           </div>
         )}
 
@@ -796,14 +833,50 @@ export const GuiaCaraivaApp: React.FC = () => {
       {activeTab !== "business" && !overlayOpen && (
         <>
           <CaraivaDock activeTab={activeTab} onNavigate={navigateGuide} favoritesCount={favoritesCount} moment={moment} />
-          {activeTab !== "inicio" && activeTab !== "concierge" && activeTab !== "mapa" && <CaraivaOrb key={activeTab}
-            onConcierge={() => navigateGuide("concierge")}
-            onSearch={() => navigateGuide("explorar")}
-            onMap={() => navigateGuide("mapa")}
-            onTides={() => setIsTideModalOpen(true)}
-            onCamera={() => setIsCameraModalOpen(true)} />}
+          {activeTab !== "inicio" && activeTab !== "concierge" && activeTab !== "mapa" && (
+            <CaraivaOrb
+              key={activeTab}
+              onConcierge={() => navigateGuide("concierge")}
+              onSearch={() => navigateGuide("explorar")}
+              onMap={() => navigateGuide("mapa")}
+              onTides={() => setIsTideModalOpen(true)}
+              onCamera={() => setIsCameraModalOpen(true)}
+            />
+          )}
         </>
-      )}    </div>
+      )}
+
+      {/* MODAL: ONBOARDING MÁGICO 3D & NFC */}
+      {isMagicOnboardingOpen && (
+        <div className="fixed inset-0 z-50 bg-[#090B0C]/95 backdrop-blur-xl overflow-y-auto animate-fade-in flex flex-col">
+          <div className="sticky top-0 z-40 bg-[#090B0C]/80 backdrop-blur-md px-6 py-3.5 border-b border-white/10 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-[#F6C945] animate-pulse" />
+              <span className="text-xs font-bold uppercase tracking-wider text-[#F6C945]">
+                Caraíva Digital • Apresentação & Ativação de Parceiros
+              </span>
+            </div>
+            <button
+              onClick={() => setIsMagicOnboardingOpen(false)}
+              className="p-1.5 rounded-full hover:bg-white/10 text-white/50 hover:text-white transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+          <CaraivaMagicOnboardingExperience
+            onClose={() => setIsMagicOnboardingOpen(false)}
+            onExploreMap={() => {
+              setIsMagicOnboardingOpen(false);
+              setActiveTab("mapa");
+            }}
+            onOpenDashboard={() => {
+              setIsMagicOnboardingOpen(false);
+              setActiveTab("business");
+            }}
+          />
+        </div>
+      )}
+    </div>
   );
 };
 

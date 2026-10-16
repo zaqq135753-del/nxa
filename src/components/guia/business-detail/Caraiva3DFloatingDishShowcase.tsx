@@ -94,11 +94,14 @@ export const SHOWCASE_3D_DISHES: Floating3DDish[] = [
 
 interface Caraiva3DFloatingDishShowcaseProps {
   onAddDishToCart?: (dishName: string, price: number, selectedOptions: string[]) => void;
+  customDish?: Floating3DDish;
 }
 
 export const Caraiva3DFloatingDishShowcase: React.FC<Caraiva3DFloatingDishShowcaseProps> = ({
   onAddDishToCart,
+  customDish,
 }) => {
+  const allDishes = customDish ? [customDish, ...SHOWCASE_3D_DISHES] : SHOWCASE_3D_DISHES;
   const [activeDishIndex, setActiveDishIndex] = useState(0);
   const [selectedCustoms, setSelectedCustoms] = useState<string[]>([]);
   const [showPins, setShowPins] = useState(true);
@@ -106,7 +109,7 @@ export const Caraiva3DFloatingDishShowcase: React.FC<Caraiva3DFloatingDishShowca
   const [spinDeg, setSpinDeg] = useState(0);
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const currentDish = SHOWCASE_3D_DISHES[activeDishIndex];
+  const currentDish = allDishes[activeDishIndex] || allDishes[0];
 
   // Motion physics para o mouse tilt 3D
   const mouseX = useMotionValue(0);

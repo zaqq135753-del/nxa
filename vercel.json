@@ -4,6 +4,9 @@
   "buildCommand": "node scripts/validate-cloud-env.mjs && npm run build -- --mode cloud",
   "outputDirectory": "dist",
   "rewrites": [
+    { "source": "/apresentacao", "destination": "/index.html" },
+    { "source": "/parceiros/apresentacao", "destination": "/index.html" },
+    { "source": "/parceiros/magic", "destination": "/index.html" },
     { "source": "/guia/pedidos", "destination": "/index.html" },
     { "source": "/guia/checkout/:businessId", "destination": "/index.html" },
     {
