@@ -91,7 +91,7 @@ Este repositório constrói o primeiro **Sistema Integrado de Destino Inteligent
      - *Fase 5 (Orb):* O Caraíva Living Orb desce do céu, toca a cumeeira e propaga um anel de choque dourado luminoso conectando o negócio ao ecossistema TapTable.
      - *Fase 6 (Mergulho):* Câmera Three.js faz um drone dive-in atravessando a porta colonial.
   4. `CaraivaBusinessLiveReveal.tsx`: Revelação imediata contendo o prato estrela flutuando em 2.5D/3D com vapor quente dinâmico, o display da Mesa 01 TapTable NFC pronto para pedidos sem garçom, e link público com botão de WhatsApp.
-  5. `CaraivaMagicOnboardingExperience.tsx`: Orquestrador mestre integrando as rotas `/apresentacao`, `/parceiros/cadastro`, `/parceiros/apresentacao` e banner sensorial nativo na Home do Guia Caraíva.
+  5. `CaraivaMagicOnboardingExperience.tsx`: Orquestrador mestre integrando as rotas `/apresentacao`, `/parceiros/cadastro`, `/parceiros/apresentacao` e banner sensorial nativo na Home do Guia Caraíva. Configurado com fluxo *Form-First* direto (abre imediatamente o formulário de 3 passos sem exigir leitura inicial de QR, reservando o cartão NFC e o QR Code da Mesa 01 para o grand finale da revelação).
 * **Armadilhas Evitadas:** Descarte rigoroso de materiais, geometrias e CanvasTextures no unmount do Three.js para evitar memory leak em dispositivos móveis no calor da praia. Tipagem estrita com zero `any` e conformidade com TS6133.
 
 ---
