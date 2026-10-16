@@ -1,0 +1,1042 @@
+[
+  {
+    "nome": "architecture",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "core",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "clean-code",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "core",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "performance",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "core",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "security",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "core",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "nxa-skill-orchestrator",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "core",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "component-design",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "frontend",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "react-best-practices",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "frontend",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "state-management",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "frontend",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "tailwind",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "frontend",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "typescript",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "frontend",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "accessibility",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "ui-ux",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "design-system",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "ui-ux",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "premium-saas-ui",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "ui-ux",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "responsive",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "ui-ux",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "visual-audit",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "ui-ux",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "cinematic-experience",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "motion",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "motion",
+      "gsap"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "cinematic-scroll",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "motion",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "motion",
+      "gsap"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "gsap",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "motion",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "motion",
+      "gsap"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "motion-react",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "motion",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "motion",
+      "gsap"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "remotion",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "motion",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "motion",
+      "gsap"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "rive",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "motion",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "motion",
+      "gsap"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "three-d-optimization",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "three-d",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "three",
+      "@react-three/fiber"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "particles",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "three-d",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "three",
+      "@react-three/fiber"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "react-three-fiber",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "three-d",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "three",
+      "@react-three/fiber"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "shaders",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "three-d",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "three",
+      "@react-three/fiber"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "threejs",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "three-d",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "three",
+      "@react-three/fiber"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "api-design",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "backend",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "authentication",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "backend",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "multi-tenancy",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "backend",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "payments",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "backend",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "postgres",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "backend",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "saas-backend-architect",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "backend",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "supabase",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "backend",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "dart",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "mobile",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "flutter",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "mobile",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "ai-agents",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "ai",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "ai-product-engineer",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "ai",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "mcp-integration",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "ai",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "rag-systems",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "ai",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "tool-calling",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "ai",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "performance-audit",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "quality",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "playwright",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "quality",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "production-readiness",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "quality",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "security-audit",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "quality",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "unit-testing",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "quality",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "audit-project",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "workflows",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "cinematic-motion",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "workflows",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "create-3d",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "workflows",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "create-saas",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "workflows",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "optimize-saas",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "workflows",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "review-design",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "workflows",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  },
+  {
+    "nome": "upgrade-ui",
+    "versao": "1.0.0",
+    "origem": "NXA Skills Engine (Curated & Tailored for Antigravity)",
+    "commit": "v1.0.0-release",
+    "categoria": "workflows",
+    "compatibilidade": "Antigravity 2.0 / Windows 11 / Node.js 22 LTS / React 19",
+    "dependencias": [
+      "typescript",
+      "react"
+    ],
+    "status": "Operacional",
+    "ultima_validacao": "2026-10-16T03:30:00-03:00",
+    "testes_executados": [
+      "YAML Frontmatter Syntax Validation",
+      "Semantic Description Clarity",
+      "Token Budget Limit Verification (<24KB)",
+      "Cross-Reference Link Integrity"
+    ]
+  }
+]

@@ -1,0 +1,49 @@
+{
+  "curated_sources": [
+    {
+      "name": "anthropics/skills",
+      "type": "Collection",
+      "role": "Specification patterns, frontend design, webapp testing"
+    },
+    {
+      "name": "vercel-labs/agent-skills",
+      "type": "Collection",
+      "role": "React best practices, composition patterns"
+    },
+    {
+      "name": "addyosmani/agent-skills",
+      "type": "Collection",
+      "role": "Software engineering, clean code, TDD, security standards"
+    },
+    {
+      "name": "nextlevelbuilder/ui-ux-pro-max-skill",
+      "type": "Skill",
+      "role": "UI/UX design intelligence, color harmony, typography tokens"
+    },
+    {
+      "name": "pbakaus/impeccable",
+      "type": "Rule & Skill",
+      "role": "Aesthetic anti-slop guidelines and visual ergonomics"
+    },
+    {
+      "name": "JustineBijuPaul/frontend-ai-skills",
+      "type": "Modular Collection",
+      "role": "GSAP, Motion, Three.js, Shaders, ScrollTrigger patterns"
+    },
+    {
+      "name": "supabase/agent-skills",
+      "type": "Official Collection",
+      "role": "Supabase client architecture, RLS and Postgres best practices"
+    },
+    {
+      "name": "flutter/agent-plugins",
+      "type": "Official Collection",
+      "role": "Flutter and Dart architectural practices and widget testing"
+    },
+    {
+      "name": "millionco/react-doctor",
+      "type": "Audit Skill",
+      "role": "Static analysis for AI-generated React anti-patterns"
+    }
+  ]
+}

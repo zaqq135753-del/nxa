@@ -1,0 +1,24 @@
+{
+  "environment": {
+    "host_os": "Windows 11 (64-bit)",
+    "runtime": "Node.js v22.14.0 LTS",
+    "package_manager": "npm 10.9.2 / npx",
+    "version_control": "Git 2.48.1"
+  },
+  "antigravity": {
+    "version": "Antigravity 2.0",
+    "discovery_methods": [
+      "Workspace project traversal (.agents/skills/<name>/SKILL.md)",
+      "skills.json manifest entries",
+      "Global discovery (~/.gemini/config/skills/<name>/SKILL.md)",
+      "Plugin bundle discovery (~/.gemini/config/plugins/<name>/)"
+    ],
+    "features_verified": [
+      "YAML frontmatter parsing",
+      "Progressive disclosure (metadata only until explicit call)",
+      "Slash command mapping (/<skill-name>)",
+      "Rule size budget compliance (< 24KB per file, < 20k tokens total)",
+      "MCP server support"
+    ]
+  }
+}

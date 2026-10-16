@@ -1,0 +1,76 @@
+{
+  "name": "nxa-skills-engine",
+  "version": "1.0.0",
+  "description": "Enterprise Arsenal of Skills, Rules, Workflows, and Tooling for Google Antigravity",
+  "engine": "Google Antigravity 2.0",
+  "created_at": "2026-10-16T06:25:12.467Z",
+  "architecture": {
+    "layers": {
+      "Camada A — Core Obrigatório": [
+        "architecture",
+        "clean-code",
+        "security",
+        "performance",
+        "react-best-practices",
+        "typescript",
+        "tailwind",
+        "component-design",
+        "state-management",
+        "design-system",
+        "visual-audit",
+        "responsive",
+        "accessibility",
+        "playwright",
+        "unit-testing",
+        "security-audit",
+        "performance-audit"
+      ],
+      "Camada B — Especializações": [
+        "motion-react",
+        "gsap",
+        "remotion",
+        "rive",
+        "cinematic-scroll",
+        "threejs",
+        "react-three-fiber",
+        "shaders",
+        "particles",
+        "three-d-optimization",
+        "supabase",
+        "postgres",
+        "api-design",
+        "authentication",
+        "payments",
+        "multi-tenancy",
+        "flutter",
+        "dart",
+        "ai-agents",
+        "mcp-integration",
+        "rag-systems",
+        "tool-calling"
+      ],
+      "Camada C — SaaS Premium Especializado & Workflows": [
+        "nxa-skill-orchestrator",
+        "premium-saas-ui",
+        "cinematic-experience",
+        "saas-backend-architect",
+        "ai-product-engineer",
+        "production-readiness",
+        "create-saas",
+        "upgrade-ui",
+        "cinematic-motion",
+        "create-3d",
+        "audit-project",
+        "optimize-saas",
+        "review-design"
+      ]
+    }
+  },
+  "stats": {
+    "total_skills": 52,
+    "core_skills": 17,
+    "specialized_skills": 22,
+    "premium_and_workflow_skills": 13,
+    "references_mapped": 34
+  }
+}
