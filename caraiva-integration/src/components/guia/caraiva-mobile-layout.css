@@ -1,0 +1,48 @@
+/* Keep mobile content in its own column; the geographic map still pans. */
+@media (max-width: 767px) {
+  .cv-merchant-panel { width: 100%; max-width: 100%; }
+  .cv-merchant-panel * { box-sizing: border-box; min-width: 0; }
+  .cv-merchant-panel > .sticky { flex-wrap: wrap; }
+  .cv-merchant-panel > .sticky > .relative { width: 100%; }
+  .cv-merchant-panel > .sticky select { width: 100%; max-width: 100%; }
+  .cv-merchant-panel .overflow-x-auto { flex-wrap: wrap; overflow: visible; gap: 8px; }
+  .cv-merchant-panel :is(p,h1,h2,h3,button,a) { overflow-wrap: anywhere; }
+  .caraiva-guide, .merchant-setup { box-sizing: border-box; }
+  .caraiva-guide *, .merchant-setup * { box-sizing: border-box; }
+  .caraiva-guide :is(.flex, .grid) > *, .merchant-setup .ms-layout > * { min-width: 0; }
+  .caraiva-guide :is(p,h1,h2,h3,h4,label,button,a,dd),
+  .merchant-setup :is(p,h1,h2,h3,label,button,a) { overflow-wrap: anywhere; }
+  .caraiva-guide :is(input,select,textarea) { min-width: 0; max-width: 100%; }
+  .caraiva-guide.caraiva-guide :is(.cv-guide-home,.cv-guide-explore) {
+    width: 100%; max-width: 640px; margin-inline: auto;
+  }
+  .caraiva-guide.caraiva-guide .cv-guide-explore { padding-inline: 16px; }
+  .caraiva-guide.caraiva-guide .caraiva-header-inner { padding-inline: 16px; gap: 8px; }
+  .caraiva-guide.caraiva-guide .caraiva-header-actions { gap: 6px; flex-shrink: 0; }
+  .caraiva-guide.caraiva-guide .cv-search-ideas {
+    flex-wrap: wrap; overflow-x: visible; max-width: 100%; margin-inline: 0;
+  }
+  .caraiva-guide.caraiva-guide .cv-home-intentions section > div:last-child {
+    display: grid; grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 8px; margin-inline: 0; padding-inline: 0;
+  }
+  .caraiva-guide.caraiva-guide .cv-home-intentions section > div:last-child > button {
+    width: 100%; min-width: 0;
+  }
+  .caraiva-guide.caraiva-guide .cv-explore-place { width: 100%; }
+  .caraiva-guide.caraiva-guide .cv-explore-place p { display: block; overflow: visible; }
+  .caraiva-guide.caraiva-guide .cv-explore-place > div:last-child > div:last-child { flex-wrap: wrap; gap: 8px; }
+  .caraiva-guide.caraiva-guide .caraiva-dock { width: calc(100% - 24px); max-width: 480px; }
+  .caraiva-guide .cv-business-panel { max-width: 100%; }
+  .caraiva-guide .clm-selection strong { white-space: normal !important; }
+  .merchant-setup { max-width: calc(100% - 12px); }
+  .merchant-setup .ms-layout { grid-template-columns: minmax(0,1fr); }
+  .merchant-setup .ms-layout nav { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); overflow: visible; }
+  .merchant-setup .ms-layout nav button { min-width: 0; white-space: normal; }
+  .merchant-setup .ms-content { width: 100%; padding: 22px 16px 28px; }
+  .merchant-setup .ms-grid { grid-template-columns: minmax(0,1fr); }
+  .merchant-setup .ms-qr { justify-content: center; text-align: center; }
+  .merchant-setup .ms-actions > * { flex: 1 1 130px; }
+  .merchant-setup .ms-photo { grid-template-columns: minmax(0,1fr); }
+  .merchant-setup .ms-photo img { margin-inline: auto; }
+}

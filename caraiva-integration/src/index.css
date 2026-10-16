@@ -1,0 +1,579 @@
+@import "tailwindcss";
+@import "./theme/tamikua.css";
+
+@theme {
+  /* Tamikua Caraíva clean brand palette */
+  --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-ui-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+
+  --color-brand-50: #f0fdfa;
+  --color-brand-100: #ccfbf1;
+  --color-brand-600: #0891b2;
+  --color-brand-700: #0e7490;
+  --color-brand-900: #155e75;
+
+  /* Clean Coastal Neutral Scale (Warm Sand & Linen) */
+  --color-zinc-50: #faf8f5;
+  --color-zinc-100: #f3efe6;
+  --color-zinc-200: #e8e2d8;
+  --color-zinc-300: #d7cebf;
+  --color-zinc-400: #9e9484;
+  --color-zinc-500: #6f6657;
+  --color-zinc-600: #524a3e;
+  --color-zinc-700: #383229;
+  --color-zinc-800: #231f19;
+  --color-zinc-900: #14120e;
+  --color-zinc-950: #0a0907;
+
+  /* Caraíva Coastal Tokens */
+  --color-sand-base: #f4ede2;
+  --color-sand-light: #faf8f5;
+  --color-ocean: #0891b2;
+  --color-deep-water: #0e7490;
+  --color-tropical-green: #166534;
+  --color-sun: #d97706;
+  --color-coral: #ea580c;
+  --color-night: #14120e;
+  --color-off-white: #ffffff;
+
+  --ease-cinematic: var(--spatial-ease-cinematic);
+}
+
+html, body {
+  font-family: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #faf8f5;
+  color: #14120e;
+}
+
+html {
+  font-feature-settings: "tnum" 1; /* tabular numbers for counts and money */
+}
+
+/* Printables (GRC, invoices) always come out on paper-white. */
+@media print {
+  .dark {
+    color-scheme: light;
+    --color-white: #ffffff;
+    --color-zinc-50: #fafafa;
+    --color-zinc-100: #f4f4f5;
+    --color-zinc-200: #e4e4e7;
+    --color-zinc-300: #d4d4d8;
+    --color-zinc-400: #a1a1aa;
+    --color-zinc-500: #71717a;
+    --color-zinc-600: #52525b;
+    --color-zinc-700: #3f3f46;
+    --color-zinc-800: #27272a;
+    --color-zinc-900: #18181b;
+    --color-zinc-950: #09090b;
+    --color-brand-50: #ecf7f2;
+    --color-brand-100: #d2ece0;
+    --color-brand-600: #0f6b54;
+    --color-brand-700: #0b5442;
+    --color-brand-900: #073527;
+    --color-rose-50: #fff1f2;
+    --color-rose-200: #fecdd3;
+    --color-rose-500: #f43f5e;
+    --color-rose-600: #e11d48;
+    --color-rose-700: #be123c;
+    --color-rose-800: #9f1239;
+    --color-rose-900: #881337;
+    --color-amber-50: #fffbeb;
+    --color-amber-200: #fde68a;
+    --color-amber-600: #d97706;
+    --color-amber-800: #92400e;
+    --color-amber-900: #78350f;
+    --color-emerald-50: #ecfdf5;
+    --color-emerald-200: #a7f3d0;
+    --color-emerald-600: #059669;
+    --color-emerald-700: #047857;
+    --color-emerald-800: #065f46;
+    --color-emerald-900: #064e3b;
+    --color-sky-50: #f0f9ff;
+    --color-sky-100: #e0f2fe;
+    --color-sky-200: #bae6fd;
+    --color-sky-700: #0369a1;
+    --color-sky-800: #075985;
+    --color-sky-900: #0c4a6e;
+  }
+}
+
+body {
+  @apply bg-zinc-50 text-zinc-900 antialiased;
+}
+
+@keyframes sheet-in {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.animate-sheet-in {
+  animation: sheet-in 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.animate-fade-in {
+  animation: fade-in 0.18s ease-out;
+}
+
+@keyframes slide-right {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+.animate-slide-right {
+  animation: slide-right 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes caraivaFloat {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+
+@keyframes caraivaPulseGlow {
+  0%, 100% { opacity: 0.92; filter: drop-shadow(0 0 10px rgba(56, 189, 248, 0.4)); }
+  50% { opacity: 1; filter: drop-shadow(0 0 20px rgba(56, 189, 248, 0.75)); }
+}
+
+@keyframes caraivaSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* Transição Cinematográfica entre Abas em Slow Motion */
+@keyframes caraivaTabEnter {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 16px, -18px) scale(0.98);
+    filter: blur(4px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+:root {
+  /* Curvas e Tempos Cinematográficos em Slow Motion */
+  --caraiva-ease-cinematic: cubic-bezier(0.22, 1, 0.36, 1);
+  --caraiva-ease-spring: cubic-bezier(0.34, 1.4, 0.64, 1);
+  --caraiva-duration-slow: 650ms;
+  --caraiva-duration-base: 450ms;
+  --caraiva-duration-touch: 140ms;
+
+  /* Camadas de Sombra Realistas: Matiz Âmbar/Tropical Quente (evita preto sintético) */
+  --caraiva-shadow-resting:
+    0 2px 4px -1px rgba(65, 42, 24, 0.06),
+    0 8px 20px -4px rgba(65, 42, 24, 0.10),
+    0 20px 32px -8px rgba(0, 0, 0, 0.08);
+
+  --caraiva-shadow-hover:
+    0 4px 8px -2px rgba(65, 42, 24, 0.08),
+    0 16px 36px -6px rgba(65, 42, 24, 0.16),
+    0 32px 56px -12px rgba(0, 0, 0, 0.14);
+
+  --caraiva-shadow-floating:
+    0 8px 16px -4px rgba(0, 0, 0, 0.10),
+    0 24px 48px -8px rgba(0, 0, 0, 0.18),
+    0 40px 80px -16px rgba(65, 42, 24, 0.12);
+
+  /* Chanfros Especulares: Micro-refração solar e oclusão de contato */
+  --caraiva-specular-top: inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.85);
+  --caraiva-specular-bottom: inset 0 -1px 1px 0 rgba(0, 0, 0, 0.08);
+}
+
+/* Palco e Perspectiva 3D */
+.caraiva-3d-stage {
+  perspective: 1200px;
+  perspective-origin: 50% 30%;
+}
+
+.caraiva-3d-preserve {
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+}
+
+/* Superfície de Vidro 3D com Chanfro Zenital Duplo */
+.caraiva-glass-3d {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(20px) saturate(150%);
+  -webkit-backdrop-filter: blur(20px) saturate(150%);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 
+    var(--caraiva-specular-top),
+    var(--caraiva-specular-bottom),
+    var(--caraiva-shadow-resting);
+  transform: translateZ(0);
+  transition: 
+    transform var(--caraiva-duration-base) var(--caraiva-ease-cinematic),
+    box-shadow var(--caraiva-duration-base) var(--caraiva-ease-cinematic);
+}
+
+/* Card 3D com Relevo Físico e Elevação em Camadas */
+.caraiva-card-3d {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    var(--caraiva-specular-top),
+    var(--caraiva-shadow-resting);
+  transform: translate3d(0, 0, 0);
+  transition: 
+    transform var(--caraiva-duration-base) var(--caraiva-ease-cinematic),
+    box-shadow var(--caraiva-duration-base) var(--caraiva-ease-cinematic);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .caraiva-card-3d:hover {
+    transform: translate3d(0, -5px, 8px);
+    box-shadow: 
+      inset 0 2px 2px 0 rgba(255, 255, 255, 0.95),
+      var(--caraiva-shadow-hover);
+  }
+}
+
+/* Compressão Tátil Háptica no Eixo Z */
+.caraiva-press-3d {
+  transition: transform var(--caraiva-duration-base) var(--caraiva-ease-cinematic),
+              box-shadow var(--caraiva-duration-base) var(--caraiva-ease-cinematic);
+}
+
+.caraiva-press-3d:active {
+  transform: translate3d(0, 2px, -4px) scale(0.985) !important;
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(255, 255, 255, 0.5),
+    0 2px 4px -1px rgba(65, 42, 24, 0.08) !important;
+  transition-duration: var(--caraiva-duration-touch) !important;
+}
+
+/* Dock Inferior Flutuante 3D */
+.caraiva-dock-3d {
+  background: rgba(255, 255, 255, 0.78);
+  backdrop-filter: blur(28px) saturate(160%);
+  -webkit-backdrop-filter: blur(28px) saturate(160%);
+  border-top: 1px solid rgba(255, 255, 255, 0.9);
+  box-shadow: 
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.95),
+    0 -10px 32px -4px rgba(0, 0, 0, 0.12),
+    0 -20px 50px -10px rgba(65, 42, 24, 0.08);
+}
+
+/* Stories Ring 3D com Aura Luminosa */
+.caraiva-story-ring-3d {
+  box-shadow: 
+    0 0 0 2px rgba(255, 255, 255, 0.85),
+    0 6px 20px -2px rgba(56, 189, 248, 0.5),
+    0 0 24px -2px rgba(56, 189, 248, 0.3);
+  transition: transform var(--caraiva-duration-base) var(--caraiva-ease-cinematic),
+              box-shadow var(--caraiva-duration-base) var(--caraiva-ease-cinematic);
+}
+
+.caraiva-story-ring-3d:hover {
+  transform: translate3d(0, -3px, 6px) scale(1.05);
+  box-shadow: 
+    0 0 0 2.5px rgba(255, 255, 255, 0.95),
+    0 10px 28px -3px rgba(56, 189, 248, 0.7),
+    0 0 32px 3px rgba(56, 189, 248, 0.45);
+}
+
+/* Transição de Abas em Slow Motion */
+.animate-tab-cinematic {
+  animation: caraivaTabEnter var(--caraiva-duration-slow) var(--caraiva-ease-cinematic) forwards;
+}
+
+.animate-caraiva-float {
+  animation: caraivaFloat 4s ease-in-out infinite;
+}
+
+.animate-caraiva-pulse {
+  animation: caraivaPulseGlow 2.5s ease-in-out infinite;
+}
+
+.animate-caraiva-slide {
+  animation: caraivaSlideUp var(--caraiva-duration-slow) var(--caraiva-ease-cinematic) forwards;
+}
+
+/* ==========================================================================
+   CARAÍVA SPATIAL UI — CAMADAS ESPACIAIS & FÍSICA CINEMATOGRÁFICA
+   ========================================================================== */
+
+/* 1. Palco Principal Tridimensional */
+.spatial-stage {
+  perspective: var(--spatial-perspective);
+  perspective-origin: 50% 25%;
+  transform-style: preserve-3d;
+}
+
+/* Camada 0: Background Parallax (Velocidade 0.2x / Distante) */
+.spatial-layer-bg {
+  transform: translate3d(0, 0, -120px) scale(1.1);
+  will-change: transform;
+  pointer-events: none;
+}
+
+/* Camada 1: Plano de Referência / Conteúdo Central (Velocidade 1.0x) */
+.spatial-layer-content {
+  transform: translate3d(0, 0, 0);
+  transform-style: preserve-3d;
+}
+
+/* Camada 2: Foreground / Floating HUD & Actions (Velocidade 1.1x / Elevado) */
+.spatial-layer-fg {
+  transform: translate3d(0, 0, 28px);
+  will-change: transform;
+}
+
+/* Vidro Espacial Caraíva (Com Refração Especular Solar) */
+.spatial-glass {
+  background: rgba(248, 245, 239, 0.45);
+  backdrop-filter: blur(28px) saturate(170%);
+  -webkit-backdrop-filter: blur(28px) saturate(170%);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  box-shadow: 
+    var(--spatial-chamfer),
+    var(--spatial-shadow-resting);
+  transform: translateZ(0);
+}
+
+/* Card Espacial Elevado (Física Sutil de 1.8° a 2.2° - Sem Parecer Videogame) */
+.spatial-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    var(--spatial-bevel-zenith),
+    var(--spatial-shadow-resting);
+  transform: translate3d(0, 0, 0) rotateX(0deg) rotateY(0deg);
+  transition: 
+    transform var(--spatial-duration-base) var(--spatial-ease-cinematic),
+    box-shadow var(--spatial-duration-base) var(--spatial-ease-cinematic),
+    border-color var(--spatial-duration-base) var(--spatial-ease-cinematic);
+  will-change: transform, box-shadow;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .spatial-card:hover {
+    transform: translate3d(0, -6px, 14px) rotateX(1.8deg);
+    border-color: rgba(255, 255, 255, 0.98);
+    box-shadow: 
+      inset 0 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+      var(--spatial-shadow-raised);
+  }
+}
+
+/* Compressão Háptica 3D ao Pressionar (Active State Físico) */
+.spatial-press {
+  transition: transform var(--spatial-duration-snap) var(--spatial-ease-haptic),
+              box-shadow var(--spatial-duration-snap) var(--spatial-ease-haptic) !important;
+}
+
+.spatial-press:active {
+  transform: translate3d(0, 3px, -8px) scale(0.985) !important;
+  box-shadow: 
+    inset 0 1px 1px 0 rgba(16, 43, 49, 0.15),
+    0 2px 6px -1px rgba(16, 43, 49, 0.12) !important;
+}
+
+/* Dock Flutuante Espacial V2 */
+.spatial-dock {
+  background: rgba(248, 245, 239, 0.78);
+  backdrop-filter: blur(36px) saturate(190%);
+  -webkit-backdrop-filter: blur(36px) saturate(190%);
+  border-top: 1px solid rgba(255, 255, 255, 0.92);
+  box-shadow: 
+    inset 0 1.5px 1px 0 rgba(255, 255, 255, 0.95),
+    var(--spatial-shadow-floating);
+}
+
+/* Animação Cinematográfica de Entrada */
+@keyframes spatialStageEntrance {
+  0% {
+    opacity: 0;
+    transform: translate3d(0, 20px, -30px) scale(0.97);
+    filter: blur(8px);
+  }
+  100% {
+    opacity: 1;
+    transform: translate3d(0, 0, 0) scale(1);
+    filter: blur(0);
+  }
+}
+
+.animate-spatial-enter {
+  animation: spatialStageEntrance var(--spatial-duration-slow) var(--spatial-ease-cinematic) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sheet-in,
+  .animate-fade-in,
+  .animate-caraiva-float,
+  .animate-caraiva-pulse,
+  .animate-caraiva-slide,
+  .animate-tab-cinematic,
+  .caraiva-card-3d,
+  .caraiva-press-3d,
+  .caraiva-story-ring-3d,
+  .spatial-card,
+  .spatial-press,
+  .spatial-card:hover,
+  .spatial-press:active,
+  .spatial-layer-bg,
+  .spatial-layer-fg,
+  .animate-spatial-enter {
+    animation: none !important;
+    transition-duration: 0.01ms !important;
+    transform: none !important;
+  }
+}
+
+@media print {
+  aside,
+  header {
+    display: none !important;
+  }
+  body {
+    background: white;
+  }
+  main {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+}
+
+/* ========================================================
+   MINI-CARDS 3D, DEPTH & BUSINESS THERMOMETER UTILITIES
+   ======================================================== */
+
+.mini-card-3d {
+  background: linear-gradient(180deg, #FFFFFF 0%, #FAF8F5 100%);
+  border: 1px solid #E2D9CC;
+  border-radius: 18px;
+  box-shadow: 
+    0 1px 2px 0 rgba(0, 0, 0, 0.03),
+    0 8px 24px -4px rgba(28, 40, 38, 0.08),
+    0 2px 6px -1px rgba(28, 40, 38, 0.04),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.95),
+    inset 0 -1px 0 0 rgba(220, 210, 195, 0.25);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.mini-card-3d:hover {
+  transform: translateY(-2.5px);
+  border-color: #D4A373;
+  box-shadow: 
+    0 1px 2px 0 rgba(0, 0, 0, 0.04),
+    0 18px 40px -6px rgba(28, 40, 38, 0.13),
+    0 4px 12px -2px rgba(28, 40, 38, 0.06),
+    inset 0 1px 0 0 rgba(255, 255, 255, 1),
+    inset 0 -1px 0 0 rgba(212, 163, 115, 0.25);
+}
+
+.mini-card-depth {
+  background: linear-gradient(180deg, #FFFFFF 0%, #F8F5F0 100%);
+  border: 1px solid #DDD3C5;
+  border-radius: 20px;
+  box-shadow: 
+    0 1px 1px 0 rgba(255, 255, 255, 0.95) inset,
+    0 0 0 1px rgba(255, 255, 255, 0.7) inset,
+    0 6px 16px -2px rgba(20, 18, 14, 0.06),
+    0 16px 32px -6px rgba(20, 18, 14, 0.09);
+  transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.tech-pill-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 9999px;
+  font-weight: 600;
+  font-size: 0.8125rem;
+  letter-spacing: -0.01em;
+  padding: 0.5rem 1.125rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.4) inset,
+    0 2px 4px rgba(0, 0, 0, 0.08),
+    0 6px 12px -2px rgba(8, 145, 178, 0.15);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+}
+
+.tech-pill-button:hover {
+  transform: translateY(-1px);
+  filter: brightness(1.05);
+  box-shadow: 
+    0 1px 0 rgba(255, 255, 255, 0.6) inset,
+    0 4px 8px rgba(0, 0, 0, 0.12),
+    0 8px 16px -2px rgba(8, 145, 178, 0.22);
+}
+
+.tech-pill-button:active {
+  transform: translateY(1px) scale(0.98);
+  box-shadow: 
+    0 1px 0 rgba(0, 0, 0, 0.1) inset,
+    0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* Termômetro IA do Negócio */
+.thermometer-tube {
+  position: relative;
+  background: #EAE3D6;
+  border: 1px solid #D6CCBE;
+  border-radius: 9999px;
+  box-shadow: inset 0 2px 4px rgba(20, 18, 14, 0.12);
+  overflow: hidden;
+}
+
+.thermometer-mercury-fill {
+  background: linear-gradient(90deg, #0891B2 0%, #10B981 35%, #F59E0B 70%, #EF4444 100%);
+  border-radius: 9999px;
+  box-shadow: 0 0 12px rgba(245, 158, 11, 0.45);
+  transition: width 1s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.pulse-badge-glow {
+  position: relative;
+}
+
+.pulse-badge-glow::after {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  border-radius: inherit;
+  background: inherit;
+  filter: blur(4px);
+  opacity: 0.4;
+  z-index: -1;
+  animation: pulseGlowAnim 2.5s infinite ease-in-out;
+}
+
+@keyframes pulseGlowAnim {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.65; transform: scale(1.04); }
+}
+

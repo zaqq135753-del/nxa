@@ -1,0 +1,195 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 700" width="100%" height="100%">
+  <defs>
+    <!-- Gradients -->
+    <linearGradient id="riverGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D5A43" />
+      <stop offset="50%" stop-color="#3B7056" />
+      <stop offset="100%" stop-color="#4E8C6C" />
+    </linearGradient>
+    <linearGradient id="oceanGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2A6F86" />
+      <stop offset="50%" stop-color="#1B4D60" />
+      <stop offset="100%" stop-color="#123543" />
+    </linearGradient>
+    <linearGradient id="sandGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F5ECE1" />
+      <stop offset="100%" stop-color="#EADBCE" />
+    </linearGradient>
+    <linearGradient id="pathGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#D6B896" />
+      <stop offset="100%" stop-color="#C29D75" />
+    </linearGradient>
+    <filter id="shadow" x="-5%" y="-5%" width="115%" height="115%">
+      <feDropShadow dx="2" dy="4" stdDeviation="4" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Background / Vila Ground (Sand) -->
+  <rect width="1000" height="700" fill="url(#sandGrad)" />
+
+  <!-- Rio Caraíva (Left Side) -->
+  <path d="M 0,0 Q 140,250 110,450 Q 80,600 0,700 L 0,0 Z" fill="url(#riverGrad)" />
+  <!-- Rio Wave Lines -->
+  <path d="M 30,120 Q 60,140 30,160" stroke="#72B593" stroke-width="2" fill="none" opacity="0.6" />
+  <path d="M 70,300 Q 100,320 70,340" stroke="#72B593" stroke-width="2" fill="none" opacity="0.6" />
+  <path d="M 40,520 Q 70,540 40,560" stroke="#72B593" stroke-width="2" fill="none" opacity="0.6" />
+
+  <!-- Oceano Atlântico / Praia (Right Side) -->
+  <path d="M 880,0 Q 840,250 870,480 Q 890,600 1000,700 L 1000,0 Z" fill="url(#oceanGrad)" />
+  <path d="M 850,50 Q 820,250 850,500 Q 870,620 930,700" stroke="#E6C894" stroke-width="14" fill="none" opacity="0.5" />
+
+  <!-- Barra do Rio / Encontro das Águas (Bottom) -->
+  <path d="M 0,650 Q 300,680 600,690 Q 850,695 1000,700 L 0,700 Z" fill="#24585C" opacity="0.3" />
+
+  <!-- Manguezal / Área de Preservação (Top) -->
+  <path d="M 110,0 Q 300,50 500,10 Q 700,40 880,0 L 110,0 Z" fill="#3D5A45" opacity="0.15" />
+
+  <!-- Redes de Ruas de Areia da Vila -->
+  <!-- Rua Principal / Beira-Rio -->
+  <path d="M 120,380 Q 200,360 250,340 T 380,310 T 520,300 T 700,290 T 850,280" stroke="#DFCCA9" stroke-width="26" stroke-linecap="round" fill="none" />
+  
+  <!-- Beco da Amendoeira / Caramuru -->
+  <path d="M 250,340 Q 280,240 310,160 T 360,90" stroke="#DFCCA9" stroke-width="20" stroke-linecap="round" fill="none" />
+  
+  <!-- Rua do Campo / Beco do Forró -->
+  <path d="M 250,340 Q 300,420 350,480 T 480,520" stroke="#DFCCA9" stroke-width="22" stroke-linecap="round" fill="none" />
+
+  <!-- Beco da Lua -->
+  <path d="M 380,310 Q 420,230 460,160 T 530,90" stroke="#DFCCA9" stroke-width="18" stroke-linecap="round" fill="none" />
+
+  <!-- Rua da Igreja de São Sebastião -->
+  <path d="M 520,300 Q 560,400 620,460 T 730,500" stroke="#DFCCA9" stroke-width="22" stroke-linecap="round" fill="none" />
+
+  <!-- Travessa da Praia (Tupinambá até a Areia do Mar) -->
+  <path d="M 700,290 Q 740,240 780,180 T 845,150" stroke="#DFCCA9" stroke-width="20" stroke-linecap="round" fill="none" />
+
+  <!-- Conexões transversais -->
+  <path d="M 310,160 Q 400,170 460,160 T 600,170 T 780,180" stroke="#DFCCA9" stroke-width="16" stroke-linecap="round" fill="none" />
+  <path d="M 350,480 Q 480,470 620,460" stroke="#DFCCA9" stroke-width="16" stroke-linecap="round" fill="none" />
+
+  <!-- Coqueiros decorativos (Ícones rústicos) -->
+  <g fill="#4A754E">
+    <!-- Próximo à praia -->
+    <circle cx="830" cy="110" r="14" opacity="0.8" />
+    <circle cx="810" cy="350" r="18" opacity="0.8" />
+    <circle cx="840" cy="480" r="16" opacity="0.8" />
+    <circle cx="800" cy="600" r="20" opacity="0.8" />
+    <!-- Próximo ao rio -->
+    <circle cx="160" cy="260" r="15" opacity="0.7" />
+    <circle cx="150" cy="480" r="17" opacity="0.7" />
+    <!-- Miolo da vila -->
+    <circle cx="430" cy="110" r="12" opacity="0.6" />
+    <circle cx="680" cy="390" r="14" opacity="0.6" />
+  </g>
+
+  <!-- PONTOS DE INTERESSE & MARCOS DA ALDEIA -->
+
+  <!-- 1. Ponto de Chegada das Canoas / Barcos -->
+  <g id="pin-porto" filter="url(#shadow)" transform="translate(120, 380)">
+    <circle cx="0" cy="0" r="18" fill="#1C3F38" />
+    <circle cx="0" cy="0" r="12" fill="#E28444" />
+    <text x="0" y="4" text-anchor="middle" font-size="10" font-weight="bold" fill="#FFF">🛶</text>
+    <rect x="-70" y="-38" width="140" height="24" rx="12" fill="#1C3F38" />
+    <text x="0" y="-22" text-anchor="middle" font-size="10" font-family="system-ui, sans-serif" font-weight="bold" fill="#FFF">Ponto das Canoas</text>
+  </g>
+
+  <!-- 2. Tenda dos Carretilheiros & Amendoeira -->
+  <g id="pin-carretilhas" filter="url(#shadow)" transform="translate(200, 355)">
+    <circle cx="0" cy="0" r="10" fill="#7A4F29" />
+    <text x="0" y="3" text-anchor="middle" font-size="8" fill="#FFF">🧳</text>
+    <text x="0" y="24" text-anchor="middle" font-size="9" font-family="system-ui, sans-serif" font-weight="bold" fill="#5C3B1E">Carretilheiros</text>
+  </g>
+
+  <!-- 3. Boteco do Pará (Pasteis & Pôr do Sol) -->
+  <g id="pin-para" filter="url(#shadow)" transform="translate(140, 260)">
+    <rect x="-8" y="-8" width="16" height="16" rx="4" fill="#C35228" />
+    <text x="0" y="4" text-anchor="middle" font-size="9" fill="#FFF">🥟</text>
+    <text x="0" y="-14" text-anchor="middle" font-size="9" font-family="system-ui, sans-serif" font-weight="bold" fill="#7A2D12">Boteco do Pará</text>
+  </g>
+
+  <!-- 4. Beco da Lua -->
+  <g id="pin-beco-lua" filter="url(#shadow)" transform="translate(380, 240)">
+    <circle cx="0" cy="0" r="10" fill="#3B5360" />
+    <text x="0" y="3" text-anchor="middle" font-size="8" fill="#FFF">🌙</text>
+    <text x="0" y="22" text-anchor="middle" font-size="9" font-family="system-ui, sans-serif" font-weight="bold" fill="#2C3E4A">Beco da Lua</text>
+  </g>
+
+  <!-- 5. Igrejinha de São Sebastião -->
+  <g id="pin-igrejinha" filter="url(#shadow)" transform="translate(620, 440)">
+    <rect x="-14" y="-14" width="28" height="28" rx="6" fill="#FFFFFF" stroke="#1B4D60" stroke-width="2" />
+    <text x="0" y="6" text-anchor="middle" font-size="14">⛪</text>
+    <rect x="-65" y="-38" width="130" height="22" rx="11" fill="#1B4D60" />
+    <text x="0" y="-23" text-anchor="middle" font-size="9" font-family="system-ui, sans-serif" font-weight="bold" fill="#FFF">Igrejinha Branca</text>
+  </g>
+
+  <!-- 6. Beco do Forró / Forró do Ouriço -->
+  <g id="pin-forro" filter="url(#shadow)" transform="translate(390, 470)">
+    <circle cx="0" cy="0" r="10" fill="#A83232" />
+    <text x="0" y="3" text-anchor="middle" font-size="8" fill="#FFF">🪗</text>
+    <text x="0" y="22" text-anchor="middle" font-size="9" font-family="system-ui, sans-serif" font-weight="bold" fill="#801F1F">Beco do Forró</text>
+  </g>
+
+  <!-- PROPRIEDADES DA REDE TAMIKUA COM DESTAQUE BRILHANTE -->
+
+  <!-- A. Caramuru Hostel & Suítes -->
+  <g id="pin-caramuru" filter="url(#shadow)" transform="translate(330, 120)">
+    <circle cx="0" cy="0" r="22" fill="#E28444" opacity="0.3">
+      <animate attributeName="r" values="18;28;18" dur="2s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.4;0.1;0.4" dur="2s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="0" cy="0" r="16" fill="#C35228" stroke="#FFFFFF" stroke-width="2.5" />
+    <text x="0" y="5" text-anchor="middle" font-size="11" fill="#FFF">🏨</text>
+    <rect x="-75" y="-38" width="150" height="24" rx="12" fill="#C35228" stroke="#FFF" stroke-width="1.5" />
+    <text x="0" y="-22" text-anchor="middle" font-size="10" font-family="system-ui, sans-serif" font-weight="bold" fill="#FFF">Caramuru Hostel ★</text>
+  </g>
+
+  <!-- B. Tupinambá Pousada e Hostel -->
+  <g id="pin-tupinamba" filter="url(#shadow)" transform="translate(760, 200)">
+    <circle cx="0" cy="0" r="22" fill="#1E7B4F" opacity="0.3">
+      <animate attributeName="r" values="18;28;18" dur="2s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.4;0.1;0.4" dur="2s" repeatCount="indefinite" />
+    </circle>
+    <circle cx="0" cy="0" r="16" fill="#1C3F38" stroke="#FFFFFF" stroke-width="2.5" />
+    <text x="0" y="5" text-anchor="middle" font-size="11" fill="#FFF">🌺</text>
+    <rect x="-85" y="-38" width="170" height="24" rx="12" fill="#1C3F38" stroke="#FFF" stroke-width="1.5" />
+    <text x="0" y="-22" text-anchor="middle" font-size="10" font-family="system-ui, sans-serif" font-weight="bold" fill="#FFF">Tupinambá Pousada ★</text>
+  </g>
+
+  <!-- C. Pousada 03 (Vila do Mar) -->
+  <g id="pin-unidade3" filter="url(#shadow)" transform="translate(800, 380)">
+    <circle cx="0" cy="0" r="13" fill="#2A6F86" stroke="#FFFFFF" stroke-width="2" />
+    <text x="0" y="4" text-anchor="middle" font-size="9" fill="#FFF">🌴</text>
+    <rect x="-65" y="-32" width="130" height="20" rx="10" fill="#2A6F86" />
+    <text x="0" y="-18" text-anchor="middle" font-size="9" font-family="system-ui, sans-serif" font-weight="bold" fill="#FFF">Vila do Mar (03)</text>
+  </g>
+
+  <!-- D. Pousada 04 (Outeiro) -->
+  <g id="pin-unidade4" filter="url(#shadow)" transform="translate(560, 110)">
+    <circle cx="0" cy="0" r="13" fill="#5F4A8B" stroke="#FFFFFF" stroke-width="2" />
+    <text x="0" y="4" text-anchor="middle" font-size="9" fill="#FFF">🌊</text>
+    <rect x="-60" y="-32" width="120" height="20" rx="10" fill="#5F4A8B" />
+    <text x="0" y="-18" text-anchor="middle" font-size="9" font-family="system-ui, sans-serif" font-weight="bold" fill="#FFF">Outeiro (04)</text>
+  </g>
+
+  <!-- Legend / Bússola Rústica -->
+  <g transform="translate(920, 60)" opacity="0.9">
+    <circle cx="0" cy="0" r="30" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1.5" />
+    <path d="M 0,-24 L 6,-4 L 0,0 L -6,-4 Z" fill="#C35228" />
+    <path d="M 0,24 L 6,4 L 0,0 L -6,4 Z" fill="#1C3F38" />
+    <text x="0" y="-28" text-anchor="middle" font-size="9" font-weight="bold" fill="#C35228">N</text>
+    <text x="0" y="38" text-anchor="middle" font-size="8" font-weight="bold" fill="#64748B">S</text>
+    <text x="36" y="3" text-anchor="middle" font-size="8" font-weight="bold" fill="#64748B">L (Mar)</text>
+    <text x="-42" y="3" text-anchor="middle" font-size="8" font-weight="bold" fill="#64748B">O (Rio)</text>
+  </g>
+
+  <!-- Rota Dinâmica Pontilhada (Canoas até Caramuru) -->
+  <path id="route-caramuru" d="M 120,380 L 250,340 Q 280,240 310,160 L 330,120" stroke="#C35228" stroke-width="4.5" stroke-dasharray="8 6" fill="none" opacity="0.85">
+    <animate attributeName="stroke-dashoffset" values="50;0" dur="2s" repeatCount="indefinite" />
+  </path>
+
+  <!-- Rota Dinâmica Pontilhada (Canoas até Tupinambá) -->
+  <path id="route-tupinamba" d="M 120,380 L 250,340 L 380,310 L 520,300 L 700,290 Q 730,240 760,200" stroke="#1E7B4F" stroke-width="4.5" stroke-dasharray="8 6" fill="none" opacity="0.85">
+    <animate attributeName="stroke-dashoffset" values="50;0" dur="2s" repeatCount="indefinite" />
+  </path>
+
+</svg>

@@ -1,0 +1,5 @@
+import {useEffect,useState} from 'react';
+import {Link,useParams,useSearchParams} from 'react-router-dom';
+import {CloudCheckout} from './business-detail/CloudCheckout';
+import {ecosystemCloud} from '../../services/ecosystemCloud';
+export function CheckoutPage(){const {businessId=''}=useParams();const [query]=useSearchParams();const [name,setName]=useState('Estabelecimento');useEffect(()=>{if(ecosystemCloud)void ecosystemCloud.from('cd_businesses').select('name').eq('id',businessId).maybeSingle().then(({data})=>{if(data)setName(data.name);});},[businessId]);return <main style={{minHeight:'100dvh',background:'#07191e',color:'#f0f6f3',padding:'max(16px, env(safe-area-inset-top)) 12px max(24px, env(safe-area-inset-bottom))'}}><div style={{maxWidth:640,margin:'auto',display:'grid',gap:20}}><Link style={{color:'#65dfcb'}} to="/guia">← Voltar ao Guia</Link><CloudCheckout key={`${businessId}:${query.get('modo')}`} businessId={businessId} businessName={name} mode={query.get('modo')??'goods'}/></div></main>;}

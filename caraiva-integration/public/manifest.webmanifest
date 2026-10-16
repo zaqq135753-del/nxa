@@ -1,0 +1,22 @@
+{
+  "name": "Caraíva Digital — Super-App do Paraíso",
+  "short_name": "Caraíva Digital",
+  "description": "Super-App do ecossistema de Caraíva, Bahia. Mapa 3D, marés preditivas, TapTable mesas NFC, gastronomia e Concierge IA.",
+  "start_url": "/guia",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#090B0C",
+  "theme_color": "#090B0C",
+  "icons": [
+    {
+      "src": "/apple-touch-180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon-32.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    }
+  ]
+}

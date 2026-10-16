@@ -33,3 +33,6 @@ Thumbs.db
 **/.next/
 **/*.tsbuildinfo
 **/supabase/.temp/
+
+.git_backup
+*.git_backup

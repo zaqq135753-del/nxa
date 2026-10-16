@@ -1,0 +1,50 @@
+.caraiva-guide { --caraiva-accent: #6ee7cf; --caraiva-glow: rgba(52,211,153,.16); --caraiva-bottom: env(safe-area-inset-bottom,0px); min-height: 100dvh; }
+.caraiva-guide[data-period="sunset"] { --caraiva-accent: #f6c76a; --caraiva-glow: rgba(246,199,106,.16); }
+.caraiva-guide[data-period="night"] { --caraiva-accent: #a6b8ff; --caraiva-glow: rgba(166,184,255,.16); }
+.caraiva-guide button:focus-visible, .caraiva-guide a:focus-visible { outline: 2px solid var(--caraiva-accent); outline-offset: 4px; }
+.caraiva-guide .caraiva-living-header { position: sticky; top: 0; z-index: 30; padding-top: env(safe-area-inset-top,0px); border-bottom: 1px solid #ffffff15; background: radial-gradient(ellipse at 5% 0%,var(--caraiva-glow),transparent 70%),#080d12f2; backdrop-filter: blur(20px); }
+.caraiva-guide .caraiva-header-inner { max-width: 1040px; margin: auto; padding: 14px max(16px,env(safe-area-inset-left,0px)) 16px max(16px,env(safe-area-inset-right,0px)); }
+.caraiva-guide .caraiva-header-row, .caraiva-guide .caraiva-moment-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.caraiva-guide .caraiva-brand { display: flex; align-items: center; gap: 10px; text-align: left; min-width: 0; }
+.caraiva-guide .caraiva-brand-mark { color: var(--caraiva-accent); border: 1px solid #ffffff20; width: 42px; height: 42px; border-radius: 15px; display: grid; place-items: center; background: var(--caraiva-glow); }
+.caraiva-guide .caraiva-brand strong { display: block; font-family: Georgia,serif; font-size: 17px; letter-spacing: .06em; }
+.caraiva-guide .caraiva-brand small { color: var(--caraiva-accent); font: 700 9px sans-serif; letter-spacing: .18em; }
+.caraiva-guide .caraiva-brand-caption { display: block; color: #94a3b8; font-size: 10px; margin-top: 3px; }
+.caraiva-guide .caraiva-header-actions { display: flex; gap: 6px; flex-shrink: 0; }
+.caraiva-guide .caraiva-icon-button { min-width: 44px; min-height: 44px; display: flex; align-items: center; justify-content: center; gap: 8px; border: 1px solid #ffffff15; border-radius: 14px; color: #cbd5e1; background: #ffffff05; }
+.caraiva-guide .caraiva-icon-button[aria-pressed="true"] { color: var(--caraiva-accent); background: var(--caraiva-glow); }
+.caraiva-guide .caraiva-desktop-label { display: none; }
+.caraiva-guide .caraiva-moment-row { margin-top: 16px; align-items: flex-end; }
+.caraiva-guide .caraiva-eyebrow { font-size: 9px; font-weight: 700; letter-spacing: .22em; color: var(--caraiva-accent); margin: 0 0 5px; }
+.caraiva-guide .caraiva-moment-row h1 { font: 500 clamp(20px,4.8vw,29px)/1.2 Georgia,serif; color: #f5f5ef; margin: 0; }
+.caraiva-guide .caraiva-invitation { font-size: 11px; color: #94a3b8; margin: 5px 0 0; }
+.caraiva-guide .caraiva-time { display: grid; grid-template-columns: 5px auto; align-items: center; gap: 3px 7px; flex-shrink: 0; color: var(--caraiva-accent); font-size: 13px; }
+.caraiva-guide .caraiva-time small { grid-column: 2; font-size: 9px; color: #94a3b8; }
+.caraiva-guide .caraiva-time-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--caraiva-accent); }
+.caraiva-guide .caraiva-content { padding-bottom: calc(154px + var(--caraiva-bottom)); }
+.caraiva-guide .caraiva-dock { position: fixed; z-index: 40; bottom: calc(10px + var(--caraiva-bottom)); left: max(12px,env(safe-area-inset-left,0px)); right: max(12px,env(safe-area-inset-right,0px)); max-width: 520px; margin: auto; display: grid; grid-template-columns: 1fr 1fr 1.24fr 1fr 1fr; align-items: center; padding: 8px 5px; border: 1px solid #ffffff1c; border-radius: 25px; background: #0c171ded; backdrop-filter: blur(24px); box-shadow: 0 16px 45px #0009; }
+.caraiva-guide .caraiva-dock-item { position: relative; min-height: 54px; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; border-radius: 16px; color: #94a3b8; font-size: 10px; transition: color .2s,background .2s; }
+.caraiva-guide .caraiva-dock-item[aria-current="page"] { color: var(--caraiva-accent); background: var(--caraiva-glow); }
+.caraiva-guide .caraiva-dock-icon { position: relative; display: grid; place-items: center; }
+.caraiva-guide .caraiva-dock-now { color: #e2e8f0; margin-top: -26px; gap: 3px; }
+.caraiva-guide .caraiva-dock-now .caraiva-dock-icon { width: 56px; height: 56px; border: 5px solid #0c171d; border-radius: 50%; background: linear-gradient(140deg,#ffffff,var(--caraiva-accent)); color: #08252c; box-shadow: 0 0 22px var(--caraiva-glow); }
+.caraiva-guide .caraiva-dock-now[aria-current="page"] { background: transparent; }
+.caraiva-guide .caraiva-dock-now small { font-size: 8px; color: var(--caraiva-accent); white-space: nowrap; }
+.caraiva-guide .caraiva-dock-badge { position: absolute; top: -7px; right: -11px; min-width: 15px; padding: 1px 3px; font-size: 8px; font-weight: 700; border-radius: 10px; background: var(--caraiva-accent); color: #08252c; }
+.caraiva-guide .caraiva-orb { position: fixed; z-index: 39; bottom: calc(112px + var(--caraiva-bottom)); right: max(18px,env(safe-area-inset-right,0px)); }
+.caraiva-guide .caraiva-orb-trigger { width: 56px; height: 56px; border-radius: 50%; border: 1px solid #ffffff50; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #ecfffa; background: radial-gradient(circle at 30% 20%,#6ee7cf,#146477 55%,#0a263b); box-shadow: 0 6px 25px #0008,inset 0 1px 6px #ffffff50; transition: transform .2s; }
+.caraiva-guide .caraiva-orb-trigger:hover { transform: translateY(-2px); }
+.caraiva-guide .caraiva-orb-caption { font-size: 8px; letter-spacing: .12em; }
+.caraiva-guide .caraiva-orb-panel { position: absolute; bottom: 68px; right: 0; width: min(280px,calc(100vw - 36px)); max-height: calc(100dvh - 250px - var(--caraiva-bottom) - env(safe-area-inset-top,0px)); overflow-y: auto; padding: 16px; border: 1px solid #ffffff26; border-radius: 22px; background: #0c171df5; backdrop-filter: blur(24px); box-shadow: 0 16px 40px #0008; }
+.caraiva-guide .caraiva-orb-panel strong { font: 500 21px Georgia,serif; display: block; margin-bottom: 10px; }
+.caraiva-guide .caraiva-orb-panel button { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 44px; text-align: left; font-size: 12px; border-radius: 10px; padding: 8px; color: #cbd5e1; }
+.caraiva-guide .caraiva-orb-panel button:hover { background: var(--caraiva-glow); color: var(--caraiva-accent); }
+@media (min-width: 640px) { .caraiva-guide .caraiva-desktop-label { display: inline; font-size: 11px; padding-right: 8px; } .caraiva-guide .caraiva-header-inner { padding: 18px 24px; } .caraiva-guide .caraiva-invitation { font-size: 12px; } .caraiva-guide .caraiva-orb { right: max(24px,calc((100vw - 1040px)/2)); } }
+@media (max-width: 359px) { .caraiva-guide .caraiva-brand strong { font-size: 13px; } .caraiva-guide .caraiva-brand small { font-size: 7px; } .caraiva-guide .caraiva-brand-mark { width: 34px; height: 38px; } .caraiva-guide .caraiva-header-row { gap: 4px; } .caraiva-guide .caraiva-header-actions { gap: 3px; } .caraiva-guide .caraiva-invitation { max-width: 210px; } }
+@media (max-height: 500px) and (orientation: landscape) { .caraiva-guide .caraiva-moment-row { display: none; } .caraiva-guide .caraiva-orb-panel { max-height: calc(100dvh - 200px); } }
+@media (prefers-reduced-motion: reduce) { .caraiva-guide *, .caraiva-guide *::before, .caraiva-guide *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; } }
+.caraiva-guide[data-tab="mapa"] { --caraiva-accent:#f6c945; --caraiva-glow:rgba(246,201,69,.12); height:100dvh; overflow:hidden; }
+.caraiva-guide[data-tab="mapa"] .caraiva-content { padding-bottom:0; }
+.caraiva-guide[data-tab="mapa"] .caraiva-dock { max-width:450px; padding:5px; border-radius:22px; background:#141719ee; }
+.caraiva-guide[data-tab="mapa"] .caraiva-dock-item { min-height:48px; font-size:9px; }
+.caraiva-guide[data-tab="mapa"] .caraiva-dock-now .caraiva-dock-icon { width:52px; height:52px; border-color:#141719; }

@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" fill="none">
+  <defs>
+    <linearGradient id="skyTupinamba" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#D4E6DF"/>
+      <stop offset="60%" stop-color="#EAF2EE"/>
+      <stop offset="100%" stop-color="#EEDDC9"/>
+    </linearGradient>
+    <linearGradient id="lushGarden" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#2D5A46"/>
+      <stop offset="100%" stop-color="#1B3B2B"/>
+    </linearGradient>
+  </defs>
+  <rect width="800" height="450" fill="url(#skyTupinamba)"/>
+  <circle cx="200" cy="120" r="55" fill="#F8B153" opacity="0.4"/>
+  <path d="M0 270 Q 300 250, 500 280 T 800 270 L 800 450 L 0 450 Z" fill="#E8DEC8"/>
+  <path d="M0 320 Q 250 300, 480 330 T 800 310 L 800 450 L 0 450 Z" fill="#D3C1A5"/>
+  <rect x="180" y="160" width="440" height="170" rx="6" fill="#F9F6F0"/>
+  <polygon points="150,160 400,80 650,160" fill="#B85D3B"/>
+  <rect x="160" y="230" width="480" height="12" fill="#52321B"/>
+  <rect x="200" y="242" width="10" height="90" fill="#52321B"/>
+  <rect x="280" y="242" width="10" height="90" fill="#52321B"/>
+  <rect x="360" y="242" width="10" height="90" fill="#52321B"/>
+  <rect x="440" y="242" width="10" height="90" fill="#52321B"/>
+  <rect x="520" y="242" width="10" height="90" fill="#52321B"/>
+  <rect x="600" y="242" width="10" height="90" fill="#52321B"/>
+  <rect x="225" y="190" width="36" height="50" rx="3" fill="#2D5A46"/>
+  <rect x="305" y="190" width="36" height="50" rx="3" fill="#2D5A46"/>
+  <rect x="385" y="190" width="36" height="50" rx="3" fill="#2D5A46"/>
+  <rect x="465" y="190" width="36" height="50" rx="3" fill="#2D5A46"/>
+  <rect x="545" y="190" width="36" height="50" rx="3" fill="#2D5A46"/>
+  <path d="M50 450 Q 80 300, 150 280 Q 120 360, 100 450 Z" fill="url(#lushGarden)"/>
+  <path d="M120 450 Q 150 320, 220 310 Q 180 390, 160 450 Z" fill="url(#lushGarden)"/>
+  <path d="M680 450 Q 650 310, 580 300 Q 620 390, 650 450 Z" fill="url(#lushGarden)"/>
+  <path d="M740 450 Q 710 320, 640 290 Q 690 380, 710 450 Z" fill="url(#lushGarden)"/>
+  <rect x="30" y="30" width="360" height="40" rx="8" fill="#1B3B2B" opacity="0.85"/>
+  <text x="45" y="55" font-family="-apple-system, BlinkMacSystemFont, sans-serif" font-size="14" font-weight="700" fill="#F4EADB">
+    TUPINAMBÁ POUSADA E HOSTEL
+  </text>
+</svg>
