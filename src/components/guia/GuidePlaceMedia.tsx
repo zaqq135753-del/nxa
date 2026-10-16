@@ -1,0 +1,3 @@
+import { useState } from 'react';
+/** Never substitutes an unrelated stock photo or a made-up business logo. */
+export function GuidePlaceMedia({src,name}:{src?:string;name:string}){const [failed,setFailed]=useState<string|null>(null);const usable=Boolean(src)&&failed!==src;const initials=name.trim().split(/\s+/).slice(0,2).map(word=>word[0]).join('');return <div className="cv-place-media">{usable?<img src={src} alt={name} loading="lazy" decoding="async" onError={()=>setFailed(src||'')}/>:<div className="cv-place-media-fallback" role="img" aria-label={name+' — foto indisponível'}><strong aria-hidden="true">{initials}</strong><small>Foto indisponível</small></div>}</div>;}

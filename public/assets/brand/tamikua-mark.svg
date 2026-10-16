@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" fill="none">
+  <!-- Fundo suave terracota / areia dourada -->
+  <defs>
+    <linearGradient id="tamikuaGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#2D5A46" />
+      <stop offset="50%" stop-color="#1B3B2B" />
+      <stop offset="100%" stop-color="#C27D38" />
+    </linearGradient>
+    <linearGradient id="sandSun" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#E8A858" />
+      <stop offset="100%" stop-color="#D97736" />
+    </linearGradient>
+  </defs>
+  <circle cx="50" cy="42" r="24" fill="url(#sandSun)" opacity="0.9" />
+  <path d="M15 68 C 30 58, 45 74, 60 64 C 75 54, 85 62, 88 66 C 88 78, 80 84, 50 84 C 20 84, 15 78, 15 68 Z" fill="#1B3B2B" />
+  <path d="M32 58 C 42 63, 58 63, 68 58 C 65 62, 55 65, 50 65 C 45 65, 35 62, 32 58 Z" fill="#F4EADB" />
+  <circle cx="50" cy="54" r="2.5" fill="#F4EADB" />
+  <line x1="48" y1="53" x2="57" y2="63" stroke="#F4EADB" stroke-width="1.5" stroke-linecap="round" />
+</svg>

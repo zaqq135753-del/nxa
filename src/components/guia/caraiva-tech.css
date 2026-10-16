@@ -1,0 +1,9 @@
+/* Restored technological interface; scoped to the guide. */
+.caraiva-guide.caraiva-guide[data-theme=dark]{--cv-sand:#080d12;--cv-paper:#111921;--cv-ink:#f1f5f9;--cv-muted:#94a3b8;--cv-line:#ffffff20;--cv-river:#6ee7cf;--cv-gold:#f6c76a;--cv-soft:#ffffff0d;--cv-active:#6ee7cf18;--cv-glass:#0c171df2;--caraiva-accent:#6ee7cf;--caraiva-glow:#34d39929;background:#080d12}
+.caraiva-guide.caraiva-guide[data-theme=dark] .caraiva-living-header{background:radial-gradient(ellipse at 5% 0%,var(--caraiva-glow),transparent 70%),#080d12f2}
+.caraiva-guide.caraiva-guide[data-theme=dark] .caraiva-dock{background:#0c171ded;box-shadow:0 16px 45px #0009;border-color:#ffffff1c}
+.caraiva-guide.caraiva-guide[data-theme=dark] .caraiva-dock-now .caraiva-dock-icon{background:linear-gradient(140deg,#fff,var(--caraiva-accent));border-color:#0c171d;color:#08252c;box-shadow:0 0 22px var(--caraiva-glow)}
+.caraiva-guide.caraiva-guide[data-theme=dark] .caraiva-orb-trigger{background:radial-gradient(circle at 30% 20%,#6ee7cf,#146477 55%,#0a263b);box-shadow:0 6px 25px #0008,inset 0 1px 6px #ffffff50}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-onboarding-launch{background:linear-gradient(120deg,#10232b,#112c2b);border-color:#6ee7cf30}
+.caraiva-guide .cv-stories-heading{display:flex;justify-content:space-between;align-items:center;padding:0 16px;margin-bottom:12px;gap:12px}.caraiva-guide .cv-stories-heading h2{font-size:14px;font-weight:700}.caraiva-guide .cv-stories-heading small{font-size:10px;color:var(--cv-muted)}
+.caraiva-guide .clm-filter-sheet h2{font-family:inherit;font-size:23px;font-weight:700}

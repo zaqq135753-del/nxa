@@ -1,0 +1,48 @@
+{
+  "name": "caraiva-digital",
+  "private": true,
+  "version": "2.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "start": "node server.mjs",
+    "postbuild": "node scripts/verify-public-build.mjs"
+  },
+  "dependencies": {
+    "@googlemaps/js-api-loader": "^2.1.3",
+    "@supabase/supabase-js": "2.117.3",
+    "@types/three": "^0.186.0",
+    "lucide-react": "^0.525.0",
+    "maplibre-gl": "^6.14.0",
+    "motion": "^14.1.0",
+    "qrcode": "1.5.4",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-router-dom": "^7.18.2",
+    "socket.io-client": "^4.8.3",
+    "three": "^0.186.1"
+  },
+  "overrides": {
+    "postcss": "8.5.23",
+    "socket.io-parser": "4.2.7"
+  },
+  "devDependencies": {
+    "@tailwindcss/vite": "^4.1.0",
+    "@types/google.maps": "^3.66.4",
+    "@types/qrcode": "1.5.6",
+    "@types/react": "^19.1.0",
+    "@types/react-dom": "^19.1.0",
+    "@vitejs/plugin-react": "^4.5.0",
+    "jsqr": "1.4.0",
+    "playwright": "^1.61.1",
+    "sharp": "^0.35.4",
+    "tailwindcss": "^4.1.0",
+    "typescript": "^5.8.0",
+    "vite": "^6.3.0"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}

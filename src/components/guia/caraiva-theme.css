@@ -1,0 +1,59 @@
+/* Theme overlay for the existing guide. Never filter map imagery or change PMS styles. */
+.caraiva-guide.caraiva-guide[data-theme]{--cv-soft:#edf1e8;--cv-active:#e6eddf;--cv-glass:#fffdf7ed;--cv-shadow:#20433820;color-scheme:light;background:var(--cv-sand);transition:background-color .45s,color .35s}
+.caraiva-guide.caraiva-guide[data-theme=dark]{--cv-sand:#090B0C;--cv-paper:#141719;--cv-ink:#FFF4ED;--cv-muted:#8A949E;--cv-line:rgba(255,255,255,0.08);--cv-river:#0FA3A5;--cv-gold:#F6C945;--cv-soft:#1D2124;--cv-active:rgba(246,201,69,0.15);--cv-glass:rgba(20,23,25,0.88);--cv-shadow:rgba(0,0,0,0.65);--caraiva-accent:#F6C945;--caraiva-glow:rgba(246,201,69,0.25);color-scheme:dark;background-image:radial-gradient(ellipse at 5% 10%,rgba(246,201,69,0.05),transparent 45%),radial-gradient(ellipse at 100% 60%,rgba(15,163,165,0.04),transparent 45%)}
+.caraiva-guide.caraiva-guide[data-theme] .caraiva-living-header{background:var(--cv-glass);border-color:var(--cv-line)}
+.caraiva-guide.caraiva-guide[data-theme] :is(.caraiva-icon-button,.caraiva-orb-panel,.caraiva-dock,.cv-intention-card,.cv-coast-search){background:var(--cv-glass);border-color:var(--cv-line);color:var(--cv-ink);box-shadow:0 10px 35px var(--cv-shadow);transition:background-color .4s,border-color .4s,color .3s,box-shadow .4s,transform .4s}
+.caraiva-guide.caraiva-guide[data-theme] :is(.caraiva-orb-panel button,.caraiva-dock-item,.cv-intention-card>small,.cv-stories-heading>small,.cv-swipe-hint){color:var(--cv-muted)}
+.caraiva-guide.caraiva-guide[data-theme] :is(.caraiva-dock-item[aria-current=page],.cv-coast-search>div>button){background:var(--cv-active);color:var(--cv-ink)}
+.caraiva-guide.caraiva-guide[data-theme] :is(.cv-intentions h2,.cv-stories-heading h2,.cv-coast-search input){color:var(--cv-ink)}
+.caraiva-guide.caraiva-guide[data-theme] :is(.cv-coast-search>label,.cv-coast-tide){color:var(--cv-muted);border-color:var(--cv-line)}
+.caraiva-guide.caraiva-guide[data-theme] :is(.cv-section-eyebrow,.caraiva-eyebrow,.caraiva-dock-now small){color:var(--cv-gold)}
+.caraiva-guide.caraiva-guide[data-theme] .caraiva-dock-now .caraiva-dock-icon{border-color:var(--cv-paper)}
+.caraiva-guide.caraiva-guide[data-theme] .caraiva-content>div{animation:cv-tech-screen .6s cubic-bezier(.2,.8,.2,1) both;transform-origin:50% 10%}
+.caraiva-guide .cv-real-landscape img{width:100%;height:100%;object-fit:cover;object-position:65% center;animation:cv-photo-breathe 22s ease-in-out infinite alternate}
+.caraiva-guide .cv-real-landscape img[data-failed=true]{display:none}
+.caraiva-guide .cv-coast-hero:not(.cv-scene-visible) .cv-real-landscape img,.caraiva-guide[data-motion=paused] .cv-real-landscape img{animation-play-state:paused}
+.caraiva-guide.caraiva-guide[data-theme] .cv-coast-hero{background:#254e47;border-color:var(--cv-line)}
+.caraiva-guide.caraiva-guide[data-theme] .cv-coast-wash{background:linear-gradient(90deg,#082b29bc,#082b2912 90%),linear-gradient(0deg,#06252388,transparent 60%)}
+.caraiva-guide.caraiva-guide[data-theme] .cv-coast-copy :is(h1,p,.cv-coast-kicker,.cv-coast-concierge){color:#fff9e9;text-shadow:0 2px 16px #082b2950}
+.caraiva-guide.caraiva-guide[data-theme] .cv-coast-copy h1 em{color:#efd694}
+.caraiva-guide.caraiva-guide[data-theme] .cv-coast-map{background:#f4df9f;color:#173f39;border-color:#efdfac;box-shadow:0 6px 24px #0002}
+.caraiva-guide.caraiva-guide[data-theme] .cv-coast-postcard{color:#fff9e9;text-shadow:0 1px 8px #082b29}
+.caraiva-guide .cv-photo-credit-button{position:absolute;z-index:3;right:19px;bottom:190px;background:#0b302bc9;color:#fff9e9;font-size:9px;line-height:1.5;border:1px solid #ffffff44;border-radius:13px;padding:9px 12px;backdrop-filter:blur(12px);display:flex;align-items:center;gap:8px;min-height:36px}
+.caraiva-guide .cv-intention-art>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .8s cubic-bezier(.2,.8,.2,1)}
+.caraiva-guide .cv-intention-art:after{content:'';position:absolute;inset:0;background:linear-gradient(0deg,#0e302a88,transparent 80%);pointer-events:none}
+.caraiva-guide .cv-intention-art>svg{color:#fff9e9;filter:drop-shadow(0 2px 5px #082b2988)}
+.caraiva-guide .cv-intention-card:hover .cv-intention-art>img{transform:scale(1.09)}
+.caraiva-guide .cv-theme-toggle svg{transition:rotate .6s cubic-bezier(.2,.8,.2,1)}
+.caraiva-guide .cv-theme-toggle:hover svg{rotate:25deg}
+.caraiva-guide .cv-theme-floating{position:fixed;z-index:35;right:max(14px,env(safe-area-inset-right,0px));bottom:calc(156px + env(safe-area-inset-bottom,0px));width:44px;height:44px;backdrop-filter:blur(16px)}
+.caraiva-guide[data-tab=business] .cv-theme-floating{bottom:auto;top:calc(12px + env(safe-area-inset-top,0px))}
+.caraiva-guide.caraiva-guide[data-theme] .caraiva-live-map{--clm-gold:var(--cv-gold);--clm-surface:var(--cv-paper);--clm-sand:var(--cv-ink);--clm-night:var(--cv-sand)}
+.caraiva-guide.caraiva-guide[data-theme] .clm-toolbar{background:linear-gradient(var(--cv-sand),color-mix(in srgb,var(--cv-sand) 87%,transparent) 80%,transparent)}
+.caraiva-guide.caraiva-guide[data-theme] :is(.clm-modes,.clm-search,.clm-filter-row button,.clm-price,.clm-controls button,.clm-list-toggle,.clm-place-list,.clm-selection,.clm-empty,.clm-loading,.clm-price select option){background:var(--cv-glass);color:var(--cv-ink);border-color:var(--cv-line)}
+.caraiva-guide.caraiva-guide[data-theme] :is(.clm-status span,.clm-location-note,.clm-notice){background:var(--cv-glass);color:var(--cv-muted);border-color:var(--cv-line)}
+.caraiva-guide.caraiva-guide[data-theme] :is(.clm-filter-row button,.clm-modes button)[aria-pressed=true]{background:var(--cv-active);color:var(--cv-ink);border-color:var(--cv-river)}
+.caraiva-guide.caraiva-guide[data-theme=dark] :is([class~="bg-white/5"],[class~="bg-white/10"],[class~="bg-white/[0.03]"]){background:var(--cv-soft)}
+.caraiva-guide.caraiva-guide[data-theme=dark] :is(.text-amber-300,.text-amber-400,.text-emerald-300,.text-emerald-400,.text-cyan-300,.text-sky-300){color:var(--cv-gold)}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-stories>div:first-of-type>button{background:var(--cv-soft);color:var(--cv-muted);border-color:var(--cv-line)}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-stories>div:first-of-type>button[class*="bg-amber-400"]{background:var(--cv-active);color:var(--cv-ink)}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-stories button>span{color:var(--cv-muted)}
+.caraiva-guide.caraiva-guide[data-theme=dark] [class*="from-[#261B12]"]{background:linear-gradient(125deg,#17392f,#173b3c,#263e33);color:var(--cv-ink);border-color:var(--cv-line)}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-onboarding-launch{background:linear-gradient(120deg,#17392f,#173b3c);color:var(--cv-ink);border-color:var(--cv-line)}
+.caraiva-guide.caraiva-guide[data-theme] .cv-onboarding-launch small{color:var(--cv-muted)}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-onboarding{--cv-ink:#ecf3e9;--cv-paper:#10282a;--cv-river:#7dd5cf;border-color:var(--cv-line)}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-onboarding :is(.cv-choice,.cv-back,.cv-welcome-top button,.cv-interest-grid button,.cv-pace-options button,input,textarea,select,.cv-draft-summary){background:var(--cv-soft);color:var(--cv-ink);border-color:var(--cv-line)}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-onboarding :is(.cv-choice[aria-pressed=true],.cv-interest-grid button[aria-pressed=true],.cv-pace-options button[aria-pressed=true]){background:var(--cv-active);color:var(--cv-ink);border-color:var(--cv-river)}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-onboarding :is(.cv-welcome-description,.cv-field-help,.cv-local-note,.cv-choice>span,.cv-step-card label small,.cv-field-label small,.cv-draft-summary small,.cv-visitor-summary p){color:var(--cv-muted)}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-next{background:#e4c47f;color:#173f39}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-welcome-art{background:linear-gradient(135deg,#183d37,#122e36)}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-floating-card{background:linear-gradient(135deg,#244b45ee,#163a3bee);border-color:#60887c}
+.caraiva-guide.caraiva-guide[data-theme=dark] .cv-art-chip{background:var(--cv-paper);border-color:var(--cv-line)}
+.caraiva-guide .cv-photo-credits{margin:auto;width:min(680px,calc(100% - 28px));max-height:85dvh;overflow:auto;border-radius:24px;border:1px solid var(--cv-line);background:var(--cv-paper);color:var(--cv-ink);padding:26px;box-shadow:0 30px 100px #0005;animation:cv-tech-screen .4s ease both}
+.caraiva-guide .cv-photo-credits::backdrop{background:#082b2999;backdrop-filter:blur(10px)}
+.caraiva-guide .cv-photo-credits header{display:flex;justify-content:space-between;gap:18px;align-items:start}.caraiva-guide .cv-photo-credits h2{font:500 27px/1.2 Georgia,serif;margin:10px 0}.caraiva-guide .cv-photo-credits header small{font-size:9px;letter-spacing:2px;color:var(--cv-gold)}.caraiva-guide .cv-photo-credits button{min-width:44px;min-height:44px;display:grid;place-items:center;border-radius:13px;background:var(--cv-soft)}.caraiva-guide .cv-photo-credits>p{color:var(--cv-muted);font-size:12px;line-height:1.7;margin:15px 0 20px}.caraiva-guide .cv-photo-credits article{display:flex;gap:15px;border-top:1px solid var(--cv-line);padding:16px 0;font-size:11px;line-height:1.7}.caraiva-guide .cv-photo-credits article img{width:75px;height:80px;object-fit:cover;border-radius:12px;flex-shrink:0}.caraiva-guide .cv-photo-credits article :is(strong,span,small){display:block}.caraiva-guide .cv-photo-credits article small{font-size:9px;color:var(--cv-muted);margin-top:5px}.caraiva-guide .cv-photo-credits a{color:var(--cv-river);text-decoration:underline}
+@keyframes cv-photo-breathe{to{transform:scale(1.075) translateX(-1%)}}
+@keyframes cv-tech-screen{from{opacity:0;transform:perspective(1400px) translateY(15px) rotateX(1.5deg)}to{opacity:1;transform:none}}
+@media(max-width:420px){.caraiva-guide .caraiva-header-row{flex-wrap:wrap}.caraiva-guide .caraiva-header-actions{margin-left:auto}.caraiva-guide .caraiva-brand strong{font-size:14px}.caraiva-guide .caraiva-brand small{font-size:7px}.caraiva-guide .caraiva-brand-caption{font-size:8px}.caraiva-guide .caraiva-brand-mark{width:32px;height:36px}.caraiva-guide .caraiva-brand{gap:6px}.caraiva-guide .caraiva-header-inner{padding-left:12px;padding-right:12px}.caraiva-guide .caraiva-header-actions{gap:4px}.caraiva-guide .caraiva-header-actions .caraiva-icon-button{min-width:40px;min-height:44px}.caraiva-guide .cv-photo-credit-button{font-size:8px;bottom:185px;right:18px;padding:7px 10px}.caraiva-guide .cv-coast-copy{top:27px}.caraiva-guide .cv-coast-copy h1{margin-top:20px}}
+@media(min-width:700px){.caraiva-guide .cv-photo-credit-button{bottom:28px;right:24px}.caraiva-guide .cv-real-landscape img{object-position:50% center}}
+@media(prefers-reduced-motion:reduce){.caraiva-guide.caraiva-guide[data-theme] .caraiva-content>div,.caraiva-guide .cv-real-landscape img,.caraiva-guide .cv-photo-credits{animation:none}.caraiva-guide.caraiva-guide[data-theme] :is(button,input,.caraiva-living-header){transition:none}}
