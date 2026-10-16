@@ -1,6 +1,11 @@
-import { loadEnv } from 'vite';
+let loaded = {};
+try {
+  const { loadEnv } = await import('vite');
+  loaded = loadEnv('cloud', process.cwd(), 'VITE_');
+} catch (e) {
+  // Vite pode estar no node_modules local ou não importável diretamente
+}
 
-const loaded = loadEnv('cloud', process.cwd(), 'VITE_');
 const env = {
   VITE_CARAIVA_CLOUD: process.env.VITE_CARAIVA_CLOUD || loaded.VITE_CARAIVA_CLOUD || 'true',
   VITE_SUPABASE_URL: process.env.VITE_SUPABASE_URL || loaded.VITE_SUPABASE_URL || 'https://ixqmvogmjvgmafmbbgli.supabase.co',
