@@ -177,3 +177,12 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
 - Primeiro deploy falhou por ausência das três variáveis públicas na Vercel. Configuradas VITE_CARAIVA_CLOUD, VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY no ambiente Production do projeto caraiva-digital/equipe zaq5. Nenhuma chave privilegiada enviada.
 - Redeploy 4SMdKKVwKNJWaW5LqAr463tZREMx concluído Ready, commit 82e2ac0, domínio www.caraiva.digital atribuído. Browser confirmou /guia/viagem com Minha viagem, roteiro, turma e atendimento na versão pública. Pagamentos e catálogo operacional continuam com as limitações registradas na implementação.
 - A conexão MCP Vercel não tem acesso à equipe zaq5; painel autenticado no navegador utilizado. Não confundir falha de acesso do conector com falha de deployment.
+
+### Resolução de Build na Vercel — 17/10/2026
+- **Causa Raiz do Erro 127 (`vite: command not found`):** A Vercel detectou o repositório como preset Vite com Root Directory `./` (raiz). Na branch `codex/caraiva-journey-contextual`, o aplicativo fica dentro de `caraiva-integration/`, sem `package.json` nem `vercel.json` na raiz. A Vercel pulou o `npm install` e executou o comando padrão `vite build` na raiz vazia, falhando com exit code 127. Além disso, o submódulo não configurado `react-bits` disparava warning de clone.
+- **Correção Aplicada:**
+  1. `react-bits` removido do índice git (`git rm --cached react-bits`).
+  2. `vercel.json` adicionado na raiz com `buildCommand: "cd caraiva-integration && npm install && npm run build"`, `outputDirectory: "caraiva-integration/dist"` e todos os rewrites SPA.
+  3. `package.json` adicionado na raiz com scripts delegados (`build`, `dev`, `vercel-build`) e dependência `vite` declarada.
+  4. Build verificado e aprovado localmente tanto da raiz quanto de dentro de `caraiva-integration/`.
+

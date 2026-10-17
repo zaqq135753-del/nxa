@@ -1,0 +1,73 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "framework": "vite",
+  "installCommand": "cd caraiva-integration && npm install",
+  "buildCommand": "cd caraiva-integration && npm run build",
+  "outputDirectory": "caraiva-integration/dist",
+  "rewrites": [
+    {
+      "source": "/apresentacao",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/parceiros/apresentacao",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/parceiros/magic",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/guia/pedidos",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/guia/checkout/:businessId",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/business",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/business/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/parceiros/painel",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/parceiros/painel/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/parceiros/painel-classico",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/parceiros/painel-classico/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/parceiros",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/parceiros/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/guia",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/guia/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

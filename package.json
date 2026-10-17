@@ -1,0 +1,17 @@
+{
+  "name": "caraiva-monorepo",
+  "version": "2.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cd caraiva-integration && npm run dev",
+    "build": "cd caraiva-integration && npm install && npm run build",
+    "vercel-build": "cd caraiva-integration && npm install && npm run build"
+  },
+  "devDependencies": {
+    "vite": "^6.3.0"
+  },
+  "engines": {
+    "node": "22.x"
+  }
+}
