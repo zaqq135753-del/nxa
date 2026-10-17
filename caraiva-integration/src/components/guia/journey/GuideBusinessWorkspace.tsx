@@ -38,7 +38,8 @@ export function GuideBusinessWorkspace() {
       if (!active) return;
       setLoaded(true); if (error) { setNotice('Não foi possível verificar seus estabelecimentos.'); return; }
       const list = (data ?? []).flatMap(member => member.cd_businesses ? [member.cd_businesses] : []);
-      setBusinesses(list); setBusinessId(previous => list.some(item => item.id === previous) ? previous : list[0]?.id ?? '');
+      const requested = new URLSearchParams(location.search).get('negocio');
+      setBusinesses(list); setBusinessId(previous => list.some(item => item.id === previous) ? previous : list.find(item => item.id === requested)?.id ?? list[0]?.id ?? '');
     }); return () => { active = false; };
   }, [userId]);
   useEffect(() => {
