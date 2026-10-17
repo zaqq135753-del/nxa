@@ -6,6 +6,7 @@ if (env.VITE_CARAIVA_CLOUD !== 'true' || !env.VITE_SUPABASE_URL || !env.VITE_SUP
 if (/sb_secret_|service_role/.test(env.VITE_SUPABASE_PUBLISHABLE_KEY)) throw Error('Uma chave privada não pode ser usada no frontend.');
 for (const [script, args] of [
   ['scripts/validate-cloud-env.mjs', []],
+  ['scripts/test-activation.mjs', []],
   ['node_modules/typescript/bin/tsc', ['-b']],
   ['node_modules/vite/bin/vite.js', ['build', '--mode', 'cloud']],
   ['scripts/verify-public-build.mjs', []]

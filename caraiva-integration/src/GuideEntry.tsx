@@ -28,25 +28,25 @@ function MerchantRegistrationPage() {
     return <main className="merchant-registration-page"><MerchantSetup onClose={() => location.assign('/guia')} /></main>;
   }
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#090B0C' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#090B0C' }}>
       <CaraivaMagicOnboardingExperience
         onClose={() => location.assign('/guia')}
         onExploreMap={() => location.assign('/guia?tab=mapa')}
         onOpenDashboard={() => location.assign('/parceiros/painel')}
         inviteCode={query.get('invite') || 'CARAIVA-2026-VIP'}
       />
-    </main>
+    </div>
   );
 }
 function MagicPresentationPage() {
   return (
-    <main style={{ minHeight: '100vh', backgroundColor: '#090B0C' }}>
+    <div style={{ minHeight: '100vh', backgroundColor: '#090B0C' }}>
       <CaraivaMagicOnboardingExperience
         onClose={() => location.assign('/guia')}
         onExploreMap={() => location.assign('/guia?tab=mapa')}
         onOpenDashboard={() => location.assign('/parceiros/painel')}
       />
-    </main>
+    </div>
   );
 }
 function PartnerDashboardPage() {
