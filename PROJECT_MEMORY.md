@@ -186,3 +186,24 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
   3. `package.json` adicionado na raiz com scripts delegados (`build`, `dev`, `vercel-build`) e dependência `vite` declarada.
   4. Build verificado e aprovado localmente tanto da raiz quanto de dentro de `caraiva-integration/`.
 
+### Onboarding por nicho — 17/10/2026
+- Plano autorizado com gate visual antes do 3D. Fase A e conceitos de B entregues. Novo ActivationOnboarding em /apresentacao e rotas de cadastro: quatro etapas, oito nichos, rascunho local, salvamento autenticado e retomada por link/QR. Revisão otimista rejeita gravações antigas; divergência local/nuvem exige escolha explícita.
+- Migração business_activation_drafts aplicada. cd_activation_drafts com RLS owner; escrita via RPC invoker e implementação em caraiva_activation_private. Criação atômica de negócio privado, vínculo owner e ID cd-UUID, idempotente. Não reaproveita slug digitado, não cria mesa fictícia nem envia para WhatsApp.
+- Perfil permanece não publicado e com recebimento pausado. Foto/logo opcionais limitadas a 300 KB, nenhuma IA de extração ou gateway simulados. Novos catálogos e publicação serão etapas posteriores; não declarar operação pronta só pelo cadastro.
+- Supabase: primeiro apply abortou integralmente por schema private inexistente; corrigido para schema específico antes da aplicação bem-sucedida. SQL com duas identidades e rollback aprovou isolamento, concorrência otimista, idempotência, vínculo e defaults privados. Advisor sem novo alerta nas tabelas criadas.
+- Build e 12 verificações do modelo aprovados na cópia exata de publicação. Teste de modelo passou a rodar no build cloud da Vercel. Deploy 9PYYo1mjKrNMmmAjM6uQszGEhXyP Ready; browser confirmou /apresentacao, edição de nome e mudança de nicho no domínio www.caraiva.digital.
+
+### Retenção de Usuário e Navegação Fluida por Abas — 17/10/2026
+- **Identificação de Novo Usuário vs Usuário Recorrente (Intro 3D):**
+  - O uso exclusivo de `sessionStorage` forçava a intro 3D a rodar a cada reabertura de aba ou reinício do navegador.
+  - Implementado `localStorage.getItem("caraiva_intro_seen_v1")` para retenção persistente: novos usuários veem a abertura 3D mágica na primeira visita; usuários recorrentes entram direto e instantaneamente na Home.
+  - Reabertura sob demanda garantida por botão com ícone do Sol dourado no `CaraivaLivingHeader` e parâmetro de URL `?intro=1` / `?intro=true`.
+- **Navegação Histórico-Consciente e Botões de Voltar:**
+  - `navigateGuide` agora sincroniza a URL (`?tab=...`) e empurra entradas no histórico do navegador via `history.pushState`.
+  - Adicionado listener de `popstate`: toque no botão "Voltar" nativo do celular (ou swipe no iOS / voltar do navegador) agora volta para a aba anterior em vez de fechar o site, além de fechar modais primeiro.
+  - Adicionados botões visuais de retorno (`← Início` / `← Voltar`) nos cabeçalhos de `Explorar`, `Agora`, `Salvos` e `Guia IA`, além de botão voltar na barra superior `CaraivaLivingHeader` em todas as telas secundárias.
+  - Toque na aba já ativa na doca rola suavemente até o topo.
+
+- Browser local validou pousada, campo Acomodação, revisão sem login bloqueada, recuperação após recarregar e viewport390 sem overflow. Login real por e-mail, sincronização entre aparelhos e upload com sessão humana não testados ponta a ponta; testes do banco não substituem essa validação.
+- Conceito raster restaurante/pousada disponível em /assets/onboarding/conceitos-v1.webp e na tela de direção visual. Não é GLB nem réplica de parceiro real. Fase C exige a revisão visual acordada; fases D–F e IA continuam pendentes.
+- Prévia local http://127.0.0.1:5193/apresentacao, Vite cloud iniciado oculto PID7624. Relatório output/ONBOARDING-ATIVACAO-2026-10-17.md; prova visual output/onboarding-publicado-conceitos.png.
