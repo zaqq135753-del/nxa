@@ -8,6 +8,7 @@ import {
   MapPin,
   ChevronRight,
   Compass,
+  ArrowLeft,
   ArrowRight,
   Share2,
   Check,
@@ -28,6 +29,7 @@ interface CaraivaSavedScreenProps {
   onOpenMap: (business: Business) => void;
   onGoToConcierge: () => void;
   onExplore: () => void;
+  onBack?: () => void;
 }
 
 export const CaraivaSavedScreen: React.FC<CaraivaSavedScreenProps> = ({
@@ -35,6 +37,7 @@ export const CaraivaSavedScreen: React.FC<CaraivaSavedScreenProps> = ({
   onOpenMap,
   onGoToConcierge,
   onExplore,
+  onBack,
 }) => {
   const [activeTab, setActiveTab] = useState<"roteiro" | "favoritos">("roteiro");
   const [favoriteIds, setFavoriteIds] = useState<string[]>([]);
@@ -93,6 +96,19 @@ export const CaraivaSavedScreen: React.FC<CaraivaSavedScreenProps> = ({
 
   return (
     <div className="w-full max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6 pb-28">
+      {/* Botão de Retorno Suave para o Início */}
+      {onBack && (
+        <button
+          type="button"
+          onClick={onBack}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-amber-400 border border-white/10 text-xs font-semibold backdrop-blur-md transition-all active:scale-95"
+          aria-label="Voltar para a página anterior"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Voltar ao Início</span>
+        </button>
+      )}
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

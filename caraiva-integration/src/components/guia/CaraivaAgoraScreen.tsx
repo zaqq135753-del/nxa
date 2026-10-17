@@ -1,5 +1,5 @@
 import React, { useState, useMemo } from "react";
-import { Clock, MapPin, ChevronRight, Sparkles } from "lucide-react";
+import { ArrowLeft, Clock, MapPin, ChevronRight, Sparkles } from "lucide-react";
 import { CARAIVA_NOW_ACTIVITIES, CARAIVA_EVENTS, CARAIVA_BUSINESSES, type NowActivity, type Business } from "../../data/caraivaDigitalData";
 import { openBusinessInApp, trackEvent } from "../../services/analytics";
 import { SafeBusinessImage } from "./SafeBusinessImage";
@@ -8,6 +8,7 @@ export interface CaraivaAgoraScreenProps {
   onSelectBusiness: (business: Business) => void;
   onSelectNowActivity?: (activity: NowActivity) => void;
   onOpenMapToBusiness?: (business: Business) => void;
+  onBack?: () => void;
 }
 
 type TimeFilter = "agora" | "proxima_hora" | "hoje" | "noite" | "amanha";
@@ -17,6 +18,7 @@ export const CaraivaAgoraScreen: React.FC<CaraivaAgoraScreenProps> = ({
   onSelectBusiness,
   onSelectNowActivity,
   onOpenMapToBusiness,
+  onBack,
 }) => {
   const [selectedTime, setSelectedTime] = useState<TimeFilter>("agora");
   const [selectedCategory, setSelectedCategory] = useState<CategoryFilter>("todos");
@@ -62,7 +64,20 @@ export const CaraivaAgoraScreen: React.FC<CaraivaAgoraScreenProps> = ({
   };
 
   return (
-    <div className="space-y-4 px-4 pt-3 pb-24">
+    <div className="space-y-4 px-4 pt-3 pb-24 max-w-4xl mx-auto">
+      {/* Botão de Retorno Suave para o Início */}
+      {onBack && (
+        <button
+          type="button"
+          onClick={onBack}
+          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-amber-400 border border-amber-400/20 text-xs font-semibold backdrop-blur-md transition-all active:scale-95"
+          aria-label="Voltar para a página anterior"
+        >
+          <ArrowLeft className="w-3.5 h-3.5" />
+          <span>Voltar ao Início</span>
+        </button>
+      )}
+
       {/* Cabeçalho Editorial com Ícone Pulsante */}
       <div className="bg-gradient-to-br from-[#261B12] via-[#3B2A1A] to-[#102B31] text-white p-5 rounded-3xl shadow-xl relative overflow-hidden">
         <div className="absolute right-0 top-0 w-36 h-36 bg-[#E88636]/15 rounded-full blur-2xl" />
