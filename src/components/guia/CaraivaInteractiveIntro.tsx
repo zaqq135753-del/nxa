@@ -18,7 +18,7 @@ const POETIC_STEPS = [
 
 export const CaraivaInteractiveIntro: React.FC<CaraivaInteractiveIntroProps> = ({
   onComplete,
-  autoPlayDelayMs = 5000,
+  autoPlayDelayMs = 9000,
 }) => {
   const [progress, setProgress] = useState(0);
   const [stepIndex, setStepIndex] = useState(0);
@@ -36,7 +36,7 @@ export const CaraivaInteractiveIntro: React.FC<CaraivaInteractiveIntroProps> = (
     setStepIndex(calculatedStep);
   }, [progress]);
 
-  // Cronômetro suave de progresso com física progressiva
+  // Cronômetro suave de progresso com ritmo contemplativo e calmo
   useEffect(() => {
     const intervalTime = 35;
     const increment = 100 / (autoPlayDelayMs / intervalTime);
@@ -55,15 +55,6 @@ export const CaraivaInteractiveIntro: React.FC<CaraivaInteractiveIntroProps> = (
 
     return () => clearInterval(timer);
   }, [autoPlayDelayMs]);
-
-  // Auto-avanço da fase "Seu ambiente está pronto" após 1.6s
-  useEffect(() => {
-    if (!isReadyPhase) return;
-    const finishTimer = setTimeout(() => {
-      onComplete();
-    }, 1800);
-    return () => clearTimeout(finishTimer);
-  }, [isReadyPhase, onComplete]);
 
   // Gestão do áudio da maré real
   const toggleAudio = (e: React.MouseEvent) => {
@@ -318,19 +309,32 @@ export const CaraivaInteractiveIntro: React.FC<CaraivaInteractiveIntroProps> = (
                 >
                   A maré está calculada, as trilhas de areia estão traçadas e o vilarejo te espera.
                 </motion.p>
+
+                {/* Instrução Explícita de Toque */}
+                <motion.p
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: [0.6, 1, 0.6] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 0.4 }}
+                  className="text-[11px] text-[#F6C945] font-semibold tracking-wider uppercase pt-2 flex items-center justify-center gap-1.5"
+                >
+                  <span>Toque no botão abaixo para ingressar na vila</span>
+                </motion.p>
               </div>
 
-              {/* Botão de Entrada Imediata */}
+              {/* Botão de Entrada Imediata com Pulso Luminoso */}
               <motion.button
                 initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.35 }}
+                animate={{ opacity: 1, scale: [1, 1.04, 1] }}
+                transition={{
+                  scale: { duration: 1.8, repeat: Infinity, ease: "easeInOut" },
+                  opacity: { duration: 0.4, delay: 0.35 }
+                }}
                 type="button"
                 onClick={onComplete}
-                className="mt-4 flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-[#F6C945] to-[#FF8A3D] text-slate-950 font-bold text-sm shadow-[0_8px_30px_rgba(246,201,69,0.4)] hover:scale-105 active:scale-95 transition-all duration-200"
+                className="mt-3 flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-gradient-to-r from-[#F6C945] via-[#FFAE33] to-[#FF8A3D] text-slate-950 font-extrabold text-sm shadow-[0_8px_35px_rgba(246,201,69,0.55)] hover:scale-105 active:scale-95 transition-all duration-200 cursor-pointer"
               >
                 <span>Entrar em Caraíva</span>
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 stroke-[2.5]" />
               </motion.button>
             </motion.div>
           )}
