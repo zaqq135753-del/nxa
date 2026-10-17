@@ -21,6 +21,7 @@ function CheckoutSession({businessId,businessName,mode='goods',onClose}:Checkout
   const [draft,setDraft]=useState(()=>initialDraft(draftKey));
   const [offerings,setOfferings]=useState<Offering[]>([]);
   const [accepting,setAccepting]=useState(false),[deliveryFee,setDeliveryFee]=useState(0),[loading,setLoading]=useState(true);
+  const [catalogFailed,setCatalogFailed]=useState(false),[catalogRevision,setCatalogRevision]=useState(0);
   const [error,setError]=useState(''),[notice,setNotice]=useState(''),[userId,setUserId]=useState<string|null>(null),[authReady,setAuthReady]=useState(false);
   const [email,setEmail]=useState(''),[password,setPassword]=useState(''),[busy,setBusy]=useState(false),[order,setOrder]=useState<Order|null>(null);
   const lock=useRef(false);
@@ -38,14 +39,15 @@ function CheckoutSession({businessId,businessName,mode='goods',onClose}:Checkout
     const load=async()=>{
       const [business,items]=await Promise.all([client.from('cd_businesses').select('accepting_orders,delivery_fee_cents').eq('id',businessId).maybeSingle(),client.from('cd_offerings').select('*').eq('business_id',businessId).eq('available',true).order('name')]);
       if(!active)return;setLoading(false);
-      if(business.error||items.error){setError('Não foi possível consultar o catálogo. Tente novamente.');return;}
+      if(business.error||items.error){setCatalogFailed(true);setError('Não foi possível consultar o catálogo. Tente novamente.');return;}
+      setCatalogFailed(false);
       setAccepting(business.data?.accepting_orders===true);setDeliveryFee(business.data?.delivery_fee_cents??0);setOfferings((items.data??[]) as Offering[]);
     };
     setLoading(true);void load();
     const channel=client.channel(`catalog:${businessId}:${normalized}:${crypto.randomUUID()}`).on('postgres_changes',{event:'*',schema:'public',table:'cd_offerings',filter:`business_id=eq.${businessId}`},()=>void load()).on('postgres_changes',{event:'UPDATE',schema:'public',table:'cd_businesses',filter:`id=eq.${businessId}`},()=>void load()).subscribe();
     const timer=window.setInterval(()=>void load(),20000);
     return()=>{active=false;clearInterval(timer);subscription.unsubscribe();void client.removeChannel(channel);};
-  },[businessId,normalized]);
+  },[businessId,normalized,catalogRevision]);
   useEffect(()=>{
     if(!db||!userId)return;let active=true;
     const last=readSession<string>(`${draftKey}:order`,'');
@@ -96,7 +98,7 @@ function CheckoutSession({businessId,businessName,mode='goods',onClose}:Checkout
   return <section className="cv-checkout" aria-label={`Checkout de ${businessName}`}>
     <header><div><small>CARAÍVA · {normalized==='goods'?'PEDIDOS':'RESERVAS'}</small><h3>{businessName}</h3></div>{onClose&&<button type="button" onClick={onClose} aria-label="Fechar checkout">✕</button>}</header>
     {error&&<p role="alert" className="cv-checkout-alert">{error}</p>}{notice&&<p role="status" className="cv-checkout-notice">{notice}</p>}
-    {loading?<p role="status">Consultando disponibilidade…</p>:order&&userId?<>
+    {loading?<p role="status">Consultando disponibilidade…</p>:catalogFailed?<><p>A consulta está indisponível. Nenhuma disponibilidade foi confirmada.</p><button type="button" onClick={()=>{setError('');setCatalogRevision(value=>value+1);}}>Tentar consultar novamente</button></>:order&&userId?<>
       <h4>Recebido pelo estabelecimento</h4><p>Código <strong className="cv-checkout-code">{order.id}</strong></p>
       <p role="status">{orderStatus(order.status,normalized!=='goods',!draft.pickup)}</p><strong className="cv-checkout-total">{money(order.total_cents)}</strong>
       <p>{order.payment_status==='paid'?'Pagamento confirmado.':order.payment_status==='refunded'?'Pagamento estornado.':'Pagamento pendente. Nenhuma cobrança foi confirmada pelo aplicativo.'}</p>

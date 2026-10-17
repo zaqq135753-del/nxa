@@ -3,6 +3,7 @@ import { Star, Navigation, Heart, Sparkles, UtensilsCrossed, SmartphoneNfc, Cloc
 import type { Business } from '../../../data/caraivaDigitalData';
 import { SafeBusinessImage } from '../SafeBusinessImage';
 import { TapTableSyncService } from '../../../services/taptableSyncService';
+import { useGuideAvailability } from '../../../services/guideAvailability';
 
 interface BusinessCard3DProps {
   business: Business;
@@ -20,6 +21,7 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
   onToggleFavorite,
   aiBadgeReason,
 }) => {
+  const availability = useGuideAvailability(business.id);
   const cardRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ rx: 0, ry: 0, gx: 50, gy: 50, active: false });
 
@@ -29,7 +31,7 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
   }, [business.id]);
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+    if (!cardRef.current || !matchMedia("(hover: hover) and (pointer: fine)").matches || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
@@ -49,14 +51,6 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
     setTilt(prev => ({ ...prev, rx: 0, ry: 0, active: false }));
   }, []);
 
-  const handleTouchStart = useCallback(() => {
-    setTilt(prev => ({ ...prev, rx: -5, ry: 0, active: true }));
-  }, []);
-
-  const handleTouchEnd = useCallback(() => {
-    setTilt(prev => ({ ...prev, rx: 0, ry: 0, active: false }));
-  }, []);
-
   const photo = business.cover_image || business.heroImage || '';
 
   // Efeito 3D com perspectiva real Dark Luxury
@@ -71,11 +65,15 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
   return (
     <div
       ref={cardRef}
+      role="button"
+      tabIndex={0}
+      aria-label={`Ver ${business.name}`}
+      onKeyDown={event => { if (event.target === event.currentTarget && ["Enter", " "].includes(event.key)) { event.preventDefault(); onSelect(business); } }}
       onClick={() => onSelect(business)}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      onTouchStart={undefined}
+      onTouchEnd={undefined}
       className="cd-card-3d cd-business-card select-none group"
       style={{
         borderRadius: 22,
@@ -169,7 +167,7 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
             </span>
 
             {/* TapTable Badge de Mesas */}
-            {tableStatus && (
+            {tableStatus.verified && (
               <span
                 style={{
                   padding: '3px 8px',
@@ -328,7 +326,10 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
           {business.shortDescription || business.description}
         </p>
 
-        {/* Informações de Distância, Maré e Horário */}
+        <p style={{fontSize:11,color:'#c3beb8',margin:'6px 0'}}>{availability ? availability.demo ? 'Catálogo demonstrativo' : availability.receiving && availability.hasCatalog ? 'Recebendo solicitações · confirme no checkout' : 'Recebimento ainda não disponível' : 'Disponibilidade não informada'}</p>
+      {availability && <small style={{fontSize:10,color:'#a6afa9'}}>Consultado no sistema às {new Date(availability.consultedAt).toLocaleTimeString('pt-BR')}</small>}
+      {availability?.receiving && availability.hasCatalog && !availability.demo && availability.highlight && <p style={{fontSize:12,color:"#F6C945"}}>Destaque do parceiro: {availability.highlight}</p>}
+      {/* Informações de Distância, Maré e Horário */}
         <div
           style={{
             display: 'flex',
@@ -343,7 +344,7 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
         >
           <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
             <Navigation size={12} color="#F6C945" />
-            <span>{business.distanceTime} a pé</span>
+            <span>{business.distanceTime} · estimativa</span>
           </div>
 
           <span
@@ -357,7 +358,7 @@ export const BusinessCard3D: React.FC<BusinessCard3DProps> = ({
               border: business.isOpenNow ? '1px solid rgba(16, 185, 129, 0.3)' : '1px solid rgba(239, 68, 68, 0.3)',
             }}
           >
-            {business.isOpenNow ? 'Aberto' : 'Fechado'}
+            Horário do cadastro
           </span>
         </div>
       </div>

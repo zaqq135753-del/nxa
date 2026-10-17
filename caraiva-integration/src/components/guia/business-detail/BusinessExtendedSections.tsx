@@ -275,7 +275,7 @@ export const BusinessBookingTab: React.FC<BusinessBookingTabProps> = ({ business
   const [selectedTime, setSelectedTime] = useState('19:30');
   const [notes, setNotes] = useState('');
   const [bookingSubmitted, setBookingSubmitted] = useState(false);
-  if (cloudCheckoutEnabled && businessId) return <CloudCheckout key={businessId} businessId={businessId} businessName={businessName} mode={businessCategory}/>;
+  if (businessId) return <CloudCheckout key={businessId} businessId={businessId} businessName={businessName} mode={businessCategory}/>;
 
   const isLodging = businessCategory === "hospedagens";
   const isTour = businessCategory === "passeios";

@@ -2,14 +2,14 @@ import http from 'node:http';
 import {readFile,stat,realpath} from 'node:fs/promises';
 import path from 'node:path';
 const root=await realpath(path.resolve('dist'));
-const types={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.json':'application/json','.mp3':'audio/mpeg','.woff2':'font/woff2','.ico':'image/x-icon'};
-const pages=new Set(['/','/guia','/guia/','/guia/pedidos','/guia/pedidos/','/parceiros/painel','/parceiros/painel/','/parceiros/cadastro','/parceiros/cadastro/']);
+const types={'.html':'text/html; charset=utf-8','.js':'application/javascript','.css':'text/css','.svg':'image/svg+xml','.png':'image/png','.jpg':'image/jpeg','.jpeg':'image/jpeg','.webp':'image/webp','.json':'application/json','.mp3':'audio/mpeg','.woff2':'font/woff2','.ico':'image/x-icon','.webmanifest':'application/manifest+json','.mp4':'video/mp4','.webm':'video/webm'};
+const pages=new Set(['/guia/viagem','/guia/viagem/','/business','/parceiros/painel-classico','/hospede','/experience','/apresentacao','/parceiros/apresentacao','/parceiros/magic','/','/guia','/guia/','/guia/pedidos','/guia/pedidos/','/parceiros/painel','/parceiros/painel/','/parceiros/cadastro','/parceiros/cadastro/']);
 const server=http.createServer(async(req,res)=>{
  res.setHeader('X-Content-Type-Options','nosniff');
  res.setHeader('Referrer-Policy','no-referrer');
  res.setHeader('X-Frame-Options','DENY');
  res.setHeader('Permissions-Policy','camera=(self), microphone=(self), geolocation=(self), payment=()');
- res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self' https://maps.googleapis.com https://maps.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://maps.googleapis.com https://maps.gstatic.com https://*.googleapis.com https://*.google.com https://ixqmvogmjvgmafmbbgli.supabase.co wss://ixqmvogmjvgmafmbbgli.supabase.co; media-src 'self' blob:; worker-src 'self' blob:; frame-src https://www.google.com https://maps.google.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'");
+ res.setHeader('Content-Security-Policy',"default-src 'self'; script-src 'self' https://maps.googleapis.com https://maps.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob: https:; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://api.open-meteo.com https://maps.googleapis.com https://maps.gstatic.com https://*.googleapis.com https://*.google.com https://ixqmvogmjvgmafmbbgli.supabase.co wss://ixqmvogmjvgmafmbbgli.supabase.co; media-src 'self' blob:; worker-src 'self' blob:; frame-src https://www.google.com https://maps.google.com; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'");
  res.setHeader('Cache-Control','no-store');
  try {
   if(req.method!=='GET'&&req.method!=='HEAD'){res.writeHead(405,{'Allow':'GET, HEAD'});res.end();return;}
@@ -19,7 +19,7 @@ const server=http.createServer(async(req,res)=>{
   if(requested.includes('\\')||requested.includes(':')||requested.includes('\0')||requested.split('/').some(segment=>segment.startsWith('.'))){res.writeHead(404);res.end();return;}
   const page=pages.has(requested)||/^\/guia\/checkout\/[a-zA-Z0-9_-]+\/?$/.test(requested);
   let file=page?path.join(root,'index.html'):path.resolve(root,'.'+requested);
-  if(!page&&(!types[path.extname(file)]||path.extname(file)==='.html')){res.writeHead(404);res.end();return;}
+  if(!page&&(!types[path.extname(file)]||(path.extname(file)==='.html'&&requested!=='/journey-offline.html'))){res.writeHead(404);res.end();return;}
   file=await realpath(file);
   if(!file.startsWith(root+path.sep)){res.writeHead(404);res.end();return;}
   const info=await stat(file);if(!info.isFile())throw new Error();

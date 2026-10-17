@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @import "./theme/tamikua.css";
 
+@font-face {
+  font-family: "Kaushan Script";
+  src: url("/assets/fonts/KaushanScript.ttf") format("truetype");
+  font-weight: 400 700;
+  font-style: normal;
+  font-display: swap;
+}
+
 @theme {
   /* Tamikua Caraíva clean brand palette */
   --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;

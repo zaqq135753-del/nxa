@@ -1,101 +1,26 @@
-import { useEffect, useState } from 'react';
-
-export interface WeatherTideData {
-  temp: number;
-  apparentTemp: number;
-  condition: string;
-  isDay: boolean;
-  uvIndex: number;
-  tideState: 'baixa' | 'alta';
-  nextTideTime: string;
-  nextTideLabel: string;
-  recommendation: string;
+import { useEffect, useSyncExternalStore } from 'react';
+export interface WeatherTideData { temp: number; apparentTemp: number; condition: string; isDay: boolean; uvIndex: number; tideState: 'baixa' | 'alta' | 'desconhecida'; nextTideTime: string; nextTideLabel: string; recommendation: string; verified: boolean; consultedAt: string }
+let value: WeatherTideData = { temp: 0, apparentTemp: 0, condition: 'Clima ainda não consultado', isDay: true, uvIndex: 0, tideState: 'desconhecida', nextTideTime: '', nextTideLabel: 'Tábua de marés não conectada', recommendation: 'Confirme as condições e orientações locais antes de entrar no mar ou realizar travessias.', verified: false, consultedAt: '' };
+const listeners = new Set<() => void>(); let pending = false; let lastAttempt = 0;
+async function fetchWeather() {
+  if (pending || Date.now() - lastAttempt < 240000 || !navigator.onLine) return;
+  pending = true; lastAttempt = Date.now(); const controller = new AbortController(); const timeout = setTimeout(() => controller.abort(), 10000);
+  try {
+    const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=-16.8049&longitude=-39.1478&current=temperature_2m,apparent_temperature,is_day,weather_code&timezone=America%2FSao_Paulo', { signal: controller.signal });
+    if (!response.ok) return;
+    const json: unknown = await response.json();
+    if (typeof json !== 'object' || !json || !('current' in json) || typeof json.current !== 'object' || !json.current) return;
+    const current = json.current;
+    if (!('temperature_2m' in current) || typeof current.temperature_2m !== 'number' || !('apparent_temperature' in current) || typeof current.apparent_temperature !== 'number') return;
+    const code = 'weather_code' in current && typeof current.weather_code === 'number' ? current.weather_code : -1;
+    value = { ...value, temp: Math.round(current.temperature_2m), apparentTemp: Math.round(current.apparent_temperature), isDay: 'is_day' in current && current.is_day === 1, condition: code === 0 ? 'Céu aberto' : code <= 3 && code > 0 ? 'Parcialmente nublado' : code >= 51 ? 'Previsão de precipitação' : 'Previsão meteorológica', verified: true, consultedAt: new Date().toISOString() };
+    listeners.forEach(listener => listener());
+  } catch { /* An unavailable forecast never becomes invented weather or tide data. */ }
+  finally { clearTimeout(timeout); pending = false; }
 }
-
-// Caraíva: Lat -16.8049, Lon -39.1478
+function subscribe(listener: () => void) { listeners.add(listener); return () => { listeners.delete(listener); }; }
 export function useCaraivaWeatherAndTide(): WeatherTideData {
-  const [data, setData] = useState<WeatherTideData>(() => {
-    // Estimativa inicial baseada na hora solar de Caraíva
-    const now = new Date();
-    const hours = now.getHours();
-    const isDay = hours >= 5 && hours < 18;
-    return {
-      temp: isDay ? 28 : 24,
-      apparentTemp: isDay ? 30 : 25,
-      condition: 'Ensolarado com brisa do mar',
-      isDay,
-      uvIndex: isDay ? 8 : 0,
-      tideState: 'baixa',
-      nextTideTime: '11:45',
-      nextTideLabel: 'Maré Baixa (0.3m)',
-      recommendation: 'Maré favorável para travessia a pé e piscinas naturais da foz',
-    };
-  });
-
-  useEffect(() => {
-    let active = true;
-
-    async function fetchWeather() {
-      try {
-        const res = await fetch(
-          'https://api.open-meteo.com/v1/forecast?latitude=-16.8049&longitude=-39.1478&current=temperature_2m,relative_humidity_2m,apparent_temperature,is_day,weather_code&hourly=uv_index&timezone=America%2FSao_Paulo'
-        );
-        if (!res.ok) return;
-        const json = await res.json();
-        if (!active || !json.current) return;
-
-        const current = json.current;
-        const now = new Date();
-        const hour = now.getHours();
-        const uv = json.hourly?.uv_index?.[hour] ?? (current.is_day ? 7 : 0);
-
-        // Mapeamento semântico do código meteorológico WMO
-        let condition = 'Céu aberto na vila';
-        const code = current.weather_code;
-        if (code === 0) condition = current.is_day ? 'Ensolarado' : 'Noite estrelada';
-        else if (code >= 1 && code <= 3) condition = 'Parcialmente nublado com brisa';
-        else if (code >= 51 && code <= 67) condition = 'Chuva passageira tropical';
-        else if (code >= 80 && code <= 82) condition = 'Pancada rápida de verão';
-        else if (code >= 95) condition = 'Instável com vento forte';
-
-        // Cálculo astronômico aproximado da maré de Caraíva (ciclo semidiurno ~12h25min)
-        // Caraíva marés: 2 baixas e 2 altas por dia
-        const tideHourCycle = (hour + (now.getMinutes() / 60)) % 12.4;
-        const isLowTide = tideHourCycle < 3.1 || tideHourCycle > 9.3;
-        
-        let rec = 'Perfeito para curtir o banho no rio e caminhar pela praia da barra.';
-        if (isLowTide) {
-          rec = 'Maré baixa: Excelente para travessia a pé, ponta do Corumbau e arrecifes.';
-        } else {
-          rec = 'Maré cheia: Pôr do sol na beira do rio e passeios de barco com água calma.';
-        }
-
-        const nextHour = (hour + (isLowTide ? 6 : 6)) % 24;
-        const nextTime = `${String(nextHour).padStart(2, '0')}:30`;
-
-        setData({
-          temp: Math.round(current.temperature_2m),
-          apparentTemp: Math.round(current.apparent_temperature),
-          condition,
-          isDay: current.is_day === 1,
-          uvIndex: Math.round(uv),
-          tideState: isLowTide ? 'baixa' : 'alta',
-          nextTideTime: nextTime,
-          nextTideLabel: isLowTide ? 'Maré Baixa (0.2m)' : 'Maré Cheia (1.8m)',
-          recommendation: rec,
-        });
-      } catch {
-        // Silently keep default Caraíva weather data
-      }
-    }
-
-    void fetchWeather();
-    const interval = setInterval(fetchWeather, 300000); // atualiza a cada 5 minutos
-    return () => {
-      active = false;
-      clearInterval(interval);
-    };
-  }, []);
-
-  return data;
+  const weather = useSyncExternalStore(subscribe, () => value);
+  useEffect(() => { void fetchWeather(); const timer = setInterval(() => void fetchWeather(), 300000); return () => clearInterval(timer); }, []);
+  return weather;
 }

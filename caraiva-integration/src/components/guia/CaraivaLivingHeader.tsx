@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { ClipboardList, Compass, Radio, Store, Volume2, VolumeX } from "lucide-react";
+import { ClipboardList, Compass, Store, Volume2, VolumeX } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { CaraivaMoment } from "./useCaraivaMoment";
 import { GuideThemeButton } from "./GuideThemeButton";
@@ -69,22 +69,13 @@ export function CaraivaLivingHeader({ moment, audioActive, salesAdmin: _salesAdm
           {/* Ações Essenciais Curadas: Pedidos/Sacola + Som + Business + Tema */}
           <div className="caraiva-header-actions flex items-center gap-1.5">
             {/* 1. Radar Admin (Discreto) */}
-            <Link 
-              className="caraiva-icon-button relative" 
-              to="/admin/radar" 
-              aria-label="Radar ao Vivo (Admin)" 
-              title="Radar ao Vivo (Admin)"
-            >
-              <Radio size={18} className="text-emerald-400" />
-              <span className="absolute top-1.5 right-1.5 w-1.5 h-1.5 rounded-full bg-emerald-400 animate-ping" />
-            </Link>
 
             {/* 2. Meus Pedidos & Reservas */}
             <Link 
               className="caraiva-icon-button" 
-              to="/guia/pedidos" 
-              aria-label="Meus pedidos e reservas" 
-              title="Meus pedidos e reservas"
+              to="/guia/viagem"
+              aria-label="Minha viagem"
+              title="Minha viagem"
             >
               <ClipboardList size={18} />
             </Link>

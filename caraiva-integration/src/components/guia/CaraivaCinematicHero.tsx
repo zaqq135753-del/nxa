@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Waves, Sun, VolumeX, Compass, Camera } from "lucide-react";
-import { CARAIVA_REALTIME_CONTEXT } from "../../data/caraivaIntelligence";
+import { useCaraivaWeatherAndTide } from "./useCaraivaWeatherAndTide";
 import { CaraivaSmartSearch } from "./CaraivaSmartSearch";
 import { caraivaAudio } from "../../utils/caraivaAudio";
 import { asset } from "../../lib/asset";
@@ -66,6 +66,7 @@ export const CaraivaCinematicHero: React.FC<CaraivaCinematicHeroProps> = ({
   visitorName,
   onPhotoCredits,
 }) => {
+  const weather = useCaraivaWeatherAndTide();
   const [isAudioActive, setIsAudioActive] = useState(false);
   const [isMediaLoaded, setIsMediaLoaded] = useState(false);
   const [photoIndex, setPhotoIndex] = useState(0);
@@ -289,11 +290,11 @@ export const CaraivaCinematicHero: React.FC<CaraivaCinematicHeroProps> = ({
             >
               <Waves className={`w-3 h-3 sm:w-3.5 sm:h-3.5 cd-boat-rock ${isLight ? "text-[#367F89]" : "text-cyan-300"}`} />
               <span>
-                {CARAIVA_REALTIME_CONTEXT.currentTide.type} {CARAIVA_REALTIME_CONTEXT.currentTide.height}
+                Maré: consulte a fonte local
               </span>
               <span className={isLight ? "text-stone-400" : "text-white/30"}>·</span>
               <Sun className={`w-3 h-3 sm:w-3.5 sm:h-3.5 cd-sun-spin ${isLight ? "text-[#AA8941]" : "text-[#F6C76A]"}`} />
-              <span>{CARAIVA_REALTIME_CONTEXT.temperature}°C</span>
+              <span>{weather.verified ? `${weather.temp}°C` : "Clima em consulta"}</span>
             </button>
 
             <span
@@ -303,7 +304,7 @@ export const CaraivaCinematicHero: React.FC<CaraivaCinematicHeroProps> = ({
                   : "bg-black/30 border-white/10 text-white/90"
               }`}
             >
-              Pôr do Sol às {CARAIVA_REALTIME_CONTEXT.sunset.time}
+              Rio, mar e vila no seu tempo
             </span>
           </div>
         </div>
