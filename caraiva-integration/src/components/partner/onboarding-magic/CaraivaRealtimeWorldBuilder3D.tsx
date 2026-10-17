@@ -34,17 +34,16 @@ export interface CaraivaRealtimeWorldBuilder3DProps {
   className?: string;
 }
 
-// Mapeamento oficial de cores da arquitetura colonial de Caraíva por categoria
 export const CARAIVA_CATEGORY_COLORS: Record<string, string> = {
-  restaurantes: "#F59E0B", // Amarelo Mostarda Tradicional
-  bares: "#EF4444",        // Vermelho Terracota Bahiano
-  cafes: "#10B981",        // Verde Menta de Caraíva
-  praias: "#06B6D4",       // Azul Turquesa Beira-Mar
-  passeios: "#2563EB",     // Azul Colonial Real
-  hospedagens: "#8B5CF6",   // Lavanda Floral Pousada
-  noite: "#EC4899",        // Rosa Bougainville do Forró
-  lojas: "#F97316",        // Laranja Artesanato Pataxó
-  pontos: "#EAB308",       // Dourado Sol de São Sebastião
+  restaurantes: "#F59E0B",
+  bares: "#EF4444",
+  cafes: "#10B981",
+  praias: "#06B6D4",
+  passeios: "#2563EB",
+  hospedagens: "#8B5CF6",
+  noite: "#EC4899",
+  lojas: "#F97316",
+  pontos: "#EAB308",
 };
 
 interface StageMetadata {
@@ -59,149 +58,145 @@ interface StageMetadata {
 const STAGES: StageMetadata[] = [
   {
     id: "sand",
-    label: "Fundação & Natureza",
-    phrase: "Acomodando a areia beira-rio e despertando os coqueirais...",
+    label: "Pedestal & Areia",
+    phrase: "Elevando o pedestal de galeria e a ilha de areia de Caraíva...",
     durationMs: 3000,
-    cameraPos: [0, 7.5, 17.5],
+    cameraPos: [0, 8.5, 17.0],
     targetPos: [0, 1.2, 0],
   },
   {
     id: "walls",
-    label: "Mourões & Adobe",
-    phrase: "Cravando mourões de eucalipto e erguendo paredes de cal caiada...",
+    label: "Estrutura & Varanda",
+    phrase: "Modelando a estrutura de jacarandá nobre e a varanda colonial...",
     durationMs: 3200,
-    cameraPos: [7.5, 5.5, 14.0],
-    targetPos: [0, 1.8, 0],
+    cameraPos: [7.2, 5.8, 13.8],
+    targetPos: [0, 1.6, 0],
   },
   {
     id: "roof",
-    label: "Telhado Colonial",
-    phrase: "Assentando telhas coloniais de barro e acendendo lampiões...",
+    label: "Telhado de Cerâmica",
+    phrase: "Assentando as telhas artesanais e acendendo os lampiões de latão...",
     durationMs: 3400,
-    cameraPos: [5.8, 6.8, 12.0],
-    targetPos: [0, 2.4, 0],
+    cameraPos: [5.6, 6.5, 11.8],
+    targetPos: [0, 2.2, 0],
   },
   {
     id: "facade_sign",
-    label: "Placa Entalhada",
-    phrase: "Entalhando o nome em madeira nobre e correntes de ferro...",
+    label: "Placa em Ouro",
+    phrase: "Entalhando o nome em madeira nobre e letras folheadas a ouro...",
     durationMs: 3000,
-    cameraPos: [0, 3.2, 8.6],
-    targetPos: [0, 2.6, 2.0],
+    cameraPos: [0, 3.4, 8.8],
+    targetPos: [0, 2.5, 1.8],
   },
   {
     id: "orb_blessing",
-    label: "Living Orb Solar",
-    phrase: "O Caraíva Orb abençoa a cumeeira e propaga ondas douradas...",
+    label: "Luz Interior & Orb",
+    phrase: "Acendendo as luzes da casa e coroando com o Living Orb solar...",
     durationMs: 3800,
-    cameraPos: [0, 5.8, 14.2],
-    targetPos: [0, 2.8, 0],
+    cameraPos: [0, 6.0, 14.0],
+    targetPos: [0, 2.6, 0],
   },
   {
     id: "dive_in",
-    label: "Mergulho Cinemático",
-    phrase: "Abrindo as portas coloniais e integrando o negócio à vila...",
+    label: "Mergulho de Gala",
+    phrase: "Aproximando da varanda iluminada e inaugurando o espaço...",
     durationMs: 2500,
-    cameraPos: [0, 1.8, 0.4],
-    targetPos: [0, 1.8, -4.0],
+    cameraPos: [0, 1.9, 0.6],
+    targetPos: [0, 1.9, -3.8],
   },
   {
     id: "completed",
-    label: "Inauguração",
-    phrase: "Casario inaugurado com excelência no ecossistema Caraíva Digital!",
+    label: "Exposição Inaugurada",
+    phrase: "Diorama Dark Luxury inaugurado no ecossistema Caraíva Digital!",
     durationMs: 0,
-    cameraPos: [0, 3.8, 11.0],
-    targetPos: [0, 2.2, 0],
+    cameraPos: [0, 4.2, 11.2],
+    targetPos: [0, 2.0, 0],
   },
 ];
 
-// Gerador procedural da textura de placa de madeira entalhada em Canvas 2D
-function createWoodSignTexture(businessName: string): THREE.CanvasTexture {
+// Placa de Madeira Nobre com Entalhe em Ouro
+function createDioramaSignTexture(businessName: string): THREE.CanvasTexture {
   const canvas = document.createElement("canvas");
   canvas.width = 1024;
   canvas.height = 512;
   const ctx = canvas.getContext("2d");
 
   if (ctx) {
-    // 1. Fundo Madeira Rústica Nobre de Demolição
+    // Madeira Escura de Jacarandá da Bahia
     const grad = ctx.createLinearGradient(0, 0, 0, canvas.height);
-    grad.addColorStop(0, "#231207");
-    grad.addColorStop(0.25, "#381d0c");
-    grad.addColorStop(0.5, "#210f05");
-    grad.addColorStop(0.75, "#351b0a");
-    grad.addColorStop(1, "#1c0c04");
+    grad.addColorStop(0, "#190e06");
+    grad.addColorStop(0.3, "#28160a");
+    grad.addColorStop(0.7, "#1c0f07");
+    grad.addColorStop(1, "#120803");
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // 2. Veios Orgânicos da Madeira de Lei
+    // Veios da madeira
     ctx.save();
-    ctx.lineWidth = 2.5;
-    for (let i = 0; i < 54; i++) {
-      const y = (i * canvas.height) / 54;
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 40; i++) {
+      const y = (i * canvas.height) / 40;
       ctx.beginPath();
       ctx.moveTo(0, y);
       ctx.bezierCurveTo(
         256,
-        y + Math.sin(i * 0.8) * 18,
+        y + Math.sin(i * 0.7) * 14,
         768,
-        y - Math.cos(i * 0.6) * 20,
+        y - Math.cos(i * 0.5) * 16,
         canvas.width,
-        y + Math.sin(i * 1.2) * 14
+        y + Math.sin(i * 1.1) * 10
       );
-      ctx.strokeStyle = i % 2 === 0 ? "rgba(14, 7, 3, 0.55)" : "rgba(82, 44, 21, 0.4)";
+      ctx.strokeStyle = i % 2 === 0 ? "rgba(10, 5, 2, 0.6)" : "rgba(65, 35, 16, 0.35)";
       ctx.stroke();
     }
     ctx.restore();
 
-    // 3. Moldura Chanfrada Entalhada com Pátina
+    // Moldura chanfrada com filete de ouro polido
     const pad = 24;
-    ctx.lineWidth = 9;
-    ctx.strokeStyle = "rgba(10, 5, 2, 0.9)";
+    ctx.lineWidth = 8;
+    ctx.strokeStyle = "rgba(10, 5, 2, 0.95)";
     ctx.strokeRect(pad, pad, canvas.width - pad * 2, canvas.height - pad * 2);
 
-    ctx.lineWidth = 3.5;
-    ctx.strokeStyle = "rgba(246, 201, 69, 0.55)"; // Filete dourado artesanal
-    ctx.strokeRect(pad + 8, pad + 8, canvas.width - (pad + 8) * 2, canvas.height - (pad + 8) * 2);
+    ctx.lineWidth = 4;
+    ctx.strokeStyle = "rgba(246, 201, 69, 0.75)";
+    ctx.strokeRect(pad + 10, pad + 10, canvas.width - (pad + 10) * 2, canvas.height - (pad + 10) * 2);
 
-    // 4. Pregos/Parafusos Rústicos de Bronze nos 4 Cantos
+    // Parafusos de latão dourado
     const corners = [
-      [pad + 20, pad + 20],
-      [canvas.width - pad - 20, pad + 20],
-      [pad + 20, canvas.height - pad - 20],
-      [canvas.width - pad - 20, canvas.height - pad - 20],
+      [pad + 22, pad + 22],
+      [canvas.width - pad - 22, pad + 22],
+      [pad + 22, canvas.height - pad - 22],
+      [canvas.width - pad - 22, canvas.height - pad - 22],
     ];
-
     corners.forEach(([cx, cy]) => {
-      const boltGrad = ctx.createRadialGradient(cx - 2, cy - 2, 2, cx, cy, 12);
-      boltGrad.addColorStop(0, "#F6C945");
-      boltGrad.addColorStop(0.7, "#854D0E");
-      boltGrad.addColorStop(1, "#1C1917");
+      const boltGrad = ctx.createRadialGradient(cx - 2, cy - 2, 2, cx, cy, 10);
+      boltGrad.addColorStop(0, "#FFF3B0");
+      boltGrad.addColorStop(0.7, "#F6C945");
+      boltGrad.addColorStop(1, "#78350F");
       ctx.beginPath();
-      ctx.arc(cx, cy, 9, 0, Math.PI * 2);
+      ctx.arc(cx, cy, 8, 0, Math.PI * 2);
       ctx.fillStyle = boltGrad;
       ctx.fill();
     });
 
-    // 5. Cabeçalho Colonial
+    // Cabeçalho
     ctx.textAlign = "center";
     ctx.textBaseline = "middle";
     ctx.font = "bold 26px 'Playfair Display', Georgia, serif";
-    ctx.fillStyle = "rgba(246, 201, 69, 0.85)";
+    ctx.fillStyle = "rgba(246, 201, 69, 0.9)";
     ctx.letterSpacing = "6px";
     ctx.fillText("• CARAÍVA • BAHIA •", canvas.width / 2, pad + 55);
 
-    // 6. Nome do Negócio com Efeito Entalhado em Ouro
+    // Nome do Negócio
     const displayName = (businessName || "Casario Colonial").toUpperCase();
     const fontSize = displayName.length > 22 ? 44 : displayName.length > 15 ? 52 : 62;
     ctx.font = `900 ${fontSize}px 'Playfair Display', 'Cinzel', Georgia, serif`;
-    ctx.letterSpacing = "3px";
+    ctx.letterSpacing = "4px";
 
-    // Sombra entalhada profunda
     ctx.fillStyle = "#0A0502";
-    ctx.fillText(displayName, canvas.width / 2 + 3, canvas.height / 2 + 5);
+    ctx.fillText(displayName, canvas.width / 2 + 2, canvas.height / 2 + 4);
 
-    // Preenchimento Dourado Rico com Degradê Solar
-    const goldGrad = ctx.createLinearGradient(0, canvas.height / 2 - 40, 0, canvas.height / 2 + 40);
+    const goldGrad = ctx.createLinearGradient(0, canvas.height / 2 - 35, 0, canvas.height / 2 + 35);
     goldGrad.addColorStop(0, "#FFFBEB");
     goldGrad.addColorStop(0.3, "#F6C945");
     goldGrad.addColorStop(0.7, "#D97706");
@@ -209,15 +204,14 @@ function createWoodSignTexture(businessName: string): THREE.CanvasTexture {
     ctx.fillStyle = goldGrad;
     ctx.fillText(displayName, canvas.width / 2, canvas.height / 2);
 
-    // Contorno fino de ouro polido
-    ctx.lineWidth = 1.5;
-    ctx.strokeStyle = "rgba(255, 255, 255, 0.55)";
+    ctx.lineWidth = 1.2;
+    ctx.strokeStyle = "rgba(255, 255, 255, 0.6)";
     ctx.strokeText(displayName, canvas.width / 2, canvas.height / 2);
 
-    // 7. Rodapé com Selo do Ecossistema
+    // Rodapé
     ctx.font = "bold 20px 'Inter', sans-serif";
     ctx.letterSpacing = "4px";
-    ctx.fillStyle = "rgba(255, 244, 237, 0.65)";
+    ctx.fillStyle = "rgba(255, 244, 237, 0.7)";
     ctx.fillText("ECOSSISTEMA DIGITAL & TAPTABLE", canvas.width / 2, canvas.height - pad - 45);
   }
 
@@ -228,245 +222,7 @@ function createWoodSignTexture(businessName: string): THREE.CanvasTexture {
   return texture;
 }
 
-// Construtor procedural de Coqueiro Nativo de Caraíva com física de brisa
-function createCoconutPalmTree(height = 6.2, curveDirection = 1): {
-  group: THREE.Group;
-  fronds: THREE.Mesh[];
-  trunk: THREE.Group;
-} {
-  const palmGroup = new THREE.Group();
-  const trunkGroup = new THREE.Group();
-  palmGroup.add(trunkGroup);
-
-  // Tronco segmentado com curvatura tropical orgânica
-  const segments = 8;
-  const segHeight = height / segments;
-  const trunkMat = new THREE.MeshStandardMaterial({
-    color: 0x4e3621,
-    roughness: 0.92,
-    metalness: 0.05,
-  });
-
-  let currentY = 0;
-  let currentX = 0;
-
-  for (let i = 0; i < segments; i++) {
-    const bottomR = 0.22 - (i / segments) * 0.08;
-    const topR = 0.20 - ((i + 1) / segments) * 0.08;
-    const segGeo = new THREE.CylinderGeometry(topR, bottomR, segHeight, 9);
-    const segMesh = new THREE.Mesh(segGeo, trunkMat);
-    segMesh.castShadow = true;
-    segMesh.receiveShadow = true;
-
-    // Curva progressiva em direção à praia
-    const lean = (i / segments) * 0.12 * curveDirection;
-    currentX += lean;
-    currentY += segHeight;
-
-    segMesh.position.set(currentX, currentY - segHeight / 2, 0);
-    segMesh.rotation.z = -lean * 1.5;
-    trunkGroup.add(segMesh);
-  }
-
-  // Coroa de Folhas de Palmeira (Fronds)
-  const frondsGroup = new THREE.Group();
-  frondsGroup.position.set(currentX, currentY, 0);
-  palmGroup.add(frondsGroup);
-
-  const frondCount = 9;
-  const fronds: THREE.Mesh[] = [];
-
-  const frondMat = new THREE.MeshStandardMaterial({
-    color: 0x2e6b35,
-    roughness: 0.72,
-    metalness: 0.08,
-    side: THREE.DoubleSide,
-  });
-
-  for (let i = 0; i < frondCount; i++) {
-    const angle = (i / frondCount) * Math.PI * 2;
-    const frondShape = new THREE.Shape();
-    frondShape.moveTo(0, 0);
-    frondShape.quadraticCurveTo(0.35, 1.5, 0, 3.2);
-    frondShape.quadraticCurveTo(-0.35, 1.5, 0, 0);
-
-    const frondGeo = new THREE.ShapeGeometry(frondShape, 8);
-    const frondMesh = new THREE.Mesh(frondGeo, frondMat);
-    frondMesh.castShadow = true;
-
-    // Inclinação natural em leque e caimento para baixo
-    frondMesh.rotation.z = Math.PI / 2 + 0.35;
-    frondMesh.rotation.y = angle;
-    frondMesh.rotation.x = 0.65;
-    frondMesh.scale.set(0.85, 0.85, 0.85);
-
-    frondsGroup.add(frondMesh);
-    fronds.push(frondMesh);
-  }
-
-  // Cacho de cocos verdes na base da coroa
-  const coconutMat = new THREE.MeshStandardMaterial({ color: 0x4a7c2e, roughness: 0.65 });
-  const coconutGeo = new THREE.SphereGeometry(0.14, 8, 8);
-  for (let c = 0; c < 5; c++) {
-    const cMesh = new THREE.Mesh(coconutGeo, coconutMat);
-    const ca = (c / 5) * Math.PI * 2;
-    cMesh.position.set(
-      currentX + Math.cos(ca) * 0.22,
-      currentY - 0.12,
-      Math.sin(ca) * 0.22
-    );
-    cMesh.castShadow = true;
-    palmGroup.add(cMesh);
-  }
-
-  return { group: palmGroup, fronds, trunk: trunkGroup };
-}
-
-// Construtor do Telhado Colonial Real com telhas de canal e capa (barro artesanal)
-function createColonialTileRoof(
-  width: number,
-  depth: number,
-  height: number,
-  wallHeight: number
-): {
-  roofGroup: THREE.Group;
-  tilesGroup: THREE.Group;
-} {
-  const roofGroup = new THREE.Group();
-  const tilesGroup = new THREE.Group();
-  roofGroup.add(tilesGroup);
-
-  // Vigamento estrutural de madeira de maçaranduba
-  const beamMat = new THREE.MeshStandardMaterial({ color: 0x3d2011, roughness: 0.9 });
-  const ridgeBeamGeo = new THREE.BoxGeometry(width + 0.6, 0.16, 0.16);
-  const ridgeBeam = new THREE.Mesh(ridgeBeamGeo, beamMat);
-  ridgeBeam.position.set(0, wallHeight + height + 0.05, 0);
-  ridgeBeam.castShadow = true;
-  roofGroup.add(ridgeBeam);
-
-  // Base rústica das duas águas
-  const baseMat = new THREE.MeshStandardMaterial({ color: 0x823315, roughness: 0.95 });
-  const slopeAngle = 0.58; // ~33 graus
-  const slopeLen = Math.sqrt(Math.pow(width / 2, 2) + Math.pow(height, 2)) * 1.08;
-  const slopeGeo = new THREE.BoxGeometry(slopeLen, 0.08, depth + 0.6);
-
-  const leftBase = new THREE.Mesh(slopeGeo, baseMat);
-  leftBase.position.set(-width / 4 + 0.04, wallHeight + height / 2, 0);
-  leftBase.rotation.z = slopeAngle;
-  leftBase.receiveShadow = true;
-  roofGroup.add(leftBase);
-
-  const rightBase = new THREE.Mesh(slopeGeo, baseMat);
-  rightBase.position.set(width / 4 - 0.04, wallHeight + height / 2, 0);
-  rightBase.rotation.z = -slopeAngle;
-  rightBase.receiveShadow = true;
-  roofGroup.add(rightBase);
-
-  // Geração de Telhas Coloniais Tipo Barro Artesanal (Capa & Canal)
-  const rows = 12;
-  const cols = 9;
-  const tileRadius = 0.11;
-  const tileLen = (depth + 0.5) / cols;
-
-  const tileColors = [0xb44318, 0xa33612, 0x8c2c0e, 0xc14c1d, 0x983210];
-
-  for (let side = -1; side <= 1; side += 2) {
-    for (let r = 0; r < rows; r++) {
-      const rowProgress = r / (rows - 1);
-      const px = side * (0.2 + rowProgress * (width / 2 - 0.1));
-      const py = wallHeight + height - rowProgress * height + 0.08;
-
-      for (let c = 0; c < cols; c++) {
-        const pz = -depth / 2 + 0.15 + c * tileLen;
-
-        const tileMat = new THREE.MeshStandardMaterial({
-          color: tileColors[(r + c) % tileColors.length],
-          roughness: 0.85,
-          metalness: 0.04,
-        });
-
-        // Telha semicilíndrica de capa (convexa)
-        const tileGeo = new THREE.CylinderGeometry(
-          tileRadius,
-          tileRadius * 1.1,
-          tileLen * 1.08,
-          8,
-          1,
-          true,
-          0,
-          Math.PI
-        );
-        const tileMesh = new THREE.Mesh(tileGeo, tileMat);
-        tileMesh.castShadow = true;
-        tileMesh.receiveShadow = true;
-
-        tileMesh.rotation.x = Math.PI / 2;
-        tileMesh.rotation.y = side === -1 ? slopeAngle : -slopeAngle;
-        tileMesh.position.set(px, py, pz);
-
-        // Pequena variação artesanal de rotação para cada telha de barro moldada à mão
-        tileMesh.rotation.z = (Math.random() - 0.5) * 0.08;
-
-        tilesGroup.add(tileMesh);
-      }
-    }
-  }
-
-  // Cumeeira de capeamento no pico central
-  const ridgeTileGeo = new THREE.CylinderGeometry(0.14, 0.14, depth + 0.7, 9);
-  const ridgeTileMat = new THREE.MeshStandardMaterial({ color: 0x7c2d12, roughness: 0.85 });
-  const ridge = new THREE.Mesh(ridgeTileGeo, ridgeTileMat);
-  ridge.rotation.x = Math.PI / 2;
-  ridge.position.set(0, wallHeight + height + 0.1, 0);
-  ridge.castShadow = true;
-  roofGroup.add(ridge);
-
-  return { roofGroup, tilesGroup };
-}
-
-// Construtor de Lampião Colonial de Ferro Forjado com Luz Quente
-function createColonialLantern(): {
-  lanternGroup: THREE.Group;
-  light: THREE.PointLight;
-} {
-  const lanternGroup = new THREE.Group();
-
-  // Braço de ferro forjado
-  const ironMat = new THREE.MeshStandardMaterial({ color: 0x1f1f1f, roughness: 0.4, metalness: 0.85 });
-  const armGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.35, 6);
-  const arm = new THREE.Mesh(armGeo, ironMat);
-  arm.rotation.x = Math.PI / 3;
-  lanternGroup.add(arm);
-
-  // Cúpula do lampião
-  const cupGeo = new THREE.ConeGeometry(0.14, 0.12, 6);
-  const cup = new THREE.Mesh(cupGeo, ironMat);
-  cup.position.set(0, 0.18, 0.14);
-  lanternGroup.add(cup);
-
-  // Vidro âmbar com filamento incandescente
-  const glassGeo = new THREE.CylinderGeometry(0.08, 0.1, 0.18, 8);
-  const glassMat = new THREE.MeshStandardMaterial({
-    color: 0xffd060,
-    emissive: 0xf59e0b,
-    emissiveIntensity: 2.2,
-    transparent: true,
-    opacity: 0.88,
-  });
-  const glass = new THREE.Mesh(glassGeo, glassMat);
-  glass.position.set(0, 0.06, 0.14);
-  lanternGroup.add(glass);
-
-  // Luz pontual que tremula
-  const light = new THREE.PointLight(0xffbe3b, 1.6, 9, 1.8);
-  light.position.set(0, 0.06, 0.18);
-  light.castShadow = true;
-  light.shadow.bias = -0.002;
-  lanternGroup.add(light);
-
-  return { lanternGroup, light };
-}
-
+// Criação do Diorama Dark Luxury: Pedestal Preto de Galeria + Maquete
 export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder3DProps> = ({
   businessName = "Pousada Flor do Mar",
   category = "hospedagens",
@@ -478,9 +234,8 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
 }) => {
   const mountRef = useRef<HTMLDivElement>(null);
 
-  // Estados de controle e UI
   const [currentStageIndex, setCurrentStageIndex] = useState<number>(0);
-  const [stageProgress, setStageProgress] = useState<number>(0); // 0 a 100
+  const [stageProgress, setStageProgress] = useState<number>(0);
   const [isMuted, setIsMuted] = useState<boolean>(true);
   const [speedMultiplier, setSpeedMultiplier] = useState<number>(1);
   const [isDiving, setIsDiving] = useState<boolean>(false);
@@ -488,10 +243,8 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [cameraMode, setCameraMode] = useState<"director" | "free">("director");
 
-  // Audio Context autocontido (Web Audio API sintetizada, zero downloads de áudio)
   const audioCtxRef = useRef<AudioContext | null>(null);
 
-  // Refs de controle de loop Three.js
   const reqIdRef = useRef<number>(0);
   const stageStartTimeRef = useRef<number>(performance.now());
   const stageIndexRef = useRef<number>(0);
@@ -500,12 +253,10 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
   const isPausedRef = useRef<boolean>(false);
   const cameraModeRef = useRef<"director" | "free">("director");
 
-  // Controle de Órbita 3D Manual (Drag / Swipe)
   const isDraggingRef = useRef<boolean>(false);
   const prevMousePosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
-  const orbitAngleRef = useRef<{ theta: number; phi: number }>({ theta: 0, phi: 0 });
+  const orbitAngleRef = useRef<{ theta: 0; phi: number }>({ theta: 0, phi: 0 });
 
-  // Sincronizar refs
   useEffect(() => {
     stageIndexRef.current = currentStageIndex;
   }, [currentStageIndex]);
@@ -526,12 +277,13 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
     cameraModeRef.current = cameraMode;
   }, [cameraMode]);
 
-  // Função para tocar efeitos sonoros táteis via Web Audio API
   const playSensorySound = useCallback((type: "thud" | "wood" | "blessing" | "whoosh" | "chime") => {
     if (isMutedRef.current) return;
     try {
       if (!audioCtxRef.current) {
-        const AudioCtxClass = window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+        const AudioCtxClass =
+          window.AudioContext ||
+          (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
         if (AudioCtxClass) {
           audioCtxRef.current = new AudioCtxClass();
         }
@@ -573,7 +325,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
         osc.type = "sine";
         osc.frequency.setValueAtTime(880, now);
         osc.frequency.exponentialRampToValueAtTime(440, now + 0.6);
-        gain.gain.setValueAtTime(0.18, now);
+        gain.gain.setValueAtTime(0.2, now);
         gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.6);
         osc.connect(gain);
         gain.connect(ctx.destination);
@@ -586,7 +338,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
           const gain = ctx.createGain();
           osc.type = "sine";
           osc.frequency.setValueAtTime(freq, now + idx * 0.08);
-          gain.gain.setValueAtTime(0.15, now + idx * 0.08);
+          gain.gain.setValueAtTime(0.18, now + idx * 0.08);
           gain.gain.exponentialRampToValueAtTime(0.0001, now + 2.0);
           osc.connect(gain);
           gain.connect(ctx.destination);
@@ -607,7 +359,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
         osc.stop(now + 0.66);
       }
     } catch {
-      // Audio policy protection
+      // Audio autoplay policy guard
     }
   }, []);
 
@@ -618,19 +370,19 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
     if (!container) return;
 
     let width = container.clientWidth || 800;
-    let height = container.clientHeight || 520;
+    let height = container.clientHeight || 540;
 
-    // 1. Scene com atmosfera de Pôr do Sol de Caraíva (Dark Luxury)
+    // 1. Galeria Noturna Dark Luxury (Câmara Escura)
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x0c0f12);
-    scene.fog = new THREE.FogExp2(0x0c0f12, 0.02);
+    scene.background = new THREE.Color(0x07080a);
+    scene.fog = new THREE.FogExp2(0x07080a, 0.022);
 
-    // 2. Camera com perspectiva cinematográfica suave
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
-    camera.position.set(0, 8.5, 17);
-    camera.lookAt(0, 0, 0);
+    // 2. Câmera
+    const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 100);
+    camera.position.set(0, 8.5, 17.0);
+    camera.lookAt(0, 1.2, 0);
 
-    // 3. Renderer de alta fidelidade visual
+    // 3. Renderer de Alta Performance e Pós-Processamento ACES
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
@@ -641,251 +393,335 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.08;
+    renderer.toneMappingExposure = 1.15;
     container.appendChild(renderer.domElement);
 
-    // 4. Sistema de Iluminação Tropical & Pôr do Sol
-    // Luz ambiente quente do céu de Caraíva
-    const ambientLight = new THREE.AmbientLight(0xfff1e0, 0.85);
+    // 4. Iluminação Dramática de Museu / Galeria (Museum Pin-Spots)
+    const ambientLight = new THREE.AmbientLight(0xffedd5, 0.35);
     scene.add(ambientLight);
 
-    // Hemisfério: céu quente âmbar e reflexo de areia dourada
-    const hemiLight = new THREE.HemisphereLight(0xffdfba, 0xc49a6c, 0.65);
-    scene.add(hemiLight);
+    // Spot 1: Foco Principal Esquerdo (3200K Quente)
+    const spotLeft = new THREE.SpotLight(0xfff0d4, 4.2, 35, 0.42, 0.75, 1.5);
+    spotLeft.position.set(-8, 16, 9);
+    spotLeft.target.position.set(0, 1.5, 0);
+    spotLeft.castShadow = true;
+    spotLeft.shadow.mapSize.width = 1024;
+    spotLeft.shadow.mapSize.height = 1024;
+    spotLeft.shadow.bias = -0.0005;
+    scene.add(spotLeft);
+    scene.add(spotLeft.target);
 
-    // Sol Poente da Bahia: feixe dourado com sombras suaves de alta resolução
-    const sunLight = new THREE.DirectionalLight(0xffdfa8, 1.85);
-    sunLight.position.set(14, 16, 12);
-    sunLight.castShadow = true;
-    sunLight.shadow.mapSize.width = 1024;
-    sunLight.shadow.mapSize.height = 1024;
-    sunLight.shadow.camera.near = 0.5;
-    sunLight.shadow.camera.far = 45;
-    sunLight.shadow.camera.left = -11;
-    sunLight.shadow.camera.right = 11;
-    sunLight.shadow.camera.top = 11;
-    sunLight.shadow.camera.bottom = -11;
-    sunLight.shadow.bias = -0.0006;
-    scene.add(sunLight);
+    // Spot 2: Foco de Contorno Direito (Dourado Suave)
+    const spotRight = new THREE.SpotLight(0xffdfa0, 3.8, 35, 0.45, 0.75, 1.5);
+    spotRight.position.set(8, 16, 8);
+    spotRight.target.position.set(0, 1.5, 0);
+    spotRight.castShadow = true;
+    spotRight.shadow.mapSize.width = 1024;
+    spotRight.shadow.mapSize.height = 1024;
+    spotRight.shadow.bias = -0.0005;
+    scene.add(spotRight);
+    scene.add(spotRight.target);
 
-    // Luz de borda azul turquesa do Rio e Mar (Rim Light)
-    const oceanRimLight = new THREE.DirectionalLight(0x38bdf8, 0.65);
-    oceanRimLight.position.set(-15, 12, -14);
-    scene.add(oceanRimLight);
+    // Rim light traseira sutil azul meia-noite
+    const rimLight = new THREE.DirectionalLight(0x38bdf8, 0.45);
+    rimLight.position.set(0, 12, -14);
+    scene.add(rimLight);
 
-    // Luz interna acolhedora da casinha (surge ao abrir a porta colonial)
-    const indoorLight = new THREE.PointLight(0xffb03a, 0, 14);
-    indoorLight.position.set(0, 1.8, 0.6);
-    scene.add(indoorLight);
+    // Cones Volumétricos de Luz de Galeria (Efeito feixe de luz descendo do teto)
+    const coneGeo = new THREE.CylinderGeometry(0.2, 4.8, 18, 24, 1, true);
+    const coneMat = new THREE.MeshBasicMaterial({
+      color: 0xffebd0,
+      transparent: true,
+      opacity: 0.045,
+      side: THREE.DoubleSide,
+      blending: THREE.AdditiveBlending,
+      depthWrite: false,
+    });
 
-    // Luz dinâmica do Caraíva Orb
-    const orbPointLight = new THREE.PointLight(0xf6c945, 0, 24);
-    scene.add(orbPointLight);
+    const coneMeshLeft = new THREE.Mesh(coneGeo, coneMat);
+    coneMeshLeft.position.set(-4, 9, 4.5);
+    coneMeshLeft.rotation.z = 0.35;
+    scene.add(coneMeshLeft);
 
-    // --- GRUPO 1: FUNDAÇÃO, AREIA DE CARAÍVA & COQUEIRAIS ---
-    const sandGroup = new THREE.Group();
-    scene.add(sandGroup);
+    const coneMeshRight = new THREE.Mesh(coneGeo, coneMat);
+    coneMeshRight.position.set(4, 9, 4.0);
+    coneMeshRight.rotation.z = -0.35;
+    scene.add(coneMeshRight);
 
-    // Malha de areia com relevo suave de dunas e tom dourado autêntico
-    const sandGeo = new THREE.CylinderGeometry(11.5, 12.5, 0.5, 48);
+    // --- GRUPO 1: PEDESTAL PRETO OBSIDIANA & ILHA DE AREIA ---
+    const pedestalGroup = new THREE.Group();
+    scene.add(pedestalGroup);
+
+    // Pedestal monolítico de museu (Plinth)
+    const plinthW = 12.0;
+    const plinthD = 9.5;
+    const plinthH = 1.6;
+    const plinthGeo = new THREE.BoxGeometry(plinthW, plinthH, plinthD);
+    const plinthMat = new THREE.MeshStandardMaterial({
+      color: 0x121518, // Preto obsidiana acetinado
+      roughness: 0.45,
+      metalness: 0.65,
+    });
+    const plinthMesh = new THREE.Mesh(plinthGeo, plinthMat);
+    plinthMesh.position.y = -plinthH / 2;
+    plinthMesh.receiveShadow = true;
+    pedestalGroup.add(plinthMesh);
+
+    // Filete chanfrado de latão dourado escovado no topo do pedestal
+    const trimGeo = new THREE.BoxGeometry(plinthW + 0.08, 0.04, plinthD + 0.08);
+    const trimMat = new THREE.MeshStandardMaterial({
+      color: 0xf6c945,
+      metalness: 0.95,
+      roughness: 0.25,
+    });
+    const trimMesh = new THREE.Mesh(trimGeo, trimMat);
+    trimMesh.position.y = 0.01;
+    pedestalGroup.add(trimMesh);
+
+    // Ilha de areia de Caraíva em relevo suave sobre o pedestal
+    const sandGeo = new THREE.BoxGeometry(plinthW - 0.4, 0.18, plinthD - 0.4);
     const sandMat = new THREE.MeshStandardMaterial({
-      color: 0xc99c6b,
-      roughness: 0.98,
-      metalness: 0.0,
+      color: 0xd9b384, // Areia dourada quente de Caraíva
+      roughness: 0.95,
+      metalness: 0.02,
     });
     const sandMesh = new THREE.Mesh(sandGeo, sandMat);
-    sandMesh.position.y = -0.25;
+    sandMesh.position.y = 0.1;
     sandMesh.receiveShadow = true;
-    sandGroup.add(sandMesh);
+    pedestalGroup.add(sandMesh);
 
-    // Caminho pedonal de areia branca batida
-    const pathGeo = new THREE.PlaneGeometry(1.8, 6.2);
-    const pathMat = new THREE.MeshStandardMaterial({
-      color: 0xf5ebd9,
-      roughness: 0.92,
-    });
-    const pathMesh = new THREE.Mesh(pathGeo, pathMat);
-    pathMesh.rotation.x = -Math.PI / 2;
-    pathMesh.position.set(0, 0.02, 4.4);
-    sandGroup.add(pathMesh);
-
-    // 2 Coqueiros Nativos de Caraíva balançando ao vento
-    const palmLeft = createCoconutPalmTree(6.4, -1);
-    palmLeft.group.position.set(-5.6, 0, -1.8);
-    palmLeft.group.rotation.y = 0.4;
-    sandGroup.add(palmLeft.group);
-
-    const palmRight = createCoconutPalmTree(5.8, 1);
-    palmRight.group.position.set(5.4, 0, -2.4);
-    palmRight.group.rotation.y = -0.8;
-    sandGroup.add(palmRight.group);
-
-    // Cerca rústica de mourões com corda de sisal
-    for (let i = 0; i < 10; i++) {
-      const angle = (i / 10) * Math.PI * 2;
-      const r = 9.8 + (i % 2) * 0.6;
-      const px = Math.cos(angle) * r;
-      const pz = Math.sin(angle) * r;
-      const postGeo = new THREE.CylinderGeometry(0.08, 0.1, 0.9, 7);
-      const postMat = new THREE.MeshStandardMaterial({ color: 0x422617, roughness: 0.9 });
-      const post = new THREE.Mesh(postGeo, postMat);
-      post.position.set(px, 0.45, pz);
-      post.castShadow = true;
-      sandGroup.add(post);
+    // Caminho de pedras rústicas de basalto até a varanda
+    const stonesGroup = new THREE.Group();
+    pedestalGroup.add(stonesGroup);
+    const stoneMat = new THREE.MeshStandardMaterial({ color: 0x3d3835, roughness: 0.9 });
+    for (let i = 0; i < 7; i++) {
+      const stoneGeo = new THREE.BoxGeometry(0.85, 0.06, 0.45);
+      const stone = new THREE.Mesh(stoneGeo, stoneMat);
+      stone.position.set(0, 0.2, 1.2 + i * 0.55);
+      stone.rotation.y = (Math.random() - 0.5) * 0.15;
+      stone.receiveShadow = true;
+      stonesGroup.add(stone);
     }
 
-    // Partículas de poeira dourada flutuando na areia (God-rays / dust motes)
-    const dustCount = 80;
+    // Vegetação tropical de restinga e bromélias em miniatura ao redor da maquete
+    const vegGroup = new THREE.Group();
+    pedestalGroup.add(vegGroup);
+    const vegMat = new THREE.MeshStandardMaterial({ color: 0x27592f, roughness: 0.75 });
+    const leafGeo = new THREE.ConeGeometry(0.12, 0.65, 5);
+    for (let b = 0; b < 16; b++) {
+      const angle = (b / 16) * Math.PI * 2;
+      const rx = (plinthW / 2 - 0.7) * Math.cos(angle);
+      const rz = (plinthD / 2 - 0.7) * Math.sin(angle);
+      const plantGroup = new THREE.Group();
+      plantGroup.position.set(rx, 0.2, rz);
+      for (let l = 0; l < 6; l++) {
+        const leaf = new THREE.Mesh(leafGeo, vegMat);
+        leaf.rotation.z = 0.5 + Math.random() * 0.3;
+        leaf.rotation.y = (l / 6) * Math.PI * 2;
+        plantGroup.add(leaf);
+      }
+      vegGroup.add(plantGroup);
+    }
+
+    // Partículas de poeira dourada flutuando sob os spots de museu
+    const dustCount = 140;
     const dustGeo = new THREE.BufferGeometry();
     const dustPos = new Float32Array(dustCount * 3);
     for (let i = 0; i < dustCount; i++) {
-      dustPos[i * 3] = (Math.random() - 0.5) * 16;
-      dustPos[i * 3 + 1] = Math.random() * 6;
-      dustPos[i * 3 + 2] = (Math.random() - 0.5) * 16;
+      dustPos[i * 3] = (Math.random() - 0.5) * 10;
+      dustPos[i * 3 + 1] = 0.5 + Math.random() * 7;
+      dustPos[i * 3 + 2] = (Math.random() - 0.5) * 9;
     }
     dustGeo.setAttribute("position", new THREE.BufferAttribute(dustPos, 3));
     const dustMat = new THREE.PointsMaterial({
-      color: 0xffe6a3,
-      size: 0.1,
+      color: 0xffdf8e,
+      size: 0.08,
       transparent: true,
-      opacity: 0.65,
+      opacity: 0.75,
       blending: THREE.AdditiveBlending,
     });
     const dustPoints = new THREE.Points(dustGeo, dustMat);
     scene.add(dustPoints);
 
-    // --- GRUPO 2: CASARIO (PAREDES DE ADOBE, MOURÕES E ESQUADRIAS) ---
+    // --- GRUPO 2: CASARIO COLONIAL DE COLECIONADOR & VARANDA ---
     const houseGroup = new THREE.Group();
     scene.add(houseGroup);
 
-    const houseW = 4.8;
-    const houseH = 3.3;
-    const houseD = 4.4;
+    const houseW = 5.2;
+    const houseH = 3.0;
+    const houseD = 4.0;
+    const verandaD = 1.6;
 
-    // Paredes de adobe caiadas artesanais
+    // Paredes de cal branca rústica
     const wallGeo = new THREE.BoxGeometry(houseW, houseH, houseD);
     const wallMat = new THREE.MeshStandardMaterial({
-      color: 0xfcf9f2, // Cal branco off-white tradicional
-      roughness: 0.85,
+      color: 0xfaf6ee,
+      roughness: 0.88,
     });
     const wallMesh = new THREE.Mesh(wallGeo, wallMat);
-    wallMesh.position.y = houseH / 2;
+    wallMesh.position.set(0, houseH / 2 + 0.2, -verandaD / 2);
     wallMesh.castShadow = true;
     wallMesh.receiveShadow = true;
     houseGroup.add(wallMesh);
 
-    // 4 Mourões estruturais de eucalipto tratado com chanfros
-    const postMat = new THREE.MeshStandardMaterial({ color: 0x361d0f, roughness: 0.92 });
-    const postGeo = new THREE.CylinderGeometry(0.15, 0.16, houseH + 0.25, 8);
-    const postCoords = [
-      [-houseW / 2 + 0.08, houseD / 2 - 0.08],
-      [houseW / 2 - 0.08, houseD / 2 - 0.08],
-      [-houseW / 2 + 0.08, -houseD / 2 + 0.08],
-      [houseW / 2 - 0.08, -houseD / 2 + 0.08],
-    ];
-    postCoords.forEach(([cx, cz]) => {
-      const beam = new THREE.Mesh(postGeo, postMat);
-      beam.position.set(cx, (houseH + 0.25) / 2, cz);
-      beam.castShadow = true;
-      houseGroup.add(beam);
-    });
-
-    // Batente da Porta Colonial na cor temática da categoria
-    const doorFrameGeo = new THREE.BoxGeometry(1.68, 2.45, 0.22);
-    const frameMat = new THREE.MeshStandardMaterial({
-      color: new THREE.Color(themeColor),
-      roughness: 0.42,
-      metalness: 0.08,
-    });
-    const doorFrame = new THREE.Mesh(doorFrameGeo, frameMat);
-    doorFrame.position.set(0, 1.22, houseD / 2 + 0.09);
-    doorFrame.castShadow = true;
-    houseGroup.add(doorFrame);
-
-    // Folhas da Porta Colonial Dupla com tábuas verticais e puxadores de ferro
-    const doorLeafGeo = new THREE.BoxGeometry(0.7, 2.22, 0.08);
-    const doorLeafMat = new THREE.MeshStandardMaterial({
-      color: 0x301a0e,
+    // Deck de madeira de jacarandá da varanda frontal
+    const deckGeo = new THREE.BoxGeometry(houseW + 0.4, 0.16, verandaD + 0.3);
+    const deckMat = new THREE.MeshStandardMaterial({
+      color: 0x3d2111,
       roughness: 0.85,
     });
+    const deckMesh = new THREE.Mesh(deckGeo, deckMat);
+    deckMesh.position.set(0, 0.28, (houseD / 2 - verandaD / 2) + 0.1);
+    deckMesh.castShadow = true;
+    deckMesh.receiveShadow = true;
+    houseGroup.add(deckMesh);
 
-    const leftDoorPivot = new THREE.Group();
-    leftDoorPivot.position.set(-0.7, 1.18, houseD / 2 + 0.14);
-    const leftDoorMesh = new THREE.Mesh(doorLeafGeo, doorLeafMat);
-    leftDoorMesh.position.set(0.35, 0, 0);
-    leftDoorPivot.add(leftDoorMesh);
-    houseGroup.add(leftDoorPivot);
+    // Degraus da varanda
+    const stairGeo = new THREE.BoxGeometry(1.6, 0.12, 0.4);
+    const stair = new THREE.Mesh(stairGeo, deckMat);
+    stair.position.set(0, 0.2, (houseD / 2 - verandaD / 2) + verandaD / 2 + 0.35);
+    stair.receiveShadow = true;
+    houseGroup.add(stair);
 
-    const rightDoorPivot = new THREE.Group();
-    rightDoorPivot.position.set(0.7, 1.18, houseD / 2 + 0.14);
-    const rightDoorMesh = new THREE.Mesh(doorLeafGeo, doorLeafMat);
-    rightDoorMesh.position.set(-0.35, 0, 0);
-    rightDoorPivot.add(rightDoorMesh);
-    houseGroup.add(rightDoorPivot);
+    // Pilares torneados de jacarandá da varanda
+    const pillarMat = new THREE.MeshStandardMaterial({ color: 0x361c0d, roughness: 0.75 });
+    const pillarGeo = new THREE.BoxGeometry(0.14, houseH, 0.14);
+    const pillarXCoords = [-houseW / 2 + 0.2, -houseW / 6, houseW / 6, houseW / 2 - 0.2];
+    pillarXCoords.forEach((px) => {
+      const p = new THREE.Mesh(pillarGeo, pillarMat);
+      p.position.set(px, houseH / 2 + 0.28, (houseD / 2 - verandaD / 2) + verandaD / 2 + 0.1);
+      p.castShadow = true;
+      houseGroup.add(p);
+    });
 
-    // Janelas Coloniais com venezianas de madeira na cor da categoria
-    const winGeo = new THREE.BoxGeometry(0.95, 1.1, 0.14);
-    const winLeft = new THREE.Mesh(winGeo, frameMat);
-    winLeft.position.set(-1.55, 1.85, houseD / 2 + 0.08);
-    winLeft.castShadow = true;
-    houseGroup.add(winLeft);
+    // Parapeito / Guarda-corpo artesanal de madeira na varanda
+    const railMat = new THREE.MeshStandardMaterial({ color: 0x442412, roughness: 0.85 });
+    const topRailGeo = new THREE.BoxGeometry((houseW / 2) - 0.8, 0.08, 0.08);
 
-    const winRight = new THREE.Mesh(winGeo, frameMat);
-    winRight.position.set(1.55, 1.85, houseD / 2 + 0.08);
-    winRight.castShadow = true;
-    houseGroup.add(winRight);
+    const railLeft = new THREE.Mesh(topRailGeo, railMat);
+    railLeft.position.set(-houseW / 3.4, 0.85, (houseD / 2 - verandaD / 2) + verandaD / 2 + 0.1);
+    houseGroup.add(railLeft);
 
-    // Dois Lampiões de Ferro Forjado iluminando a fachada
-    const lanternLeft = createColonialLantern();
-    lanternLeft.lanternGroup.position.set(-1.15, 2.55, houseD / 2 + 0.12);
-    houseGroup.add(lanternLeft.lanternGroup);
+    const railRight = new THREE.Mesh(topRailGeo, railMat);
+    railRight.position.set(houseW / 3.4, 0.85, (houseD / 2 - verandaD / 2) + verandaD / 2 + 0.1);
+    houseGroup.add(railRight);
 
-    const lanternRight = createColonialLantern();
-    lanternRight.lanternGroup.position.set(1.15, 2.55, houseD / 2 + 0.12);
-    houseGroup.add(lanternRight.lanternGroup);
+    // Rede artesanal pendurada na varanda
+    const hammockGeo = new THREE.TorusGeometry(0.9, 0.06, 8, 24, Math.PI);
+    const hammockMat = new THREE.MeshStandardMaterial({ color: 0xe2d7c5, roughness: 0.95 });
+    const hammock = new THREE.Mesh(hammockGeo, hammockMat);
+    hammock.rotation.x = Math.PI / 2;
+    hammock.position.set(-1.4, 1.0, 0.8);
+    houseGroup.add(hammock);
 
-    // Soleira de pedra na entrada
-    const stepGeo = new THREE.BoxGeometry(1.8, 0.12, 0.6);
-    const stepMat = new THREE.MeshStandardMaterial({ color: 0x78716c, roughness: 0.95 });
-    const step = new THREE.Mesh(stepGeo, stepMat);
-    step.position.set(0, 0.06, houseD / 2 + 0.3);
-    step.receiveShadow = true;
-    houseGroup.add(step);
+    // Janelas coloniais iluminadas por dentro (Glow âmbar acolhedor)
+    const windowFrameMat = new THREE.MeshStandardMaterial({
+      color: new THREE.Color(themeColor),
+      roughness: 0.5,
+      metalness: 0.1,
+    });
+    const windowGlowMat = new THREE.MeshBasicMaterial({
+      color: 0xffa034, // Luz âmbar quente de querosene acesa no interior
+    });
 
-    // --- GRUPO 3: TELHADO COLONIAL COM TELHAS DE BARRO ---
-    const { roofGroup, tilesGroup } = createColonialTileRoof(houseW + 0.8, houseD + 0.8, 2.0, houseH);
+    const winCoords = [-1.6, 1.6];
+    winCoords.forEach((wx) => {
+      const wFrame = new THREE.Mesh(new THREE.BoxGeometry(0.9, 1.1, 0.12), windowFrameMat);
+      wFrame.position.set(wx, 1.8, houseD / 2 - verandaD / 2 + 0.06);
+      houseGroup.add(wFrame);
+
+      const wGlow = new THREE.Mesh(new THREE.PlaneGeometry(0.72, 0.9), windowGlowMat);
+      wGlow.position.set(wx, 1.8, houseD / 2 - verandaD / 2 + 0.13);
+      houseGroup.add(wGlow);
+    });
+
+    // Porta frontal aberta revelando a luz acolhedora
+    const doorFrame = new THREE.Mesh(new THREE.BoxGeometry(1.4, 2.3, 0.14), windowFrameMat);
+    doorFrame.position.set(0, 1.35, houseD / 2 - verandaD / 2 + 0.06);
+    houseGroup.add(doorFrame);
+
+    const doorInteriorGlow = new THREE.Mesh(new THREE.PlaneGeometry(1.15, 2.1), windowGlowMat);
+    doorInteriorGlow.position.set(0, 1.35, houseD / 2 - verandaD / 2 + 0.13);
+    houseGroup.add(doorInteriorGlow);
+
+    // Luz interna real que se projeta para a varanda
+    const interiorLight = new THREE.PointLight(0xffa83b, 2.4, 9, 1.6);
+    interiorLight.position.set(0, 1.6, 0.4);
+    scene.add(interiorLight);
+
+    // Lampiões de latão dourado pendurados na cumeeira da varanda
+    const brassMat = new THREE.MeshStandardMaterial({ color: 0xf6c945, metalness: 0.9, roughness: 0.25 });
+    const lanternLeft = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.18, 8), brassMat);
+    lanternLeft.position.set(-1.8, 2.8, (houseD / 2 - verandaD / 2) + verandaD / 2 + 0.1);
+    houseGroup.add(lanternLeft);
+
+    const lanternRight = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.08, 0.18, 8), brassMat);
+    lanternRight.position.set(1.8, 2.8, (houseD / 2 - verandaD / 2) + verandaD / 2 + 0.1);
+    houseGroup.add(lanternRight);
+
+    // --- GRUPO 3: TELHADO COLONIAL EM CERÂMICA REAL ---
+    const roofGroup = new THREE.Group();
     scene.add(roofGroup);
 
-    // Empena triangular frontal em adobe caiado
+    const roofW = houseW + 0.8;
+    const roofD = houseD + verandaD + 0.4;
+    const roofH = 1.8;
+    const slopeAngle = 0.54;
+
+    // Duas águas de terracota artesanal
+    const roofSlopeGeo = new THREE.BoxGeometry(roofW / 2 + 0.4, 0.14, roofD);
+    const roofSlopeMat = new THREE.MeshStandardMaterial({
+      color: 0xa83b16, // Terracota cerâmica de colecionador
+      roughness: 0.82,
+      metalness: 0.05,
+    });
+
+    const leftSlope = new THREE.Mesh(roofSlopeGeo, roofSlopeMat);
+    leftSlope.position.set(-roofW / 4 + 0.06, houseH + roofH / 2 + 0.2, 0);
+    leftSlope.rotation.z = slopeAngle;
+    leftSlope.castShadow = true;
+    leftSlope.receiveShadow = true;
+    roofGroup.add(leftSlope);
+
+    const rightSlope = new THREE.Mesh(roofSlopeGeo, roofSlopeMat);
+    rightSlope.position.set(roofW / 4 - 0.06, houseH + roofH / 2 + 0.2, 0);
+    rightSlope.rotation.z = -slopeAngle;
+    rightSlope.castShadow = true;
+    rightSlope.receiveShadow = true;
+    roofGroup.add(rightSlope);
+
+    // Cumeeira de barro no cume
+    const ridgeGeo = new THREE.CylinderGeometry(0.12, 0.12, roofD + 0.2, 9);
+    const ridgeMat = new THREE.MeshStandardMaterial({ color: 0x7c2d12, roughness: 0.85 });
+    const ridgeMesh = new THREE.Mesh(ridgeGeo, ridgeMat);
+    ridgeMesh.rotation.x = Math.PI / 2;
+    ridgeMesh.position.set(0, houseH + roofH + 0.25, 0);
+    ridgeMesh.castShadow = true;
+    roofGroup.add(ridgeMesh);
+
+    // Empena frontal triangular
     const pedimentShape = new THREE.Shape();
     pedimentShape.moveTo(-houseW / 2, 0);
-    pedimentShape.lineTo(0, 1.95);
+    pedimentShape.lineTo(0, roofH);
     pedimentShape.lineTo(houseW / 2, 0);
     pedimentShape.closePath();
-
-    const pedimentGeo = new THREE.ShapeGeometry(pedimentShape);
-    const pedimentFront = new THREE.Mesh(pedimentGeo, wallMat);
-    pedimentFront.position.set(0, houseH, houseD / 2 - 0.02);
+    const pedimentFront = new THREE.Mesh(new THREE.ShapeGeometry(pedimentShape), wallMat);
+    pedimentFront.position.set(0, houseH + 0.2, (houseD / 2 - verandaD / 2) + verandaD / 2 + 0.08);
     roofGroup.add(pedimentFront);
 
-    const pedimentBack = new THREE.Mesh(pedimentGeo, wallMat);
-    pedimentBack.position.set(0, houseH, -houseD / 2 + 0.02);
-    pedimentBack.rotation.y = Math.PI;
-    roofGroup.add(pedimentBack);
-
-    // --- GRUPO 4: PLACA DE MADEIRA NOBRE ENTALHADA ---
+    // --- GRUPO 4: PLACA DE MADEIRA COM ENTALHE FOLHEADO A OURO ---
     const signGroup = new THREE.Group();
     scene.add(signGroup);
 
-    const woodTexture = createWoodSignTexture(businessName);
-    const signGeo = new THREE.BoxGeometry(2.4, 1.2, 0.09);
+    const woodTexture = createDioramaSignTexture(businessName);
+    const signGeo = new THREE.BoxGeometry(2.5, 1.25, 0.08);
     const signMaterials = [
-      new THREE.MeshStandardMaterial({ color: 0x241208, roughness: 0.9 }),
-      new THREE.MeshStandardMaterial({ color: 0x241208, roughness: 0.9 }),
-      new THREE.MeshStandardMaterial({ color: 0x241208, roughness: 0.9 }),
-      new THREE.MeshStandardMaterial({ color: 0x241208, roughness: 0.9 }),
-      new THREE.MeshStandardMaterial({ map: woodTexture, roughness: 0.62 }), // Frente entalhada
-      new THREE.MeshStandardMaterial({ color: 0x241208, roughness: 0.9 }),
+      new THREE.MeshStandardMaterial({ color: 0x180d05, roughness: 0.9 }),
+      new THREE.MeshStandardMaterial({ color: 0x180d05, roughness: 0.9 }),
+      new THREE.MeshStandardMaterial({ color: 0x180d05, roughness: 0.9 }),
+      new THREE.MeshStandardMaterial({ color: 0x180d05, roughness: 0.9 }),
+      new THREE.MeshStandardMaterial({ map: woodTexture, roughness: 0.55, metalness: 0.2 }),
+      new THREE.MeshStandardMaterial({ color: 0x180d05, roughness: 0.9 }),
     ];
     const signMesh = new THREE.Mesh(signGeo, signMaterials);
     signMesh.castShadow = true;
@@ -895,38 +731,44 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
     const chainMat = new THREE.MeshStandardMaterial({ color: 0x18181b, roughness: 0.35, metalness: 0.85 });
     const chainGeo = new THREE.CylinderGeometry(0.02, 0.02, 0.65, 6);
     const chainLeft = new THREE.Mesh(chainGeo, chainMat);
-    chainLeft.position.set(-0.85, 0.72, 0);
+    chainLeft.position.set(-0.9, 0.75, 0);
     signGroup.add(chainLeft);
 
     const chainRight = new THREE.Mesh(chainGeo, chainMat);
-    chainRight.position.set(0.85, 0.72, 0);
+    chainRight.position.set(0.9, 0.75, 0);
     signGroup.add(chainRight);
 
-    // Posição final da placa: na fachada acima da porta
-    const signFinalPos = new THREE.Vector3(0, 3.55, houseD / 2 + 0.24);
+    const signFinalPos = new THREE.Vector3(0, 3.5, (houseD / 2 - verandaD / 2) + verandaD / 2 + 0.25);
     signGroup.position.copy(signFinalPos);
 
-    // --- GRUPO 5: CARAÍVA LIVING ORB & PARTICULAS DOURADAS ---
+    // Spot focal dedicado para a placa
+    const plaqueSpot = new THREE.SpotLight(0xfff3d6, 2.5, 12, 0.35, 0.8);
+    plaqueSpot.position.set(0, 5.5, signFinalPos.z + 3.2);
+    plaqueSpot.target.position.copy(signFinalPos);
+    scene.add(plaqueSpot);
+    scene.add(plaqueSpot.target);
+
+    // --- GRUPO 5: CARAÍVA LIVING ORB CELESTIAL & ENXAME SOLAR ---
     const orbGroup = new THREE.Group();
     scene.add(orbGroup);
 
-    const orbCoreGeo = new THREE.SphereGeometry(0.6, 32, 32);
+    const orbCoreGeo = new THREE.SphereGeometry(0.65, 32, 32);
     const orbCoreMat = new THREE.MeshStandardMaterial({
       color: 0xfffbeb,
       emissive: 0xf6c945,
-      emissiveIntensity: 2.8,
-      roughness: 0.12,
-      metalness: 0.88,
+      emissiveIntensity: 3.2,
+      roughness: 0.1,
+      metalness: 0.95,
     });
     const orbCore = new THREE.Mesh(orbCoreGeo, orbCoreMat);
     orbGroup.add(orbCore);
 
-    // Enxame solar de 180 lucíolas de Caraíva em órbita
-    const particleCount = 180;
+    // 160 partículas douradas de stardust
+    const particleCount = 160;
     const particleGeo = new THREE.BufferGeometry();
     const particlePos = new Float32Array(particleCount * 3);
     for (let i = 0; i < particleCount; i++) {
-      const radius = 0.95 + Math.random() * 1.6;
+      const radius = 1.0 + Math.random() * 1.6;
       const theta = Math.random() * Math.PI * 2;
       const phi = Math.acos(Math.random() * 2 - 1);
       particlePos[i * 3] = radius * Math.sin(phi) * Math.cos(theta);
@@ -936,7 +778,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
     particleGeo.setAttribute("position", new THREE.BufferAttribute(particlePos, 3));
     const particleMat = new THREE.PointsMaterial({
       color: 0xffd97d,
-      size: 0.15,
+      size: 0.14,
       transparent: true,
       opacity: 0.95,
       blending: THREE.AdditiveBlending,
@@ -944,8 +786,8 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
     const particlePoints = new THREE.Points(particleGeo, particleMat);
     orbGroup.add(particlePoints);
 
-    // Anel de luz expansivo da bênção solar (Shockwave Ring)
-    const ringGeo = new THREE.RingGeometry(0.3, 0.8, 48);
+    // Anel de choque dourado (Shockwave)
+    const ringGeo = new THREE.RingGeometry(0.4, 0.9, 48);
     const ringMat = new THREE.MeshBasicMaterial({
       color: 0xf6c945,
       side: THREE.DoubleSide,
@@ -957,15 +799,18 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
     shockwaveRing.rotation.x = -Math.PI / 2;
     scene.add(shockwaveRing);
 
-    // Posicionamento inicial para a coreografia:
-    sandGroup.scale.set(0.001, 1, 0.001);
+    // Luz pontual do Orb
+    const orbPointLight = new THREE.PointLight(0xf6c945, 0, 24);
+    scene.add(orbPointLight);
+
+    // Posicionamento inicial para animação procedural:
+    pedestalGroup.position.y = -4.0; // Pedestal sobe da escuridão
     houseGroup.scale.set(1, 0.001, 1);
     roofGroup.position.y = 12; // Telhado desce dos céus
     signGroup.scale.set(0.001, 0.001, 0.001);
-    orbGroup.position.set(0, 16, 0); // Orb inicia alto no céu
+    orbGroup.position.set(0, 16, 0);
     orbGroup.scale.set(0.001, 0.001, 0.001);
 
-    // Easing helpers orgânicos
     const easeOutCubic = (x: number): number => 1 - Math.pow(1 - x, 3);
     const easeOutBack = (x: number): number => {
       const c1 = 1.70158;
@@ -973,33 +818,20 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
       return 1 + c3 * Math.pow(x - 1, 3) + c1 * Math.pow(x - 1, 2);
     };
 
-    // Alvos para interpolação da câmera
-    const currentCamTarget = new THREE.Vector3(0, 8.5, 17);
-    const lookTarget = new THREE.Vector3(0, 0, 0);
+    const currentCamTarget = new THREE.Vector3(0, 8.5, 17.0);
+    const lookTarget = new THREE.Vector3(0, 1.2, 0);
 
     let stageSoundPlayed = -1;
 
-    // Loop de Renderização & Animação
+    // Loop de Renderização do Diorama
     const animate = (time: number) => {
       reqIdRef.current = requestAnimationFrame(animate);
 
-      // Tremor orgânico dos lampiões (chama viva)
-      const flicker = 1.5 + Math.sin(time * 0.012) * 0.18 + Math.sin(time * 0.028) * 0.1;
-      lanternLeft.light.intensity = flicker;
-      lanternRight.light.intensity = flicker * 0.95;
+      // Tremor suave e acolhedor da luz interior
+      const flicker = 2.2 + Math.sin(time * 0.01) * 0.2 + Math.sin(time * 0.024) * 0.1;
+      interiorLight.intensity = flicker;
 
-      // Balanço suave dos coqueiros e folhas com o vento do mar
-      const wind = Math.sin(time * 0.002) * 0.05;
-      palmLeft.trunk.rotation.z = wind * 0.5;
-      palmRight.trunk.rotation.z = -wind * 0.4;
-      palmLeft.fronds.forEach((f, idx) => {
-        f.rotation.z = Math.PI / 2 + 0.35 + Math.sin(time * 0.0025 + idx) * 0.05 + wind;
-      });
-      palmRight.fronds.forEach((f, idx) => {
-        f.rotation.z = Math.PI / 2 + 0.35 + Math.cos(time * 0.0022 + idx) * 0.05 - wind;
-      });
-
-      // Flutuação das partículas de poeira solar
+      // Poeira estelar flutuando sob a luz da galeria
       dustPoints.rotation.y = time * 0.00015;
 
       const activeIdx = stageIndexRef.current;
@@ -1009,7 +841,6 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
 
       let t = duration > 0 ? Math.min(elapsed / duration, 1) : 1;
 
-      // Sons na transição de estágios
       if (stageSoundPlayed !== activeIdx) {
         stageSoundPlayed = activeIdx;
         if (currentStage.id === "sand") playSensorySound("thud");
@@ -1020,16 +851,15 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
         else if (currentStage.id === "dive_in") playSensorySound("whoosh");
       }
 
-      // Animações Procedurais por Fase
-      // 1. ESTÁGIO 'sand': expansão circular da areia e coqueiros
+      // 1. ESTÁGIO 'sand': Pedestal sobe da escuridão e se estabiliza
       if (activeIdx === 0) {
-        const s = easeOutCubic(t);
-        sandGroup.scale.set(s, 1, s);
+        const py = THREE.MathUtils.lerp(-4.0, 0, easeOutCubic(t));
+        pedestalGroup.position.y = py;
       } else {
-        sandGroup.scale.set(1, 1, 1);
+        pedestalGroup.position.y = 0;
       }
 
-      // 2. ESTÁGIO 'walls': elevação das paredes caiadas e mourões
+      // 2. ESTÁGIO 'walls': Varanda de jacarandá e paredes sobem
       if (activeIdx >= 1) {
         if (activeIdx === 1) {
           const sy = easeOutCubic(t);
@@ -1039,31 +869,29 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
         }
       }
 
-      // 3. ESTÁGIO 'roof': descida suave das telhas coloniais de barro
+      // 3. ESTÁGIO 'roof': Telhado de cerâmica desce e acopla com elegância
       if (activeIdx >= 2) {
         if (activeIdx === 2) {
           const py = THREE.MathUtils.lerp(10, 0, easeOutBack(t));
           roofGroup.position.y = py;
-          tilesGroup.position.y = (1 - t) * 1.5;
         } else {
           roofGroup.position.y = 0;
-          tilesGroup.position.y = 0;
         }
       }
 
-      // 4. ESTÁGIO 'facade_sign': placa de madeira surge com oscilação pendular
+      // 4. ESTÁGIO 'facade_sign': Placa em madeira e ouro surge com oscilação
       if (activeIdx >= 3) {
         if (activeIdx === 3) {
           const s = easeOutBack(t);
           signGroup.scale.set(s, s, s);
-          signGroup.rotation.x = Math.sin(time * 0.006) * 0.09 * (1 - t);
+          signGroup.rotation.x = Math.sin(time * 0.006) * 0.08 * (1 - t);
         } else {
           signGroup.scale.set(1, 1, 1);
           signGroup.rotation.x = 0;
         }
       }
 
-      // 5. ESTÁGIO 'orb_blessing': Orb solar toca a cumeeira e propaga onda dourada
+      // 5. ESTÁGIO 'orb_blessing': Living Orb celestial abençoa a cumeeira
       if (activeIdx >= 4) {
         if (activeIdx === 4) {
           const orbT = easeOutCubic(Math.min(t * 1.3, 1));
@@ -1077,11 +905,10 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
           orbPointLight.position.copy(orbGroup.position);
           orbPointLight.intensity = 2.6 * pulse * t;
 
-          // Onda de choque luminosa
           if (t > 0.45) {
             const shockT = (t - 0.45) / 0.55;
-            const shockScale = THREE.MathUtils.lerp(0.8, 15.5, easeOutCubic(shockT));
-            shockwaveRing.position.set(0, 0.06, 0);
+            const shockScale = THREE.MathUtils.lerp(0.8, 15.0, easeOutCubic(shockT));
+            shockwaveRing.position.set(0, 0.25, 0);
             shockwaveRing.scale.set(shockScale, shockScale, shockScale);
             ringMat.opacity = Math.sin(shockT * Math.PI) * 0.95;
           }
@@ -1098,38 +925,24 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
         particlePoints.rotation.x = Math.sin(time * 0.001) * 0.2;
       }
 
-      // 6. ESTÁGIO 'dive_in': portas coloniais se abrem e luz interna acende
-      if (activeIdx >= 5) {
-        if (activeIdx === 5) {
-          const openT = easeOutCubic(Math.min(t * 1.5, 1));
-          leftDoorPivot.rotation.y = -openT * (Math.PI * 0.52);
-          rightDoorPivot.rotation.y = openT * (Math.PI * 0.52);
-          indoorLight.intensity = openT * 3.8;
-        } else {
-          leftDoorPivot.rotation.y = -Math.PI * 0.52;
-          rightDoorPivot.rotation.y = Math.PI * 0.52;
-          indoorLight.intensity = 3.8;
-        }
-      }
-
-      // Interpolação suave de Câmera
+      // 6. ESTÁGIO 'dive_in': Câmera aproxima da varanda acolhedora
       const targetCam = new THREE.Vector3(...currentStage.cameraPos);
       const targetLook = new THREE.Vector3(...currentStage.targetPos);
 
       if (activeIdx === 5) {
-        targetCam.z = THREE.MathUtils.lerp(7.6, 0.4, easeOutCubic(t));
-        targetCam.y = THREE.MathUtils.lerp(3.6, 1.8, easeOutCubic(t));
+        targetCam.z = THREE.MathUtils.lerp(8.8, 0.6, easeOutCubic(t));
+        targetCam.y = THREE.MathUtils.lerp(3.4, 1.9, easeOutCubic(t));
       }
 
-      // Aplicar rotação manual se o usuário estiver arrastando a tela (Modo Órbita Livre)
+      // Rotação Manual 360° no Modo Livre
       if (cameraModeRef.current === "free") {
         const radius = 13.5;
         const theta = orbitAngleRef.current.theta;
         const phi = Math.max(0.2, Math.min(Math.PI / 2.2, orbitAngleRef.current.phi));
         targetCam.x = radius * Math.sin(phi) * Math.sin(theta);
-        targetCam.y = radius * Math.cos(phi) + 1.5;
+        targetCam.y = radius * Math.cos(phi) + 1.2;
         targetCam.z = radius * Math.sin(phi) * Math.cos(theta);
-        targetLook.set(0, 2.0, 0);
+        targetLook.set(0, 1.8, 0);
       }
 
       currentCamTarget.lerp(targetCam, 0.045);
@@ -1138,7 +951,6 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
       camera.position.copy(currentCamTarget);
       camera.lookAt(lookTarget);
 
-      // Progresso percentual
       const totalStages = STAGES.length - 1;
       const overallPercent = Math.min(
         Math.round(((activeIdx + t) / totalStages) * 100),
@@ -1146,7 +958,6 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
       );
       setStageProgress(overallPercent);
 
-      // Avançar para próximo estágio
       if (autoPlay && !isPausedRef.current && t >= 1 && activeIdx < STAGES.length - 1) {
         const nextIdx = activeIdx + 1;
         stageIndexRef.current = nextIdx;
@@ -1166,7 +977,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
 
     reqIdRef.current = requestAnimationFrame(animate);
 
-    // Eventos de Órbita Interativa Manual (Mouse e Touch)
+    // Eventos de Órbita Interativa 360° (Mouse e Touch)
     const handlePointerDown = (e: MouseEvent | TouchEvent) => {
       isDraggingRef.current = true;
       const clientX = "touches" in e ? e.touches[0].clientX : e.clientX;
@@ -1182,7 +993,6 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
       const dy = clientY - prevMousePosRef.current.y;
       prevMousePosRef.current = { x: clientX, y: clientY };
 
-      // Alterna automaticamente para o modo livre ao arrastar
       if (cameraModeRef.current !== "free") {
         setCameraMode("free");
       }
@@ -1203,7 +1013,6 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
     window.addEventListener("touchmove", handlePointerMove, { passive: true });
     window.addEventListener("touchend", handlePointerUp);
 
-    // ResizeObserver
     const resizeObserver = new ResizeObserver((entries) => {
       for (const entry of entries) {
         const newW = entry.contentRect.width;
@@ -1220,7 +1029,6 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
 
     resizeObserver.observe(container);
 
-    // Limpeza de recursos
     return () => {
       cancelAnimationFrame(reqIdRef.current);
       resizeObserver.disconnect();
@@ -1278,27 +1086,36 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
 
   return (
     <div
-      className={`relative w-full max-w-4xl mx-auto rounded-3xl overflow-hidden border border-[#F6C945]/20 bg-[#090B0C] shadow-2xl ${className}`}
+      id="caraiva-world-builder-card"
+      className={`relative w-full max-w-4xl mx-auto rounded-3xl overflow-hidden border bg-[#07080a] shadow-2xl ${className}`}
       style={{
-        boxShadow: "0 25px 60px -15px rgba(0, 0, 0, 0.95), 0 0 50px -10px rgba(246, 201, 69, 0.18)",
+        borderColor: "rgba(246, 201, 69, 0.3)",
+        boxShadow: "0 30px 80px -15px rgba(0, 0, 0, 0.98), 0 0 60px -10px rgba(246, 201, 69, 0.22)",
       }}
     >
-      {/* Canvas Three.js com suporte a arrastar para orbitar */}
+      {/* Canvas Three.js Diorama */}
       <div
         ref={mountRef}
-        className="w-full h-[440px] sm:h-[520px] md:h-[560px] cursor-grab active:cursor-grabbing select-none"
-        title="Clique e arraste para explorar o casario em 360°"
+        className="w-full h-[450px] sm:h-[530px] md:h-[570px] cursor-grab active:cursor-grabbing select-none"
+        title="Clique e arraste para explorar a maquete em 360°"
       />
 
       {/* Dica de interação 360° no canto inferior do canvas */}
-      <div className="absolute top-20 right-4 pointer-events-none hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#141719]/80 border border-white/20 text-[10px] text-white/80 font-mono backdrop-blur-sm z-10">
-        <Compass className="w-3 h-3 text-[#F6C945]" />
+      <div
+        className="absolute top-20 right-4 pointer-events-none hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-full border text-[11px] font-mono backdrop-blur-md z-10"
+        style={{
+          backgroundColor: "rgba(18, 21, 24, 0.85)",
+          borderColor: "rgba(246, 201, 69, 0.25)",
+          color: "rgba(255, 244, 237, 0.85)",
+        }}
+      >
+        <Compass className="w-3.5 h-3.5 text-[#F6C945]" />
         <span>Arraste para girar em 360°</span>
       </div>
 
       {/* Vinheta Dark Luxury Superior com Nome do Negócio & Controles */}
       <div
-        className="absolute top-0 inset-x-0 p-4 sm:p-6 bg-gradient-to-b from-[#090B0C]/95 via-[#090B0C]/70 to-transparent flex items-center justify-between pointer-events-none z-20"
+        className="absolute top-0 inset-x-0 p-4 sm:p-6 bg-gradient-to-b from-[#07080a]/95 via-[#07080a]/75 to-transparent flex items-center justify-between pointer-events-none z-20"
         style={{ color: "#FFF4ED" }}
       >
         <div className="flex items-center gap-3 pointer-events-auto">
@@ -1317,7 +1134,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
               style={{ color: "#F6C945" }}
             >
               <Sparkles className="w-3.5 h-3.5 animate-spin-slow" />
-              <span>CARAÍVA REALTIME WORLD BUILDER 3D</span>
+              <span>CARAÍVA DIORAMA DARK LUXURY</span>
             </div>
             <h2 className="text-base sm:text-lg font-bold tracking-tight" style={{ color: "#FFF4ED" }}>
               {businessName}
@@ -1332,7 +1149,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
             onClick={() => setCameraMode((m) => (m === "director" ? "free" : "director"))}
             className="px-2.5 py-1.5 rounded-xl border text-xs font-mono transition-colors flex items-center gap-1.5"
             style={{
-              backgroundColor: cameraMode === "free" ? "rgba(246, 201, 69, 0.2)" : "rgba(20, 23, 25, 0.85)",
+              backgroundColor: cameraMode === "free" ? "rgba(246, 201, 69, 0.25)" : "rgba(20, 23, 26, 0.9)",
               borderColor: cameraMode === "free" ? "#F6C945" : "rgba(255, 255, 255, 0.15)",
               color: cameraMode === "free" ? "#F6C945" : "#FFF4ED",
             }}
@@ -1348,7 +1165,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
               onClick={togglePause}
               className="p-2.5 rounded-xl border transition-colors"
               style={{
-                backgroundColor: "rgba(20, 23, 25, 0.85)",
+                backgroundColor: "rgba(20, 23, 26, 0.9)",
                 borderColor: "rgba(255, 255, 255, 0.15)",
                 color: "#FFF4ED",
               }}
@@ -1363,7 +1180,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
             onClick={() => setIsMuted((m) => !m)}
             className="p-2.5 rounded-xl border transition-colors"
             style={{
-              backgroundColor: "rgba(20, 23, 25, 0.85)",
+              backgroundColor: "rgba(20, 23, 26, 0.9)",
               borderColor: "rgba(255, 255, 255, 0.15)",
               color: "#FFF4ED",
             }}
@@ -1377,7 +1194,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
             onClick={() => setSpeedMultiplier((s) => (s === 1 ? 1.6 : 1))}
             className="px-2.5 py-1.5 rounded-xl border text-xs font-mono transition-colors flex items-center gap-1.5"
             style={{
-              backgroundColor: "rgba(20, 23, 25, 0.85)",
+              backgroundColor: "rgba(20, 23, 26, 0.9)",
               borderColor: "rgba(255, 255, 255, 0.15)",
               color: "#FFF4ED",
             }}
@@ -1406,7 +1223,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
       {/* Flash Dourado no Mergulho (dive_in) */}
       <div
         className={`absolute inset-0 bg-[#F6C945] pointer-events-none transition-opacity duration-700 z-30 ${
-          isDiving ? "opacity-30" : "opacity-0"
+          isDiving ? "opacity-35" : "opacity-0"
         }`}
       />
 
@@ -1414,7 +1231,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
       <div
         className="absolute bottom-0 inset-x-0 p-4 sm:p-5 backdrop-blur-md border-t z-20"
         style={{
-          backgroundColor: "rgba(14, 18, 21, 0.96)",
+          backgroundColor: "rgba(10, 12, 15, 0.96)",
           borderColor: "rgba(246, 201, 69, 0.3)",
           color: "#FFF4ED",
         }}
@@ -1425,7 +1242,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
             className="h-full bg-gradient-to-r from-[#D97706] via-[#F6C945] to-[#FFE57F] transition-all duration-300 rounded-full"
             style={{
               width: `${stageProgress}%`,
-              boxShadow: "0 0 12px rgba(246, 201, 69, 0.5)",
+              boxShadow: "0 0 14px rgba(246, 201, 69, 0.55)",
             }}
           />
         </div>
@@ -1468,7 +1285,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
                 }}
               >
                 <RotateCcw className="w-3.5 h-3.5" />
-                <span>Rever Construção</span>
+                <span>Rever Maquete</span>
               </button>
               <button
                 onClick={() => onComplete?.()}
@@ -1488,7 +1305,7 @@ export const CaraivaRealtimeWorldBuilder3D: React.FC<CaraivaRealtimeWorldBuilder
               }}
             >
               <CheckCircle2 className="w-3.5 h-3.5 text-[#F6C945]" />
-              <span>{stageProgress}% CONSTRUÍDO</span>
+              <span>{stageProgress}% ESCULPIDO</span>
             </div>
           )}
         </div>

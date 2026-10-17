@@ -108,3 +108,7 @@ Sempre que uma nova ideia for criada ou refinada em um chat:
 - Ecossistema: Guia inicia, Business recebe, TapTable atende por NFC, PMS coordena a estadia, Remotion apresenta e gera retrospectiva com dados autorizados. Não exige usar vídeos ou 3D em cada etapa.
 - Pré-condição: corrigir a distância entre as promessas visuais atuais e as simulações de mesas, combos pagos e vouchers locais. O checkout por estabelecimento existente não equivale a uma transação multiforncedor.
 - Evidências e sequência sugerida: `output/REVISAO-CARAIVA-2026-10-16.md`.
+
+## Ideia 07 — Interface contextual e continuidade da viagem
+**Status:** Proposta para discussão; implementação não aprovada.
+Evoluir o Guia preservando funções existentes: Home orientada à próxima ação, cartões com disponibilidade verificável e origem/atualização, viagem compartilhada com votação, central de pedidos/reservas/vouchers, concierge da pousada e modo de conexão limitada. Integrar ações ao Business e TapTable com identificadores comuns, permissões por participante e confirmação autoritativa no servidor. Recomendações explicáveis; anúncios identificados; movimentos acessíveis e desempenho móvel como limites. Priorizar clareza visual e central da viagem antes de grupos e automações de capacidade ociosa. Não apresentar estimativas, marés ou pagamentos simulados como fatos confirmados.

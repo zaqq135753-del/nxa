@@ -140,3 +140,6 @@ Sempre que em um chat você:
 - O validador Node de env não exporta variáveis para o processo irmão após `&&`; confirmar variáveis no build real, em vez de confiar no log.
 - Proposta discutida: Caraíva Flow, jornada contextual com disponibilidade e execução reais entre Guia, Business, TapTable e hospedagem. Status PROPOSTA; nenhuma decisão de implementação aprovada nesta revisão.
 - Relatório: `output/REVISAO-CARAIVA-2026-10-16.md`. Não houve alteração nos aplicativos nesta inspeção.
+
+### Propostas de produto — 16/10/2026
+Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrada Ideia 07: interface contextual, central da viagem, disponibilidade verificável, grupos, concierge e conexão limitada. Apenas proposta; nenhuma alteração funcional ou publicação autorizada por esta discussão.

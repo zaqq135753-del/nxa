@@ -38,23 +38,25 @@ async function run() {
   await page.fill('input[type="tel"]', '(73) 99888-7777');
   await page.click('button:has-text("Construir Meu Espaço em 3D")');
   
-  // Captura do início da construção 3D (coqueirais, areia e dunas)
-  await page.waitForTimeout(2000);
-  await page.screenshot({ path: path.join(OUTPUT_DIR, '5-construcao-3d-fase-areia-coqueiros.png') });
-  console.log('Screenshot 4 salvo: 5-construcao-3d-fase-areia-coqueiros.png');
+  // Captura do início: Pedestal de Obsidiana & Ilha de Areia
+  await page.waitForTimeout(2500);
+  await page.screenshot({ path: path.join(OUTPUT_DIR, '5-diorama-fase-pedestal-areia.png') });
+  console.log('Screenshot 4 salvo: 5-diorama-fase-pedestal-areia.png');
 
-  // Captura do meio da construção 3D (telhado colonial real e lampiões)
-  await page.waitForTimeout(4000);
-  await page.screenshot({ path: path.join(OUTPUT_DIR, '5-construcao-3d-fase-telhado-lampioes.png') });
-  console.log('Screenshot 5 salvo: 5-construcao-3d-fase-telhado-lampioes.png');
+  // Captura da Fase 2/3: Varanda Jacarandá, Telhado e Lampiões
+  await page.waitForTimeout(6000);
+  await page.screenshot({ path: path.join(OUTPUT_DIR, '5-diorama-fase-estrutura-telhado.png') });
+  console.log('Screenshot 5 salvo: 5-diorama-fase-estrutura-telhado.png');
 
-  // Captura da placa entalhada e Living Orb
-  await page.waitForTimeout(4000);
-  await page.screenshot({ path: path.join(OUTPUT_DIR, '5-construcao-3d-fase-placa-orb.png') });
-  console.log('Screenshot 6 salvo: 5-construcao-3d-fase-placa-orb.png');
+  // Captura da Fase 4/5: Placa Ouro, Holofotes de Galeria e Luz Interior Quente
+  await page.waitForTimeout(6000);
+  await page.screenshot({ path: path.join(OUTPUT_DIR, '5-diorama-fase-galeria-holofotes.png') });
+  console.log('Screenshot 6 salvo: 5-diorama-fase-galeria-holofotes.png');
 
   // Conclusão e revelação triunfante
-  await page.waitForTimeout(6000);
+  console.log('Aguardando conclusão do Cine-Tour e transição para o Live Reveal...');
+  await page.waitForSelector('button:has-text("Mesa 01 TapTable NFC")', { timeout: 35000 });
+  await page.waitForTimeout(1000);
   await page.screenshot({ path: path.join(OUTPUT_DIR, '6-revelacao-prato-3d-flutuante.png') });
   console.log('Screenshot 7 salvo: 6-revelacao-prato-3d-flutuante.png');
 
