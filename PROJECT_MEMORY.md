@@ -171,3 +171,9 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
 - Prévias persistentes: Guia/Viagem/Business em http://127.0.0.1:5191; TapTable /operacao em http://127.0.0.1:5192. Servidores estáticos PIDs 9124 e 19480 na criação. Prévia temporária Vite5190 encerrada; servidores anteriores do usuário preservados.
 - Catálogo cloud estava vazio. Ofertas reais/capacidade/recebimento e escolha do provedor financeiro continuam necessários para operação comercial. Checkout multiforncedor/garantias financeiras/holds não são recursos concluídos do Flow inicial.
 - Relatório auditável: output/IMPLEMENTACAO-JORNADA-CARAIVA-2026-10-16.md.
+### Publicação autorizada — 17/10/2026
+- Commit fonte local beb1cd7 na branch codex/caraiva-journey-contextual. Exportação revisada para o formato do remoto nxacorp68-afk/nxa (Guia na raiz): commit 82e2ac006be8a5c3a183e7bb5119a94bcfba8b4e enviado à main, sem force push. Business/TapTable preservados em ecosystem/ como fontes complementares, sem expor PMS inteiro.
+- Build cloud e cinco testes aprovados na cópia de publicação output/caraiva-release-20261017. Não versionar .env, dependências ou backups.
+- Primeiro deploy falhou por ausência das três variáveis públicas na Vercel. Configuradas VITE_CARAIVA_CLOUD, VITE_SUPABASE_URL e VITE_SUPABASE_PUBLISHABLE_KEY no ambiente Production do projeto caraiva-digital/equipe zaq5. Nenhuma chave privilegiada enviada.
+- Redeploy 4SMdKKVwKNJWaW5LqAr463tZREMx concluído Ready, commit 82e2ac0, domínio www.caraiva.digital atribuído. Browser confirmou /guia/viagem com Minha viagem, roteiro, turma e atendimento na versão pública. Pagamentos e catálogo operacional continuam com as limitações registradas na implementação.
+- A conexão MCP Vercel não tem acesso à equipe zaq5; painel autenticado no navegador utilizado. Não confundir falha de acesso do conector com falha de deployment.

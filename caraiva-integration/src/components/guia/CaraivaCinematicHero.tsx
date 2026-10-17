@@ -90,7 +90,7 @@ export const CaraivaCinematicHero: React.FC<CaraivaCinematicHeroProps> = ({
       }`}
     >
       {/* 1. BACKGROUND CINEMATOGRÁFICO DE CARAÍVA COM CARREGAMENTO PROGRESSIVO */}
-      <div className="relative h-[360px] sm:h-[390px] w-full select-none overflow-hidden">
+      <div className="relative h-[250px] sm:h-[320px] w-full select-none overflow-hidden">
         {/* Poster de alta resolução com transição suave */}
         <img
           key={bgImageSrc}

@@ -449,10 +449,10 @@ export const CaraivaInstantOnboardingModal: React.FC<CaraivaInstantOnboardingMod
           <button
             onClick={handleNext}
             disabled={step === 1 && !formData.name.trim()}
-            className={`py-3 px-6 rounded-2xl font-bold text-sm tracking-wide shadow-lg flex items-center gap-2 transition-all ${
+            className={`py-3 px-6 rounded-2xl font-extrabold text-sm tracking-wide shadow-lg flex items-center gap-2 transition-all ${
               step === 1 && !formData.name.trim()
-                ? "bg-white/10 text-white/30 cursor-not-allowed"
-                : "bg-gradient-to-r from-[#F6C945] to-[#D97706] text-[#090B0C] hover:brightness-110 active:scale-95 shadow-[#F6C945]/20"
+                ? "bg-stone-800 text-stone-500 border border-white/5 cursor-not-allowed opacity-80"
+                : "bg-gradient-to-r from-[#F6C945] to-[#D97706] text-[#090B0C] hover:brightness-110 active:scale-95 shadow-[#F6C945]/30 cursor-pointer"
             }`}
           >
             {step === 3 ? (
