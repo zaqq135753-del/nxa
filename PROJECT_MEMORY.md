@@ -97,6 +97,19 @@ Este repositório constrói o primeiro **Sistema Integrado de Destino Inteligent
 
 ---
 
+### ADR 008: Transição de Tridimensional Procedural Low-Poly para Diorama Foto-Realista Ultra-HD 2.5D com Parallax Físico
+* **Data:** 16/10/2026
+* **Contexto:** Malhas poligonais 3D construídas proceduralmente via WebGL/Three.js em runtime apresentavam estética excessivamente simplista/low-poly (cubos e cones primitivos), destoando do padrão Dark Luxury e da sofisticação de destinos como Caraíva.
+* **Decisão Tomada:** Substituição dos sólidos primitivos pelo **Motor de Diorama Foto-Realista Ultra-HD de Galeria (Cinema Híbrido 2.5D)**:
+  1. Base fotográfica de alta fidelidade artística inspirada na Architectural Digest / Apple Pro: casario colonial baiano autêntico em miniatura sobre pedestal monolítico de obsidiana acetinada, ilha de areia de praia, jardim de restinga, iluminação de holofotes de galeria (*pin-spotlights*) e silhuetas de visitantes no museu.
+  2. Física de Parallax 3D com aceleração de hardware: resposta dinâmica ao movimento do mouse e inclinação do giroscópio no celular através de matriz de perspectiva CSS 3D (`rotateX`, `rotateY`, `scale3d`).
+  3. Placa entalhada dinâmica em madeira nobre e letras gravadas em ouro 24k gerada em tempo real com o nome exato digitado pelo comerciante durante o onboarding.
+  4. Partículas físicas de poeira dourada flutuando suavemente pelos cones de luz volumétrica sobrepostos via HTML5 Canvas.
+  5. 0ms de latência de rede na geração e zero alucinação textual no primeiro contato do comerciante.
+* **Armadilhas Evitadas:** Evitou-se a chamada síncrona a modelos de difusão lentos (8-15s) durante a etapa de onboarding, garantindo taxa de conversão máxima e carregamento instantâneo mesmo no 3G/4G da praia.
+
+---
+
 ## ⚠️ 4. ARMADILHAS EVITADAS & LIÇÕES APRENDIDAS (NÃO REPETIR)
 
 1. **Evitar concorrência de Remotion Players:** Nunca colocar `<Player />` do Remotion dentro de listas com scroll infinito (`map()`). Isso trava o navegador móvel. Use sempre `<video loop autoPlay muted playsInline>` com assets pré-renderizados.
@@ -143,3 +156,18 @@ Sempre que em um chat você:
 
 ### Propostas de produto — 16/10/2026
 Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrada Ideia 07: interface contextual, central da viagem, disponibilidade verificável, grupos, concierge e conexão limitada. Apenas proposta; nenhuma alteração funcional ou publicação autorizada por esta discussão.
+
+### Implementação da jornada contextual — 16/10/2026
+- Usuário aprovou implementar as propostas de interface e continuidade da viagem. Branch criada: codex/caraiva-journey-contextual. Sem push/deploy ao domínio nesta etapa.
+- Guia recebeu ContextualHome, JourneyPage (/guia/viagem), roteiro persistido localmente, sugestões por interesse/orçamento quando há preços no cadastro, grupos com convites e votos no banco, pedidos reais por usuário e concierge por estabelecimento.
+- Default /business e /parceiros/painel agora usam GuideBusinessWorkspace autenticado (catálogo, recebimento, pedidos/reservas, solicitações e oportunidades reais). Demonstração clássica preservada separadamente. QR da pousada abre atendimento direcionado; destaque temporário usa details do item, sem criar desconto nem estoque.
+- Business Next recebeu BusinessServiceInbox sobre o mesmo cd_service_requests. TapTable ganhou /operacao, autenticada e vinculada ao mesmo cd_orders, sem converter silenciosamente as simulações antigas.
+- Reservas e cardápio do perfil usam CloudCheckout, inclusive rodapé; combos preservam inspiração visual e salvam roteiro, sem cobrança/voucher fictícios. TapTableSyncService não fabrica mesas/Pix. Clima compartilhado via Open-Meteo; maré sem fonte não é apresentada como previsão.
+- Seis tabelas com RLS. Migrações aplicadas: 20261016234426, 20261017000605, 20261017001213. Testes de três identidades com rollback aprovados (dono, convidado e terceiro; isolamento de pedidos/atendimento). Função privilegiada do convite em schema privado com wrapper público invoker.
+- Armadilha corrigida: política SELECT de viagem precisa incluir owner_id=auth.uid() diretamente para INSERT RETURNING; helper STABLE que consulta a tabela não enxerga necessariamente a nova linha nessa etapa.
+- Offline limita cache a assets públicos e mantém roteiro local; não cacheia API/Auth. Build cloud executa validação/TS/Vite/verificador com o mesmo env.
+- Validação: build final do Guia aprovado (52 arquivos públicos), build TapTable aprovado com módulo conectado, cinco testes de lógica aprovados, Business Next typecheck aprovado. Build completo Next encontrou EPERM na pasta padrão; tentativa isolada interrompida sem conclusão. Nenhuma transação comercial ou e-mail de teste enviado.
+- Browser validou desktop e mobile390, geração do roteiro e persistência entre abas, checkout interno, login exigido no Business e TapTable. Fluxo autenticado completo no browser ainda depende de login; não declarar 100% validado.
+- Prévias persistentes: Guia/Viagem/Business em http://127.0.0.1:5191; TapTable /operacao em http://127.0.0.1:5192. Servidores estáticos PIDs 9124 e 19480 na criação. Prévia temporária Vite5190 encerrada; servidores anteriores do usuário preservados.
+- Catálogo cloud estava vazio. Ofertas reais/capacidade/recebimento e escolha do provedor financeiro continuam necessários para operação comercial. Checkout multiforncedor/garantias financeiras/holds não são recursos concluídos do Flow inicial.
+- Relatório auditável: output/IMPLEMENTACAO-JORNADA-CARAIVA-2026-10-16.md.
