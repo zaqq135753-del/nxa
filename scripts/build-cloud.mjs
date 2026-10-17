@@ -7,6 +7,7 @@ if (/sb_secret_|service_role/.test(env.VITE_SUPABASE_PUBLISHABLE_KEY)) throw Err
 for (const [script, args] of [
   ['scripts/validate-cloud-env.mjs', []],
   ['scripts/test-activation.mjs', []],
+  ['scripts/test-architecture.mjs', []],
   ['node_modules/typescript/bin/tsc', ['-b']],
   ['node_modules/vite/bin/vite.js', ['build', '--mode', 'cloud']],
   ['scripts/verify-public-build.mjs', []]
