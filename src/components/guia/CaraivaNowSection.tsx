@@ -48,7 +48,7 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
               Caraíva Agora
             </h2>
             <p className="text-[10px] sm:text-[11px]" style={{ color: "var(--cv-muted)" }}>
-              Acontecendo ou começando em breve na vila
+              Sugestões do catálogo — confirme os horários no perfil
             </p>
           </div>
         </div>
@@ -91,7 +91,7 @@ export const CaraivaNowSection: React.FC<CaraivaNowSectionProps> = ({
               {/* Tag de Urgência / Status */}
               <div className="absolute top-2 left-2 flex items-center gap-1.5">
                 <span className="text-[9px] font-bold px-2 py-0.5 rounded-full bg-amber-500 text-slate-950 shadow-sm">
-                  {item.tag}
+                  Do cadastro
                 </span>
               </div>
 

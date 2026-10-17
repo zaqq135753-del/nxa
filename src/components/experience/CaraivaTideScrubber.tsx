@@ -20,20 +20,20 @@ export const CaraivaTideScrubber: React.FC = () => {
       return {
         badge: "MARÉ BAIXA (PISCINAS NATURAIS)",
         color: "#5F7D63",
-        text: "Momento perfeito para caminhar até a Ponta do Corumbau ou curtir as piscinas naturais da Praia do Satu.",
+        text: "Simulação visual de maré baixa. Não representa condições locais nem autoriza travessias ou banho.",
       };
     }
     if (height >= 1.4) {
       return {
         badge: "MARÉ CHEIA (ÁGUA NO RIO)",
         color: "#F6C945",
-        text: "Visual cinematográfico na beira do rio. Ótimo momento para banho calmo e apreciar o pôr do sol nas canoas.",
+        text: "Simulação visual de maré cheia. Consulte a previsão local e orientações da região.",
       };
     }
     return {
       badge: "MARÉ INTERMEDIÁRIA",
       color: "#FFF4ED",
-      text: "Ideal para travessia de canoa, caiaque no mangue e caminhadas tranquilas pela areia batida.",
+      text: "Simulação visual intermediária, sem previsão das condições de navegação ou banho.",
     };
   };
 

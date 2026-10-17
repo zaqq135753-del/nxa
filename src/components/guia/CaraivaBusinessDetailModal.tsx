@@ -37,8 +37,8 @@ import { getBusinessCatalog, getCartItems, clearCartForBusiness, type CartItem }
 import { SafeBusinessImage } from "./SafeBusinessImage";
 import { cloudCheckoutEnabled } from '../../services/ecosystemCloud';
 import { CloudCheckout } from './business-detail/CloudCheckout';
-import { CaraivaLivingBookingSection } from './business-detail/CaraivaLivingBookingSection';
-import { CaraivaLivingMenuSection } from './business-detail/CaraivaLivingMenuSection';
+import { addPlanBusiness } from '../../services/journeyModel';
+
 
 interface CaraivaBusinessDetailModalProps {
   business: Business | null;
@@ -131,6 +131,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
       category: business.category,
       tip: `Visitar ${business.name}. Referência: ${business.locationReference}`,
     });
+    addPlanBusiness(business);
     setAddedToDay(true);
     setTimeout(() => setAddedToDay(false), 2500);
   };
@@ -414,11 +415,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
 
           {detailTab === "cardapio" && (
             <div className="pt-2">
-              <CaraivaLivingMenuSection
-                businessId={business.id}
-                businessName={business.name}
-                onOpenCheckout={() => setIsCartModalOpen(true)}
-              />
+              <CloudCheckout key={business.id} businessId={business.id} businessName={business.name} mode="goods"/>
             </div>
           )}
 
@@ -442,24 +439,12 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
 
           {detailTab === "reserva" && ["restaurantes", "bares", "cafes", "hospedagens", "passeios", "noite"].includes(business.category) && (
             <div className="pt-2">
-              {["restaurantes", "bares", "cafes"].includes(business.category) ? (
-                <CaraivaLivingBookingSection
-                  business={business}
-                  businessId={business.id}
-                  businessName={business.name}
-                  businessCategory={business.category}
-                  whatsappNumber={business.whatsapp}
-                  locationReference={business.locationReference || business.address}
-                  onClose={onClose}
-                />
-              ) : (
-                <BusinessBookingTab
+              <BusinessBookingTab
                   businessId={business.id}
                   businessName={business.name}
                   businessCategory={business.category}
                   schedule={getBusinessProfileDetail(business.slug || business.id, business.name).schedule}
                 />
-              )}
             </div>
           )}
 
@@ -666,6 +651,8 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
           const isFood = business.category === "restaurantes" || business.category === "bares" || business.category === "cafes";
           const currentCatalog = getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory);
           const hasShowcase = isFood || Boolean(currentCatalog);
+
+          if (cloudCheckoutEnabled) return <div className="sticky bottom-0 p-3 sm:p-4 bg-[#080d12]/95 backdrop-blur-xl border-t border-white/10 flex items-center gap-2.5 z-30"><button type="button" className="px-4 py-3 rounded-xl border border-white/20 text-white" onClick={() => { if (onStartRoute) onStartRoute(business); else onOpenMap?.(business); onClose(); }}>Ver no mapa</button>{!['praias','pontos'].includes(business.category) && <a className="flex-1 px-4 py-3 rounded-xl bg-amber-400 text-slate-950 text-center font-bold" href={`/guia/checkout/${encodeURIComponent(business.id)}?modo=${detailTab === 'reserva' || business.category === 'hospedagens' || business.category === 'passeios' || business.category === 'noite' ? business.category : 'goods'}`}>Consultar {detailTab === 'reserva' ? 'reserva' : 'catálogo'} no app</a>}</div>;
 
           return (
             <div className="sticky bottom-0 p-3 sm:p-4 bg-[#080d12]/95 backdrop-blur-xl border-t border-white/10 flex items-center gap-2.5 z-30">
