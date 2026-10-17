@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import {
+  ArrowLeft,
   Sparkles,
   CalendarPlus,
   CheckCircle2,
@@ -14,12 +15,14 @@ interface CaraivaConciergeAgentProps {
   initialRequest?: string;
   onSelectBusiness?: (business: Business) => void;
   onNavigateToSaved?: () => void;
+  onBack?: () => void;
 }
 
 export const CaraivaConciergeAgent: React.FC<CaraivaConciergeAgentProps> = ({
   initialRequest = '',
   onSelectBusiness,
   onNavigateToSaved,
+  onBack,
 }) => {
   const [messages, setMessages] = useState<
     Array<{
@@ -147,6 +150,28 @@ export const CaraivaConciergeAgent: React.FC<CaraivaConciergeAgentProps> = ({
         }}
       >
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              style={{
+                width: 38,
+                height: 38,
+                borderRadius: 12,
+                border: '1px solid rgba(255,255,255,0.15)',
+                background: 'rgba(255,255,255,0.06)',
+                color: '#F6C945',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                cursor: 'pointer',
+              }}
+              aria-label="Voltar ao Início"
+              title="Voltar ao Início"
+            >
+              <ArrowLeft size={18} />
+            </button>
+          )}
           <div
             style={{
               width: 44,

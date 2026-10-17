@@ -1,9 +1,10 @@
 import { useEffect, useState, useRef } from "react";
-import { ClipboardList, Compass, Store, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, ClipboardList, Compass, Store, Sun, Volume2, VolumeX } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { CaraivaMoment } from "./useCaraivaMoment";
 import { GuideThemeButton } from "./GuideThemeButton";
 import type { GuideTheme } from "./useGuideTheme";
+import type { GuiaTab } from "../../screens/GuiaCaraivaApp";
 
 import { CaraivaWeatherTideWidget } from "./CaraivaWeatherTideWidget";
 
@@ -14,11 +15,14 @@ interface Props {
   onHome: () => void;
   onAudio: () => void;
   onBusiness: () => void;
+  onReplayIntro?: () => void;
   theme: GuideTheme;
   onToggleTheme: () => void;
+  activeTab?: GuiaTab;
+  onBack?: () => void;
 }
 
-export function CaraivaLivingHeader({ moment, audioActive, salesAdmin: _salesAdmin, onHome, onAudio, onBusiness, theme, onToggleTheme }: Props) {
+export function CaraivaLivingHeader({ moment, audioActive, salesAdmin: _salesAdmin, onHome, onAudio, onBusiness, onReplayIntro, theme, onToggleTheme, activeTab, onBack }: Props) {
   const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const lastScrollY = useRef(0);
@@ -58,17 +62,41 @@ export function CaraivaLivingHeader({ moment, audioActive, salesAdmin: _salesAdm
     >
       <div className="caraiva-header-inner">
         <div className="caraiva-header-row">
-          <button type="button" className="caraiva-brand" onClick={onHome} aria-label="Caraíva Digital — voltar ao início">
-            <span className="caraiva-brand-mark"><Compass size={22} aria-hidden="true" /></span>
-            <span>
-              <strong>CARAÍVA <small>DIGITAL</small></strong>
-              <span className="caraiva-brand-caption">Viva a vila. No seu tempo.</span>
-            </span>
-          </button>
+          <div className="flex items-center gap-2 min-w-0">
+            {activeTab && activeTab !== "inicio" && onBack && (
+              <button 
+                type="button" 
+                className="caraiva-icon-button text-amber-500 bg-amber-400/10 border-amber-400/25 hover:bg-amber-400/20 shrink-0 transition-transform active:scale-95" 
+                onClick={onBack} 
+                aria-label="Voltar para a aba anterior" 
+                title="Voltar"
+              >
+                <ArrowLeft size={18} />
+              </button>
+            )}
+            <button type="button" className="caraiva-brand" onClick={onHome} aria-label="Caraíva Digital — voltar ao início">
+              <span className="caraiva-brand-mark"><Compass size={22} aria-hidden="true" /></span>
+              <span>
+                <strong>CARAÍVA <small>DIGITAL</small></strong>
+                <span className="caraiva-brand-caption">Viva a vila. No seu tempo.</span>
+              </span>
+            </button>
+          </div>
 
           {/* Ações Essenciais Curadas: Pedidos/Sacola + Som + Business + Tema */}
           <div className="caraiva-header-actions flex items-center gap-1.5">
-            {/* 1. Radar Admin (Discreto) */}
+            {/* 1. Rever Intro 3D do Sol sob demanda */}
+            {onReplayIntro && (
+              <button
+                type="button"
+                className="caraiva-icon-button"
+                onClick={onReplayIntro}
+                aria-label="Rever abertura 3D do Sol"
+                title="Rever abertura 3D do Sol"
+              >
+                <Sun size={18} className="text-amber-400 hover:rotate-45 transition-transform" />
+              </button>
+            )}
 
             {/* 2. Meus Pedidos & Reservas */}
             <Link 

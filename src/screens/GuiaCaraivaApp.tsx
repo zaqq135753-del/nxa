@@ -9,6 +9,7 @@ import {
   ChevronDown,
   ChevronUp,
   ArrowRight,
+  ArrowLeft,
 } from "lucide-react";
 import { CARAIVA_BUSINESSES, type Business, type BusinessCategory, type NowActivity } from "../data/caraivaDigitalData";
 import { asset } from "../lib/asset";
@@ -128,14 +129,46 @@ export const GuiaCaraivaApp: React.FC = () => {
   const [welcomeRevision, setWelcomeRevision] = useState(0);
   const visitorName = useMemo(readGuideGreeting, [welcomeRevision]);
   const visitorInterests = useMemo(readGuideInterests, [welcomeRevision]);
-  const [activeTab, setActiveTab] = useState<GuiaTab>(() => { const tab = new URLSearchParams(location.search).get("tab"); return ["inicio","explorar","agora","mapa","salvos","concierge"].includes(tab || "") ? tab as GuiaTab : "inicio"; });
+  const [activeTab, setActiveTab] = useState<GuiaTab>(() => {
+    if (typeof window === "undefined") return "inicio";
+    const tab = new URLSearchParams(window.location.search).get("tab");
+    return ["inicio", "explorar", "agora", "mapa", "salvos", "concierge"].includes(tab || "")
+      ? (tab as GuiaTab)
+      : "inicio";
+  });
+
   const [isIntroOpen, setIsIntroOpen] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
-    // Permite reabrir com ?intro=1 na URL ou primeira vez na sessão
     const params = new URLSearchParams(window.location.search);
-    if (params.get("intro") === "1") return true;
-    return !sessionStorage.getItem("caraiva_intro_seen_v1");
+    // Permite reabrir explicitamente com ?intro=1 ou ?intro=true
+    if (params.get("intro") === "1" || params.get("intro") === "true") return true;
+    if (params.get("intro") === "0" || params.get("intro") === "false") return false;
+    try {
+      // Usuário existente que já assistiu: NÃO abre a intro toda vez!
+      const seen = localStorage.getItem("caraiva_intro_seen_v1");
+      return !seen;
+    } catch {
+      return false;
+    }
   });
+
+  const handleIntroComplete = useCallback(() => {
+    setIsIntroOpen(false);
+    try {
+      localStorage.setItem("caraiva_intro_seen_v1", "true");
+      sessionStorage.setItem("caraiva_intro_seen_v1", "true");
+      if (!localStorage.getItem("caraiva_first_visit_date")) {
+        localStorage.setItem("caraiva_first_visit_date", new Date().toISOString());
+      }
+    } catch {
+      // ignora em navegadores com restrições
+    }
+  }, []);
+
+  const handleReplayIntro = useCallback(() => {
+    setIsIntroOpen(true);
+    window.scrollTo({ top: 0, behavior: "instant" });
+  }, []);
   const [isMagicOnboardingOpen, setIsMagicOnboardingOpen] = useState(false);
   const [conciergeRequest, setConciergeRequest] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
@@ -167,10 +200,82 @@ export const GuiaCaraivaApp: React.FC = () => {
   useGuideViewport();
   const moment = useCaraivaMoment();
   const overlayOpen = Boolean(photoCreditsOpen || onboardingOpen || selectedBusiness || activeStory || isPostingStory || isTideModalOpen || isCameraModalOpen);
-  const navigateGuide = (tab: GuiaTab) => {
+
+  const navigateGuide = useCallback((tab: GuiaTab, options?: { replace?: boolean }) => {
     setActiveTab(tab);
     window.scrollTo({ top: 0, behavior: "instant" });
-  };
+
+    if (typeof window !== "undefined") {
+      const url = new URL(window.location.href);
+      if (tab === "inicio") {
+        url.searchParams.delete("tab");
+      } else {
+        url.searchParams.set("tab", tab);
+      }
+      url.searchParams.delete("intro");
+
+      const state = { tab, timestamp: Date.now() };
+      if (options?.replace) {
+        window.history.replaceState(state, "", url.toString());
+      } else {
+        window.history.pushState(state, "", url.toString());
+      }
+    }
+  }, []);
+
+  const handleGoBack = useCallback(() => {
+    // 1. Fecha modais sobrepostos se houver
+    if (selectedBusiness) { setSelectedBusiness(null); return; }
+    if (activeStory) { setActiveStory(null); return; }
+    if (isPostingStory) { setIsPostingStory(false); return; }
+    if (isTideModalOpen) { setIsTideModalOpen(false); return; }
+    if (isCameraModalOpen) { setIsCameraModalOpen(false); return; }
+    if (isMagicOnboardingOpen) { setIsMagicOnboardingOpen(false); return; }
+    if (photoCreditsOpen) { setPhotoCreditsOpen(false); return; }
+
+    // 2. Se estiver fora da Home, volta para a aba anterior no histórico ou Início
+    if (activeTab !== "inicio") {
+      if (window.history.length > 1 && window.history.state?.tab) {
+        window.history.back();
+      } else {
+        navigateGuide("inicio");
+      }
+    }
+  }, [
+    selectedBusiness,
+    activeStory,
+    isPostingStory,
+    isTideModalOpen,
+    isCameraModalOpen,
+    isMagicOnboardingOpen,
+    photoCreditsOpen,
+    activeTab,
+    navigateGuide,
+  ]);
+
+  // Sincronização nativa com botão Voltar do navegador/celular (Android back e swipe iOS)
+  useEffect(() => {
+    const handlePopState = () => {
+      if (selectedBusiness) { setSelectedBusiness(null); return; }
+      if (activeStory) { setActiveStory(null); return; }
+      if (isPostingStory) { setIsPostingStory(false); return; }
+      if (isTideModalOpen) { setIsTideModalOpen(false); return; }
+      if (isCameraModalOpen) { setIsCameraModalOpen(false); return; }
+      if (isMagicOnboardingOpen) { setIsMagicOnboardingOpen(false); return; }
+
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab") as GuiaTab | null;
+      if (tabParam && ["inicio", "explorar", "agora", "mapa", "salvos", "concierge"].includes(tabParam)) {
+        setActiveTab(tabParam);
+      } else {
+        setActiveTab("inicio");
+      }
+      window.scrollTo({ top: 0, behavior: "instant" });
+    };
+
+    window.addEventListener("popstate", handlePopState);
+    return () => window.removeEventListener("popstate", handlePopState);
+  }, [selectedBusiness, activeStory, isPostingStory, isTideModalOpen, isCameraModalOpen, isMagicOnboardingOpen]);
 
   // Suporte a abertura direta de negócio via URL: ?local=boteco-do-para
   useEffect(() => {
@@ -249,7 +354,7 @@ export const GuiaCaraivaApp: React.FC = () => {
 
   const handleOpenMapWithBusiness = (business: Business) => {
     setMapFocusBusiness(business);
-    setActiveTab("mapa");
+    navigateGuide("mapa");
   };
 
   const handleStartRoute = (business: Business) => {
@@ -259,26 +364,26 @@ export const GuiaCaraivaApp: React.FC = () => {
 
   const handleIntentionSelect = (intentionId: string) => {
     if (intentionId === "agora") {
-      setActiveTab("agora");
+      navigateGuide("agora");
     } else if (intentionId === "comer") {
       setSelectedCategory("restaurantes");
-      setActiveTab("explorar");
+      navigateGuide("explorar");
     } else if (intentionId === "praias") {
       setSelectedCategory("praias");
-      setActiveTab("explorar");
+      navigateGuide("explorar");
     } else if (intentionId === "passeios") {
       setSelectedCategory("passeios");
-      setActiveTab("explorar");
+      navigateGuide("explorar");
     } else if (intentionId === "noite") {
       setSelectedCategory("noite");
-      setActiveTab("explorar");
+      navigateGuide("explorar");
     } else if (intentionId === "cafes") {
       setSelectedCategory("cafes");
-      setActiveTab("explorar");
+      navigateGuide("explorar");
     } else if (intentionId === "eventos") {
-      setActiveTab("agora");
+      navigateGuide("agora");
     } else {
-      setActiveTab("explorar");
+      navigateGuide("explorar");
     }
   };
 
@@ -332,14 +437,7 @@ export const GuiaCaraivaApp: React.FC = () => {
     <div data-theme={theme} data-period={moment.period} data-tab={activeTab} className={`caraiva-guide min-h-screen ${theme === 'light' ? 'bg-[#f7f3e9] text-[#1e4339]' : 'bg-[#080d12] text-slate-100'} font-sans relative selection:bg-amber-400 selection:text-slate-950 transition-colors duration-300`}>
       {isIntroOpen && (
         <CaraivaInteractiveIntro
-          onComplete={() => {
-            setIsIntroOpen(false);
-            try {
-              sessionStorage.setItem("caraiva_intro_seen_v1", "true");
-            } catch {
-              // ignora em navegadores com restrições
-            }
-          }}
+          onComplete={handleIntroComplete}
         />
       )}
       {photoCreditsOpen && <GuidePhotoCredits onClose={() => setPhotoCreditsOpen(false)} />}
@@ -361,9 +459,19 @@ export const GuiaCaraivaApp: React.FC = () => {
       )}
 
       {activeTab !== "business" && activeTab !== "mapa" && (
-        <CaraivaLivingHeader moment={moment} audioActive={isAudioActive} salesAdmin={isSalesAdmin}
-          onHome={() => navigateGuide("inicio")} onAudio={handleToggleGlobalAudio}
-          onBusiness={() => location.assign("/parceiros/painel")} theme={theme} onToggleTheme={toggleTheme} />
+        <CaraivaLivingHeader 
+          moment={moment} 
+          audioActive={isAudioActive} 
+          salesAdmin={isSalesAdmin}
+          onHome={() => navigateGuide("inicio")} 
+          onAudio={handleToggleGlobalAudio}
+          onBusiness={() => location.assign("/parceiros/painel")} 
+          onReplayIntro={handleReplayIntro}
+          theme={theme} 
+          onToggleTheme={toggleTheme}
+          activeTab={activeTab}
+          onBack={handleGoBack}
+        />
       )}
       {/* Main Content Render Area */}
       <GuideTabArrival tab={activeTab}/>
@@ -437,7 +545,7 @@ export const GuiaCaraivaApp: React.FC = () => {
                     )}
                   </button>
                   <button
-                    onClick={() => setActiveTab("explorar")}
+                    onClick={() => navigateGuide("explorar")}
                     className="text-xs font-bold text-amber-500 hover:text-amber-400"
                   >
                     Ver todos ↗
@@ -468,7 +576,7 @@ export const GuiaCaraivaApp: React.FC = () => {
             <div className="max-w-4xl mx-auto">
               <CaraivaNowSection
                 onSelectBusiness={handleOpenBusinessModal}
-                onSeeAllNow={() => setActiveTab("agora")}
+                onSeeAllNow={() => navigateGuide("agora")}
               />
             </div>
 
@@ -569,16 +677,27 @@ export const GuiaCaraivaApp: React.FC = () => {
         {/* 2. ABA EXPLORAR */}
         {activeTab === "explorar" && (
           <div className="cv-guide-explore max-w-4xl mx-auto px-4 sm:px-6 py-6 space-y-6 pb-28">
-            <div>
-              <span className="text-xs uppercase tracking-wider text-amber-400 font-bold">
-                Explorar Caraíva
-              </span>
-              <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-serif mt-1">
-                Todos os Lugares & Experiências
-              </h1>
-              <p className="text-slate-400 text-xs sm:text-sm mt-0.5">
-                {filteredBusinesses.length} estabelecimentos e atrativos autênticos verificados.
-              </p>
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <span className="text-xs uppercase tracking-wider text-amber-400 font-bold">
+                  Explorar Caraíva
+                </span>
+                <h1 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight font-serif mt-1">
+                  Todos os Lugares & Experiências
+                </h1>
+                <p className="text-slate-400 text-xs sm:text-sm mt-0.5">
+                  {filteredBusinesses.length} estabelecimentos e atrativos autênticos verificados.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => navigateGuide("inicio")}
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 border border-white/10 transition-colors shrink-0 active:scale-95"
+                title="Voltar para o Início"
+              >
+                <ArrowLeft className="w-3.5 h-3.5 text-amber-400" />
+                <span>Início</span>
+              </button>
             </div>
 
             <CaraivaSmartSearch compact query={searchQuery} onQueryChange={setSearchQuery} onSubmit={()=>{}} onAskConcierge={request=>{setConciergeRequest(request);navigateGuide("concierge");}}/>
@@ -701,6 +820,7 @@ export const GuiaCaraivaApp: React.FC = () => {
               const b = CARAIVA_BUSINESSES.find((item) => item.id === activity.business_id);
               if (b) handleOpenBusinessModal(b);
             }}
+            onBack={handleGoBack}
           />
         )}
 
@@ -724,8 +844,9 @@ export const GuiaCaraivaApp: React.FC = () => {
           <CaraivaSavedScreen
             onSelectBusiness={handleOpenBusinessModal}
             onOpenMap={handleOpenMapWithBusiness}
-            onGoToConcierge={() => setActiveTab("concierge")}
-            onExplore={() => setActiveTab("explorar")}
+            onGoToConcierge={() => navigateGuide("concierge")}
+            onExplore={() => navigateGuide("explorar")}
+            onBack={handleGoBack}
           />
         )}
 
@@ -734,7 +855,8 @@ export const GuiaCaraivaApp: React.FC = () => {
           <CaraivaConciergeAgent
             initialRequest={conciergeRequest}
             onSelectBusiness={handleOpenBusinessModal}
-            onNavigateToSaved={() => setActiveTab("salvos")}
+            onNavigateToSaved={() => navigateGuide("salvos")}
+            onBack={handleGoBack}
           />
         )}
 
@@ -742,7 +864,7 @@ export const GuiaCaraivaApp: React.FC = () => {
         {activeTab === "business" && (
           <PartnerPremiumDashboard
             businessId={selectedBusiness?.id || "boteco-do-para"}
-            onBackToGuide={() => setActiveTab("inicio")}
+            onBackToGuide={() => navigateGuide("inicio")}
           />
         )}
       </main>
@@ -766,7 +888,7 @@ export const GuiaCaraivaApp: React.FC = () => {
           setExternalMapCommand(undefined);
         }}
         onUpdatePovCamera={(camera) => {
-          setActiveTab("mapa");
+          navigateGuide("mapa");
           setExternalMapCommand({
             id: Date.now(),
             povCamera: camera,
@@ -787,7 +909,7 @@ export const GuiaCaraivaApp: React.FC = () => {
         onClose={() => setIsTideModalOpen(false)}
         onFilterTideSpots={() => {
           setSelectedCategory("praias");
-          setActiveTab("explorar");
+          navigateGuide("explorar");
         }}
       />
 
@@ -885,7 +1007,7 @@ export const GuiaCaraivaApp: React.FC = () => {
             onClose={() => setIsMagicOnboardingOpen(false)}
             onExploreMap={() => {
               setIsMagicOnboardingOpen(false);
-              setActiveTab("mapa");
+              navigateGuide("mapa");
             }}
             onOpenDashboard={() => {
               setIsMagicOnboardingOpen(false);

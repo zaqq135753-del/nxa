@@ -30,6 +30,11 @@ export function CaraivaDock({
         /* Ignora se o navegador restringir vibração */
       }
     }
+    // Se tocar na aba atual, rola suavemente até o topo
+    if (activeTab === id) {
+      window.scrollTo({ top: 0, behavior: "smooth" });
+      return;
+    }
     onNavigate(id);
   };
 
@@ -37,7 +42,7 @@ export function CaraivaDock({
     <nav className="caraiva-dock cd-floating-dock" aria-label="Navegação do guia">
       {destinations.map(({ id, label, Icon, ...rest }) => {
         const isAi = "isAiCore" in rest && rest.isAiCore;
-        const isActive = activeTab === id;
+        const isActive = activeTab === id || (id === "explorar" && activeTab === "agora");
 
         return (
           <button
