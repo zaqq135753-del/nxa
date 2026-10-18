@@ -49,13 +49,18 @@ function MagicPresentationPage() {
     </div>
   );
 }
+import { CaraivaUniversalBusinessApp } from './components/partner/CaraivaUniversalBusinessApp';
+
 function PartnerDashboardPage() {
+  return <main style={{minHeight:'100vh'}}><CaraivaUniversalBusinessApp /></main>;
+}
+function PartnerDashboardWorkspacePage() {
   return <main style={{minHeight:'100vh'}}><GuideBusinessWorkspace /></main>;
 }
 function PartnerDashboardClassicPage() {
   return <main style={{minHeight:'100vh'}}><PartnerPremiumDashboard onBackToGuide={() => location.assign('/parceiros/painel')} /></main>;
 }
-createRoot(document.getElementById('root')!).render(<StrictMode><BrowserRouter><Routes><Route path="/apresentacao" element={<MagicPresentationPage />} /><Route path="/parceiros/apresentacao" element={<MagicPresentationPage />} /><Route path="/parceiros/magic" element={<MagicPresentationPage />} /><Route path="/experience" element={<CaraivaExperienceShowcase />} /><Route path="/admin/radar" element={<CaraivaRealtimeRadarView />} /><Route path="/hospede" element={<CaraivaGuestNfcView />} /><Route path="/guia/viagem" element={<JourneyPage />} /><Route path="/guia/pedidos" element={<CustomerOrders />} /><Route path="/guia/checkout/:businessId" element={<CheckoutPage />} /><Route path="/parceiros/painel-classico" element={<PartnerDashboardClassicPage />} /><Route path="/parceiros/painel" element={<PartnerDashboardPage />} /><Route path="/business" element={<PartnerDashboardPage />} /><Route path="/parceiros/cadastro" element={<MerchantRegistrationPage />} /><Route path="/guia" element={<GuideRoute />} /><Route path="/" element={<Navigate to="/guia" replace />} /><Route path="*" element={<main style={{padding:40,color:'white'}}>Página indisponível. <a href="/guia">Abrir guia</a></main>} /></Routes></BrowserRouter></StrictMode>);
+createRoot(document.getElementById('root')!).render(<StrictMode><BrowserRouter><Routes><Route path="/apresentacao" element={<MagicPresentationPage />} /><Route path="/parceiros/apresentacao" element={<MagicPresentationPage />} /><Route path="/parceiros/magic" element={<MagicPresentationPage />} /><Route path="/experience" element={<CaraivaExperienceShowcase />} /><Route path="/admin/radar" element={<CaraivaRealtimeRadarView />} /><Route path="/hospede" element={<CaraivaGuestNfcView />} /><Route path="/guia/viagem" element={<JourneyPage />} /><Route path="/guia/pedidos" element={<CustomerOrders />} /><Route path="/pedidos" element={<CustomerOrders />} /><Route path="/guia/checkout/:businessId" element={<CheckoutPage />} /><Route path="/parceiros/painel-workspace" element={<PartnerDashboardWorkspacePage />} /><Route path="/parceiros/painel-classico" element={<PartnerDashboardClassicPage />} /><Route path="/parceiros/painel" element={<PartnerDashboardPage />} /><Route path="/business" element={<PartnerDashboardPage />} /><Route path="/parceiros/cadastro" element={<MerchantRegistrationPage />} /><Route path="/guia" element={<GuideRoute />} /><Route path="/" element={<Navigate to="/guia" replace />} /><Route path="*" element={<main style={{padding:40,color:'white'}}>Página indisponível. <a href="/guia">Abrir guia</a></main>} /></Routes></BrowserRouter></StrictMode>);
 
 if (import.meta.env.PROD && 'serviceWorker' in navigator) {
  window.addEventListener('load', () => { void navigator.serviceWorker.register('/sw.js').catch(() => {}); }, {once:true});

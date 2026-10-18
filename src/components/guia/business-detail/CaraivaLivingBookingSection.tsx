@@ -23,6 +23,7 @@ import { motion, AnimatePresence } from "motion/react";
 import type { Business } from "../../../data/caraivaDigitalData";
 import { addToItinerary } from "../../../services/favoritesService";
 import { TapTableSyncService, type TapTableLiveState } from "../../../services/taptableSyncService";
+import { createUnifiedOrder } from "../../../services/villageUnifiedOrdersService";
 
 export interface CaraivaLivingBookingSectionProps {
   business?: Business | null;
@@ -253,6 +254,52 @@ export const CaraivaLivingBookingSection: React.FC<CaraivaLivingBookingSectionPr
         depositTotal: totalDeposit,
         expirationMinutes: 20,
       });
+
+      // Registra a reserva no Business OS e no hub do cliente
+      try {
+        const isHospedagem = (businessCategory || '').includes('hosped') || (businessCategory || '').includes('pousad');
+        const isPasseio = (businessCategory || '').includes('passeio') || (businessCategory || '').includes('nautic');
+
+        createUnifiedOrder({
+          businessId,
+          businessName,
+          niche: isHospedagem ? 'hospedagem' : isPasseio ? 'passeios_barcos' : 'gastronomia',
+          orderType: isHospedagem ? 'hospedagem' : isPasseio ? 'passeio' : 'mesa',
+          customer: {
+            name: customerName.trim(),
+            phone: customerPhone.trim() || '73999990000',
+            whatsappFormatted: (customerPhone.trim() || '73999990000').replace(/\D/g, ''),
+          },
+          items: [
+            {
+              id: voucherCode,
+              name: `${isHospedagem ? 'Reserva de Suíte' : isPasseio ? 'Reserva de Passeio' : 'Bloqueio de Mesa'} — ${selectedMoment.title} (${selectedAmbience.title})`,
+              quantity: peopleCount,
+              unitPrice: depositPerPerson,
+              subtotal: totalDeposit,
+              notes: specialNotes.trim() || undefined,
+            },
+          ],
+          totalAmount: totalDeposit,
+          paidAmount: totalDeposit,
+          paymentMethod: 'pix',
+          paymentStatus: 'paid',
+          destination: {
+            type: 'mesa',
+            label: 'Ambiente Selecionado',
+            detail: `${selectedAmbience.title} • ${locationReference || 'Vila de Caraíva'}`,
+          },
+          bookingDetails: {
+            checkInDate: getResolvedDateString(),
+            timeSlot: `${selectedTime} (${selectedMoment.title})`,
+            guestsCount: peopleCount,
+            roomOrSuiteName: isHospedagem ? selectedAmbience.title : undefined,
+          },
+          notes: specialNotes.trim() || undefined,
+        });
+      } catch (err) {
+        console.warn('Erro ao registrar reserva unificada:', err);
+      }
 
       setIsSubmitting(false);
     }, 700);
