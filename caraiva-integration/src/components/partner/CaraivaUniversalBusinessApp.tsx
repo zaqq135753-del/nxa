@@ -32,6 +32,7 @@ import {
 import {
   getUnifiedOrders,
   updateOrderStatus,
+  createUnifiedOrder,
   type UnifiedOrder,
   type UnifiedOrderStatus,
   getStatusBadge,
@@ -109,8 +110,18 @@ const INITIAL_SUITES: SuiteRoom[] = [
 ];
 
 // ==========================================
-// 2. MODELOS DO TAPTABLE (SALÃO & MESAS NFC)
+// 2. MODELOS DO TAPTABLE (SALÃO, COMANDA & MESAS NFC)
 // ==========================================
+interface TableConsumedItem {
+  id: string;
+  name: string;
+  qty: number;
+  unitPrice: number;
+  orderedBy: 'NFC Cliente' | 'Garçom (Manual)';
+  time: string;
+  station: 'cozinha_quente' | 'bar_drinks';
+}
+
 interface TapTableFloorSeat {
   tableNumber: string;
   status: 'livre' | 'comanda_aberta' | 'pedindo_conta' | 'ociosa';
@@ -121,7 +132,28 @@ interface TapTableFloorSeat {
   openMinutes: number;
   waiterName: string;
   activeCall?: string;
+  callMinutesAgo?: number;
+  items: TableConsumedItem[];
 }
+
+interface QuickMenuItem {
+  id: string;
+  name: string;
+  price: number;
+  category: 'Pratos & Petiscos' | 'Drinks & Cervejas' | 'Sem Álcool';
+  station: 'cozinha_quente' | 'bar_drinks';
+}
+
+const RESTAURANT_QUICK_MENU: QuickMenuItem[] = [
+  { id: 'm-01', name: 'Moqueca de Badejo & Camarão (2p)', price: 168, category: 'Pratos & Petiscos', station: 'cozinha_quente' },
+  { id: 'm-02', name: 'Pastel de Arraia Artesanal', price: 24, category: 'Pratos & Petiscos', station: 'cozinha_quente' },
+  { id: 'm-03', name: 'Bolinho de Peixe c/ Pimenta (8 un)', price: 58, category: 'Pratos & Petiscos', station: 'cozinha_quente' },
+  { id: 'm-04', name: 'Isca de Badejo Empanada c/ Aipim', price: 74, category: 'Pratos & Petiscos', station: 'cozinha_quente' },
+  { id: 'm-05', name: 'Caipirinha de Cacau & Biribiri', price: 38, category: 'Drinks & Cervejas', station: 'bar_drinks' },
+  { id: 'm-06', name: 'Cerveja Original 600ml Gelada', price: 22, category: 'Drinks & Cervejas', station: 'bar_drinks' },
+  { id: 'm-07', name: 'Balde 5 Heinekens Long Neck', price: 85, category: 'Drinks & Cervejas', station: 'bar_drinks' },
+  { id: 'm-08', name: 'Água de Coco Nativa no Gelo', price: 14, category: 'Sem Álcool', station: 'bar_drinks' },
+];
 
 const INITIAL_TABLES: TapTableFloorSeat[] = [
   {
@@ -133,7 +165,14 @@ const INITIAL_TABLES: TapTableFloorSeat[] = [
     peopleTapCount: 3,
     openMinutes: 42,
     waiterName: 'Lucas',
-    activeCall: '🧊 Trazer Gelo & Limão',
+    activeCall: '🧊 Chamou Garçom: Trazer Gelo & Limão',
+    callMinutesAgo: 2,
+    items: [
+      { id: 'it-101', name: 'Moqueca de Badejo & Camarão (2p)', qty: 1, unitPrice: 168, orderedBy: 'NFC Cliente', time: '18:40', station: 'cozinha_quente' },
+      { id: 'it-102', name: 'Caipirinha de Cacau & Biribiri', qty: 2, unitPrice: 38, orderedBy: 'NFC Cliente', time: '18:45', station: 'bar_drinks' },
+      { id: 'it-103', name: 'Água de Coco Nativa no Gelo', qty: 1, unitPrice: 14, orderedBy: 'Garçom (Manual)', time: '19:02', station: 'bar_drinks' },
+      { id: 'it-104', name: 'Cerveja Original 600ml Gelada', qty: 1, unitPrice: 22, orderedBy: 'Garçom (Manual)', time: '19:10', station: 'bar_drinks' },
+    ],
   },
   {
     tableNumber: '02',
@@ -144,6 +183,7 @@ const INITIAL_TABLES: TapTableFloorSeat[] = [
     peopleTapCount: 0,
     openMinutes: 0,
     waiterName: 'Lucas',
+    items: [],
   },
   {
     tableNumber: '03',
@@ -154,7 +194,15 @@ const INITIAL_TABLES: TapTableFloorSeat[] = [
     peopleTapCount: 4,
     openMinutes: 75,
     waiterName: 'Mateus',
-    activeCall: '💳 Fechando no Split Bill NFC (3/4 pagos)',
+    activeCall: '💳 Pediu Fechamento / Maquininha (Falta R$ 100)',
+    callMinutesAgo: 1,
+    items: [
+      { id: 'it-301', name: 'Moqueca de Badejo & Camarão (2p)', qty: 1, unitPrice: 168, orderedBy: 'NFC Cliente', time: '18:10', station: 'cozinha_quente' },
+      { id: 'it-302', name: 'Bolinho de Peixe c/ Pimenta (8 un)', qty: 2, unitPrice: 58, orderedBy: 'NFC Cliente', time: '18:15', station: 'cozinha_quente' },
+      { id: 'it-303', name: 'Balde 5 Heinekens Long Neck', qty: 1, unitPrice: 85, orderedBy: 'NFC Cliente', time: '18:30', station: 'bar_drinks' },
+      { id: 'it-304', name: 'Pastel de Arraia Artesanal', qty: 1, unitPrice: 24, orderedBy: 'Garçom (Manual)', time: '18:50', station: 'cozinha_quente' },
+      { id: 'it-305', name: 'Água de Coco Nativa no Gelo', qty: 1, unitPrice: 17, orderedBy: 'Garçom (Manual)', time: '19:00', station: 'bar_drinks' },
+    ],
   },
   {
     tableNumber: '04',
@@ -165,7 +213,13 @@ const INITIAL_TABLES: TapTableFloorSeat[] = [
     peopleTapCount: 2,
     openMinutes: 88,
     waiterName: 'Lucas',
-    activeCall: '⚠️ 32 min sem novo pedido (Sugerir Rodada)',
+    activeCall: '⚠️ 32 min sem novo pedido (Oferecer Rodada)',
+    callMinutesAgo: 5,
+    items: [
+      { id: 'it-401', name: 'Isca de Badejo Empanada c/ Aipim', qty: 1, unitPrice: 74, orderedBy: 'NFC Cliente', time: '17:55', station: 'cozinha_quente' },
+      { id: 'it-402', name: 'Caipirinha de Cacau & Biribiri', qty: 2, unitPrice: 38, orderedBy: 'NFC Cliente', time: '18:00', station: 'bar_drinks' },
+      { id: 'it-403', name: 'Água de Coco Nativa no Gelo', qty: 1, unitPrice: 15, orderedBy: 'Garçom (Manual)', time: '18:20', station: 'bar_drinks' },
+    ],
   },
   {
     tableNumber: '05',
@@ -176,6 +230,7 @@ const INITIAL_TABLES: TapTableFloorSeat[] = [
     peopleTapCount: 0,
     openMinutes: 0,
     waiterName: 'Mateus',
+    items: [],
   },
   {
     tableNumber: '06',
@@ -186,7 +241,13 @@ const INITIAL_TABLES: TapTableFloorSeat[] = [
     peopleTapCount: 2,
     openMinutes: 25,
     waiterName: 'Carla',
-    activeCall: '🥃 +2 Copos Limpos',
+    activeCall: '🥃 Chamou Garçom: +2 Copos Limpos c/ Gelo',
+    callMinutesAgo: 3,
+    items: [
+      { id: 'it-601', name: 'Bolinho de Peixe c/ Pimenta (8 un)', qty: 1, unitPrice: 58, orderedBy: 'NFC Cliente', time: '19:00', station: 'cozinha_quente' },
+      { id: 'it-602', name: 'Balde 5 Heinekens Long Neck', qty: 1, unitPrice: 85, orderedBy: 'NFC Cliente', time: '19:02', station: 'bar_drinks' },
+      { id: 'it-603', name: 'Pastel de Arraia Artesanal', qty: 2, unitPrice: 27.5, orderedBy: 'Garçom (Manual)', time: '19:12', station: 'cozinha_quente' },
+    ],
   },
   {
     tableNumber: '07',
@@ -197,6 +258,7 @@ const INITIAL_TABLES: TapTableFloorSeat[] = [
     peopleTapCount: 0,
     openMinutes: 0,
     waiterName: 'Carla',
+    items: [],
   },
   {
     tableNumber: '08',
@@ -207,6 +269,10 @@ const INITIAL_TABLES: TapTableFloorSeat[] = [
     peopleTapCount: 2,
     openMinutes: 55,
     waiterName: 'Mateus',
+    items: [
+      { id: 'it-801', name: 'Moqueca de Badejo & Camarão (2p)', qty: 1, unitPrice: 168, orderedBy: 'NFC Cliente', time: '18:30', station: 'cozinha_quente' },
+      { id: 'it-802', name: 'Balde 5 Heinekens Long Neck', qty: 2, unitPrice: 86, orderedBy: 'NFC Cliente', time: '18:35', station: 'bar_drinks' },
+    ],
   },
 ];
 
@@ -249,6 +315,14 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [copiedReport, setCopiedReport] = useState(false);
   const [kdsStation, setKdsStation] = useState<'todas' | 'cozinha_quente' | 'bar_drinks'>('todas');
+
+  // Estados da Tela Inicial de Restaurante (Comanda da Mesa + Lançamento Manual PDV)
+  const [selectedTableNumber, setSelectedTableNumber] = useState<string>('01');
+  const [showManualPos, setShowManualPos] = useState<boolean>(false);
+  const [posTargetTable, setPosTargetTable] = useState<string>('01');
+  const [posCart, setPosCart] = useState<Record<string, number>>({});
+  const [posNotes, setPosNotes] = useState<string>('');
+  const [posCustomerName, setPosCustomerName] = useState<string>('');
 
   // Estados dos Conectores de Chave API
   const [apiConnections, setApiConnections] = useState({
@@ -423,7 +497,17 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
     setTables((prev) =>
       prev.map((t) =>
         t.tableNumber === tableNumber
-          ? { ...t, status: 'livre', currentTotal: 0, paidSoFar: 0, peopleTapCount: 0, openMinutes: 0, activeCall: undefined }
+          ? {
+              ...t,
+              status: 'livre',
+              currentTotal: 0,
+              paidSoFar: 0,
+              peopleTapCount: 0,
+              openMinutes: 0,
+              activeCall: undefined,
+              callMinutesAgo: undefined,
+              items: [],
+            }
           : t
       )
     );
@@ -431,8 +515,147 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
 
   const handleClearTableCall = (tableNumber: string) => {
     setTables((prev) =>
-      prev.map((t) => (t.tableNumber === tableNumber ? { ...t, activeCall: undefined, status: t.status === 'ociosa' ? 'comanda_aberta' : t.status } : t))
+      prev.map((t) =>
+        t.tableNumber === tableNumber
+          ? {
+              ...t,
+              activeCall: undefined,
+              callMinutesAgo: undefined,
+              status: t.status === 'ociosa' ? 'comanda_aberta' : t.status,
+            }
+          : t
+      )
     );
+  };
+
+  const handleReceiveTablePayment = (tableNumber: string, amount: number) => {
+    setTables((prev) =>
+      prev.map((t) => {
+        if (t.tableNumber !== tableNumber) return t;
+        const nextPaid = Math.min(t.currentTotal, t.paidSoFar + amount);
+        return {
+          ...t,
+          paidSoFar: nextPaid,
+          status: nextPaid >= t.currentTotal && t.currentTotal > 0 ? 'pedindo_conta' : t.status,
+        };
+      })
+    );
+  };
+
+  const handleTriggerWaiterCall = (tableNumber: string, callText: string) => {
+    setTables((prev) =>
+      prev.map((t) =>
+        t.tableNumber === tableNumber
+          ? {
+              ...t,
+              activeCall: callText,
+              callMinutesAgo: 1,
+              status: t.status === 'livre' ? 'comanda_aberta' : t.status,
+            }
+          : t
+      )
+    );
+  };
+
+  const handleAdjustPosCart = (menuItemId: string, delta: number) => {
+    setPosCart((prev) => {
+      const current = prev[menuItemId] || 0;
+      const next = Math.max(0, current + delta);
+      const copy = { ...prev };
+      if (next === 0) {
+        delete copy[menuItemId];
+      } else {
+        copy[menuItemId] = next;
+      }
+      return copy;
+    });
+  };
+
+  const handleSubmitManualPosOrder = () => {
+    const selectedEntries = Object.entries(posCart).filter(([, qty]) => qty > 0);
+    if (selectedEntries.length === 0) return;
+
+    const nowTime = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+    const newConsumedItems: TableConsumedItem[] = [];
+    const orderItems = selectedEntries.map(([itemId, qty]) => {
+      const menuObj = RESTAURANT_QUICK_MENU.find((m) => m.id === itemId)!;
+      newConsumedItems.push({
+        id: `it-${Date.now()}-${itemId}`,
+        name: menuObj.name,
+        qty,
+        unitPrice: menuObj.price,
+        orderedBy: 'Garçom (Manual)',
+        time: nowTime,
+        station: menuObj.station,
+      });
+      return {
+        id: menuObj.id,
+        name: menuObj.name,
+        quantity: qty,
+        unitPrice: menuObj.price,
+        subtotal: menuObj.price * qty,
+        notes: posNotes.trim() || undefined,
+      };
+    });
+
+    const addedTotal = orderItems.reduce((acc, i) => acc + i.subtotal, 0);
+
+    // 1. Se o alvo for uma Mesa (01 a 08), atualiza a Comanda da Mesa ao vivo
+    if (posTargetTable !== 'delivery_pousada') {
+      setTables((prev) =>
+        prev.map((t) => {
+          if (t.tableNumber !== posTargetTable) return t;
+          return {
+            ...t,
+            status: 'comanda_aberta',
+            currentTotal: t.currentTotal + addedTotal,
+            openMinutes: t.openMinutes > 0 ? t.openMinutes : 1,
+            peopleTapCount: t.peopleTapCount > 0 ? t.peopleTapCount : 2,
+            items: [...newConsumedItems, ...t.items],
+          };
+        })
+      );
+      setSelectedTableNumber(posTargetTable);
+    }
+
+    // 2. Envia também para o KDS (Cozinha & Bar) para preparo imediato
+    createUnifiedOrder({
+      businessId: 'boteco-do-para',
+      businessName: 'Boteco do Pará',
+      niche: 'gastronomia',
+      orderType: posTargetTable === 'delivery_pousada' ? 'delivery' : 'mesa',
+      customer: {
+        name:
+          posCustomerName.trim() ||
+          (posTargetTable === 'delivery_pousada' ? 'Cliente Delivery Manual' : `Mesa ${posTargetTable} (Garçom)`),
+        phone: '73999112233',
+        whatsappFormatted: '5573999112233',
+      },
+      items: orderItems,
+      totalAmount: addedTotal,
+      paidAmount: 0,
+      paymentMethod: 'pix',
+      paymentStatus: 'pending',
+      destination:
+        posTargetTable === 'delivery_pousada'
+          ? {
+              type: 'pousada',
+              label: 'Delivery Lançado no Caixa',
+              detail: posNotes.trim() || 'Entregar na Pousada / Vila',
+            }
+          : {
+              type: 'mesa',
+              label: `Mesa ${posTargetTable} • Lançamento Manual`,
+              detail: `Mesa ${posTargetTable} (Pedido lançado pelo Garçom)`,
+            },
+      notes: posNotes.trim() || undefined,
+    });
+
+    setOrders(getUnifiedOrders());
+    setPosCart({});
+    setPosNotes('');
+    setPosCustomerName('');
+    setShowManualPos(false);
   };
 
   const handleCopyShiftReport = () => {
@@ -769,7 +992,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
               {selectedNiche === 'hospedagem'
                 ? '1. Mapa de Suítes (Mini PMS)'
                 : selectedNiche === 'gastronomia'
-                ? '1. Cozinha & KDS'
+                ? '1. Tela Inicial: Mesas, Chamados & Pedidos'
                 : selectedNiche === 'conveniencia'
                 ? '1. Estoque & Ficha Técnica'
                 : '1. Manifesto de Embarque'}
@@ -786,7 +1009,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
               }`}
             >
               <QrCode className="w-3.5 h-3.5" />
-              <span>2. Salão TapTable NFC ({occupiedTables}/{tables.length})</span>
+              <span>2. Visão Tela Cheia Salão & Gorjetas ({occupiedTables}/{tables.length})</span>
             </button>
           )}
 
@@ -989,130 +1212,596 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
             </div>
           )}
 
-          {/* B. GASTRONOMIA: KDS COM FILTRO DE PRAÇAS & SLA */}
+          {/* B. GASTRONOMIA: TELA INICIAL UNIFICADA (MESAS + CHAMADOS GARÇOM + COMANDA + PDV MANUAL + KDS) */}
           {selectedNiche === 'gastronomia' && (
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                <div>
-                  <h3 className="text-lg font-black text-white">KDS Digital Sem Papel (Praças de Produção)</h3>
-                  <p className="text-xs text-slate-400">
-                    Pedidos caem direto da placa NFC da mesa ou do delivery para a tela da cozinha/bar.
-                  </p>
+            <div className="space-y-6">
+              {/* 1. BARRA DE CHAMADOS DE GARÇOM AO VIVO ("QUEM CHAMOU O GARÇOM AGORA") + BOTÃO NOVO PEDIDO MANUAL */}
+              <div className="p-4 rounded-3xl bg-gradient-to-r from-[#221711] via-[#181614] to-[#141719] border border-amber-500/40 shadow-xl space-y-3">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-9 h-9 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center animate-pulse">
+                      <BellRing className="w-4 h-4" />
+                    </div>
+                    <div>
+                      <h3 className="text-sm font-black uppercase tracking-wider text-amber-300">
+                        Chamados de Garçom & Alertas de Mesa ({tables.filter((t) => Boolean(t.activeCall)).length} ativos)
+                      </h3>
+                      <p className="text-[11px] text-slate-300">
+                        Clientes que tocaram na placa NFC pedindo atendimento, gelo, copos ou fechamento de conta.
+                      </p>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      setPosTargetTable(selectedTableNumber);
+                      setShowManualPos((prev) => !prev);
+                    }}
+                    className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#F6C945] to-[#ffd86b] text-slate-950 font-black text-xs shadow-lg shadow-[#F6C945]/20 hover:brightness-110 transition cursor-pointer flex items-center justify-center gap-2 shrink-0"
+                  >
+                    <Utensils className="w-4 h-4" />
+                    <span>{showManualPos ? 'Fechar Lançador PDV' : '+ Lançar Pedido Manual (Mesa / Balcão / Delivery)'}</span>
+                  </button>
                 </div>
 
-                {/* Seletor de Praça KDS */}
-                <div className="flex items-center gap-1.5 bg-[#141719] p-1 rounded-xl border border-white/10">
-                  {[
-                    { id: 'todas', label: 'Todas as Praças' },
-                    { id: 'cozinha_quente', label: '🔥 Cozinha Quente' },
-                    { id: 'bar_drinks', label: '🍸 Bar & Coquetéis' },
-                  ].map((st) => (
-                    <button
-                      key={st.id}
-                      onClick={() => setKdsStation(st.id as any)}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                        kdsStation === st.id ? 'bg-[#F6C945] text-slate-950' : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {st.label}
-                    </button>
-                  ))}
-                </div>
+                {/* Lista de Quem Chamou o Garçom */}
+                {tables.filter((t) => Boolean(t.activeCall)).length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-1">
+                    {tables
+                      .filter((t) => Boolean(t.activeCall))
+                      .map((t) => (
+                        <div
+                          key={t.tableNumber}
+                          onClick={() => setSelectedTableNumber(t.tableNumber)}
+                          className="p-3 rounded-2xl bg-black/50 border border-amber-500/30 hover:border-[#F6C945] transition flex flex-col justify-between gap-2 cursor-pointer"
+                        >
+                          <div className="flex items-center justify-between">
+                            <span className="text-xs font-black text-white">
+                              🪑 Mesa {t.tableNumber} ({t.zone})
+                            </span>
+                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">
+                              há {t.callMinutesAgo || 2} min
+                            </span>
+                          </div>
+                          <p className="text-xs font-bold text-[#F6C945] leading-snug">{t.activeCall}</p>
+                          <div className="flex items-center justify-between pt-1 border-t border-white/10">
+                            <span className="text-[10px] text-slate-400">Garçom: {t.waiterName}</span>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleClearTableCall(t.tableNumber);
+                              }}
+                              className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[10px] cursor-pointer"
+                            >
+                              ✓ Atender Agora
+                            </button>
+                          </div>
+                        </div>
+                      ))}
+                  </div>
+                ) : (
+                  <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 font-bold text-center">
+                    ✓ Nenhum chamado pendente no salão — todas as mesas atendidas!
+                  </div>
+                )}
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {nicheOrders.map((order) => {
-                  const badge = getStatusBadge(order.status);
-                  return (
-                    <div
-                      key={order.id}
-                      className="p-5 rounded-3xl bg-[#141719] border border-white/10 flex flex-col justify-between space-y-4 shadow-xl"
-                    >
-                      <div className="space-y-3">
-                        <div className="flex items-start justify-between">
+              {/* 2. MODAL / GAVETA DE LANÇAMENTO DE PEDIDO MANUAL (PDV GARÇOM / CAIXA) */}
+              {showManualPos && (
+                <div className="p-5 rounded-3xl bg-[#13181C] border-2 border-[#F6C945] shadow-2xl space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
+                    <div>
+                      <span className="text-[10px] font-black uppercase tracking-wider text-[#F6C945]">
+                        PDV RÁPIDO DE SALÃO & BALCÃO
+                      </span>
+                      <h4 className="text-base font-black text-white">
+                        Adicionar Pedido Manual na Mesa ou Delivery
+                      </h4>
+                    </div>
+
+                    {/* Escolha de qual Mesa ou Delivery receberá o lançamento */}
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      {tables.map((t) => (
+                        <button
+                          key={t.tableNumber}
+                          onClick={() => setPosTargetTable(t.tableNumber)}
+                          className={`px-2.5 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
+                            posTargetTable === t.tableNumber
+                              ? 'bg-[#F6C945] text-slate-950'
+                              : 'bg-white/5 text-slate-300 hover:bg-white/10'
+                          }`}
+                        >
+                          Mesa {t.tableNumber}
+                        </button>
+                      ))}
+                      <button
+                        onClick={() => setPosTargetTable('delivery_pousada')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
+                          posTargetTable === 'delivery_pousada'
+                            ? 'bg-emerald-400 text-slate-950'
+                            : 'bg-white/5 text-emerald-300 hover:bg-white/10'
+                        }`}
+                      >
+                        🛵 Delivery / Balcão
+                      </button>
+                    </div>
+                  </div>
+
+                  {/* Catálogo Rápido de 1 Clique para o Garçom/Caixa */}
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                    {RESTAURANT_QUICK_MENU.map((item) => {
+                      const qty = posCart[item.id] || 0;
+                      return (
+                        <div
+                          key={item.id}
+                          className={`p-3 rounded-2xl border transition flex flex-col justify-between gap-2 ${
+                            qty > 0
+                              ? 'bg-[#1f1b12] border-[#F6C945]'
+                              : 'bg-black/40 border-white/10 hover:border-white/20'
+                          }`}
+                        >
                           <div>
-                            <div className="flex items-center gap-2">
-                              <span className="text-xs font-black text-[#F6C945]">{order.orderNumber}</span>
-                              <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                                <Clock className="w-3 h-3" /> SLA 12m
+                            <span className="text-[9px] font-bold uppercase text-slate-400">
+                              {item.category}
+                            </span>
+                            <p className="text-xs font-bold text-white leading-snug mt-0.5">{item.name}</p>
+                            <p className="text-xs font-black text-[#F6C945] mt-1">
+                              {formatCurrency(item.price)}
+                            </p>
+                          </div>
+
+                          <div className="flex items-center justify-between pt-1 border-t border-white/10">
+                            <button
+                              onClick={() => handleAdjustPosCart(item.id, -1)}
+                              className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-xs cursor-pointer"
+                            >
+                              -
+                            </button>
+                            <span className="text-xs font-black text-white">{qty}x</span>
+                            <button
+                              onClick={() => handleAdjustPosCart(item.id, 1)}
+                              className="w-7 h-7 rounded-lg bg-[#F6C945] hover:brightness-110 text-slate-950 font-black text-xs cursor-pointer"
+                            >
+                              +
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+                  </div>
+
+                  {/* Observações da Cozinha + Botão Confirmar Lançamento */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
+                    <input
+                      type="text"
+                      value={posCustomerName}
+                      onChange={(e) => setPosCustomerName(e.target.value)}
+                      placeholder={
+                        posTargetTable === 'delivery_pousada'
+                          ? 'Nome do Cliente / Pousada...'
+                          : `Identificação na Mesa ${posTargetTable} (opcional)...`
+                      }
+                      className="px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/15 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-[#F6C945]"
+                    />
+                    <input
+                      type="text"
+                      value={posNotes}
+                      onChange={(e) => setPosNotes(e.target.value)}
+                      placeholder="Observação p/ Cozinha (Ex: Sem coentro, gelo à parte)..."
+                      className="px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/15 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-[#F6C945]"
+                    />
+                    <button
+                      onClick={handleSubmitManualPosOrder}
+                      className="py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition cursor-pointer shadow-lg shadow-emerald-500/20"
+                    >
+                      ✓ Confirmar & Lançar na {posTargetTable === 'delivery_pousada' ? 'Cozinha (Delivery)' : `Mesa ${posTargetTable} + Cozinha`}
+                    </button>
+                  </div>
+                </div>
+              )}
+
+              {/* 3. VISÃO CENTRAL DO RESTAURANTE: MAPA DE MESAS (ESQUERDA) + COMANDA DA MESA SELECIONADA (DIREITA) */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
+                {/* COLUNA ESQUERDA (7 COLUNAS): MAPA INTERATIVO DAS MESAS (QUANTO TÁ CADA MESA) */}
+                <div className="lg:col-span-7 space-y-3">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                      <h3 className="text-base font-black text-white">
+                        Mapa de Mesas ao Vivo (Toque na mesa para abrir a comanda)
+                      </h3>
+                      <p className="text-xs text-slate-400">
+                        Veja quanto está cada mesa, quem está pagando via NFC e lance itens com 1 toque.
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2.5 text-[11px]">
+                      <span className="flex items-center gap-1 text-emerald-400 font-bold">
+                        <span className="w-2 h-2 rounded-full bg-emerald-400" /> Livre ({tables.filter((t) => t.status === 'livre').length})
+                      </span>
+                      <span className="flex items-center gap-1 text-[#F6C945] font-bold">
+                        <span className="w-2 h-2 rounded-full bg-[#F6C945]" /> Ocupadas ({occupiedTables})
+                      </span>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                    {tables.map((table) => {
+                      const isSelected = selectedTableNumber === table.tableNumber;
+                      const splitPercent =
+                        table.currentTotal > 0 ? Math.round((table.paidSoFar / table.currentTotal) * 100) : 0;
+                      const remaining = Math.max(0, table.currentTotal - table.paidSoFar);
+
+                      return (
+                        <div
+                          key={table.tableNumber}
+                          onClick={() => setSelectedTableNumber(table.tableNumber)}
+                          className={`p-3.5 rounded-2xl border transition cursor-pointer flex flex-col justify-between space-y-2.5 relative ${
+                            isSelected
+                              ? 'ring-2 ring-[#F6C945] border-[#F6C945] bg-[#1c1912] shadow-xl'
+                              : table.status === 'pedindo_conta'
+                              ? 'bg-[#211414] border-rose-500/50 hover:border-rose-400'
+                              : table.status === 'ociosa'
+                              ? 'bg-[#211a12] border-orange-500/50 hover:border-orange-400'
+                              : table.status === 'comanda_aberta'
+                              ? 'bg-[#16181b] border-amber-500/40 hover:border-amber-400'
+                              : 'bg-[#111614] border-emerald-500/30 hover:border-emerald-400'
+                          }`}
+                        >
+                          <div className="space-y-1">
+                            <div className="flex items-center justify-between">
+                              <span className="text-[10px] font-extrabold text-slate-400 uppercase">
+                                {table.zone}
+                              </span>
+                              <span
+                                className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md ${
+                                  table.status === 'pedindo_conta'
+                                    ? 'bg-rose-500/20 text-rose-300 animate-pulse'
+                                    : table.status === 'ociosa'
+                                    ? 'bg-orange-500/20 text-orange-300'
+                                    : table.status === 'comanda_aberta'
+                                    ? 'bg-amber-500/20 text-amber-300'
+                                    : 'bg-emerald-500/20 text-emerald-300'
+                                }`}
+                              >
+                                {table.status === 'pedindo_conta'
+                                  ? 'Conta'
+                                  : table.status === 'ociosa'
+                                  ? 'Ociosa'
+                                  : table.status === 'comanda_aberta'
+                                  ? 'Ocupada'
+                                  : 'Livre'}
                               </span>
                             </div>
-                            <h4 className="text-base font-bold text-white mt-0.5">{order.customer.name}</h4>
-                          </div>
-                          <span
-                            className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border ${badge.bg} ${badge.text}`}
-                          >
-                            {badge.label}
-                          </span>
-                        </div>
 
-                        <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5 space-y-1.5 text-xs">
-                          {order.items.map((i, idx) => (
-                            <div key={idx} className="space-y-0.5">
-                              <div className="flex items-start justify-between">
-                                <span className="text-slate-100 font-medium">
-                                  <strong className="text-[#F6C945]">{i.quantity}x</strong> {i.name}
-                                </span>
-                                <span className="text-slate-400">{formatCurrency(i.subtotal)}</span>
-                              </div>
-                              {i.notes && (
-                                <p className="text-[10px] text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded">
-                                  ⚠️ {i.notes}
+                            <div className="flex items-baseline justify-between pt-0.5">
+                              <h4 className="text-lg font-black text-white">Mesa {table.tableNumber}</h4>
+                              <span className="text-[10px] text-slate-400">{table.waiterName}</span>
+                            </div>
+
+                            {/* VALOR DA MESA EM DESTAQUE */}
+                            <div className="pt-1">
+                              <p className="text-base font-black text-[#F6C945]">
+                                {table.status !== 'livre' ? formatCurrency(table.currentTotal) : 'R$ 0,00'}
+                              </p>
+                              {table.status !== 'livre' && (
+                                <p className="text-[10px] text-slate-300">
+                                  Falta: <strong className="text-white">{formatCurrency(remaining)}</strong>
                                 </p>
                               )}
                             </div>
-                          ))}
-                          {order.destination && (
-                            <p className="pt-2 border-t border-white/10 text-[11px] text-emerald-300 font-medium">
-                              📍 {order.destination.detail}
+                          </div>
+
+                          {/* Barra Split Bill ou Status Livre */}
+                          {table.status !== 'livre' ? (
+                            <div className="space-y-1">
+                              <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+                                <div
+                                  className="h-full rounded-full bg-emerald-400"
+                                  style={{ width: `${splitPercent}%` }}
+                                />
+                              </div>
+                              <div className="flex items-center justify-between text-[9px] text-slate-400">
+                                <span>{table.items.length} itens</span>
+                                <span className="text-emerald-400 font-bold">{splitPercent}% pago</span>
+                              </div>
+                            </div>
+                          ) : (
+                            <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-lg text-center">
+                              Pronta p/ Sentar
+                            </span>
+                          )}
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+
+                {/* COLUNA DIREITA (5 COLUNAS): COMANDA DETALHADA DA MESA SELECIONADA */}
+                <div className="lg:col-span-5">
+                  {(() => {
+                    const activeTable =
+                      tables.find((t) => t.tableNumber === selectedTableNumber) || tables[0];
+                    const remainingToPay = Math.max(0, activeTable.currentTotal - activeTable.paidSoFar);
+                    const serviceFee10 = activeTable.currentTotal * 0.1;
+
+                    return (
+                      <div className="p-5 rounded-3xl bg-[#141719] border border-[#F6C945]/40 shadow-2xl space-y-4">
+                        <div className="flex items-start justify-between border-b border-white/10 pb-3">
+                          <div>
+                            <span className="text-[10px] font-black uppercase tracking-wider text-[#F6C945]">
+                              COMANDA AO VIVO • {activeTable.zone.toUpperCase()}
+                            </span>
+                            <h4 className="text-2xl font-black text-white mt-0.5">
+                              Mesa {activeTable.tableNumber}
+                            </h4>
+                            <p className="text-xs text-slate-400">
+                              Garçom responsável: <strong className="text-slate-200">{activeTable.waiterName}</strong> •{' '}
+                              {activeTable.openMinutes > 0 ? `Aberta há ${activeTable.openMinutes} min` : 'Mesa Livre'}
                             </p>
+                          </div>
+
+                          <button
+                            onClick={() => {
+                              setPosTargetTable(activeTable.tableNumber);
+                              setShowManualPos(true);
+                            }}
+                            className="px-3 py-2 rounded-xl bg-[#F6C945] text-slate-950 font-black text-xs hover:brightness-110 transition cursor-pointer shrink-0"
+                          >
+                            + Adicionar Item
+                          </button>
+                        </div>
+
+                        {/* Chamado ativo nessa mesa */}
+                        {activeTable.activeCall && (
+                          <div className="p-3 rounded-2xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-between gap-2">
+                            <span className="text-xs font-bold text-amber-300">{activeTable.activeCall}</span>
+                            <button
+                              onClick={() => handleClearTableCall(activeTable.tableNumber)}
+                              className="px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-black text-[10px] cursor-pointer shrink-0"
+                            >
+                              ✓ Atendido
+                            </button>
+                          </div>
+                        )}
+
+                        {/* Lista de Itens Consumidos na Mesa */}
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
+                            <span>Itens Consumidos na Mesa ({activeTable.items.length})</span>
+                            <span>Subtotal</span>
+                          </div>
+
+                          {activeTable.items.length > 0 ? (
+                            <div className="max-h-52 overflow-y-auto space-y-2 pr-1">
+                              {activeTable.items.map((item) => (
+                                <div
+                                  key={item.id}
+                                  className="p-2.5 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between text-xs"
+                                >
+                                  <div>
+                                    <p className="font-bold text-white">
+                                      <span className="text-[#F6C945]">{item.qty}x</span> {item.name}
+                                    </p>
+                                    <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
+                                      <span
+                                        className={
+                                          item.orderedBy === 'NFC Cliente' ? 'text-sky-400 font-bold' : 'text-amber-300 font-bold'
+                                        }
+                                      >
+                                        {item.orderedBy === 'NFC Cliente' ? '📱 Via Placa NFC' : '🧑‍🍳 Garçom (Manual)'}
+                                      </span>
+                                      <span>• {item.time}</span>
+                                    </div>
+                                  </div>
+                                  <strong className="text-white font-black">
+                                    {formatCurrency(item.qty * item.unitPrice)}
+                                  </strong>
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className="p-5 rounded-2xl bg-black/30 border border-white/5 text-center space-y-2">
+                              <p className="text-xs text-slate-400">Nenhum item lançado na Mesa {activeTable.tableNumber} ainda.</p>
+                              <button
+                                onClick={() => {
+                                  setPosTargetTable(activeTable.tableNumber);
+                                  setShowManualPos(true);
+                                }}
+                                className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold text-[#F6C945] cursor-pointer"
+                              >
+                                + Abrir Mesa & Lançar 1º Pedido
+                              </button>
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Resumo Financeiro da Mesa */}
+                        <div className="p-3.5 rounded-2xl bg-black/50 border border-white/10 space-y-1.5 text-xs">
+                          <div className="flex items-center justify-between text-slate-300">
+                            <span>Consumo da Mesa:</span>
+                            <strong>{formatCurrency(activeTable.currentTotal)}</strong>
+                          </div>
+                          <div className="flex items-center justify-between text-slate-400">
+                            <span>Taxa de Serviço 10% (Opcional):</span>
+                            <span>+{formatCurrency(serviceFee10)}</span>
+                          </div>
+                          <div className="flex items-center justify-between text-emerald-400">
+                            <span>Já Pago (Split Bill NFC / Parcial):</span>
+                            <strong>-{formatCurrency(activeTable.paidSoFar)}</strong>
+                          </div>
+                          <div className="pt-2 border-t border-white/10 flex items-center justify-between text-sm">
+                            <span className="font-black text-white uppercase">Falta Pagar:</span>
+                            <strong className="text-lg font-black text-[#F6C945]">
+                              {formatCurrency(remainingToPay)}
+                            </strong>
+                          </div>
+                        </div>
+
+                        {/* Botões Operacionais da Comanda */}
+                        <div className="grid grid-cols-2 gap-2">
+                          <button
+                            onClick={() => handleReceiveTablePayment(activeTable.tableNumber, 50)}
+                            disabled={remainingToPay <= 0}
+                            className="py-2 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 disabled:opacity-40 text-emerald-300 border border-emerald-500/30 font-bold text-xs transition cursor-pointer"
+                          >
+                            💵 Abater R$ 50 (Parcial)
+                          </button>
+                          <button
+                            onClick={() => handleReceiveTablePayment(activeTable.tableNumber, remainingToPay)}
+                            disabled={remainingToPay <= 0}
+                            className="py-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-slate-950 font-black text-xs transition cursor-pointer"
+                          >
+                            ✓ Quitar Saldo ({formatCurrency(remainingToPay)})
+                          </button>
+                          <button
+                            onClick={() =>
+                              handleTriggerWaiterCall(
+                                activeTable.tableNumber,
+                                '🔔 Garçom solicitado na Mesa ' + activeTable.tableNumber
+                              )
+                            }
+                            className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-amber-300 border border-white/10 font-bold text-xs transition cursor-pointer"
+                          >
+                            🔔 Testar Chamado NFC
+                          </button>
+                          <button
+                            onClick={() => handleCloseTableBill(activeTable.tableNumber)}
+                            className="py-2 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 font-bold text-xs transition cursor-pointer"
+                          >
+                            🧹 Liberar / Zerar Mesa
+                          </button>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </div>
+              </div>
+
+              {/* 4. FILA DE PEDIDOS EM PREPARO (KDS COZINHA, BAR & DELIVERY) NA MESMA TELA INICIAL */}
+              <div className="pt-2 space-y-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div>
+                    <h3 className="text-lg font-black text-white">
+                      Fila de Pedidos Ativos — Cozinha, Bar & Delivery ({nicheOrders.length})
+                    </h3>
+                    <p className="text-xs text-slate-400">
+                      Todos os pedidos vindos das mesas NFC, lançados manualmente pelo garçom ou pedidos via Delivery.
+                    </p>
+                  </div>
+
+                  {/* Seletor de Praça KDS */}
+                  <div className="flex items-center gap-1.5 bg-[#141719] p-1 rounded-xl border border-white/10">
+                    {[
+                      { id: 'todas', label: 'Todas as Praças' },
+                      { id: 'cozinha_quente', label: '🔥 Cozinha Quente' },
+                      { id: 'bar_drinks', label: '🍸 Bar & Coquetéis' },
+                    ].map((st) => (
+                      <button
+                        key={st.id}
+                        onClick={() => setKdsStation(st.id as 'todas' | 'cozinha_quente' | 'bar_drinks')}
+                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
+                          kdsStation === st.id ? 'bg-[#F6C945] text-slate-950' : 'text-slate-400 hover:text-white'
+                        }`}
+                      >
+                        {st.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {nicheOrders.map((order) => {
+                    const badge = getStatusBadge(order.status);
+                    return (
+                      <div
+                        key={order.id}
+                        className="p-5 rounded-3xl bg-[#141719] border border-white/10 flex flex-col justify-between space-y-4 shadow-xl"
+                      >
+                        <div className="space-y-3">
+                          <div className="flex items-start justify-between">
+                            <div>
+                              <div className="flex items-center gap-2">
+                                <span className="text-xs font-black text-[#F6C945]">{order.orderNumber}</span>
+                                <span className="text-[10px] text-slate-400 flex items-center gap-1">
+                                  <Clock className="w-3 h-3" /> SLA 12m
+                                </span>
+                              </div>
+                              <h4 className="text-base font-bold text-white mt-0.5">{order.customer.name}</h4>
+                            </div>
+                            <span
+                              className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border ${badge.bg} ${badge.text}`}
+                            >
+                              {badge.label}
+                            </span>
+                          </div>
+
+                          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5 space-y-1.5 text-xs">
+                            {order.items.map((i, idx) => (
+                              <div key={idx} className="space-y-0.5">
+                                <div className="flex items-start justify-between">
+                                  <span className="text-slate-100 font-medium">
+                                    <strong className="text-[#F6C945]">{i.quantity}x</strong> {i.name}
+                                  </span>
+                                  <span className="text-slate-400">{formatCurrency(i.subtotal)}</span>
+                                </div>
+                                {i.notes && (
+                                  <p className="text-[10px] text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded">
+                                    ⚠️ {i.notes}
+                                  </p>
+                                )}
+                              </div>
+                            ))}
+                            {order.destination && (
+                              <p className="pt-2 border-t border-white/10 text-[11px] text-emerald-300 font-medium">
+                                📍 {order.destination.detail}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+
+                        <div className="space-y-2 pt-1">
+                          {order.status === 'novo' && (
+                            <button
+                              onClick={() => handleAdvanceStatus(order.id, 'preparando')}
+                              className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition cursor-pointer"
+                            >
+                              Iniciar Preparo na Cozinha
+                            </button>
+                          )}
+                          {order.status === 'confirmado' && (
+                            <button
+                              onClick={() => handleAdvanceStatus(order.id, 'preparando')}
+                              className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition cursor-pointer"
+                            >
+                              Mandar para Fogo / Preparo
+                            </button>
+                          )}
+                          {order.status === 'preparando' && (
+                            <button
+                              onClick={() => handleAdvanceStatus(order.id, 'em_rota')}
+                              className="w-full py-2.5 rounded-xl bg-purple-500 hover:bg-purple-600 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
+                            >
+                              <Send className="w-3.5 h-3.5" />
+                              <span>Pronto! Chamar Garçom / Entregador</span>
+                            </button>
+                          )}
+                          {order.status === 'em_rota' && (
+                            <button
+                              onClick={() => handleAdvanceStatus(order.id, 'concluido')}
+                              className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs transition cursor-pointer"
+                            >
+                              ✓ Confirmar Entrega na Mesa/Pousada
+                            </button>
+                          )}
+                          {order.status === 'concluido' && (
+                            <div className="w-full py-2 rounded-xl bg-emerald-500/10 text-center text-xs font-bold text-emerald-400 border border-emerald-500/20">
+                              ✓ Pedido Entregue & Auditado
+                            </div>
                           )}
                         </div>
                       </div>
-
-                      <div className="space-y-2 pt-1">
-                        {order.status === 'novo' && (
-                          <button
-                            onClick={() => handleAdvanceStatus(order.id, 'preparando')}
-                            className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition cursor-pointer"
-                          >
-                            Iniciar Preparo na Cozinha
-                          </button>
-                        )}
-                        {order.status === 'confirmado' && (
-                          <button
-                            onClick={() => handleAdvanceStatus(order.id, 'preparando')}
-                            className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition cursor-pointer"
-                          >
-                            Mandar para Fogo / Preparo
-                          </button>
-                        )}
-                        {order.status === 'preparando' && (
-                          <button
-                            onClick={() => handleAdvanceStatus(order.id, 'em_rota')}
-                            className="w-full py-2.5 rounded-xl bg-purple-500 hover:bg-purple-600 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
-                          >
-                            <Send className="w-3.5 h-3.5" />
-                            <span>Pronto! Chamar Garçom / Entregador</span>
-                          </button>
-                        )}
-                        {order.status === 'em_rota' && (
-                          <button
-                            onClick={() => handleAdvanceStatus(order.id, 'concluido')}
-                            className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs transition cursor-pointer"
-                          >
-                            ✓ Confirmar Entrega na Mesa/Pousada
-                          </button>
-                        )}
-                        {order.status === 'concluido' && (
-                          <div className="w-full py-2 rounded-xl bg-emerald-500/10 text-center text-xs font-bold text-emerald-400 border border-emerald-500/20">
-                            ✓ Pedido Entregue & Auditado
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             </div>
           )}
