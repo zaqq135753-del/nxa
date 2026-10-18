@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import {
   Users,
@@ -8,14 +8,10 @@ import {
   BedDouble,
   RefreshCw,
   ExternalLink,
-  Send,
   Store,
   Package,
   DoorOpen,
-  Copy,
-  Check,
   BellRing,
-  Clock,
   ArrowUpRight,
   ShieldCheck,
   Utensils,
@@ -31,6 +27,9 @@ import {
   Sparkles
 } from 'lucide-react';
 import { CaraivaSpatialSuite3D } from './CaraivaSpatialSuite3D';
+import { CaraivaKdsActionTab } from './tabs/CaraivaKdsActionTab';
+import { CaraivaFinancialDreTab } from './tabs/CaraivaFinancialDreTab';
+import { CaraivaCrmLoyaltyTab, type CustomerProfile } from './tabs/CaraivaCrmLoyaltyTab';
 import {
   getUnifiedOrders,
   updateOrderStatus,
@@ -391,7 +390,6 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
   const [products, setProducts] = useState<RetailProduct[]>(INITIAL_PRODUCTS);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const [copiedReport, setCopiedReport] = useState(false);
-  const [kdsStation, setKdsStation] = useState<'todas' | 'cozinha_quente' | 'bar_drinks'>('todas');
 
   // Estados da Comanda e PDV Manual
   const [selectedTableNumber, setSelectedTableNumber] = useState<string>('01');
@@ -463,69 +461,13 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
 
   const gatewayFees = totalPix * 0.0089 + totalCard * 0.0289;
   const cmvEstimated = totalGross * (selectedNiche === 'hospedagem' ? 0.18 : selectedNiche === 'passeios_barcos' ? 0.22 : 0.29);
-  const serviceTipPool = selectedNiche === 'gastronomia' ? totalGross * 0.1 : 0;
   const netOperatingProfit = totalGross - gatewayFees - cmvEstimated;
   const netMarginPercent = totalGross > 0 ? Math.round((netOperatingProfit / totalGross) * 100) : 68;
-  const estimatedIfoodLoss = totalGross * 0.25;
 
   const occupiedSuites = suites.filter((s) => s.status === 'ocupado' || s.status === 'checkin_hoje').length;
-  const suitesOccupancyRate = Math.round((occupiedSuites / suites.length) * 100);
 
   const occupiedTables = tables.filter((t) => t.status !== 'livre').length;
   const tablesOccupancyRate = Math.round((occupiedTables / tables.length) * 100);
-
-  const occupancyWidgetData =
-    selectedNiche === 'hospedagem'
-      ? {
-          title: 'Ocupação de Suítes',
-          rate: suitesOccupancyRate,
-          subtitle: `${occupiedSuites} de ${suites.length} suítes ocupadas`,
-        }
-      : selectedNiche === 'passeios_barcos'
-      ? {
-          title: 'Lotação de Embarcações',
-          rate: 75,
-          subtitle: '9 de 12 assentos vendidos hoje',
-        }
-      : selectedNiche === 'conveniencia'
-      ? {
-          title: 'Conversão Etiquetas NFC',
-          rate: 84,
-          subtitle: '104 leituras NFC nas peças hoje',
-        }
-      : {
-          title: 'Ocupação do Salão',
-          rate: tablesOccupancyRate,
-          subtitle: `${occupiedTables} de ${tables.length} mesas ativas`,
-        };
-
-  const hourlyBars =
-    selectedNiche === 'hospedagem'
-      ? [
-          { label: '09h', px: 16, val: 'Café' },
-          { label: '12h', px: 28, val: 'Out' },
-          { label: '14h', px: 42, val: 'Check-in', hot: true },
-          { label: '17h', px: 32, val: 'Concierge' },
-          { label: '20h', px: 24, val: 'Jantar' },
-          { label: '22h', px: 14, val: 'Noite' },
-        ]
-      : selectedNiche === 'passeios_barcos'
-      ? [
-          { label: '08h', px: 30, val: 'Saída 1' },
-          { label: '09:30', px: 42, val: 'Corumbau', hot: true },
-          { label: '12h', px: 26, val: 'Corais' },
-          { label: '15h', px: 34, val: 'Buggy' },
-          { label: '17h', px: 38, val: 'Rio' },
-          { label: '19h', px: 12, val: 'Doca' },
-        ]
-      : [
-          { label: '11h', px: 16, val: 'R$ 320' },
-          { label: '13h', px: 32, val: 'R$ 890' },
-          { label: '15h', px: 22, val: 'R$ 540' },
-          { label: '17h', px: 42, val: 'R$ 1.480', hot: true },
-          { label: '19h', px: 28, val: 'R$ 760' },
-          { label: '21h', px: 36, val: 'R$ 1.120' },
-        ];
 
   const uniqueCustomers = Array.from(
     new Map(
@@ -544,6 +486,38 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
       ])
     ).values()
   );
+
+  // Perfis Enriquecidos de Clientes para CRM & Fidelidade NFC
+  const crmCustomerProfiles: CustomerProfile[] = useMemo(() => {
+    const dishCatalog = [
+      'Moqueca de Robalo na Telha',
+      'Camarão VG na Castanha de Caju',
+      'Gin Tônica de Frutas Nativas',
+      'Pastel de Arraia do Pará (6un)',
+      'Polvo Grelhado na Brasa',
+      'Risoto de Frutos do Rio Caraíva'
+    ];
+    const tableOptions = ['Mesa 01 (Balcão)', 'Mesa 02 (Jardim)', 'Mesa 03 (Vista Rio)', 'Mesa 05 (Lounge)'];
+    const emojis = ['👑', '🏄‍♂️', '🌺', '🍹', '🌴', '⛵', '✨', '🌊'];
+
+    return uniqueCustomers.map((c, idx) => {
+      const isVip = c.totalSpent > 300;
+      const isFrequent = c.ordersCount >= 2;
+      const segment: CustomerProfile['segment'] = isVip ? 'vip' : isFrequent ? 'frequente' : idx % 3 === 0 ? 'em_risco' : 'novo';
+      return {
+        name: c.name,
+        phone: c.phone,
+        whatsappFormatted: c.whatsappFormatted,
+        totalSpent: c.totalSpent,
+        ordersCount: c.ordersCount,
+        lastVisit: idx === 0 ? 'Hoje, 20:15' : idx === 1 ? 'Ontem, 21:30' : 'Há 3 dias',
+        favoriteDish: dishCatalog[idx % dishCatalog.length],
+        preferredTable: tableOptions[idx % tableOptions.length],
+        segment,
+        avatarEmoji: emojis[idx % emojis.length],
+      };
+    });
+  }, [uniqueCustomers]);
 
   const handleAdvanceStatus = (orderId: string, nextStatus: UnifiedOrderStatus) => {
     const updated = updateOrderStatus(orderId, nextStatus);
@@ -1634,132 +1608,15 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
         )}
 
         {/* ==================================================================== */}
-        {/* ABA 2: FILA DE PEDIDOS — KDS COZINHA & BAR (GASTRONOMIA)            */}
+        {/* ABA 2: FILA DE PEDIDOS & AÇÃO — KDS COZINHA & BAR (GASTRONOMIA)     */}
         {/* ==================================================================== */}
         {activeUniversalTab === 'fila_pedidos' && selectedNiche === 'gastronomia' && !showPosLauncher && (
-          <div className="space-y-5">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h2 className="text-base font-bold text-white">
-                  Fila de Preparo — Cozinha & Bar ({nicheOrders.length})
-                </h2>
-                <p className="text-xs text-slate-400">
-                  Pedidos recebidos via placa NFC das mesas, PDV manual ou Delivery no Guia.
-                </p>
-              </div>
-
-              <div className="flex items-center gap-2">
-                <div className="flex items-center gap-1.5 bg-[#121519] p-1 rounded-xl border border-white/[0.07]">
-                  {[
-                    { id: 'todas', label: 'Todas' },
-                    { id: 'cozinha_quente', label: 'Cozinha Quente' },
-                    { id: 'bar_drinks', label: 'Bar & Drinks' },
-                  ].map((st) => (
-                    <button
-                      key={st.id}
-                      onClick={() => setKdsStation(st.id as 'todas' | 'cozinha_quente' | 'bar_drinks')}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                        kdsStation === st.id ? 'bg-white text-slate-950' : 'text-slate-400 hover:text-white'
-                      }`}
-                    >
-                      {st.label}
-                    </button>
-                  ))}
-                </div>
-
-                <button
-                  onClick={() => setShowPosLauncher(true)}
-                  className="px-3 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-semibold text-white border border-white/[0.08] cursor-pointer flex items-center gap-1.5 shrink-0"
-                >
-                  <PlusCircle className="w-3.5 h-3.5" />
-                  <span>+ PDV Manual</span>
-                </button>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {nicheOrders.map((order) => {
-                const badge = getStatusBadge(order.status);
-                return (
-                  <div
-                    key={order.id}
-                    className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] flex flex-col justify-between space-y-4"
-                  >
-                    <div className="space-y-3">
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <div className="flex items-center gap-2">
-                            <span className="text-xs font-bold text-slate-300">{order.orderNumber}</span>
-                            <span className="text-[11px] text-slate-500 flex items-center gap-1">
-                              <Clock className="w-3 h-3" /> 12m
-                            </span>
-                          </div>
-                          <h4 className="text-sm font-bold text-white mt-0.5">{order.customer.name}</h4>
-                        </div>
-                        <span className="text-[10px] font-semibold px-2.5 py-1 rounded-lg bg-white/[0.05] text-slate-300 border border-white/[0.07]">
-                          {badge.label}
-                        </span>
-                      </div>
-
-                      <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] space-y-1.5 text-xs">
-                        {order.items.map((i, idx) => (
-                          <div key={idx} className="space-y-0.5">
-                            <div className="flex items-start justify-between">
-                              <span className="text-slate-200">
-                                <strong className="text-white">{i.quantity}x</strong> {i.name}
-                              </span>
-                              <span className="text-slate-500">{formatCurrency(i.subtotal)}</span>
-                            </div>
-                            {i.notes && (
-                              <p className="text-[11px] text-amber-200/90 pt-0.5">Obs: {i.notes}</p>
-                            )}
-                          </div>
-                        ))}
-                        {order.destination && (
-                          <p className="pt-2 border-t border-white/[0.05] text-[11px] text-slate-400">
-                            Destino: {order.destination.detail}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-
-                    <div>
-                      {(order.status === 'novo' || order.status === 'confirmado') && (
-                        <button
-                          onClick={() => handleAdvanceStatus(order.id, 'preparando')}
-                          className="w-full py-2.5 rounded-xl bg-white text-slate-950 hover:bg-slate-200 font-semibold text-xs transition cursor-pointer"
-                        >
-                          Iniciar Preparo
-                        </button>
-                      )}
-                      {order.status === 'preparando' && (
-                        <button
-                          onClick={() => handleAdvanceStatus(order.id, 'em_rota')}
-                          className="w-full py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-white font-semibold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
-                        >
-                          <Send className="w-3.5 h-3.5" />
-                          <span>Pronto p/ Servir ou Entregar</span>
-                        </button>
-                      )}
-                      {order.status === 'em_rota' && (
-                        <button
-                          onClick={() => handleAdvanceStatus(order.id, 'concluido')}
-                          className="w-full py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 font-semibold text-xs transition cursor-pointer"
-                        >
-                          Confirmar Entrega
-                        </button>
-                      )}
-                      {order.status === 'concluido' && (
-                        <div className="w-full py-2 rounded-xl bg-white/[0.03] text-center text-xs text-slate-500">
-                          Pedido Finalizado
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+          <CaraivaKdsActionTab
+            niche={selectedNiche}
+            orders={nicheOrders}
+            onOrderUpdated={() => setOrders(getUnifiedOrders())}
+            onOpenPosLauncher={() => setShowPosLauncher(true)}
+          />
         )}
 
         {/* ==================================================================== */}
@@ -2227,154 +2084,25 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
         {/* ABA 3: CAIXA & DRE OPERACIONAL (TODOS OS NICHOS)                    */}
         {/* ==================================================================== */}
         {activeUniversalTab === 'financeiro_dre' && (
-          <div className="space-y-6">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-              <div>
-                <h2 className="text-base font-bold text-white">
-                  DRE Operacional & Relatório Financeiro
-                </h2>
-                <p className="text-xs text-slate-400">
-                  Apuração em tempo real descontando taxas de transação e custo de mercadoria (CMV).
-                </p>
-              </div>
-
-              <button
-                onClick={handleCopyShiftReport}
-                className="px-4 py-2 rounded-xl bg-white text-slate-950 font-semibold text-xs flex items-center gap-2 cursor-pointer self-start"
-              >
-                {copiedReport ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-                <span>{copiedReport ? 'Relatório Copiado!' : 'Copiar Fechamento p/ WhatsApp'}</span>
-              </button>
-            </div>
-
-            {/* 3 Indicadores Visuais Sóbrios */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-2">
-                <span className="text-xs text-slate-400">{occupancyWidgetData.title}</span>
-                <div className="flex items-baseline justify-between">
-                  <strong className="text-2xl font-bold text-white">{occupancyWidgetData.rate}%</strong>
-                  <span className="text-xs text-slate-400">{occupancyWidgetData.subtitle}</span>
-                </div>
-                <div className="w-full h-1.5 rounded-full bg-white/[0.07] overflow-hidden">
-                  <div
-                    className="h-full rounded-full bg-white"
-                    style={{ width: `${occupancyWidgetData.rate}%` }}
-                  />
-                </div>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-2">
-                <span className="text-xs text-slate-400">Curva de Demanda por Horário</span>
-                <div className="flex items-end justify-between gap-2 pt-2 h-14">
-                  {hourlyBars.map((bar, i) => (
-                    <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1">
-                      <div
-                        className={`w-full rounded-t ${bar.hot ? 'bg-white' : 'bg-slate-700'}`}
-                        style={{ height: `${bar.px}px` }}
-                      />
-                      <span className="text-[9px] text-slate-400">{bar.label}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-1">
-                <span className="text-xs text-slate-400">Economia vs Apps Tradicionais (25%)</span>
-                <strong className="text-2xl font-bold text-emerald-400 block pt-1">
-                  +{formatCurrency(estimatedIfoodLoss)}
-                </strong>
-                <p className="text-[11px] text-slate-500">Preservados no caixa do estabelecimento hoje</p>
-              </div>
-            </div>
-
-            {/* Equação DRE (+ - =) Clean */}
-            <div className="p-6 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-3">
-              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
-                Demonstrativo de Resultado do Turno (`+` `-` `=`)
-              </h3>
-
-              <div className="space-y-2 text-xs">
-                <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] flex items-center justify-between">
-                  <span className="text-slate-200 font-medium">(+) Receita Bruta Total</span>
-                  <strong className="text-sm font-bold text-white">{formatCurrency(totalGross)}</strong>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] flex items-center justify-between">
-                  <span className="text-slate-400">(-) Taxas Pix (0,89%) & Cartão (2,89%)</span>
-                  <span className="text-slate-300 font-medium">-{formatCurrency(gatewayFees)}</span>
-                </div>
-
-                <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] flex items-center justify-between">
-                  <span className="text-slate-400">(-) Custo de Mercadoria / Insumos (CMV Estimado)</span>
-                  <span className="text-slate-300 font-medium">-{formatCurrency(cmvEstimated)}</span>
-                </div>
-
-                {selectedNiche === 'gastronomia' && (
-                  <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] flex items-center justify-between">
-                    <span className="text-slate-400">
-                      (i) Gorjeta 10% Equipe (70% Salão: {formatCurrency(serviceTipPool * 0.7)} • 20% Cozinha: {formatCurrency(serviceTipPool * 0.2)})
-                    </span>
-                    <span className="text-slate-300 font-medium">{formatCurrency(serviceTipPool)}</span>
-                  </div>
-                )}
-
-                <div className="p-4 rounded-xl bg-white/[0.04] border border-white/15 flex items-center justify-between">
-                  <div>
-                    <span className="text-sm font-bold text-white">(=) Lucro Líquido Real</span>
-                    <p className="text-[11px] text-slate-400">Margem líquida de {netMarginPercent}%</p>
-                  </div>
-                  <strong className="text-xl font-bold text-emerald-400">
-                    {formatCurrency(netOperatingProfit)}
-                  </strong>
-                </div>
-              </div>
-            </div>
-          </div>
+          <CaraivaFinancialDreTab
+            niche={selectedNiche}
+            totalGross={totalGross}
+            totalPix={totalPix}
+            tablesCount={tables.length}
+            occupiedCount={occupiedTables}
+            onCopyShiftReport={handleCopyShiftReport}
+            copiedReport={copiedReport}
+          />
         )}
 
         {/* ==================================================================== */}
         {/* ABA 4: CRM & CLIENTES (TODOS OS NICHOS)                             */}
         {/* ==================================================================== */}
         {activeUniversalTab === 'crm_clientes' && (
-          <div className="space-y-5">
-            <div>
-              <h2 className="text-base font-bold text-white">
-                Base de Clientes & Fidelização ({uniqueCustomers.length})
-              </h2>
-              <p className="text-xs text-slate-400">
-                Clientes capturados automaticamente ao pagarem na placa NFC ou pedirem pelo Guia.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {uniqueCustomers.map((c) => (
-                <div
-                  key={c.phone}
-                  className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] flex items-center justify-between gap-4"
-                >
-                  <div className="space-y-1">
-                    <h4 className="text-sm font-bold text-white">{c.name}</h4>
-                    <p className="text-xs text-slate-400">
-                      {c.ordersCount} pedido(s) • Total gasto:{' '}
-                      <strong className="text-white">{formatCurrency(c.totalSpent)}</strong>
-                    </p>
-                  </div>
-
-                  <a
-                    href={`https://wa.me/${c.whatsappFormatted}?text=${encodeURIComponent(
-                      `Olá ${c.name}! Tudo bem? Entramos em contato a respeito do seu pedido.`
-                    )}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="px-3.5 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.08] text-xs font-medium text-white flex items-center gap-1.5 shrink-0"
-                  >
-                    <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>WhatsApp</span>
-                  </a>
-                </div>
-              ))}
-            </div>
-          </div>
+          <CaraivaCrmLoyaltyTab
+            niche={selectedNiche}
+            customers={crmCustomerProfiles}
+          />
         )}
       </main>
 
