@@ -793,6 +793,12 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
 
             <div className="flex items-center gap-2.5">
               <Link
+                to="/entregas"
+                className="px-3.5 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-xs font-bold text-emerald-300 flex items-center gap-1.5 transition"
+              >
+                <span>🏍️ App Motoboy & Mapa</span>
+              </Link>
+              <Link
                 to="/guia/pedidos"
                 className="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-medium text-slate-200 flex items-center gap-1.5 transition"
               >
@@ -1122,7 +1128,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
         {/* ==================================================================== */}
         {/* SUÍTE ESPACIAL 3D (APPLE VISIONOS & CLAYMORPHISM TÁTIL)              */}
         {/* ==================================================================== */}
-        {spatialViewActive && !showPosLauncher && (
+        {activeUniversalTab === 'operacao_principal' && spatialViewActive && !showPosLauncher && (
           <CaraivaSpatialSuite3D
             niche={selectedNiche}
             businessName={currentBusinessUnit.name}
@@ -1135,7 +1141,6 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
             }}
             onOpenTable={(tableNum) => {
               setSelectedTableNumber(tableNum);
-              setActiveUniversalTab('operacao_principal');
             }}
           />
         )}
@@ -1143,7 +1148,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
         {/* ==================================================================== */}
         {/* ABA 1: OPERAÇÃO PRINCIPAL — SALÃO & MESAS (GASTRONOMIA)             */}
         {/* ==================================================================== */}
-        {activeUniversalTab === 'operacao_principal' && selectedNiche === 'gastronomia' && !showPosLauncher && (
+        {activeUniversalTab === 'operacao_principal' && selectedNiche === 'gastronomia' && !spatialViewActive && !showPosLauncher && (
           <div className="space-y-6">
             {/* Resumo Clean em 4 Cards Sóbrios */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
