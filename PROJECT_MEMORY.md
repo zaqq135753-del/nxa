@@ -279,3 +279,25 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
   2. **Alternador de Modo Instantâneo no Topo:** Botão elegante que permite alternar a qualquer momento entre `[✨ Espacial 3D]` e `[📋 Painel 2D]`.
 * **Armadilhas Evitadas:** O canvas e cálculos de movimento utilizam `requestAnimationFrame` e Motion React nativo, preservando a performance a 60fps em dispositivos móveis e desktops sem travamentos de thread.
 
+
+### ADR 011: Rider OS & Smart Dispatch Cockpit (Rotas Inteligentes, Mapa Tático 3D, Waze da Tropa, Rádio PTT e Pix Instantâneo) — 18/10/2026
+* **Contexto:** Criação de uma plataforma de despacho inteligente e valorização real dos entregadores/motoboys (modelo Anti-iFood, 100% do frete + gorjeta integral e liquidez imediata no Pix), aplicável tanto para a operação das redes de mototáxi e delivery de **Conceição do Mato Dentro (MG)** quanto para a logística integrada de **Caraíva (BA)**.
+* **Decisão Tomada:**
+  1. **Serviço de Despacho e Telemetria (`src/services/riderDispatchService.ts`):**
+     - Suporte multi-cidade (`cmd_mg` para Conceição do Mato Dentro e `caraiva_ba` para Caraíva) com cálculo espacial de proximidade (Haversine), alertas sonoros sintetizados via Web Audio API (`playRiderTacticalSound`) sem dependência de arquivos MP3 externos, e agrupamento inteligente de rotas (*Smart Batching* com múltiplas coletas e entregas no mesmo sentido).
+  2. **Mapa Tático Noturno 3D (`src/components/rider/RiderTacticalMap.tsx`):**
+     - Motor **MapLibre GL** em tela cheia com estilo Dark Matter HUD, câmera 3D inclinada (`pitch: 52°`), traçado neon de rota inteligente (`smart-route-glow` + `smart-route-core`), polígono dinâmico de **Geofence de 300m** para aviso automático de portão, radar ao vivo das motos dos colegas da rede e pinos interativos de alertas colaborativos.
+  3. **Cockpit Completo do Entregador (`src/components/rider/RiderSmartCockpitApp.tsx` nas rotas `/entregas`, `/motoboy`, `/entregador`, `/rider`):**
+     - **Raio-X Transparente de Chamadas:** Exibe 100% do frete + gorjeta + bônus de relevo/ladeira + sincronia com KDS da cozinha (*"Zero espera no balcão"*).
+     - **Simulador de Piloto em Rota + Geofence 300m:** Move a moto pelo traçado do mapa em tempo real e dispara aviso automático de WhatsApp quando o entregador entra no raio de 300m do cliente.
+     - **Segurança Ativa ("Waze dos Motoboys" + Botão SOS):** Acionamento de sinalizador SOS para toda a tropa num raio de 2km e botões rápidos (pensados para uso com luva) para cravar no mapa buracos/brita, cachorros soltos, ruas escuras, ladeiras escorregadias e Pontos de Apoio (água, café e tomada 220V).
+     - **QG da Tropa & Rádio Walkie-Talkie PTT:** Câmbio de voz rápido com bip clássico e mural de apoio entre as redes de mototáxi.
+     - **Carteira Pix Instantâneo & Clube do Motoboy:** Saque imediato com taxa zero, vouchers de desconto em combustível e conexão em tempo real com os pedidos de delivery do `villageUnifiedOrdersService.ts`.
+
+### ADR 012: Ergonomia 3D Tátil em Cards Individuais e Isolamento Estrito de Abas Operacionais — 18/10/2026
+* **Contexto:** A rotação 3D de perspectiva no container inteiro com mousemove (`transform: perspective rotateX rotateY`) causava vertigem e desconforto visual. Além disso, a montagem incondicional do componente 3D no topo da página bloqueava a visualização imediata das demais abas operacionais (Fila de Pedidos KDS, Caixa & DRE e Clientes CRM).
+* **Decisão Tomada:**
+  1. **Container Pai Estável:** Remoção completa da rotação de container por mousemove. O container principal permanece fixo, responsivo e ergonômico.
+  2. **Efeitos Tridimensionais nos Cards:** Profundidade física 2.5D, anéis de telemetria, iluminação ambiente, placa NFC em acrílico Black Piano e hover tátil suave (`y: -3, scale: 1.01`) concentrados exclusivamente nos **cards individuais**.
+  3. **Isolamento Estrito de Abas:** `CaraivaSpatialSuite3D` é exibido estritamente na Aba 1 (`operacao_principal`). Ao clicar na Aba 2 (Fila de Pedidos & KDS), Aba 3 (Caixa & DRE) ou Aba 4 (Clientes), o conteúdo surge imediatamente no topo com acesso direto e sem componentes invasivos.
+* **Armadilhas Evitadas:** Fim da sensação de abas inoperantes e zero fadiga de movimento na navegação.

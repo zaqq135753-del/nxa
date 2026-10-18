@@ -442,3 +442,25 @@ export function getStatusBadge(status: UnifiedOrderStatus): { label: string; bg:
       return { label: 'Cancelado', bg: 'bg-slate-500/20 border-slate-500/40', text: 'text-slate-400' };
   }
 }
+
+// Alias e subscription para sincronização em tempo real (ex: Rider Cockpit)
+export const updateUnifiedOrderStatus = updateOrderStatus;
+
+export function subscribeToUnifiedOrders(callback: (orders: UnifiedOrder[]) => void): () => void {
+  const handler = (e: Event) => {
+    const customEvent = e as CustomEvent<UnifiedOrder[]>;
+    if (customEvent && customEvent.detail) {
+      callback(customEvent.detail);
+    } else {
+      callback(getUnifiedOrders());
+    }
+  };
+  if (typeof window !== 'undefined') {
+    window.addEventListener('caraiva:orders-updated', handler);
+  }
+  return () => {
+    if (typeof window !== 'undefined') {
+      window.removeEventListener('caraiva:orders-updated', handler);
+    }
+  };
+}

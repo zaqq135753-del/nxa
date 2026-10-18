@@ -76,25 +76,8 @@ export const CaraivaSpatialSuite3D: React.FC<CaraivaSpatialSuite3DProps> = ({
     },
   ]);
 
-  // Efeito Parallax 3D com o Mouse
-  const [tilt, setTilt] = useState({ x: 0, y: 0 });
-  const containerRef = useRef<HTMLDivElement>(null);
+  // Canvas de onda estático/fluido para ambientação marítima
   const waveCanvasRef = useRef<HTMLCanvasElement>(null);
-
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!containerRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left - rect.width / 2;
-    const y = e.clientY - rect.top - rect.height / 2;
-    setTilt({
-      x: (y / (rect.height / 2)) * -6,
-      y: (x / (rect.width / 2)) * 6,
-    });
-  };
-
-  const handleMouseLeave = () => {
-    setTilt({ x: 0, y: 0 });
-  };
 
   // Animação Contínua da Onda de Maré em Canvas para Náutica/Ambiente
   useEffect(() => {
@@ -167,15 +150,7 @@ export const CaraivaSpatialSuite3D: React.FC<CaraivaSpatialSuite3DProps> = ({
   };
 
   return (
-    <div
-      ref={containerRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      className="relative w-full rounded-3xl p-6 sm:p-8 overflow-hidden bg-[#05080A] border border-white/10 shadow-[0_30px_90px_rgba(0,0,0,0.85)] text-slate-100 transition-transform duration-300 ease-out"
-      style={{
-        transform: `perspective(1200px) rotateX(${tilt.x * 0.4}deg) rotateY(${tilt.y * 0.4}deg)`,
-      }}
-    >
+    <div className="relative w-full rounded-3xl p-6 sm:p-8 overflow-hidden bg-[#05080A] border border-white/10 shadow-[0_20px_60px_rgba(0,0,0,0.8)] text-slate-100">
       {/* 1. Iluminação Ambiente de Galeria & Grid Espacial */}
       <div className="absolute inset-0 pointer-events-none">
         {/* Glow Esmeralda Superior */}
@@ -349,7 +324,13 @@ export const CaraivaSpatialSuite3D: React.FC<CaraivaSpatialSuite3DProps> = ({
             <div className="flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#FFD15C]" />
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-300">
-                Salão 3D Isométrico & TapTable
+                {niche === 'gastronomia'
+                  ? 'Salão 3D Isométrico & Mesas'
+                  : niche === 'hospedagem'
+                  ? 'Mapa 3D de Suítes & Governança'
+                  : niche === 'passeios_barcos'
+                  ? 'Radar do Píer & Embarcações 3D'
+                  : 'Vitrine Digital & Etiquetas NFC'}
               </h2>
             </div>
             <span className="px-2 py-0.5 rounded-full bg-white/[0.05] border border-white/10 text-slate-300 text-[10px] font-semibold">
@@ -360,8 +341,16 @@ export const CaraivaSpatialSuite3D: React.FC<CaraivaSpatialSuite3DProps> = ({
           {/* Salão Isométrico em Relevo Tátil */}
           <div className="p-4 rounded-2xl bg-[#0C1014]/90 border border-white/10 shadow-[0_20px_45px_rgba(0,0,0,0.6)] relative overflow-hidden space-y-3">
             <div className="flex items-center justify-between text-xs text-slate-400 pb-2 border-b border-white/[0.06]">
-              <span>Planta de Mesas Inteligentes NFC</span>
-              <span className="text-emerald-400 font-medium">Toque p/ Abrir Mesa</span>
+              <span>
+                {niche === 'gastronomia'
+                  ? 'Planta de Mesas Inteligentes NFC'
+                  : niche === 'hospedagem'
+                  ? 'Suítes c/ Placa NFC de Cabeceira'
+                  : niche === 'passeios_barcos'
+                  ? 'Embarcações Escaladas no Píer'
+                  : 'Pontos de Coleta & Scan-and-Go'}
+              </span>
+              <span className="text-emerald-400 font-medium">Toque p/ Detalhes</span>
             </div>
 
             {/* Grid Isométrico de Mesas Táteis */}
@@ -380,6 +369,14 @@ export const CaraivaSpatialSuite3D: React.FC<CaraivaSpatialSuite3DProps> = ({
                 { num: '06', status: 'pago_nfc', val: 'R$ 95', label: 'Split Feito', users: 2, glow: '#4EEDB2' },
               ].map((table) => {
                 const isSelected = selectedSpatialTable === table.num;
+                const unitLabel =
+                  niche === 'gastronomia'
+                    ? 'Mesa'
+                    : niche === 'hospedagem'
+                    ? 'Suíte'
+                    : niche === 'passeios_barcos'
+                    ? 'Barco'
+                    : 'Tag';
                 return (
                   <motion.div
                     key={table.num}
@@ -408,7 +405,9 @@ export const CaraivaSpatialSuite3D: React.FC<CaraivaSpatialSuite3DProps> = ({
 
                     <div>
                       <div className="flex items-center justify-between">
-                        <span className="text-[11px] font-black text-white">Mesa {table.num}</span>
+                        <span className="text-[11px] font-black text-white">
+                          {unitLabel} {table.num}
+                        </span>
                         {table.alert ? (
                           <BellRing className="w-3.5 h-3.5 text-[#FFD15C] animate-bounce" />
                         ) : (
