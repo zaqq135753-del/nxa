@@ -226,3 +226,29 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
   1. **Serviço Unificado de Pedidos (`villageUnifiedOrdersService.ts`):** Barramento transacional reativo para delivery, comandas de mesa, diárias de suítes e ingressos de passeios náuticos, sincronizado via localStorage e BroadcastChannel com persistência de status (*Novo ➔ Na Cozinha ➔ Saiu para Entrega ➔ Concluído*).
   2. **Hub do Cliente (`CustomerOrders.tsx` / `/guia/pedidos`):** Central Dark Luxury com rastreamento ao vivo em stepper, vouchers de confirmação com QR Code, detalhamento de valores pagos no Pix/Cartão e botão com 1 clique para falar no WhatsApp do local.
   3. **Universal Business OS (`CaraivaUniversalBusinessApp.tsx` / `/business` & `/parceiros/painel`):** Cockpit adaptativo multi-nicho com KDS de cozinha em tempo real (Gastronomia), mapa de suítes e diárias (Pousadas), manifesto de embarque (Passeios), CRM de clientes com histórico de gastos e botão de reativação no WhatsApp, DRE financeiro em tempo real e simulador de placas de mesa NFC em acrílico Black Piano.
+
+### Auditoria ao vivo para dashboard — 17/10/2026
+- Supabase zaq crvi.dg ixqmvogmjvgmafmbbgli healthy; 13 tabelas públicas com RLS, 18 negócios/vínculos; zero catálogo/pedidos/reservas/viagens/rascunhos cloud/atendimento; todos os negócios publicados mas accepting_orders=false. TapTable CloudOperation conectado no código, App principal com estados INITIAL_*; Business preserva store demo local. Não declarar unificação completa.
+- Relatório output/AUDITORIA-BANCO-DASHBOARD-2026-10-17.md e dicionário JSON com metadados sem PII. Advisors: proteção senhas vazadas desativada, admin_emails private RLS sem policies (avaliar intenção), seis FKs sem índices. Nenhuma mutação no banco. Redesenho onboarding/modal/3D solicitado antes permanece pendente.
+
+### ADR 010: Reestruturação Multi-Nicho com TapTable NFC 2.0, DRE ao Vivo e Inovações NFC de Grande Porte — 17/10/2026
+* **Contexto:** Necessidade de elevar o painel `CaraivaUniversalBusinessApp.tsx` (em `/business`) para bater de frente e superar sistemas tradicionais de gestão (Saipos, iFood, PMS hoteleiros), integrando a inteligência de mesas do `taptable-app` com casos de uso proprietários de NFC para os 4 nichos (Gastronomia, Hospedagem, Passeios & Náutica, Loja & Varejo) e corrigindo problemas visuais de barras de demanda e métricas em lojas/varejo.
+* **Decisão Tomada:**
+  1. **KPIs e Gráficos Contextuais por Nicho (Zero Clutter / Visual-First):**
+     - Corrigido o colapso de altura percentual no gráfico de barras ("Curva de Demanda / Picos de Venda") usando alturas explícitas em pixels (`px`) dentro do container flexível, com destaque visual para os horários de pico de cada nicho.
+     - O Widget 2 adapta título, percentual e subtítulo dinamicamente ao nicho ativo (`OCUPAÇÃO MESAS NFC`, `OCUPAÇÃO SUÍTES`, `LOTAÇÃO LANCHAS`, `CONVERSÃO TAG NFC`).
+     - Atualizado `villageUnifiedOrdersService.ts` (`caraiva_unified_orders_v3`) com pedidos reais de Scan & Go NFC para `Ateliê Arte da Terra` (Loja & Varejo) e Split Bill NFC para mesas de restaurante, garantindo faturamento e métricas vivas em todos os 4 nichos.
+  2. **TapTable NFC 2.0 — Inteligência para Grandes Restaurantes e Beach Clubs:**
+     - **Split Bill by Tap (Divisão de Conta por Toque NFC):** Acompanhamento visual com barra de progresso da conta da mesa (ex: *Pago R$ 280 de R$ 420 — 2/3 pagantes via Apple Pay / Pix*), eliminando a fila de maquininha no caixa.
+     - **Seul Tech Smart Waiter Calls:** Botões de pedido rápido acionados via NFC na mesa sem chamar o garçom no grito (*"Trazer Gelo & Limão"*, *"+2 Copos Limpos"*, *"Fechar Parcial"*), com baixa em 1 clique no painel.
+     - **Detecção de Mesa Ociosa (>80m):** Alerta automático para mesas abertas sem novo consumo há mais de 80 minutos, sugerindo envio de oferta de sobremesa/digestivo na tela do cliente.
+     - **Simulador de Rateio de Gorjeta 10% (Tip Pool):** Divisão automática transparente entre Salão (70%), Cozinha (20%) e Cumins/Bar (10%).
+     - **Filtro de Estações no KDS:** Separação instantânea entre `Todas Estações`, `Cozinha Quente` e `Bar & Coquetéis` com timers de SLA em cores.
+  3. **DRE Simplificado ao Vivo (`+` `-` `=`) & Fechamento de Turno no WhatsApp:**
+     - Nova aba `DRE & Finanças` com equações visuais intuitivas: `(+) Receita Bruta`, `(-) Taxas Pix/Gateway (0,99%)`, `(-) CMV / Insumos Estimados` e `(=) Lucro Líquido Real no Bolso`, além de gráfico horizontal de distribuição por canal (NFC Direto vs. Guia vs. Balcão) e botão **"Copiar Fechamento de Turno (WhatsApp)"** formatado para os sócios.
+  4. **Inovações NFC Multi-Nicho (`Tecnologia NFC do Nicho`):**
+     - *Gastronomia:* Split Bill por toque + cardápio dinâmico por horário/maré.
+     - *Hospedagem (Mini PMS):* Placa NFC de Cabeceira (Concierge Silencioso, pedir café da manhã no quarto, revelar senha do Wi-Fi no iOS/Android e pedir late check-out com 1 toque).
+     - *Passeios & Náutica:* Fast Boarding NFC no Píer (validação de manifesto e seguro náutico em 1 segundo encostando o celular no colete/totem).
+     - *Loja & Varejo:* Etiqueta Smart Tag NFC "Scan & Go — Entregar na Pousada" (turista compra artesanato/quadro pesado com 1 toque na etiqueta e recebe na recepção da pousada onde está hospedado).
+

@@ -76,7 +76,7 @@ export interface UnifiedOrder {
   notes?: string;
 }
 
-const STORAGE_KEY = 'caraiva_unified_orders_v2';
+const STORAGE_KEY = 'caraiva_unified_orders_v3';
 const BROADCAST_CHANNEL = 'caraiva_unified_orders_sync';
 
 // Mock inicial enriquecido para testes imediatos nos 4 nichos
@@ -110,6 +110,36 @@ const INITIAL_MOCK_ORDERS: UnifiedOrder[] = [
       type: 'pousada',
       label: 'Entrega na Pousada',
       detail: 'Pousada Casa da Praia — Suíte Amendoeira (Entregar na recepção)',
+    },
+  },
+  {
+    id: 'ord-gast-005',
+    orderNumber: '#NFC-0912',
+    businessId: 'boteco-do-para',
+    businessName: 'Boteco do Pará',
+    niche: 'gastronomia',
+    orderType: 'mesa',
+    status: 'concluido',
+    createdAt: new Date(Date.now() - 95 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 40 * 60 * 1000).toISOString(),
+    customer: {
+      name: 'Eduardo & Turma SP',
+      phone: '11991234567',
+      whatsappFormatted: '5511991234567',
+    },
+    items: [
+      { id: 'm1', name: 'Peixe Vermelho Grelhado na Folha de Bananeira', quantity: 1, unitPrice: 210.0, subtotal: 210.0 },
+      { id: 'm2', name: 'Caipirinha de Cajá com Pimenta Rosa', quantity: 4, unitPrice: 35.0, subtotal: 140.0 },
+      { id: 'm3', name: 'Dadinho de Tapioca com Melado', quantity: 1, unitPrice: 54.0, subtotal: 54.0 },
+    ],
+    totalAmount: 404.0,
+    paidAmount: 404.0,
+    paymentMethod: 'cartao_online',
+    paymentStatus: 'paid',
+    destination: {
+      type: 'mesa',
+      label: 'Auto-Checkout NFC na Mesa',
+      detail: 'Mesa 03 (Beira-Rio) — Dividido por 4 pessoas via TapTable NFC',
     },
   },
   {
@@ -177,6 +207,36 @@ const INITIAL_MOCK_ORDERS: UnifiedOrder[] = [
     },
   },
   {
+    id: 'ord-pass-006',
+    orderNumber: '#PAS-8904',
+    businessId: 'caraiva-brasil-turismo',
+    businessName: 'Caraíva Brasil Passeios',
+    niche: 'passeios_barcos',
+    orderType: 'passeio',
+    status: 'concluido',
+    createdAt: new Date(Date.now() - 180 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 120 * 60 * 1000).toISOString(),
+    customer: {
+      name: 'Marcelo Siqueira',
+      phone: '31987776655',
+      whatsappFormatted: '5531987776655',
+    },
+    items: [
+      { id: 'pass-buggy', name: 'Expedição Buggy Reserva Pataxó + Praia do Satu', quantity: 3, unitPrice: 220.0, subtotal: 660.0 },
+    ],
+    totalAmount: 660.0,
+    paidAmount: 660.0,
+    paymentMethod: 'pix',
+    paymentStatus: 'paid',
+    bookingDetails: {
+      checkInDate: '2026-10-18',
+      timeSlot: 'Saída às 10:00',
+      guestsCount: 3,
+      tourTitle: 'Roteiro Buggy Praias Desertas & Aldeia',
+      departurePoint: 'Receptivo da Travessia das Canoas',
+    },
+  },
+  {
     id: 'ord-mesa-004',
     orderNumber: '#MES-0701',
     businessId: 'boteco-do-para',
@@ -206,6 +266,64 @@ const INITIAL_MOCK_ORDERS: UnifiedOrder[] = [
     bookingDetails: {
       timeSlot: '16:45 — Pôr do Sol Dourado',
       guestsCount: 4,
+    },
+  },
+  {
+    id: 'ord-loja-007',
+    orderNumber: '#LOJ-3310',
+    businessId: 'atelie-arte-da-terra',
+    businessName: 'Ateliê Arte da Terra',
+    niche: 'conveniencia',
+    orderType: 'delivery',
+    status: 'preparando',
+    createdAt: new Date(Date.now() - 25 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 15 * 60 * 1000).toISOString(),
+    customer: {
+      name: 'Helena Alencar',
+      phone: '11977665544',
+      whatsappFormatted: '5511977665544',
+    },
+    items: [
+      { id: 'p-01', name: 'Canga Algodão Cru Artesanal Caraíva', quantity: 2, unitPrice: 95.0, subtotal: 190.0 },
+      { id: 'p-03', name: 'Cerâmica Rústica Queimada no Forno', quantity: 1, unitPrice: 140.0, subtotal: 140.0 },
+    ],
+    totalAmount: 330.0,
+    paidAmount: 330.0,
+    paymentMethod: 'pix',
+    paymentStatus: 'paid',
+    destination: {
+      type: 'pousada',
+      label: 'Scan & Go NFC — Entrega na Pousada',
+      detail: 'Comprado via Tag NFC na loja • Entregar na Pousada Vila do Mar (Quarto 04)',
+    },
+  },
+  {
+    id: 'ord-loja-008',
+    orderNumber: '#LOJ-3315',
+    businessId: 'atelie-arte-da-terra',
+    businessName: 'Ateliê Arte da Terra',
+    niche: 'conveniencia',
+    orderType: 'servico',
+    status: 'concluido',
+    createdAt: new Date(Date.now() - 150 * 60 * 1000).toISOString(),
+    updatedAt: new Date(Date.now() - 90 * 60 * 1000).toISOString(),
+    customer: {
+      name: 'Gabriel Monteiro',
+      phone: '21988112233',
+      whatsappFormatted: '5521988112233',
+    },
+    items: [
+      { id: 'p-02', name: 'Colar de Sementes Nativas Pataxó', quantity: 2, unitPrice: 65.0, subtotal: 130.0 },
+      { id: 'p-04', name: 'Chapéu de Palha Trançado à Mão', quantity: 1, unitPrice: 110.0, subtotal: 110.0 },
+    ],
+    totalAmount: 240.0,
+    paidAmount: 240.0,
+    paymentMethod: 'cartao_online',
+    paymentStatus: 'paid',
+    destination: {
+      type: 'retirada',
+      label: 'Retirado via Tap NFC no Balcão',
+      detail: 'Ateliê Arte da Terra — Beco da Lua',
     },
   },
 ];
