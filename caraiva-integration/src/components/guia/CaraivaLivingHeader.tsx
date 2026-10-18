@@ -100,12 +100,13 @@ export function CaraivaLivingHeader({ moment, audioActive, salesAdmin: _salesAdm
 
             {/* 2. Meus Pedidos & Reservas */}
             <Link 
-              className="caraiva-icon-button" 
-              to="/guia/viagem"
-              aria-label="Minha viagem"
-              title="Minha viagem"
+              className="caraiva-icon-button relative" 
+              to="/guia/pedidos"
+              aria-label="Meus Pedidos e Reservas"
+              title="Meus Pedidos e Reservas"
             >
               <ClipboardList size={18} />
+              <span className="sr-only">Meus Pedidos e Reservas</span>
             </Link>
 
             {/* 3. Tema Claro / Escuro */}

@@ -19,6 +19,7 @@ import {
   clearCartForBusiness,
   buildVillageOrderPayload,
 } from '../../../services/catalogCartService';
+import { createUnifiedOrder } from '../../../services/villageUnifiedOrdersService';
 
 interface CaraivaCartCheckoutModalProps {
   isOpen: boolean;
@@ -109,6 +110,37 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
       const existingOrders = JSON.parse(localStorage.getItem('caraiva_orders_history') || '[]');
       existingOrders.unshift(payload);
       localStorage.setItem('caraiva_orders_history', JSON.stringify(existingOrders));
+      
+      // Cria no serviço unificado conectado ao novo Business OS
+      createUnifiedOrder({
+        businessId,
+        businessName,
+        niche: (currentItems[0]?.businessNiche as any) || 'gastronomia',
+        orderType: 'delivery',
+        customer: {
+          name: payload.customerName,
+          phone: '73999990000',
+          whatsappFormatted: '5573999990000',
+        },
+        items: payload.items.map(i => ({
+          id: i.id,
+          name: i.name,
+          quantity: i.quantity,
+          unitPrice: i.unitPrice,
+          subtotal: i.subtotal,
+          notes: i.notes,
+        })),
+        totalAmount: payload.totalAmount,
+        paidAmount: payload.totalAmount,
+        paymentMethod: payload.paymentMethod === 'pix' ? 'pix' : payload.paymentMethod === 'cartao_entrega' ? 'cartao_entrega' : 'dinheiro',
+        paymentStatus: 'paid',
+        destination: {
+          type: payload.destinationType === 'pousada' ? 'pousada' : payload.destinationType === 'praia' ? 'praia' : 'retirada',
+          label: `Entrega em ${payload.destinationType}`,
+          detail: payload.destinationDetail,
+        },
+      });
+
       window.dispatchEvent(new CustomEvent('caraiva:order-submitted', { detail: payload }));
     } catch {
       // Storage fallback
