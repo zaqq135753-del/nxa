@@ -17,7 +17,6 @@ import {
   BellRing,
   Clock,
   ArrowUpRight,
-  Smartphone,
   ShieldCheck,
   Utensils,
   Wifi,
@@ -26,7 +25,9 @@ import {
   PlusCircle,
   Receipt,
   Search,
-  ChevronRight
+  ChevronRight,
+  Settings,
+  X
 } from 'lucide-react';
 import {
   getUnifiedOrders,
@@ -364,14 +365,12 @@ const INITIAL_PRODUCTS: RetailProduct[] = [
   { id: 'p-04', name: 'Chapéu de Palha Trançado à Mão', price: 110, costCmv: 32, stock: 5, minStock: 4, category: 'Acessórios', available: true, nfcScansToday: 22 },
 ];
 
-type RestaurantSubView = 'salao_mesas' | 'lancar_pedido' | 'kds_cozinha' | 'financeiro' | 'crm' | 'nfc_api';
+type SystemUniversalTab = 'operacao_principal' | 'fila_pedidos' | 'financeiro_dre' | 'crm_clientes';
 
 export const CaraivaUniversalBusinessApp: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState<UnifiedOrder[]>(() => getUnifiedOrders());
 
-  // Se não houver `?nicho=` na URL, exibe o CENTRALIZADOR DE NEGÓCIOS (Hub Inicial).
-  // Quando o usuário clica em um negócio, abre o sistema individual daquele negócio.
   const activeNicheParam = searchParams.get('nicho') as OrderNiche | null;
   const [viewMode, setViewMode] = useState<'hub_centralizador' | 'sistema_negocio'>(() =>
     activeNicheParam ? 'sistema_negocio' : 'hub_centralizador'
@@ -379,8 +378,10 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
   const [selectedNiche, setSelectedNiche] = useState<OrderNiche>(() => activeNicheParam || 'gastronomia');
   const [hubSearch, setHubSearch] = useState<string>('');
 
-  // Telas separadas dentro de cada negócio (1 função por tela, sem poluição!)
-  const [activeScreen, setActiveScreen] = useState<RestaurantSubView>('salao_mesas');
+  // 4 Abas Universais e Padronizadas em todos os nichos
+  const [activeUniversalTab, setActiveUniversalTab] = useState<SystemUniversalTab>('operacao_principal');
+  const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
+  const [showPosLauncher, setShowPosLauncher] = useState<boolean>(false);
 
   const [suites, setSuites] = useState<SuiteRoom[]>(INITIAL_SUITES);
   const [tables, setTables] = useState<TapTableFloorSeat[]>(INITIAL_TABLES);
@@ -421,7 +422,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
   const handleOpenBusinessUnit = (niche: OrderNiche, businessId?: string) => {
     setSelectedNiche(niche);
     setViewMode('sistema_negocio');
-    setActiveScreen('salao_mesas');
+    setActiveUniversalTab('operacao_principal');
     setSearchParams({ nicho: niche, ...(businessId ? { id: businessId } : {}) });
   };
 
@@ -993,101 +994,95 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
           </div>
         </div>
 
-        {/* NAVEGAÇÃO PRINCIPAL DE TELAS SEPARADAS (1 FUNÇÃO POR TELA) */}
-        <div className="max-w-6xl mx-auto pt-3 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
-          <button
-            onClick={() => setActiveScreen('salao_mesas')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
-              activeScreen === 'salao_mesas'
-                ? 'bg-white text-slate-950'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
-            }`}
-          >
-            <Store className="w-3.5 h-3.5" />
-            <span>
-              {selectedNiche === 'gastronomia'
-                ? `1. Mesas & Comandas (${occupiedTables}/${tables.length})`
-                : selectedNiche === 'hospedagem'
-                ? `1. Mapa de Suítes (${occupiedSuites}/${suites.length})`
-                : selectedNiche === 'passeios_barcos'
-                ? '1. Manifesto de Embarque'
-                : '1. Catálogo & Estoque'}
-            </span>
-            {selectedNiche === 'gastronomia' && activeWaiterCalls.length > 0 && (
-              <span
-                className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
-                  activeScreen === 'salao_mesas'
-                    ? 'bg-slate-950 text-amber-300'
-                    : 'bg-amber-500/20 text-amber-300'
-                }`}
-              >
-                {activeWaiterCalls.length}
+        {/* NAVEGAÇÃO UNIVERSAL PADRONIZADA (4 ABAS EM TODOS OS NICHOS) */}
+        <div className="max-w-6xl mx-auto pt-3 flex items-center justify-between gap-2 overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-1.5">
+            <button
+              onClick={() => setActiveUniversalTab('operacao_principal')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
+                activeUniversalTab === 'operacao_principal'
+                  ? 'bg-white text-slate-950'
+                  : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+              }`}
+            >
+              <Store className="w-3.5 h-3.5" />
+              <span>
+                {selectedNiche === 'gastronomia'
+                  ? `1. Salão & Mesas (${occupiedTables}/${tables.length})`
+                  : selectedNiche === 'hospedagem'
+                  ? `1. Mapa de Suítes (${occupiedSuites}/${suites.length})`
+                  : selectedNiche === 'passeios_barcos'
+                  ? '1. Embarques & Vagas'
+                  : '1. Catálogo & Estoque'}
               </span>
-            )}
-          </button>
+              {selectedNiche === 'gastronomia' && activeWaiterCalls.length > 0 && (
+                <span
+                  className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                    activeUniversalTab === 'operacao_principal'
+                      ? 'bg-slate-950 text-amber-300'
+                      : 'bg-amber-500/20 text-amber-300'
+                  }`}
+                >
+                  {activeWaiterCalls.length}
+                </span>
+              )}
+            </button>
 
-          {selectedNiche === 'gastronomia' && (
-            <>
-              <button
-                onClick={() => setActiveScreen('lancar_pedido')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
-                  activeScreen === 'lancar_pedido'
-                    ? 'bg-white text-slate-950'
-                    : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
-                }`}
-              >
-                <PlusCircle className="w-3.5 h-3.5" />
-                <span>2. Lançar Pedido Manual (PDV)</span>
-              </button>
+            <button
+              onClick={() => setActiveUniversalTab('fila_pedidos')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
+                activeUniversalTab === 'fila_pedidos'
+                  ? 'bg-white text-slate-950'
+                  : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+              }`}
+            >
+              <ChefHat className="w-3.5 h-3.5" />
+              <span>
+                {selectedNiche === 'gastronomia'
+                  ? `2. Cozinha, Bar & PDV (${nicheOrders.length})`
+                  : selectedNiche === 'hospedagem'
+                  ? '2. Concierge & Chamados'
+                  : selectedNiche === 'passeios_barcos'
+                  ? '2. Check-in NFC no Píer'
+                  : '2. Encomendas & Scan-and-Go'}
+              </span>
+            </button>
 
-              <button
-                onClick={() => setActiveScreen('kds_cozinha')}
-                className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
-                  activeScreen === 'kds_cozinha'
-                    ? 'bg-white text-slate-950'
-                    : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
-                }`}
-              >
-                <ChefHat className="w-3.5 h-3.5" />
-                <span>3. Pedidos na Cozinha & Bar ({nicheOrders.length})</span>
-              </button>
-            </>
-          )}
+            <button
+              onClick={() => setActiveUniversalTab('financeiro_dre')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
+                activeUniversalTab === 'financeiro_dre'
+                  ? 'bg-white text-slate-950'
+                  : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+              }`}
+            >
+              <Receipt className="w-3.5 h-3.5" />
+              <span>3. Caixa & DRE</span>
+            </button>
+
+            <button
+              onClick={() => setActiveUniversalTab('crm_clientes')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
+                activeUniversalTab === 'crm_clientes'
+                  ? 'bg-white text-slate-950'
+                  : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+              }`}
+            >
+              <Users className="w-3.5 h-3.5" />
+              <span>4. Clientes ({uniqueCustomers.length})</span>
+            </button>
+          </div>
 
           <button
-            onClick={() => setActiveScreen('financeiro')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
-              activeScreen === 'financeiro'
-                ? 'bg-white text-slate-950'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+            onClick={() => setShowConfigModal((prev) => !prev)}
+            className={`px-3 py-2 rounded-xl text-xs font-medium transition shrink-0 flex items-center gap-1.5 cursor-pointer border ${
+              showConfigModal
+                ? 'bg-white text-slate-950 border-white'
+                : 'bg-white/[0.03] hover:bg-white/[0.08] text-slate-300 border-white/[0.07]'
             }`}
           >
-            <Receipt className="w-3.5 h-3.5" />
-            <span>DRE & Financeiro</span>
-          </button>
-
-          <button
-            onClick={() => setActiveScreen('crm')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
-              activeScreen === 'crm'
-                ? 'bg-white text-slate-950'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
-            }`}
-          >
-            <Users className="w-3.5 h-3.5" />
-            <span>Clientes ({uniqueCustomers.length})</span>
-          </button>
-
-          <button
-            onClick={() => setActiveScreen('nfc_api')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
-              activeScreen === 'nfc_api'
-                ? 'bg-white text-slate-950'
-                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
-            }`}
-          >
-            <Smartphone className="w-3.5 h-3.5" />
-            <span>Placas NFC & API</span>
+            <Settings className="w-3.5 h-3.5" />
+            <span>Configurações & NFC</span>
           </button>
         </div>
       </header>
@@ -1095,9 +1090,9 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
       {/* CONTEÚDO PRINCIPAL DO NEGÓCIO */}
       <main className="max-w-6xl mx-auto px-6 pt-6 space-y-6">
         {/* ==================================================================== */}
-        {/* TELA A: SALÃO DE MESAS & COMANDAS (PARA RESTAURANTE)                 */}
+        {/* ABA 1: OPERAÇÃO PRINCIPAL — SALÃO & MESAS (GASTRONOMIA)             */}
         {/* ==================================================================== */}
-        {activeScreen === 'salao_mesas' && selectedNiche === 'gastronomia' && (
+        {activeUniversalTab === 'operacao_principal' && selectedNiche === 'gastronomia' && !showPosLauncher && (
           <div className="space-y-6">
             {/* Resumo Clean em 4 Cards Sóbrios */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
@@ -1132,7 +1127,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
                 <button
                   onClick={() => {
                     setPosTargetTable(selectedTableNumber);
-                    setActiveScreen('lancar_pedido');
+                    setShowPosLauncher(true);
                   }}
                   className="mt-2 w-full py-2 px-3 rounded-xl bg-white text-slate-950 hover:bg-slate-200 font-semibold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
                 >
@@ -1303,7 +1298,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
                         <button
                           onClick={() => {
                             setPosTargetTable(activeTable.tableNumber);
-                            setActiveScreen('lancar_pedido');
+                            setShowPosLauncher(true);
                           }}
                           className="px-3 py-2 rounded-xl bg-white text-slate-950 hover:bg-slate-200 font-semibold text-xs transition cursor-pointer shrink-0"
                         >
@@ -1347,7 +1342,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
                             <button
                               onClick={() => {
                                 setPosTargetTable(activeTable.tableNumber);
-                                setActiveScreen('lancar_pedido');
+                                setShowPosLauncher(true);
                               }}
                               className="px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-white cursor-pointer"
                             >
@@ -1422,9 +1417,9 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
         )}
 
         {/* ==================================================================== */}
-        {/* TELA B: LANÇAR PEDIDO MANUAL — PDV DEDICADO (TELA SEPARADA!)         */}
+        {/* PDV LANÇADOR MANUAL DE PEDIDOS (MESA, BALCÃO OU DELIVERY)           */}
         {/* ==================================================================== */}
-        {activeScreen === 'lancar_pedido' && selectedNiche === 'gastronomia' && (
+        {selectedNiche === 'gastronomia' && showPosLauncher && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
@@ -1436,10 +1431,10 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
                 </p>
               </div>
               <button
-                onClick={() => setActiveScreen('salao_mesas')}
+                onClick={() => setShowPosLauncher(false)}
                 className="px-3.5 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-xs font-medium text-slate-300 cursor-pointer self-start"
               >
-                ← Voltar ao Mapa de Mesas
+                ← Voltar ao Salão de Mesas
               </button>
             </div>
 
@@ -1447,10 +1442,10 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
               <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-xs font-semibold text-emerald-300 flex items-center justify-between">
                 <span>✓ {posSuccessFeedback}</span>
                 <button
-                  onClick={() => setActiveScreen('salao_mesas')}
+                  onClick={() => setShowPosLauncher(false)}
                   className="underline text-white ml-4 cursor-pointer"
                 >
-                  Ver na Comanda →
+                  Ver no Salão de Mesas →
                 </button>
               </div>
             )}
@@ -1583,9 +1578,9 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
         )}
 
         {/* ==================================================================== */}
-        {/* TELA C: KDS COZINHA & BAR (TELA SEPARADA!)                           */}
+        {/* ABA 2: FILA DE PEDIDOS — KDS COZINHA & BAR (GASTRONOMIA)            */}
         {/* ==================================================================== */}
-        {activeScreen === 'kds_cozinha' && selectedNiche === 'gastronomia' && (
+        {activeUniversalTab === 'fila_pedidos' && selectedNiche === 'gastronomia' && !showPosLauncher && (
           <div className="space-y-5">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
@@ -1597,22 +1592,32 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
                 </p>
               </div>
 
-              <div className="flex items-center gap-1.5 bg-[#121519] p-1 rounded-xl border border-white/[0.07]">
-                {[
-                  { id: 'todas', label: 'Todas' },
-                  { id: 'cozinha_quente', label: 'Cozinha Quente' },
-                  { id: 'bar_drinks', label: 'Bar & Drinks' },
-                ].map((st) => (
-                  <button
-                    key={st.id}
-                    onClick={() => setKdsStation(st.id as 'todas' | 'cozinha_quente' | 'bar_drinks')}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
-                      kdsStation === st.id ? 'bg-white text-slate-950' : 'text-slate-400 hover:text-white'
-                    }`}
-                  >
-                    {st.label}
-                  </button>
-                ))}
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 bg-[#121519] p-1 rounded-xl border border-white/[0.07]">
+                  {[
+                    { id: 'todas', label: 'Todas' },
+                    { id: 'cozinha_quente', label: 'Cozinha Quente' },
+                    { id: 'bar_drinks', label: 'Bar & Drinks' },
+                  ].map((st) => (
+                    <button
+                      key={st.id}
+                      onClick={() => setKdsStation(st.id as 'todas' | 'cozinha_quente' | 'bar_drinks')}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                        kdsStation === st.id ? 'bg-white text-slate-950' : 'text-slate-400 hover:text-white'
+                      }`}
+                    >
+                      {st.label}
+                    </button>
+                  ))}
+                </div>
+
+                <button
+                  onClick={() => setShowPosLauncher(true)}
+                  className="px-3 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] text-xs font-semibold text-white border border-white/[0.08] cursor-pointer flex items-center gap-1.5 shrink-0"
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>+ PDV Manual</span>
+                </button>
               </div>
             </div>
 
@@ -1702,9 +1707,10 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
         )}
 
         {/* ==================================================================== */}
-        {/* TELA INICIAL DOS OUTROS 3 NICHOS (POUSADA, NÁUTICA, VAREJO)          */}
         {/* ==================================================================== */}
-        {activeScreen === 'salao_mesas' && selectedNiche === 'hospedagem' && (
+        {/* ABA 1: OPERAÇÃO PRINCIPAL — MAPA DE SUÍTES & PMS (HOSPEDAGEM)       */}
+        {/* ==================================================================== */}
+        {activeUniversalTab === 'operacao_principal' && selectedNiche === 'hospedagem' && (
           <div className="space-y-5">
             <div>
               <h2 className="text-base font-bold text-white">Mapa de Suítes & Governança (Mini PMS)</h2>
@@ -1809,12 +1815,15 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
           </div>
         )}
 
-        {activeScreen === 'salao_mesas' && selectedNiche === 'conveniencia' && (
+        {/* ==================================================================== */}
+        {/* ABA 1: OPERAÇÃO PRINCIPAL — CATÁLOGO & ESTOQUE (CONVENIÊNCIA)       */}
+        {/* ==================================================================== */}
+        {activeUniversalTab === 'operacao_principal' && selectedNiche === 'conveniencia' && (
           <div className="space-y-5">
             <div>
               <h2 className="text-base font-bold text-white">Catálogo, CMV & Etiquetas Scan-and-Go NFC</h2>
               <p className="text-xs text-slate-400">
-                Controle de estoque, margem de lucro e pedidos feitos pelos turistas via etiqueta NFC.
+                Controle de estoque, margem de lucro e produtos sincronizados com as etiquetas inteligentes NFC.
               </p>
             </div>
 
@@ -1851,14 +1860,14 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
                       <div className="flex items-center gap-2">
                         <button
                           onClick={() => handleAdjustStock(product.id, -1)}
-                          className="w-7 h-7 rounded-lg bg-white/[0.05] text-white text-xs cursor-pointer"
+                          className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-white text-xs cursor-pointer"
                         >
                           -
                         </button>
                         <span className="text-xs font-bold text-white">{product.stock} un</span>
                         <button
                           onClick={() => handleAdjustStock(product.id, 1)}
-                          className="w-7 h-7 rounded-lg bg-white/[0.05] text-white text-xs cursor-pointer"
+                          className="w-7 h-7 rounded-lg bg-white/[0.05] hover:bg-white/[0.1] text-white text-xs cursor-pointer"
                         >
                           +
                         </button>
@@ -1877,12 +1886,251 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
           </div>
         )}
 
-        {activeScreen === 'salao_mesas' && selectedNiche === 'passeios_barcos' && (
+        {/* ==================================================================== */}
+        {/* ABA 1: OPERAÇÃO PRINCIPAL — LOTAÇÃO & SAÍDAS (NÁUTICA)              */}
+        {/* ==================================================================== */}
+        {activeUniversalTab === 'operacao_principal' && selectedNiche === 'passeios_barcos' && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+              <div className="p-4 rounded-2xl bg-[#121519] border border-white/[0.06]">
+                <span className="text-[11px] text-slate-400 font-medium">Lotação do Dia</span>
+                <p className="text-xl font-bold text-white mt-1">9 de 12 vagas</p>
+                <span className="text-[11px] text-slate-500 mt-0.5 block">75% da capacidade vendida</span>
+              </div>
+              <div className="p-4 rounded-2xl bg-[#121519] border border-white/[0.06]">
+                <span className="text-[11px] text-slate-400 font-medium">Tábua de Marés</span>
+                <p className="text-xl font-bold text-emerald-400 mt-1">Baixa-mar 11:45</p>
+                <span className="text-[11px] text-slate-500 mt-0.5 block">0.3m (ideal p/ piscinas)</span>
+              </div>
+              <div className="p-4 rounded-2xl bg-[#121519] border border-white/[0.06]">
+                <span className="text-[11px] text-slate-400 font-medium">Próxima Saída</span>
+                <p className="text-xl font-bold text-white mt-1">09:30 • Corumbau</p>
+                <span className="text-[11px] text-slate-500 mt-0.5 block">Embarque no Píer do Rio</span>
+              </div>
+              <div className="p-4 rounded-2xl bg-[#121519] border border-white/[0.06]">
+                <span className="text-[11px] text-slate-400 font-medium">Faturamento Estimado</span>
+                <p className="text-xl font-bold text-white mt-1">{formatCurrency(totalGross)}</p>
+                <span className="text-[11px] text-slate-500 mt-0.5 block">Recebido via Pix NFC</span>
+              </div>
+            </div>
+
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h2 className="text-base font-bold text-white">Embarcações & Saídas Escaladas</h2>
+                <span className="text-xs text-slate-400">Píer Municipal de Caraíva</span>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                {[
+                  {
+                    id: 'b-01',
+                    name: 'Lancha Caraíva Star (250 HP)',
+                    tour: 'Ponta do Corumbau & Falésias',
+                    departure: '09:30',
+                    captain: 'Mestre Tiago',
+                    booked: 8,
+                    capacity: 10,
+                    status: 'Embarque em 15m',
+                  },
+                  {
+                    id: 'b-02',
+                    name: 'Barco Tatuetê Clássico',
+                    tour: 'Pôr do Sol no Rio Caraíva',
+                    departure: '16:00',
+                    captain: 'Zé do Rio',
+                    booked: 11,
+                    capacity: 14,
+                    status: 'Aguardando Maré',
+                  },
+                  {
+                    id: 'b-03',
+                    name: 'Lancha Corais Express',
+                    tour: 'Mergulho nos Corais do Tatuaçu',
+                    departure: '11:00',
+                    captain: 'Mateus Pataxó',
+                    booked: 6,
+                    capacity: 8,
+                    status: 'Confirmada',
+                  },
+                ].map((boat) => (
+                  <div key={boat.id} className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-3">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <span className="text-[10px] text-slate-400 uppercase font-medium">{boat.tour}</span>
+                        <h4 className="text-sm font-bold text-white mt-0.5">{boat.name}</h4>
+                      </div>
+                      <span className="px-2 py-0.5 rounded-lg bg-white/[0.05] text-[10px] text-slate-300 border border-white/[0.08]">
+                        {boat.status}
+                      </span>
+                    </div>
+
+                    <div className="p-3 rounded-xl bg-[#0B0D10] border border-white/[0.05] text-xs space-y-1 text-slate-300">
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Horário:</span>
+                        <strong className="text-white">{boat.departure}</strong>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Marinheiro:</span>
+                        <span>{boat.captain}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-slate-400">Ocupação:</span>
+                        <strong className="text-emerald-400">{boat.booked} / {boat.capacity} vagas</strong>
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => setActiveUniversalTab('fila_pedidos')}
+                      className="w-full py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-xs font-semibold text-slate-200 border border-white/[0.08] transition cursor-pointer"
+                    >
+                      Ver Manifesto & Check-in NFC →
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================================== */}
+        {/* ABA 2: FILA DE PEDIDOS — CONCIERGE & CHAMADOS NFC (HOSPEDAGEM)       */}
+        {/* ==================================================================== */}
+        {activeUniversalTab === 'fila_pedidos' && selectedNiche === 'hospedagem' && (
+          <div className="space-y-5">
+            <div>
+              <h2 className="text-base font-bold text-white">
+                Fila de Concierge & Chamados de Quarto NFC
+              </h2>
+              <p className="text-xs text-slate-400">
+                Solicitações feitas pelos hóspedes ao aproximarem o celular da Placa NFC de cabeceira.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {suites
+                .filter((s) => s.nfcRequests && s.nfcRequests.length > 0)
+                .map((suite) => (
+                  <div key={suite.id} className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-3.5">
+                    <div className="flex items-start justify-between">
+                      <div>
+                        <span className="text-[10px] text-amber-300 font-semibold uppercase tracking-wider">
+                          NFC Quarto Ativo
+                        </span>
+                        <h4 className="text-base font-bold text-white mt-0.5">{suite.name}</h4>
+                        <p className="text-xs text-slate-400">Hóspede: {suite.currentGuest?.name || 'Hóspede Cadastrado'}</p>
+                      </div>
+                      <span className="px-2.5 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-[11px] font-semibold text-amber-300">
+                        Pendente
+                      </span>
+                    </div>
+
+                    <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] space-y-2">
+                      <span className="text-[11px] text-slate-400 font-medium">Itens solicitados:</span>
+                      {suite.nfcRequests?.map((req, i) => (
+                        <div key={i} className="flex items-center justify-between text-xs text-slate-200">
+                          <span>• {req}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={() => {
+                          setSuites((prev) =>
+                            prev.map((s) => (s.id === suite.id ? { ...s, nfcRequests: [] } : s))
+                          );
+                        }}
+                        className="flex-1 py-2 rounded-xl bg-white text-slate-950 font-semibold text-xs cursor-pointer hover:bg-slate-200 transition"
+                      >
+                        ✓ Marcar Atendido
+                      </button>
+                      {suite.currentGuest?.phone && (
+                        <a
+                          href={`https://wa.me/55${suite.currentGuest.phone}?text=${encodeURIComponent(
+                            `Olá ${suite.currentGuest.name}! Recebemos sua solicitação no ${suite.name} e nossa equipe já está providenciando.`
+                          )}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="px-3 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-xs font-semibold text-emerald-400 border border-white/[0.08] cursor-pointer flex items-center gap-1.5"
+                        >
+                          <MessageCircle className="w-3.5 h-3.5" />
+                          <span>WhatsApp</span>
+                        </a>
+                      )}
+                    </div>
+                  </div>
+                ))}
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================================== */}
+        {/* ABA 2: FILA DE PEDIDOS — ENCOMENDAS & SCAN-AND-GO (CONVENIÊNCIA)    */}
+        {/* ==================================================================== */}
+        {activeUniversalTab === 'fila_pedidos' && selectedNiche === 'conveniencia' && (
+          <div className="space-y-5">
+            <div>
+              <h2 className="text-base font-bold text-white">
+                Fila de Encomendas & Pedidos Scan-and-Go ({nicheOrders.length})
+              </h2>
+              <p className="text-xs text-slate-400">
+                Compras feitas por aproximação de etiquetas NFC nas peças físicas ou encomendadas pelo Guia.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {nicheOrders.map((order) => {
+                const badge = getStatusBadge(order.status);
+                return (
+                  <div key={order.id} className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-3.5 flex flex-col justify-between">
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <span className="text-xs font-bold text-slate-400">{order.orderNumber}</span>
+                          <h4 className="text-sm font-bold text-white mt-0.5">{order.customer.name}</h4>
+                        </div>
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded-lg bg-white/[0.05] text-slate-300 border border-white/[0.07]">
+                          {badge.label}
+                        </span>
+                      </div>
+
+                      <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] text-xs space-y-1.5">
+                        {order.items.map((it, idx) => (
+                          <div key={idx} className="flex justify-between">
+                            <span className="text-slate-200">{it.quantity}x {it.name}</span>
+                            <span className="text-slate-400">{formatCurrency(it.subtotal)}</span>
+                          </div>
+                        ))}
+                        {order.destination && (
+                          <p className="pt-2 border-t border-white/[0.05] text-[11px] text-slate-400">
+                            Entrega: {order.destination.detail}
+                          </p>
+                        )}
+                      </div>
+                    </div>
+
+                    <button
+                      onClick={() => handleAdvanceStatus(order.id, 'concluido')}
+                      className="w-full py-2.5 rounded-xl bg-white text-slate-950 font-semibold text-xs cursor-pointer hover:bg-slate-200 transition"
+                    >
+                      {order.status === 'concluido' ? 'Pedido Entregue' : 'Confirmar Envio / Retirada'}
+                    </button>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================================== */}
+        {/* ABA 2: FILA DE PEDIDOS — FAST CHECK-IN NO PÍER NFC (NÁUTICA)        */}
+        {/* ==================================================================== */}
+        {activeUniversalTab === 'fila_pedidos' && selectedNiche === 'passeios_barcos' && (
           <div className="space-y-5">
             <div>
               <h2 className="text-base font-bold text-white">Manifesto de Embarque & Check-in NFC no Píer</h2>
               <p className="text-xs text-slate-400">
-                Passageiros confirmados com validação de voucher por aproximação NFC.
+                Aproxime o smartphone do cliente na placa do marinheiro para validar o voucher e autorizar o embarque.
               </p>
             </div>
 
@@ -1908,7 +2156,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
 
                   <button
                     onClick={() => handleAdvanceStatus(order.id, 'concluido')}
-                    className="w-full py-2.5 rounded-xl bg-white text-slate-950 font-semibold text-xs cursor-pointer"
+                    className="w-full py-2.5 rounded-xl bg-white text-slate-950 font-semibold text-xs cursor-pointer hover:bg-slate-200 transition"
                   >
                     Confirmar Embarque NFC
                   </button>
@@ -1919,9 +2167,10 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
         )}
 
         {/* ==================================================================== */}
-        {/* TELA D: DRE & FINANCEIRO CLEAN (TELA SEPARADA)                       */}
         {/* ==================================================================== */}
-        {activeScreen === 'financeiro' && (
+        {/* ABA 3: CAIXA & DRE OPERACIONAL (TODOS OS NICHOS)                    */}
+        {/* ==================================================================== */}
+        {activeUniversalTab === 'financeiro_dre' && (
           <div className="space-y-6">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
@@ -2028,9 +2277,9 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
         )}
 
         {/* ==================================================================== */}
-        {/* TELA E: CRM & CLIENTES (TELA SEPARADA)                               */}
+        {/* ABA 4: CRM & CLIENTES (TODOS OS NICHOS)                             */}
         {/* ==================================================================== */}
-        {activeScreen === 'crm' && (
+        {activeUniversalTab === 'crm_clientes' && (
           <div className="space-y-5">
             <div>
               <h2 className="text-base font-bold text-white">
@@ -2071,19 +2320,30 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
             </div>
           </div>
         )}
+      </main>
 
-        {/* ==================================================================== */}
-        {/* TELA F: HARDWARE NFC & CHAVES API (TELA SEPARADA)                    */}
-        {/* ==================================================================== */}
-        {activeScreen === 'nfc_api' && (
-          <div className="space-y-6">
-            <div>
-              <h2 className="text-base font-bold text-white">
-                Placas NFC Inteligentes & Chaves de Integração API
-              </h2>
-              <p className="text-xs text-slate-400">
-                Configuração das tags NFC de {currentBusinessUnit.name} e conectores externos.
-              </p>
+      {/* ==================================================================== */}
+      {/* MODAL CONFIGURAÇÕES & PLACAS NFC                                     */}
+      {/* ==================================================================== */}
+      {showConfigModal && (
+        <div className="fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4 sm:p-6 animate-in fade-in duration-150">
+          <div className="bg-[#121519] border border-white/10 rounded-3xl w-full max-w-3xl max-h-[90vh] overflow-y-auto p-6 space-y-6 shadow-2xl">
+            <div className="flex items-center justify-between pb-4 border-b border-white/[0.08]">
+              <div>
+                <h2 className="text-base font-bold text-white flex items-center gap-2">
+                  <Settings className="w-4 h-4 text-slate-300" />
+                  <span>Configurações do Sistema & Placas NFC</span>
+                </h2>
+                <p className="text-xs text-slate-400 mt-0.5">
+                  Módulo ativo: {currentBusinessUnit.name} • {currentBusinessUnit.categoryLabel}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowConfigModal(false)}
+                className="w-8 h-8 rounded-full bg-white/[0.06] hover:bg-white/[0.12] text-slate-300 hover:text-white flex items-center justify-center cursor-pointer transition"
+              >
+                <X className="w-4 h-4" />
+              </button>
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -2113,7 +2373,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
                 return (
                   <div
                     key={item.key}
-                    className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] flex items-center justify-between gap-4"
+                    className="p-5 rounded-2xl bg-[#0B0D10] border border-white/[0.07] flex items-center justify-between gap-4"
                   >
                     <div className="space-y-1">
                       <div className="flex items-center gap-2">
@@ -2143,27 +2403,35 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
             </div>
 
             {/* Resumo das Placas NFC do Estabelecimento */}
-            <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="p-5 rounded-2xl bg-[#0B0D10] border border-white/[0.07] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
               <div className="space-y-1">
                 <div className="flex items-center gap-2 text-xs text-slate-300 font-semibold">
                   <Wifi className="w-4 h-4 text-slate-400" />
                   <span>{currentBusinessUnit.nfcPlatesActive} Placas / Smart Tags NFC Vinculadas</span>
                 </div>
                 <p className="text-xs text-slate-400">
-                  Link direto gravado no chip NTAG215: <code className="text-slate-200">caraiva.digital/guia?biz={currentBusinessUnit.id}</code>
+                  Link gravado no chip NTAG215: <code className="text-slate-200">caraiva.digital/guia?biz={currentBusinessUnit.id}</code>
                 </p>
               </div>
-              <Link
-                to="/guia"
-                className="px-4 py-2 rounded-xl bg-white text-slate-950 font-semibold text-xs flex items-center gap-1.5 shrink-0"
-              >
-                <span>Simular Leitura do Cliente</span>
-                <ArrowUpRight className="w-3.5 h-3.5" />
-              </Link>
+              <div className="flex items-center gap-2">
+                <Link
+                  to="/guia"
+                  className="px-4 py-2 rounded-xl bg-white text-slate-950 font-semibold text-xs flex items-center gap-1.5 shrink-0"
+                >
+                  <span>Simular Leitura</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </Link>
+                <button
+                  onClick={() => setShowConfigModal(false)}
+                  className="px-4 py-2 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-white font-medium text-xs cursor-pointer"
+                >
+                  Fechar
+                </button>
+              </div>
             </div>
           </div>
-        )}
-      </main>
+        </div>
+      )}
     </div>
   );
 };
