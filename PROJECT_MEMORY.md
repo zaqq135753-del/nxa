@@ -265,3 +265,17 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
      - **Configurações & NFC:** Drawer/Modal flutuante com blur backdrop acessível de qualquer aba com placas NTAG215 e 4 conectores de chave API (Asaas Pix Split, WhatsApp Cloud, Impressora Térmica KDS, SEFAZ NFC-e).
 * **Armadilhas Evitadas:** Evitou-se sobrecarga cognitiva e inconsistência de rotas mantendo todos os nichos sob as mesmas 4 abas e um único modal de configurações, com código estritamente tipado (TypeScript strict, build testado e verificado).
 
+### ADR 012: Inclusão do Cockpit Espacial 3D (Apple VisionOS & Claymorphism Tátil) no Business OS — 18/10/2026
+* **Contexto:** Necessidade de transformar a experiência visual e sensorial do painel B2B em um produto de Big Tech futurista, de alto impacto e inovação tangível (alinhado aos renders espaciais de `caraiva_spatial_business_os_v2`), substituindo formulários 2D rasos por profundidade física, relevo tátil, física de parallax com o mouse e tecnologias proprietárias de NFC.
+* **Decisão Tomada:**
+  1. **Componente Nativo `CaraivaSpatialSuite3D.tsx`:**
+     - **Física de Parallax 3D com Aceleração de Hardware:** O container reage ao mouse através de `perspective(1200px) rotateX(...) rotateY(...)` em 60fps sem engasgos de GPU.
+     - **Simulador Interativo de Aproximação NFC (Placa Piano Black + Chip NTAG215):** Renderização física da placa com borda dourada a laser, onde o usuário clica e visualiza o smartphone 3D descer sobre a placa, emitindo anéis concêntricos de pulso neon (`animate-ping`), som visual e liquidação instantânea de Split Pix D+0 no valor exato.
+     - **Salão Isométrico 3D com TapTable:** Mesas em perspectiva 3D (`rotateX(8deg)`) com iluminação dinâmica por status (ouro pulsante para chamado de garçom, ciano para consumo aberto, esmeralda para conta paga) e clique direto para abrir comanda.
+     - **KDS Flutuante com SLA em Anel Circular Neon:** Cartões de tickets com contagem regressiva viva e botão tátil com efeito claymorphism `Despachar 3D`.
+     - **Anéis Holográficos de Telemetria Preditiva:** SVG em anel circular com gradientes esmeralda e ciano exibindo 524 leituras NFC (+41%) e 63 rotas a pé guiadas até a porta do comerciante.
+     - **Radar Náutico de Maré Viva em Canvas HTML5:** Onda física animada senoidalmente calculando a janela de baixa-mar para travessia a pé (0.3m).
+     - **Caraíva Brain IA:** Assistente executivo integrado alertando sobre picos de demanda da maré e mesas ociosas.
+  2. **Alternador de Modo Instantâneo no Topo:** Botão elegante que permite alternar a qualquer momento entre `[✨ Espacial 3D]` e `[📋 Painel 2D]`.
+* **Armadilhas Evitadas:** O canvas e cálculos de movimento utilizam `requestAnimationFrame` e Motion React nativo, preservando a performance a 60fps em dispositivos móveis e desktops sem travamentos de thread.
+
