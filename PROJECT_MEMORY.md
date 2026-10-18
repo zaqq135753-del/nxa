@@ -252,3 +252,16 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
      - *Passeios & Náutica:* Fast Boarding NFC no Píer (validação de manifesto e seguro náutico em 1 segundo encostando o celular no colete/totem).
      - *Loja & Varejo:* Etiqueta Smart Tag NFC "Scan & Go — Entregar na Pousada" (turista compra artesanato/quadro pesado com 1 toque na etiqueta e recebe na recepção da pousada onde está hospedado).
 
+### ADR 011: Padronização Universal em 4 Abas Executivas e Hub Centralizador B2B — 18/10/2026
+* **Contexto:** Necessidade de transformar a tela `/business` de um painel carregado de cores e nomes específicos de comerciantes em um Centralizador de Sistemas B2B com padrão de design Dark Luxury limpo e minimalista (estilo Linear/Stripe), unificando a navegação de todos os 4 nichos exatamente na mesma estrutura mental.
+* **Decisão Tomada:**
+  1. **Nomes Genéricos Modulares dos Sistemas:** Eliminação de nomes de mock específicos em prol de nomes modulares: `Sistema Gastronomia & TapTable NFC`, `Sistema Hotelaria & Mini PMS`, `Sistema Náutica & Passeios`, `Sistema Varejo & Ateliê`.
+  2. **Centralizador de Sistemas B2B (`hub_centralizador`):** Tela inicial que apresenta os 4 sistemas com métricas em tempo real, busca rápida e botão de inicialização direta para cada cockpit.
+  3. **Padrão Universal de 4 Abas em Todos os Nichos:**
+     - **Aba 1: Salão / Operação:** Gastronomia (Salão de Mesas + Comanda + PDV rápido), Hospedagem (Mapa de Suítes & Governança 1-click), Náutica (Lotação de Lanchas, Saídas & Maré), Varejo (Catálogo, Ficha CMV & Estoque +/-).
+     - **Aba 2: Fila de Pedidos & Ação:** Gastronomia (KDS Cozinha & Bar com filtro de praças + PDV Lançador Manual), Hospedagem (Fila de Concierge & Chamados de Quarto NFC com link WhatsApp), Náutica (Fast Check-in no Píer NFC & Manifesto), Varejo (Fila de Encomendas & Pedidos Scan-and-Go).
+     - **Aba 3: Caixa & DRE:** Demonstrativo `+` `-` `=`, separação Pix NFC (0,89%) vs Cartão (2,89%), Custo de Mercadoria (CMV), Gorjeta de Equipe (10%), Lucro Líquido Real e exportação instantânea para o WhatsApp dos sócios.
+     - **Aba 4: Clientes (CRM):** Base unificada com histórico de gastos, recorrência e contato direto via WhatsApp.
+     - **Configurações & NFC:** Drawer/Modal flutuante com blur backdrop acessível de qualquer aba com placas NTAG215 e 4 conectores de chave API (Asaas Pix Split, WhatsApp Cloud, Impressora Térmica KDS, SEFAZ NFC-e).
+* **Armadilhas Evitadas:** Evitou-se sobrecarga cognitiva e inconsistência de rotas mantendo todos os nichos sob as mesmas 4 abas e um único modal de configurações, com código estritamente tipado (TypeScript strict, build testado e verificado).
+
