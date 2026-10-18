@@ -3,31 +3,30 @@ import { Link, useSearchParams } from 'react-router-dom';
 import {
   Users,
   MessageCircle,
-  QrCode,
   ChefHat,
   Compass,
   BedDouble,
-  Sparkles,
   RefreshCw,
   ExternalLink,
   Send,
   Store,
   Package,
   DoorOpen,
-  KeyRound,
-  Zap,
-  Flame,
-  TrendingUp,
   Copy,
   Check,
   BellRing,
   Clock,
-  Award,
   ArrowUpRight,
   Smartphone,
   ShieldCheck,
   Utensils,
-  Wifi
+  Wifi,
+  ArrowLeft,
+  LayoutGrid,
+  PlusCircle,
+  Receipt,
+  Search,
+  ChevronRight
 } from 'lucide-react';
 import {
   getUnifiedOrders,
@@ -39,6 +38,73 @@ import {
   formatCurrency,
   type OrderNiche
 } from '../../services/villageUnifiedOrdersService';
+
+// ==========================================
+// 0. DIRETÓRIO DO CENTRALIZADOR DE NEGÓCIOS
+// ==========================================
+interface BusinessUnitDirectoryItem {
+  id: string;
+  name: string;
+  niche: OrderNiche;
+  categoryLabel: string;
+  systemModuleTitle: string;
+  location: string;
+  statusText: string;
+  activeAlerts: number;
+  todayRevenuePreview: number;
+  nfcPlatesActive: number;
+}
+
+const BUSINESS_DIRECTORY: BusinessUnitDirectoryItem[] = [
+  {
+    id: 'boteco-do-para',
+    name: 'Boteco do Pará',
+    niche: 'gastronomia',
+    categoryLabel: 'Restaurante & Bar',
+    systemModuleTitle: 'TapTable Salão NFC + PDV + KDS',
+    location: 'Beira-Rio • Caraíva',
+    statusText: '5 de 8 mesas ocupadas • 3 chamados',
+    activeAlerts: 3,
+    todayRevenuePreview: 1845,
+    nfcPlatesActive: 12,
+  },
+  {
+    id: 'pousada-casa-da-praia',
+    name: 'Pousada Casa da Praia',
+    niche: 'hospedagem',
+    categoryLabel: 'Hospedagem & Pousada',
+    systemModuleTitle: 'Mini PMS + Quarto NFC Concierge',
+    location: 'Praia de Caraíva',
+    statusText: '3 de 4 suítes ocupadas • 1 check-in hoje',
+    activeAlerts: 2,
+    todayRevenuePreview: 3910,
+    nfcPlatesActive: 8,
+  },
+  {
+    id: 'caraiva-brasil-turismo',
+    name: 'Caraíva Brasil Turismo',
+    niche: 'passeios_barcos',
+    categoryLabel: 'Passeios & Náutica',
+    systemModuleTitle: 'Manifesto de Embarque & Píer NFC',
+    location: 'Porto Beira-Rio',
+    statusText: '9 de 12 vagas vendidas • Maré 0.2m',
+    activeAlerts: 1,
+    todayRevenuePreview: 1420,
+    nfcPlatesActive: 4,
+  },
+  {
+    id: 'atelie-arte-da-terra',
+    name: 'Ateliê Arte da Terra',
+    niche: 'conveniencia',
+    categoryLabel: 'Loja & Artesanato',
+    systemModuleTitle: 'Estoque, CMV & Scan-and-Go NFC',
+    location: 'Beco da Lua',
+    statusText: '104 leituras NFC hoje • 1 item estoque baixo',
+    activeAlerts: 1,
+    todayRevenuePreview: 685,
+    nfcPlatesActive: 25,
+  },
+];
 
 // ==========================================
 // 1. MODELOS DO MINI PMS (HOTELARIA)
@@ -165,7 +231,7 @@ const INITIAL_TABLES: TapTableFloorSeat[] = [
     peopleTapCount: 3,
     openMinutes: 42,
     waiterName: 'Lucas',
-    activeCall: '🧊 Chamou Garçom: Trazer Gelo & Limão',
+    activeCall: 'Trazer Gelo & Limão',
     callMinutesAgo: 2,
     items: [
       { id: 'it-101', name: 'Moqueca de Badejo & Camarão (2p)', qty: 1, unitPrice: 168, orderedBy: 'NFC Cliente', time: '18:40', station: 'cozinha_quente' },
@@ -194,7 +260,7 @@ const INITIAL_TABLES: TapTableFloorSeat[] = [
     peopleTapCount: 4,
     openMinutes: 75,
     waiterName: 'Mateus',
-    activeCall: '💳 Pediu Fechamento / Maquininha (Falta R$ 100)',
+    activeCall: 'Pediu Fechamento (Falta R$ 100)',
     callMinutesAgo: 1,
     items: [
       { id: 'it-301', name: 'Moqueca de Badejo & Camarão (2p)', qty: 1, unitPrice: 168, orderedBy: 'NFC Cliente', time: '18:10', station: 'cozinha_quente' },
@@ -213,7 +279,7 @@ const INITIAL_TABLES: TapTableFloorSeat[] = [
     peopleTapCount: 2,
     openMinutes: 88,
     waiterName: 'Lucas',
-    activeCall: '⚠️ 32 min sem novo pedido (Oferecer Rodada)',
+    activeCall: '32 min sem novo pedido',
     callMinutesAgo: 5,
     items: [
       { id: 'it-401', name: 'Isca de Badejo Empanada c/ Aipim', qty: 1, unitPrice: 74, orderedBy: 'NFC Cliente', time: '17:55', station: 'cozinha_quente' },
@@ -241,7 +307,7 @@ const INITIAL_TABLES: TapTableFloorSeat[] = [
     peopleTapCount: 2,
     openMinutes: 25,
     waiterName: 'Carla',
-    activeCall: '🥃 Chamou Garçom: +2 Copos Limpos c/ Gelo',
+    activeCall: '+2 Copos Limpos c/ Gelo',
     callMinutesAgo: 3,
     items: [
       { id: 'it-601', name: 'Bolinho de Peixe c/ Pimenta (8 un)', qty: 1, unitPrice: 58, orderedBy: 'NFC Cliente', time: '19:00', station: 'cozinha_quente' },
@@ -298,16 +364,23 @@ const INITIAL_PRODUCTS: RetailProduct[] = [
   { id: 'p-04', name: 'Chapéu de Palha Trançado à Mão', price: 110, costCmv: 32, stock: 5, minStock: 4, category: 'Acessórios', available: true, nfcScansToday: 22 },
 ];
 
+type RestaurantSubView = 'salao_mesas' | 'lancar_pedido' | 'kds_cozinha' | 'financeiro' | 'crm' | 'nfc_api';
+
 export const CaraivaUniversalBusinessApp: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const [orders, setOrders] = useState<UnifiedOrder[]>(() => getUnifiedOrders());
-  const [selectedNiche, setSelectedNiche] = useState<OrderNiche>(() => {
-    const fromUrl = searchParams.get('nicho') as OrderNiche;
-    return fromUrl || 'gastronomia';
-  });
-  const [activeTab, setActiveTab] = useState<
-    'operacao' | 'mesas_taptable' | 'financeiro' | 'crm' | 'integracoes_api' | 'placa_nfc'
-  >('operacao');
+
+  // Se não houver `?nicho=` na URL, exibe o CENTRALIZADOR DE NEGÓCIOS (Hub Inicial).
+  // Quando o usuário clica em um negócio, abre o sistema individual daquele negócio.
+  const activeNicheParam = searchParams.get('nicho') as OrderNiche | null;
+  const [viewMode, setViewMode] = useState<'hub_centralizador' | 'sistema_negocio'>(() =>
+    activeNicheParam ? 'sistema_negocio' : 'hub_centralizador'
+  );
+  const [selectedNiche, setSelectedNiche] = useState<OrderNiche>(() => activeNicheParam || 'gastronomia');
+  const [hubSearch, setHubSearch] = useState<string>('');
+
+  // Telas separadas dentro de cada negócio (1 função por tela, sem poluição!)
+  const [activeScreen, setActiveScreen] = useState<RestaurantSubView>('salao_mesas');
 
   const [suites, setSuites] = useState<SuiteRoom[]>(INITIAL_SUITES);
   const [tables, setTables] = useState<TapTableFloorSeat[]>(INITIAL_TABLES);
@@ -316,13 +389,13 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
   const [copiedReport, setCopiedReport] = useState(false);
   const [kdsStation, setKdsStation] = useState<'todas' | 'cozinha_quente' | 'bar_drinks'>('todas');
 
-  // Estados da Tela Inicial de Restaurante (Comanda da Mesa + Lançamento Manual PDV)
+  // Estados da Comanda e PDV Manual
   const [selectedTableNumber, setSelectedTableNumber] = useState<string>('01');
-  const [showManualPos, setShowManualPos] = useState<boolean>(false);
   const [posTargetTable, setPosTargetTable] = useState<string>('01');
   const [posCart, setPosCart] = useState<Record<string, number>>({});
   const [posNotes, setPosNotes] = useState<string>('');
   const [posCustomerName, setPosCustomerName] = useState<string>('');
+  const [posSuccessFeedback, setPosSuccessFeedback] = useState<string | null>(null);
 
   // Estados dos Conectores de Chave API
   const [apiConnections, setApiConnections] = useState({
@@ -345,13 +418,21 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
     return () => window.removeEventListener('caraiva:orders-updated', handleSync);
   }, []);
 
-  const handleNicheChange = (niche: OrderNiche) => {
+  const handleOpenBusinessUnit = (niche: OrderNiche, businessId?: string) => {
     setSelectedNiche(niche);
-    setSearchParams({ nicho: niche });
-    if (activeTab === 'mesas_taptable' && niche !== 'gastronomia') {
-      setActiveTab('operacao');
-    }
+    setViewMode('sistema_negocio');
+    setActiveScreen('salao_mesas');
+    setSearchParams({ nicho: niche, ...(businessId ? { id: businessId } : {}) });
   };
+
+  const handleBackToHub = () => {
+    setViewMode('hub_centralizador');
+    setSearchParams({});
+  };
+
+  // Negócio atualmente aberto
+  const currentBusinessUnit =
+    BUSINESS_DIRECTORY.find((b) => b.niche === selectedNiche) || BUSINESS_DIRECTORY[0];
 
   // Filtragem dos pedidos de acordo com o nicho selecionado
   const nicheOrders = orders.filter((o) => {
@@ -376,15 +457,13 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
   const pixPercentage = totalGross > 0 ? Math.round((totalPix / totalGross) * 100) : 72;
   const cardPercentage = 100 - pixPercentage;
 
-  // Custos para o DRE
-  const gatewayFees = totalPix * 0.0089 + totalCard * 0.0289; // 0.89% Pix, 2.89% Cartão
+  const gatewayFees = totalPix * 0.0089 + totalCard * 0.0289;
   const cmvEstimated = totalGross * (selectedNiche === 'hospedagem' ? 0.18 : selectedNiche === 'passeios_barcos' ? 0.22 : 0.29);
   const serviceTipPool = selectedNiche === 'gastronomia' ? totalGross * 0.1 : 0;
   const netOperatingProfit = totalGross - gatewayFees - cmvEstimated;
   const netMarginPercent = totalGross > 0 ? Math.round((netOperatingProfit / totalGross) * 100) : 68;
   const estimatedIfoodLoss = totalGross * 0.25;
 
-  // Métricas de Ocupação por Nicho (Para o Widget 2 ser 100% contextual!)
   const occupiedSuites = suites.filter((s) => s.status === 'ocupado' || s.status === 'checkin_hoje').length;
   const suitesOccupancyRate = Math.round((occupiedSuites / suites.length) * 100);
 
@@ -394,33 +473,28 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
   const occupancyWidgetData =
     selectedNiche === 'hospedagem'
       ? {
-          title: 'OCUPAÇÃO SUÍTES',
+          title: 'Ocupação de Suítes',
           rate: suitesOccupancyRate,
-          subtitle: `${occupiedSuites} de ${suites.length} suítes reservadas`,
-          badge: 'Mini PMS',
+          subtitle: `${occupiedSuites} de ${suites.length} suítes ocupadas`,
         }
       : selectedNiche === 'passeios_barcos'
       ? {
-          title: 'LOTAÇÃO LANCHAS',
+          title: 'Lotação de Embarcações',
           rate: 75,
-          subtitle: '9 de 12 vagas preenchidas hoje',
-          badge: 'Maré 0.2m',
+          subtitle: '9 de 12 assentos vendidos hoje',
         }
       : selectedNiche === 'conveniencia'
       ? {
-          title: 'CONVERSÃO TAG NFC',
+          title: 'Conversão Etiquetas NFC',
           rate: 84,
           subtitle: '104 leituras NFC nas peças hoje',
-          badge: 'Scan & Go',
         }
       : {
-          title: 'OCUPAÇÃO MESAS NFC',
+          title: 'Ocupação do Salão',
           rate: tablesOccupancyRate,
-          subtitle: `${occupiedTables} de ${tables.length} mesas com comanda`,
-          badge: 'Giro 42m',
+          subtitle: `${occupiedTables} de ${tables.length} mesas ativas`,
         };
 
-  // Barras Horárias por Nicho (Com alturas fixas em pixels para nunca colapsar!)
   const hourlyBars =
     selectedNiche === 'hospedagem'
       ? [
@@ -449,7 +523,6 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
           { label: '21h', px: 36, val: 'R$ 1.120' },
         ];
 
-  // CRM
   const uniqueCustomers = Array.from(
     new Map(
       nicheOrders.map((o) => [
@@ -600,7 +673,6 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
 
     const addedTotal = orderItems.reduce((acc, i) => acc + i.subtotal, 0);
 
-    // 1. Se o alvo for uma Mesa (01 a 08), atualiza a Comanda da Mesa ao vivo
     if (posTargetTable !== 'delivery_pousada') {
       setTables((prev) =>
         prev.map((t) => {
@@ -618,7 +690,6 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
       setSelectedTableNumber(posTargetTable);
     }
 
-    // 2. Envia também para o KDS (Cozinha & Bar) para preparo imediato
     createUnifiedOrder({
       businessId: 'boteco-do-para',
       businessName: 'Boteco do Pará',
@@ -655,21 +726,17 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
     setPosCart({});
     setPosNotes('');
     setPosCustomerName('');
-    setShowManualPos(false);
+    setPosSuccessFeedback(
+      posTargetTable === 'delivery_pousada'
+        ? `Pedido de ${formatCurrency(addedTotal)} enviado para a Cozinha (Delivery)!`
+        : `Pedido de ${formatCurrency(addedTotal)} lançado na Mesa ${posTargetTable} e enviado para a Cozinha!`
+    );
+    setTimeout(() => setPosSuccessFeedback(null), 3500);
   };
 
   const handleCopyShiftReport = () => {
     const reportText = [
-      `📊 *FECHAMENTO DE TURNO — TAPTABLE & CARAÍVA BUSINESS OS*`,
-      `Estabelecimento: ${
-        selectedNiche === 'gastronomia'
-          ? 'Boteco do Pará'
-          : selectedNiche === 'hospedagem'
-          ? 'Pousada Casa da Praia'
-          : selectedNiche === 'passeios_barcos'
-          ? 'Caraíva Brasil Turismo'
-          : 'Ateliê Arte da Terra'
-      }`,
+      `📊 *FECHAMENTO DE TURNO — ${currentBusinessUnit.name.toUpperCase()}*`,
       `──────────────────────────`,
       `💰 (+) Receita Bruta: ${formatCurrency(totalGross)}`,
       `⚡ Via Pix NFC (0,89%): ${formatCurrency(totalPix)} (${pixPercentage}%)`,
@@ -678,8 +745,6 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
       `📦 (-) CMV / Custos Insumos: -${formatCurrency(cmvEstimated)}`,
       `──────────────────────────`,
       `✅ (=) LUCRO LÍQUIDO REAL: ${formatCurrency(netOperatingProfit)} (Margem ${netMarginPercent}%)`,
-      `🔥 Economia vs. iFood/OTAs: +${formatCurrency(estimatedIfoodLoss)} preservados no caixa`,
-      `⭐ NPS do Turno: 94 (Excelente)`,
     ].join('\n');
 
     navigator.clipboard.writeText(reportText).catch(() => {});
@@ -687,1203 +752,778 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
     setTimeout(() => setCopiedReport(false), 2500);
   };
 
-  return (
-    <div className="min-h-screen bg-[#07090A] text-[#FFF4ED] font-sans pb-32 selection:bg-[#F6C945] selection:text-slate-950">
-      {/* ======================================================== */}
-      {/* TOPBAR EXECUTIVO                                         */}
-      {/* ======================================================== */}
-      <header className="sticky top-0 z-40 bg-[#07090A]/95 backdrop-blur-2xl border-b border-white/[0.08] px-4 py-3">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <Link
-              to="/guia"
-              className="px-3 py-1.5 rounded-full bg-white/5 hover:bg-white/10 border border-white/10 text-xs font-bold text-slate-300 hover:text-white transition"
-            >
-              ← Guia B2C
-            </Link>
+  // ============================================================================
+  // TELA 1: CENTRALIZADOR DE NEGÓCIOS (HUB DA REDE CARAÍVA DIGITAL)
+  // ============================================================================
+  if (viewMode === 'hub_centralizador') {
+    const filteredBusinesses = BUSINESS_DIRECTORY.filter(
+      (b) =>
+        b.name.toLowerCase().includes(hubSearch.toLowerCase()) ||
+        b.categoryLabel.toLowerCase().includes(hubSearch.toLowerCase()) ||
+        b.systemModuleTitle.toLowerCase().includes(hubSearch.toLowerCase())
+    );
 
-            <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-400 animate-ping" />
-              <h1 className="text-xs font-black tracking-widest uppercase text-white">
-                TapTable • Business OS
-              </h1>
-              <span className="hidden md:inline-flex text-[10px] font-extrabold px-2 py-0.5 rounded-full bg-[#F6C945]/15 text-[#F6C945] border border-[#F6C945]/30">
-                NFC Intelligence 3.0
-              </span>
+    const networkTotalGmv = BUSINESS_DIRECTORY.reduce((acc, b) => acc + b.todayRevenuePreview, 0);
+    const networkTotalPlates = BUSINESS_DIRECTORY.reduce((acc, b) => acc + b.nfcPlatesActive, 0);
+
+    return (
+      <div className="min-h-screen bg-[#0B0D10] text-slate-100 font-sans pb-24">
+        {/* Topbar Minimalista do Centralizador */}
+        <header className="sticky top-0 z-30 bg-[#0B0D10]/90 backdrop-blur-xl border-b border-white/[0.06] px-6 py-4">
+          <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="w-9 h-9 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-slate-200">
+                <LayoutGrid className="w-4 h-4" />
+              </div>
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">
+                    Caraíva Digital • Centralizador B2B
+                  </span>
+                </div>
+                <h1 className="text-base font-bold text-white tracking-tight">
+                  Central de Negócios & Sistemas por Nicho
+                </h1>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2.5">
+              <Link
+                to="/guia/pedidos"
+                className="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-medium text-slate-200 flex items-center gap-1.5 transition"
+              >
+                <span>App do Cliente</span>
+                <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
+              </Link>
+              <Link
+                to="/guia"
+                className="px-3.5 py-2 rounded-xl bg-white text-slate-950 hover:bg-slate-200 text-xs font-semibold transition"
+              >
+                Abrir Guia Caraíva
+              </Link>
+            </div>
+          </div>
+        </header>
+
+        <main className="max-w-6xl mx-auto px-6 pt-8 space-y-8">
+          {/* Resumo Executivo Clean da Plataforma */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.06] space-y-1">
+              <span className="text-xs font-medium text-slate-400">Negócios Integrados na Rede</span>
+              <div className="flex items-baseline justify-between pt-1">
+                <strong className="text-2xl font-bold text-white">{BUSINESS_DIRECTORY.length} unidades</strong>
+                <span className="text-xs text-emerald-400 font-medium">100% Online</span>
+              </div>
+              <p className="text-[11px] text-slate-500">Gastronomia, Pousadas, Náutica e Varejo</p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.06] space-y-1">
+              <span className="text-xs font-medium text-slate-400">Volume Transacionado Hoje (GMV)</span>
+              <div className="flex items-baseline justify-between pt-1">
+                <strong className="text-2xl font-bold text-white">{formatCurrency(networkTotalGmv)}</strong>
+                <span className="text-xs text-slate-400 font-medium">Pix & Tap NFC</span>
+              </div>
+              <p className="text-[11px] text-slate-500">Liquidação direta na conta de cada parceiro</p>
+            </div>
+
+            <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.06] space-y-1">
+              <span className="text-xs font-medium text-slate-400">Placas & Smart Tags NFC Ativas</span>
+              <div className="flex items-baseline justify-between pt-1">
+                <strong className="text-2xl font-bold text-white">{networkTotalPlates} tags NFC</strong>
+                <span className="text-xs text-slate-300 font-medium">Mesas, Suítes e Lojas</span>
+              </div>
+              <p className="text-[11px] text-slate-500">Zero necessidade de aplicativo nativo</p>
             </div>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* Barra de Busca e Instrução de Redirecionamento */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
+            <div>
+              <h2 className="text-lg font-bold text-white">Selecione o Estabelecimento para Gerenciar</h2>
+              <p className="text-xs text-slate-400 mt-0.5">
+                Cada estabelecimento abre seu próprio sistema dedicado (Salão NFC, Mini PMS, Embarque ou Varejo).
+              </p>
+            </div>
+
+            <div className="relative w-full sm:w-72">
+              <Search className="w-4 h-4 text-slate-500 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                value={hubSearch}
+                onChange={(e) => setHubSearch(e.target.value)}
+                placeholder="Buscar negócio ou nicho..."
+                className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#121519] border border-white/[0.08] text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-white/25"
+              />
+            </div>
+          </div>
+
+          {/* Grid Clean dos Negócios que Redirecionam para seus Sistemas */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {filteredBusinesses.map((biz) => (
+              <div
+                key={biz.id}
+                onClick={() => handleOpenBusinessUnit(biz.niche, biz.id)}
+                className="p-6 rounded-2xl bg-[#121519] hover:bg-[#161A20] border border-white/[0.07] hover:border-white/[0.18] transition cursor-pointer flex flex-col justify-between gap-5 group"
+              >
+                <div className="space-y-3">
+                  <div className="flex items-start justify-between gap-3">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-white/[0.05] border border-white/[0.08] flex items-center justify-center text-slate-200">
+                        {biz.niche === 'gastronomia' && <Utensils className="w-4 h-4" />}
+                        {biz.niche === 'hospedagem' && <BedDouble className="w-4 h-4" />}
+                        {biz.niche === 'passeios_barcos' && <Compass className="w-4 h-4" />}
+                        {biz.niche === 'conveniencia' && <Package className="w-4 h-4" />}
+                      </div>
+                      <div>
+                        <span className="text-[11px] font-medium text-slate-400">
+                          {biz.categoryLabel} • {biz.location}
+                        </span>
+                        <h3 className="text-base font-bold text-white group-hover:text-amber-200 transition">
+                          {biz.name}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <span className="px-2.5 py-1 rounded-lg bg-white/[0.04] border border-white/[0.07] text-[11px] font-medium text-slate-300">
+                      {biz.nfcPlatesActive} tags NFC
+                    </span>
+                  </div>
+
+                  <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] flex items-center justify-between text-xs">
+                    <div>
+                      <span className="text-slate-400 block text-[10px] uppercase tracking-wider font-semibold">
+                        Módulo Operacional
+                      </span>
+                      <strong className="text-slate-200 font-semibold mt-0.5 block">
+                        {biz.systemModuleTitle}
+                      </strong>
+                    </div>
+                    <div className="text-right">
+                      <span className="text-slate-400 block text-[10px] uppercase tracking-wider font-semibold">
+                        Hoje
+                      </span>
+                      <strong className="text-white font-bold mt-0.5 block">
+                        {formatCurrency(biz.todayRevenuePreview)}
+                      </strong>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between pt-1 border-t border-white/[0.05]">
+                  <div className="flex items-center gap-2 text-xs text-slate-400">
+                    <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                    <span>{biz.statusText}</span>
+                  </div>
+
+                  <span className="inline-flex items-center gap-1 text-xs font-semibold text-white group-hover:translate-x-0.5 transition">
+                    <span>Abrir Painel</span>
+                    <ChevronRight className="w-4 h-4 text-slate-400" />
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </main>
+      </div>
+    );
+  }
+
+  // ============================================================================
+  // TELA 2: AMBIENTE INDIVIDUAL DO NEGÓCIO (CLEAN, SEPARADO POR TELAS)
+  // ============================================================================
+  const activeWaiterCalls = tables.filter((t) => Boolean(t.activeCall));
+  const posCartTotalItems = Object.values(posCart).reduce((acc, q) => acc + q, 0);
+  const posCartTotalAmount = Object.entries(posCart).reduce((acc, [id, qty]) => {
+    const item = RESTAURANT_QUICK_MENU.find((m) => m.id === id);
+    return acc + (item ? item.price * qty : 0);
+  }, 0);
+
+  return (
+    <div className="min-h-screen bg-[#0B0D10] text-slate-100 font-sans pb-28">
+      {/* TOPBAR CLEAN DO ESTABELECIMENTO INDIVIDUAL */}
+      <header className="sticky top-0 z-30 bg-[#0B0D10]/90 backdrop-blur-xl border-b border-white/[0.06] px-6 py-3.5">
+        <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-4">
+          <div className="flex items-center gap-3">
             <button
-              onClick={handleCopyShiftReport}
-              className="hidden sm:flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/30 text-xs font-bold text-emerald-300 transition cursor-pointer"
+              onClick={handleBackToHub}
+              className="px-3 py-1.5 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] border border-white/[0.08] text-xs font-medium text-slate-300 flex items-center gap-1.5 transition cursor-pointer"
+              title="Voltar para a Central de Negócios"
             >
-              {copiedReport ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
-              <span>{copiedReport ? 'DRE Copiado!' : 'Copiar Fechamento'}</span>
+              <ArrowLeft className="w-3.5 h-3.5" />
+              <span>Central de Negócios</span>
             </button>
+
+            <div className="h-4 w-px bg-white/10 hidden sm:block" />
+
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                <span className="text-[11px] font-medium text-slate-400">
+                  {currentBusinessUnit.categoryLabel} • {currentBusinessUnit.systemModuleTitle}
+                </span>
+              </div>
+              <h1 className="text-base font-bold text-white tracking-tight">
+                {currentBusinessUnit.name}
+              </h1>
+            </div>
+          </div>
+
+          {/* Ações Rápidas Clean no Topo */}
+          <div className="flex items-center gap-2">
+            {/* Troca rápida de negócio se desejar */}
+            <select
+              value={selectedNiche}
+              onChange={(e) => handleOpenBusinessUnit(e.target.value as OrderNiche)}
+              className="px-3 py-1.5 rounded-xl bg-[#121519] border border-white/[0.08] text-xs text-slate-300 focus:outline-none cursor-pointer"
+            >
+              {BUSINESS_DIRECTORY.map((b) => (
+                <option key={b.id} value={b.niche} className="bg-[#121519] text-white">
+                  Alternar: {b.name}
+                </option>
+              ))}
+            </select>
 
             <button
               onClick={reloadData}
-              className={`p-2 rounded-xl bg-white/5 border border-white/10 text-slate-300 hover:text-white transition cursor-pointer ${
-                isRefreshing ? 'animate-spin text-[#F6C945]' : ''
-              }`}
-              title="Atualizar dados em tempo real"
+              className="p-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 transition cursor-pointer"
+              title="Sincronizar"
             >
-              <RefreshCw className="w-4 h-4" />
+              <RefreshCw className={`w-3.5 h-3.5 ${isRefreshing ? 'animate-spin' : ''}`} />
             </button>
-
-            <Link
-              to="/guia/pedidos"
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/5 border border-white/10 text-xs font-bold text-slate-300 hover:text-white"
-            >
-              <span className="hidden sm:inline">Tela do Cliente</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </Link>
-          </div>
-        </div>
-      </header>
-
-      {/* ======================================================== */}
-      {/* SELETOR DE ESTABELECIMENTO MULTI-NICHO                   */}
-      {/* ======================================================== */}
-      <div className="border-b border-white/[0.06] bg-[#0A0D10] px-4 py-2.5">
-        <div className="max-w-6xl mx-auto flex items-center gap-2 overflow-x-auto scrollbar-none">
-          <span className="text-[10px] font-black uppercase tracking-wider text-slate-500 mr-1 flex items-center gap-1 shrink-0">
-            <Store className="w-3.5 h-3.5 text-[#F6C945]" /> Negócio:
-          </span>
-
-          <button
-            onClick={() => handleNicheChange('gastronomia')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold shrink-0 transition flex items-center gap-2 cursor-pointer ${
-              selectedNiche === 'gastronomia'
-                ? 'bg-gradient-to-r from-[#F6C945] to-[#ffd56b] text-slate-950 shadow-md'
-                : 'bg-white/5 text-slate-400 hover:text-white border border-white/5'
-            }`}
-          >
-            <ChefHat className="w-3.5 h-3.5" />
-            <span>Boteco do Pará (Restaurante & TapTable NFC)</span>
-          </button>
-
-          <button
-            onClick={() => handleNicheChange('hospedagem')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold shrink-0 transition flex items-center gap-2 cursor-pointer ${
-              selectedNiche === 'hospedagem'
-                ? 'bg-gradient-to-r from-[#F6C945] to-[#ffd56b] text-slate-950 shadow-md'
-                : 'bg-white/5 text-slate-400 hover:text-white border border-white/5'
-            }`}
-          >
-            <BedDouble className="w-3.5 h-3.5" />
-            <span>Pousada Casa da Praia (Mini PMS & Quarto NFC)</span>
-          </button>
-
-          <button
-            onClick={() => handleNicheChange('passeios_barcos')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold shrink-0 transition flex items-center gap-2 cursor-pointer ${
-              selectedNiche === 'passeios_barcos'
-                ? 'bg-gradient-to-r from-[#F6C945] to-[#ffd56b] text-slate-950 shadow-md'
-                : 'bg-white/5 text-slate-400 hover:text-white border border-white/5'
-            }`}
-          >
-            <Compass className="w-3.5 h-3.5" />
-            <span>Caraíva Brasil (Lanchas & Embarque NFC)</span>
-          </button>
-
-          <button
-            onClick={() => handleNicheChange('conveniencia')}
-            className={`px-3.5 py-1.5 rounded-xl text-xs font-extrabold shrink-0 transition flex items-center gap-2 cursor-pointer ${
-              selectedNiche === 'conveniencia'
-                ? 'bg-gradient-to-r from-[#F6C945] to-[#ffd56b] text-slate-950 shadow-md'
-                : 'bg-white/5 text-slate-400 hover:text-white border border-white/5'
-            }`}
-          >
-            <Package className="w-3.5 h-3.5" />
-            <span>Ateliê Arte da Terra (Varejo Scan & Go NFC)</span>
-          </button>
-        </div>
-      </div>
-
-      {/* ======================================================== */}
-      {/* 4 WIDGETS GRÁFICOS VISUAIS (100% CONTEXTUAIS POR NICHO)  */}
-      {/* ======================================================== */}
-      <div className="max-w-6xl mx-auto px-4 pt-5">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3.5">
-          {/* WIDGET 1: DONUT DE RECEITA & PIX VS CARTÃO */}
-          <div className="p-4 rounded-3xl bg-[#111417] border border-white/[0.08] flex items-center justify-between shadow-xl">
-            <div className="space-y-1">
-              <div className="flex items-center gap-1.5">
-                <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                  Faturamento Hoje
-                </span>
-                <span className="text-[9px] font-extrabold px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-400">
-                  +18%
-                </span>
-              </div>
-              <p className="text-2xl font-black text-white">{formatCurrency(totalGross)}</p>
-              <div className="flex flex-wrap items-center gap-2 text-[10px] pt-1">
-                <span className="flex items-center gap-1 text-[#F6C945] font-bold">
-                  <span className="w-2 h-2 rounded-full bg-[#F6C945]" /> {pixPercentage}% Pix ({formatCurrency(totalPix)})
-                </span>
-                <span className="flex items-center gap-1 text-sky-400 font-bold">
-                  <span className="w-2 h-2 rounded-full bg-sky-400" /> {cardPercentage}% Cartão
-                </span>
-              </div>
-            </div>
-
-            {/* SVG Donut Ring */}
-            <div className="relative w-16 h-16 shrink-0 flex items-center justify-center">
-              <svg className="w-full h-full -rotate-90" viewBox="0 0 36 36">
-                <circle cx="18" cy="18" r="14" fill="none" stroke="#1e242b" strokeWidth="4.2" />
-                <circle
-                  cx="18"
-                  cy="18"
-                  r="14"
-                  fill="none"
-                  stroke="#F6C945"
-                  strokeWidth="4.2"
-                  strokeDasharray={`${pixPercentage * 0.88} 100`}
-                  strokeLinecap="round"
-                />
-                <circle
-                  cx="18"
-                  cy="18"
-                  r="14"
-                  fill="none"
-                  stroke="#38bdf8"
-                  strokeWidth="4.2"
-                  strokeDasharray={`${cardPercentage * 0.88} 100`}
-                  strokeDashoffset={`-${pixPercentage * 0.88}`}
-                  strokeLinecap="round"
-                />
-              </svg>
-              <Zap className="w-4 h-4 text-[#F6C945] absolute" />
-            </div>
-          </div>
-
-          {/* WIDGET 2: TERMÔMETRO DE OCUPAÇÃO / CONVERSÃO DO NICHO */}
-          <div className="p-4 rounded-3xl bg-[#111417] border border-white/[0.08] flex flex-col justify-between shadow-xl space-y-2.5">
-            <div className="flex items-center justify-between">
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                {occupancyWidgetData.title}
-              </span>
-              <span className="text-sm font-black text-[#F6C945]">{occupancyWidgetData.rate}%</span>
-            </div>
-
-            {/* Barra de Progresso Segmentada */}
-            <div className="w-full h-3 rounded-full bg-white/[0.07] overflow-hidden p-0.5">
-              <div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-400 via-[#F6C945] to-amber-500 transition-all duration-500"
-                style={{ width: `${occupancyWidgetData.rate}%` }}
-              />
-            </div>
-
-            <div className="flex items-center justify-between text-[11px]">
-              <span className="text-slate-300 font-medium">{occupancyWidgetData.subtitle}</span>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-white/5 text-emerald-400 border border-white/10">
-                {occupancyWidgetData.badge}
-              </span>
-            </div>
-          </div>
-
-          {/* WIDGET 3: GRÁFICO DE BARRAS DE PICO HORÁRIO (ALTURAS EM PX NÍTIDAS) */}
-          <div className="p-4 rounded-3xl bg-[#111417] border border-white/[0.08] flex flex-col justify-between shadow-xl">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">
-                Curva de Demanda
-              </span>
-              <span className="text-[10px] font-extrabold text-[#F6C945] flex items-center gap-1">
-                <Flame className="w-3.5 h-3.5 text-[#F6C945]" /> Pico 17h Pôr do Sol
-              </span>
-            </div>
-
-            {/* Barras com alturas em pixels explícitas */}
-            <div className="flex items-end justify-between gap-2 pt-1 h-14">
-              {hourlyBars.map((bar, i) => (
-                <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1 group">
-                  <div
-                    className={`w-full rounded-t-md transition-all ${
-                      bar.hot
-                        ? 'bg-gradient-to-t from-[#F6C945] to-[#ffe07d] shadow-md shadow-[#F6C945]/30'
-                        : 'bg-slate-700/70 group-hover:bg-slate-500'
-                    }`}
-                    style={{ height: `${bar.px}px` }}
-                    title={`${bar.label}: ${bar.val}`}
-                  />
-                  <span className={`text-[9px] font-bold ${bar.hot ? 'text-[#F6C945]' : 'text-slate-400'}`}>
-                    {bar.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* WIDGET 4: LUCRO LÍQUIDO & ECONOMIA REAL ZERO COMISSÃO */}
-          <div className="p-4 rounded-3xl bg-gradient-to-br from-emerald-950/50 via-[#111715] to-[#111417] border border-emerald-500/30 flex items-center justify-between shadow-xl">
-            <div className="space-y-1">
-              <span className="text-[10px] uppercase font-bold text-emerald-300 tracking-wider">
-                Lucro Líquido Real (DRE)
-              </span>
-              <p className="text-2xl font-black text-emerald-400">
-                {formatCurrency(netOperatingProfit)}
-              </p>
-              <p className="text-[10px] text-slate-300">
-                Economia de <strong className="text-white">+{formatCurrency(estimatedIfoodLoss)}</strong> vs iFood
-              </p>
-            </div>
-            <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 border border-emerald-500/30 text-emerald-300 flex flex-col items-center justify-center">
-              <span className="text-xs font-black">{netMarginPercent}%</span>
-              <span className="text-[8px] uppercase font-bold">Margem</span>
-            </div>
           </div>
         </div>
 
-        {/* ======================================================== */}
-        {/* COPILOT IA DE TURNO (INSIGHT ACIONÁVEL EM 1 CLIQUE)      */}
-        {/* ======================================================== */}
-        <div className="mt-3.5 p-3.5 rounded-2xl bg-gradient-to-r from-[#171510] via-[#121518] to-[#111417] border border-[#F6C945]/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="p-2 rounded-xl bg-[#F6C945]/15 text-[#F6C945] border border-[#F6C945]/30 shrink-0">
-              <Sparkles className="w-4 h-4" />
-            </div>
-            <div className="text-xs">
-              <span className="font-black text-[#F6C945] uppercase tracking-wider mr-2">
-                Copilot IA • Insight Agora:
-              </span>
-              <span className="text-slate-200">
-                {selectedNiche === 'gastronomia'
-                  ? 'Mesa 04 está há 32 min sem pedir bebidas e Mesa 03 já pagou 75% da conta via Split Bill NFC.'
-                  : selectedNiche === 'hospedagem'
-                  ? 'Suíte Amendoeira tem check-in às 14h (hóspede já preencheu ficha no celular via NFC). Bangalô pediu 2 toalhas.'
-                  : selectedNiche === 'passeios_barcos'
-                  ? 'Maré baixa de 0.2m amanhã às 09:30. Restam apenas 3 vagas na Lancha Corumbau — dispare alerta para hóspedes.'
-                  : 'Canga Artesanal teve 34 leituras na etiqueta NFC hoje. Estoque da Cerâmica Rústica chegou ao mínimo (2 un).'}
-              </span>
-            </div>
-          </div>
-
+        {/* NAVEGAÇÃO PRINCIPAL DE TELAS SEPARADAS (1 FUNÇÃO POR TELA) */}
+        <div className="max-w-6xl mx-auto pt-3 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
           <button
-            onClick={() =>
-              setActiveTab(
-                selectedNiche === 'gastronomia' ? 'mesas_taptable' : selectedNiche === 'conveniencia' ? 'operacao' : 'financeiro'
-              )
-            }
-            className="px-3.5 py-1.5 rounded-xl bg-[#F6C945] text-slate-950 font-black text-xs shrink-0 hover:brightness-110 transition cursor-pointer flex items-center gap-1"
-          >
-            <span>Agir Agora</span>
-            <ArrowUpRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-      </div>
-
-      {/* ======================================================== */}
-      {/* BARRA DE NAVEGAÇÃO DE ABAS DO SISTEMA                    */}
-      {/* ======================================================== */}
-      <div className="max-w-6xl mx-auto px-4 pt-5">
-        <div className="flex items-center gap-2 border-b border-white/[0.08] pb-2.5 overflow-x-auto scrollbar-none">
-          <button
-            onClick={() => setActiveTab('operacao')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-2 cursor-pointer ${
-              activeTab === 'operacao'
-                ? 'bg-[#F6C945] text-slate-950 shadow-sm'
-                : 'bg-white/5 text-slate-400 hover:text-white'
+            onClick={() => setActiveScreen('salao_mesas')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
+              activeScreen === 'salao_mesas'
+                ? 'bg-white text-slate-950'
+                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
-            <Sparkles className="w-3.5 h-3.5" />
+            <Store className="w-3.5 h-3.5" />
             <span>
-              {selectedNiche === 'hospedagem'
-                ? '1. Mapa de Suítes (Mini PMS)'
-                : selectedNiche === 'gastronomia'
-                ? '1. Tela Inicial: Mesas, Chamados & Pedidos'
-                : selectedNiche === 'conveniencia'
-                ? '1. Estoque & Ficha Técnica'
-                : '1. Manifesto de Embarque'}
+              {selectedNiche === 'gastronomia'
+                ? `1. Mesas & Comandas (${occupiedTables}/${tables.length})`
+                : selectedNiche === 'hospedagem'
+                ? `1. Mapa de Suítes (${occupiedSuites}/${suites.length})`
+                : selectedNiche === 'passeios_barcos'
+                ? '1. Manifesto de Embarque'
+                : '1. Catálogo & Estoque'}
             </span>
+            {selectedNiche === 'gastronomia' && activeWaiterCalls.length > 0 && (
+              <span
+                className={`px-1.5 py-0.2 rounded-full text-[10px] font-bold ${
+                  activeScreen === 'salao_mesas'
+                    ? 'bg-slate-950 text-amber-300'
+                    : 'bg-amber-500/20 text-amber-300'
+                }`}
+              >
+                {activeWaiterCalls.length}
+              </span>
+            )}
           </button>
 
           {selectedNiche === 'gastronomia' && (
-            <button
-              onClick={() => setActiveTab('mesas_taptable')}
-              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-2 cursor-pointer ${
-                activeTab === 'mesas_taptable'
-                  ? 'bg-[#F6C945] text-slate-950 shadow-sm'
-                  : 'bg-white/5 text-slate-400 hover:text-white'
-              }`}
-            >
-              <QrCode className="w-3.5 h-3.5" />
-              <span>2. Visão Tela Cheia Salão & Gorjetas ({occupiedTables}/{tables.length})</span>
-            </button>
+            <>
+              <button
+                onClick={() => setActiveScreen('lancar_pedido')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
+                  activeScreen === 'lancar_pedido'
+                    ? 'bg-white text-slate-950'
+                    : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                }`}
+              >
+                <PlusCircle className="w-3.5 h-3.5" />
+                <span>2. Lançar Pedido Manual (PDV)</span>
+              </button>
+
+              <button
+                onClick={() => setActiveScreen('kds_cozinha')}
+                className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
+                  activeScreen === 'kds_cozinha'
+                    ? 'bg-white text-slate-950'
+                    : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
+                }`}
+              >
+                <ChefHat className="w-3.5 h-3.5" />
+                <span>3. Pedidos na Cozinha & Bar ({nicheOrders.length})</span>
+              </button>
+            </>
           )}
 
           <button
-            onClick={() => setActiveTab('financeiro')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-2 cursor-pointer ${
-              activeTab === 'financeiro'
-                ? 'bg-[#F6C945] text-slate-950 shadow-sm'
-                : 'bg-white/5 text-slate-400 hover:text-white'
+            onClick={() => setActiveScreen('financeiro')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
+              activeScreen === 'financeiro'
+                ? 'bg-white text-slate-950'
+                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
-            <TrendingUp className="w-3.5 h-3.5" />
-            <span>DRE & Relatório Financeiro</span>
+            <Receipt className="w-3.5 h-3.5" />
+            <span>DRE & Financeiro</span>
           </button>
 
           <button
-            onClick={() => setActiveTab('crm')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-2 cursor-pointer ${
-              activeTab === 'crm'
-                ? 'bg-[#F6C945] text-slate-950 shadow-sm'
-                : 'bg-white/5 text-slate-400 hover:text-white'
+            onClick={() => setActiveScreen('crm')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
+              activeScreen === 'crm'
+                ? 'bg-white text-slate-950'
+                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
             <Users className="w-3.5 h-3.5" />
-            <span>CRM & WhatsApp ({uniqueCustomers.length})</span>
+            <span>Clientes ({uniqueCustomers.length})</span>
           </button>
 
           <button
-            onClick={() => setActiveTab('placa_nfc')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-2 cursor-pointer ${
-              activeTab === 'placa_nfc'
-                ? 'bg-[#F6C945] text-slate-950 shadow-sm'
-                : 'bg-white/5 text-slate-400 hover:text-white'
+            onClick={() => setActiveScreen('nfc_api')}
+            className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition shrink-0 flex items-center gap-2 cursor-pointer ${
+              activeScreen === 'nfc_api'
+                ? 'bg-white text-slate-950'
+                : 'text-slate-400 hover:text-white hover:bg-white/[0.04]'
             }`}
           >
             <Smartphone className="w-3.5 h-3.5" />
-            <span>Tecnologia NFC do Nicho</span>
-          </button>
-
-          <button
-            onClick={() => setActiveTab('integracoes_api')}
-            className={`px-3.5 py-2 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-2 cursor-pointer ${
-              activeTab === 'integracoes_api'
-                ? 'bg-[#F6C945] text-slate-950 shadow-sm'
-                : 'bg-white/5 text-slate-400 hover:text-white'
-            }`}
-          >
-            <KeyRound className="w-3.5 h-3.5" />
-            <span>Chaves API</span>
+            <span>Placas NFC & API</span>
           </button>
         </div>
-      </div>
+      </header>
 
-      {/* ======================================================== */}
-      {/* CONTEÚDO 1: OPERAÇÃO POR NICHO                           */}
-      {/* ======================================================== */}
-      {activeTab === 'operacao' && (
-        <main className="max-w-6xl mx-auto px-4 pt-6 space-y-6">
-          {/* A. POUSADAS: MINI PMS + CONCIERGE NFC DO QUARTO */}
-          {selectedNiche === 'hospedagem' && (
-            <div className="space-y-4">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div>
-                  <h3 className="text-lg font-black text-white">Mapa de Ocupação, Governança & Room Service NFC</h3>
-                  <p className="text-xs text-slate-400">
-                    Controle check-in express, limpeza de camareira e chamados vindos da placa NFC de cada suíte.
-                  </p>
-                </div>
+      {/* CONTEÚDO PRINCIPAL DO NEGÓCIO */}
+      <main className="max-w-6xl mx-auto px-6 pt-6 space-y-6">
+        {/* ==================================================================== */}
+        {/* TELA A: SALÃO DE MESAS & COMANDAS (PARA RESTAURANTE)                 */}
+        {/* ==================================================================== */}
+        {activeScreen === 'salao_mesas' && selectedNiche === 'gastronomia' && (
+          <div className="space-y-6">
+            {/* Resumo Clean em 4 Cards Sóbrios */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5">
+              <div className="p-4 rounded-2xl bg-[#121519] border border-white/[0.06]">
+                <span className="text-[11px] text-slate-400 font-medium">Faturamento do Turno</span>
+                <p className="text-xl font-bold text-white mt-1">{formatCurrency(totalGross)}</p>
+                <span className="text-[11px] text-slate-500 mt-0.5 block">
+                  {pixPercentage}% via Pix NFC • {cardPercentage}% Cartão
+                </span>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {suites.map((suite) => (
-                  <div
-                    key={suite.id}
-                    className={`p-5 rounded-3xl border transition shadow-xl space-y-4 ${
-                      suite.status === 'ocupado'
-                        ? 'bg-[#121920] border-sky-500/40'
-                        : suite.status === 'checkin_hoje'
-                        ? 'bg-[#1e1c15] border-amber-500/40'
-                        : suite.status === 'limpeza'
-                        ? 'bg-[#1f1414] border-rose-500/40'
-                        : 'bg-[#121614] border-emerald-500/40'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <span className="text-[10px] font-black uppercase tracking-wider text-slate-400">
-                          {suite.category.toUpperCase()} • PLACA NFC ATIVA
-                        </span>
-                        <h4 className="text-base font-bold text-white mt-0.5">{suite.name}</h4>
-                        <p className="text-xs text-[#F6C945] font-extrabold">
-                          Diária: {formatCurrency(suite.dailyRate)}
-                        </p>
-                      </div>
+              <div className="p-4 rounded-2xl bg-[#121519] border border-white/[0.06]">
+                <span className="text-[11px] text-slate-400 font-medium">Mesas Ocupadas</span>
+                <p className="text-xl font-bold text-white mt-1">
+                  {occupiedTables} de {tables.length} mesas
+                </p>
+                <span className="text-[11px] text-slate-500 mt-0.5 block">
+                  Taxa de ocupação: {tablesOccupancyRate}%
+                </span>
+              </div>
 
-                      <span
-                        className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border ${
-                          suite.status === 'ocupado'
-                            ? 'bg-sky-500/20 text-sky-300 border-sky-500/40'
-                            : suite.status === 'checkin_hoje'
-                            ? 'bg-amber-500/20 text-amber-300 border-amber-500/40 animate-pulse'
-                            : suite.status === 'limpeza'
-                            ? 'bg-rose-500/20 text-rose-300 border-rose-500/40'
-                            : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
-                        }`}
-                      >
-                        {suite.status === 'ocupado'
-                          ? 'Em Estadia'
-                          : suite.status === 'checkin_hoje'
-                          ? 'Check-in Hoje'
-                          : suite.status === 'limpeza'
-                          ? 'Governança / Sujo'
-                          : 'Livre p/ Reserva'}
-                      </span>
-                    </div>
+              <div className="p-4 rounded-2xl bg-[#121519] border border-white/[0.06]">
+                <span className="text-[11px] text-slate-400 font-medium">Chamados de Garçom</span>
+                <p className="text-xl font-bold text-white mt-1">{activeWaiterCalls.length} ativos</p>
+                <span className="text-[11px] text-slate-500 mt-0.5 block">
+                  Acionados via Placa NFC na mesa
+                </span>
+              </div>
 
-                    {suite.currentGuest ? (
-                      <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5 space-y-2 text-xs">
-                        <div className="flex items-center justify-between">
-                          <strong className="text-white">{suite.currentGuest.name}</strong>
-                          <span className="text-emerald-400 font-bold">
-                            Pago: {formatCurrency(suite.currentGuest.paidAmount)}
-                          </span>
-                        </div>
-                        <p className="text-[11px] text-slate-400">
-                          Estadia: {suite.currentGuest.checkIn} até {suite.currentGuest.checkOut} ({suite.currentGuest.guests} hóspedes)
-                        </p>
-
-                        {/* Chamados vindos da Placa NFC na Cabeceira da Cama */}
-                        {suite.nfcRequests && suite.nfcRequests.length > 0 && (
-                          <div className="pt-2 border-t border-white/10 space-y-1">
-                            <span className="text-[10px] font-black uppercase text-[#F6C945] flex items-center gap-1">
-                              <BellRing className="w-3 h-3" /> Solicitação via Placa NFC da Suíte:
-                            </span>
-                            {suite.nfcRequests.map((req, idx) => (
-                              <p key={idx} className="text-[11px] text-amber-200 bg-amber-500/10 px-2 py-1 rounded-lg">
-                                • {req}
-                              </p>
-                            ))}
-                          </div>
-                        )}
-
-                        <a
-                          href={`https://wa.me/55${suite.currentGuest.phone}?text=${encodeURIComponent(
-                            `Olá ${suite.currentGuest.name}! Aqui é da recepção da Pousada Casa da Praia. Seu ${suite.name} está pronto! Senha do Wi-Fi: caraiva2026`
-                          )}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1.5 text-emerald-400 font-bold text-[11px] pt-1 hover:underline"
-                        >
-                          <MessageCircle className="w-3.5 h-3.5" />
-                          <span>Enviar Chave Digital & Wi-Fi no WhatsApp</span>
-                        </a>
-                      </div>
-                    ) : (
-                      <div className="p-3.5 rounded-2xl bg-black/20 border border-white/5 text-xs text-slate-400 flex items-center justify-between">
-                        <span>Sincronizado com Guia Caraíva & Booking</span>
-                        <span className="text-emerald-400 font-bold">Disponível</span>
-                      </div>
-                    )}
-
-                    <div className="flex items-center gap-2 pt-1">
-                      {suite.status === 'limpeza' && (
-                        <button
-                          onClick={() => handleToggleSuiteStatus(suite.id, 'disponivel')}
-                          className="flex-1 py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs transition cursor-pointer"
-                        >
-                          ✓ Confirmar Quarto Limpo & Vistoriado
-                        </button>
-                      )}
-                      {suite.status === 'checkin_hoje' && (
-                        <button
-                          onClick={() => handleToggleSuiteStatus(suite.id, 'ocupado')}
-                          className="flex-1 py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
-                        >
-                          <DoorOpen className="w-3.5 h-3.5" />
-                          <span>Confirmar Entrada (Check-in Express NFC)</span>
-                        </button>
-                      )}
-                      {suite.status === 'ocupado' && (
-                        <button
-                          onClick={() => handleToggleSuiteStatus(suite.id, 'limpeza')}
-                          className="flex-1 py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-slate-200 font-bold text-xs transition cursor-pointer"
-                        >
-                          Encerrar Estadia (Check-out) ➔ Enviar Camareira
-                        </button>
-                      )}
-                      {suite.status === 'disponivel' && (
-                        <button
-                          onClick={() => handleToggleSuiteStatus(suite.id, 'limpeza')}
-                          className="w-full py-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 text-xs transition cursor-pointer"
-                        >
-                          Solicitar Vistoria de Governança
-                        </button>
-                      )}
-                    </div>
-                  </div>
-                ))}
+              <div className="p-4 rounded-2xl bg-[#121519] border border-white/[0.06] flex flex-col justify-between">
+                <span className="text-[11px] text-slate-400 font-medium">Ação Rápida</span>
+                <button
+                  onClick={() => {
+                    setPosTargetTable(selectedTableNumber);
+                    setActiveScreen('lancar_pedido');
+                  }}
+                  className="mt-2 w-full py-2 px-3 rounded-xl bg-white text-slate-950 hover:bg-slate-200 font-semibold text-xs transition cursor-pointer flex items-center justify-center gap-1.5"
+                >
+                  <PlusCircle className="w-3.5 h-3.5" />
+                  <span>Lançar Pedido Manual</span>
+                </button>
               </div>
             </div>
-          )}
 
-          {/* B. GASTRONOMIA: TELA INICIAL UNIFICADA (MESAS + CHAMADOS GARÇOM + COMANDA + PDV MANUAL + KDS) */}
-          {selectedNiche === 'gastronomia' && (
-            <div className="space-y-6">
-              {/* 1. BARRA DE CHAMADOS DE GARÇOM AO VIVO ("QUEM CHAMOU O GARÇOM AGORA") + BOTÃO NOVO PEDIDO MANUAL */}
-              <div className="p-4 rounded-3xl bg-gradient-to-r from-[#221711] via-[#181614] to-[#141719] border border-amber-500/40 shadow-xl space-y-3">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div className="flex items-center gap-2.5">
-                    <div className="w-9 h-9 rounded-2xl bg-amber-500/20 border border-amber-500/40 text-amber-300 flex items-center justify-center animate-pulse">
-                      <BellRing className="w-4 h-4" />
-                    </div>
-                    <div>
-                      <h3 className="text-sm font-black uppercase tracking-wider text-amber-300">
-                        Chamados de Garçom & Alertas de Mesa ({tables.filter((t) => Boolean(t.activeCall)).length} ativos)
-                      </h3>
-                      <p className="text-[11px] text-slate-300">
-                        Clientes que tocaram na placa NFC pedindo atendimento, gelo, copos ou fechamento de conta.
-                      </p>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      setPosTargetTable(selectedTableNumber);
-                      setShowManualPos((prev) => !prev);
-                    }}
-                    className="px-4 py-2.5 rounded-2xl bg-gradient-to-r from-[#F6C945] to-[#ffd86b] text-slate-950 font-black text-xs shadow-lg shadow-[#F6C945]/20 hover:brightness-110 transition cursor-pointer flex items-center justify-center gap-2 shrink-0"
-                  >
-                    <Utensils className="w-4 h-4" />
-                    <span>{showManualPos ? 'Fechar Lançador PDV' : '+ Lançar Pedido Manual (Mesa / Balcão / Delivery)'}</span>
-                  </button>
-                </div>
-
-                {/* Lista de Quem Chamou o Garçom */}
-                {tables.filter((t) => Boolean(t.activeCall)).length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2.5 pt-1">
-                    {tables
-                      .filter((t) => Boolean(t.activeCall))
-                      .map((t) => (
-                        <div
-                          key={t.tableNumber}
-                          onClick={() => setSelectedTableNumber(t.tableNumber)}
-                          className="p-3 rounded-2xl bg-black/50 border border-amber-500/30 hover:border-[#F6C945] transition flex flex-col justify-between gap-2 cursor-pointer"
-                        >
-                          <div className="flex items-center justify-between">
-                            <span className="text-xs font-black text-white">
-                              🪑 Mesa {t.tableNumber} ({t.zone})
-                            </span>
-                            <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300">
-                              há {t.callMinutesAgo || 2} min
-                            </span>
-                          </div>
-                          <p className="text-xs font-bold text-[#F6C945] leading-snug">{t.activeCall}</p>
-                          <div className="flex items-center justify-between pt-1 border-t border-white/10">
-                            <span className="text-[10px] text-slate-400">Garçom: {t.waiterName}</span>
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                handleClearTableCall(t.tableNumber);
-                              }}
-                              className="px-2.5 py-1 rounded-lg bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-[10px] cursor-pointer"
-                            >
-                              ✓ Atender Agora
-                            </button>
-                          </div>
-                        </div>
-                      ))}
-                  </div>
-                ) : (
-                  <div className="p-3 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-xs text-emerald-300 font-bold text-center">
-                    ✓ Nenhum chamado pendente no salão — todas as mesas atendidas!
-                  </div>
-                )}
-              </div>
-
-              {/* 2. MODAL / GAVETA DE LANÇAMENTO DE PEDIDO MANUAL (PDV GARÇOM / CAIXA) */}
-              {showManualPos && (
-                <div className="p-5 rounded-3xl bg-[#13181C] border-2 border-[#F6C945] shadow-2xl space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-white/10 pb-3">
-                    <div>
-                      <span className="text-[10px] font-black uppercase tracking-wider text-[#F6C945]">
-                        PDV RÁPIDO DE SALÃO & BALCÃO
-                      </span>
-                      <h4 className="text-base font-black text-white">
-                        Adicionar Pedido Manual na Mesa ou Delivery
-                      </h4>
-                    </div>
-
-                    {/* Escolha de qual Mesa ou Delivery receberá o lançamento */}
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      {tables.map((t) => (
-                        <button
-                          key={t.tableNumber}
-                          onClick={() => setPosTargetTable(t.tableNumber)}
-                          className={`px-2.5 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
-                            posTargetTable === t.tableNumber
-                              ? 'bg-[#F6C945] text-slate-950'
-                              : 'bg-white/5 text-slate-300 hover:bg-white/10'
-                          }`}
-                        >
-                          Mesa {t.tableNumber}
-                        </button>
-                      ))}
-                      <button
-                        onClick={() => setPosTargetTable('delivery_pousada')}
-                        className={`px-3 py-1.5 rounded-xl text-xs font-black transition cursor-pointer ${
-                          posTargetTable === 'delivery_pousada'
-                            ? 'bg-emerald-400 text-slate-950'
-                            : 'bg-white/5 text-emerald-300 hover:bg-white/10'
-                        }`}
-                      >
-                        🛵 Delivery / Balcão
-                      </button>
-                    </div>
-                  </div>
-
-                  {/* Catálogo Rápido de 1 Clique para o Garçom/Caixa */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-                    {RESTAURANT_QUICK_MENU.map((item) => {
-                      const qty = posCart[item.id] || 0;
-                      return (
-                        <div
-                          key={item.id}
-                          className={`p-3 rounded-2xl border transition flex flex-col justify-between gap-2 ${
-                            qty > 0
-                              ? 'bg-[#1f1b12] border-[#F6C945]'
-                              : 'bg-black/40 border-white/10 hover:border-white/20'
-                          }`}
-                        >
-                          <div>
-                            <span className="text-[9px] font-bold uppercase text-slate-400">
-                              {item.category}
-                            </span>
-                            <p className="text-xs font-bold text-white leading-snug mt-0.5">{item.name}</p>
-                            <p className="text-xs font-black text-[#F6C945] mt-1">
-                              {formatCurrency(item.price)}
-                            </p>
-                          </div>
-
-                          <div className="flex items-center justify-between pt-1 border-t border-white/10">
-                            <button
-                              onClick={() => handleAdjustPosCart(item.id, -1)}
-                              className="w-7 h-7 rounded-lg bg-white/10 hover:bg-white/20 text-white font-black text-xs cursor-pointer"
-                            >
-                              -
-                            </button>
-                            <span className="text-xs font-black text-white">{qty}x</span>
-                            <button
-                              onClick={() => handleAdjustPosCart(item.id, 1)}
-                              className="w-7 h-7 rounded-lg bg-[#F6C945] hover:brightness-110 text-slate-950 font-black text-xs cursor-pointer"
-                            >
-                              +
-                            </button>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-
-                  {/* Observações da Cozinha + Botão Confirmar Lançamento */}
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 pt-2">
-                    <input
-                      type="text"
-                      value={posCustomerName}
-                      onChange={(e) => setPosCustomerName(e.target.value)}
-                      placeholder={
-                        posTargetTable === 'delivery_pousada'
-                          ? 'Nome do Cliente / Pousada...'
-                          : `Identificação na Mesa ${posTargetTable} (opcional)...`
-                      }
-                      className="px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/15 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-[#F6C945]"
-                    />
-                    <input
-                      type="text"
-                      value={posNotes}
-                      onChange={(e) => setPosNotes(e.target.value)}
-                      placeholder="Observação p/ Cozinha (Ex: Sem coentro, gelo à parte)..."
-                      className="px-3.5 py-2.5 rounded-xl bg-black/50 border border-white/15 text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-[#F6C945]"
-                    />
-                    <button
-                      onClick={handleSubmitManualPosOrder}
-                      className="py-2.5 px-4 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 font-black text-xs transition cursor-pointer shadow-lg shadow-emerald-500/20"
-                    >
-                      ✓ Confirmar & Lançar na {posTargetTable === 'delivery_pousada' ? 'Cozinha (Delivery)' : `Mesa ${posTargetTable} + Cozinha`}
-                    </button>
-                  </div>
-                </div>
-              )}
-
-              {/* 3. VISÃO CENTRAL DO RESTAURANTE: MAPA DE MESAS (ESQUERDA) + COMANDA DA MESA SELECIONADA (DIREITA) */}
-              <div className="grid grid-cols-1 lg:grid-cols-12 gap-5">
-                {/* COLUNA ESQUERDA (7 COLUNAS): MAPA INTERATIVO DAS MESAS (QUANTO TÁ CADA MESA) */}
-                <div className="lg:col-span-7 space-y-3">
-                  <div className="flex flex-wrap items-center justify-between gap-2">
-                    <div>
-                      <h3 className="text-base font-black text-white">
-                        Mapa de Mesas ao Vivo (Toque na mesa para abrir a comanda)
-                      </h3>
-                      <p className="text-xs text-slate-400">
-                        Veja quanto está cada mesa, quem está pagando via NFC e lance itens com 1 toque.
-                      </p>
-                    </div>
-                    <div className="flex items-center gap-2.5 text-[11px]">
-                      <span className="flex items-center gap-1 text-emerald-400 font-bold">
-                        <span className="w-2 h-2 rounded-full bg-emerald-400" /> Livre ({tables.filter((t) => t.status === 'livre').length})
-                      </span>
-                      <span className="flex items-center gap-1 text-[#F6C945] font-bold">
-                        <span className="w-2 h-2 rounded-full bg-[#F6C945]" /> Ocupadas ({occupiedTables})
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                    {tables.map((table) => {
-                      const isSelected = selectedTableNumber === table.tableNumber;
-                      const splitPercent =
-                        table.currentTotal > 0 ? Math.round((table.paidSoFar / table.currentTotal) * 100) : 0;
-                      const remaining = Math.max(0, table.currentTotal - table.paidSoFar);
-
-                      return (
-                        <div
-                          key={table.tableNumber}
-                          onClick={() => setSelectedTableNumber(table.tableNumber)}
-                          className={`p-3.5 rounded-2xl border transition cursor-pointer flex flex-col justify-between space-y-2.5 relative ${
-                            isSelected
-                              ? 'ring-2 ring-[#F6C945] border-[#F6C945] bg-[#1c1912] shadow-xl'
-                              : table.status === 'pedindo_conta'
-                              ? 'bg-[#211414] border-rose-500/50 hover:border-rose-400'
-                              : table.status === 'ociosa'
-                              ? 'bg-[#211a12] border-orange-500/50 hover:border-orange-400'
-                              : table.status === 'comanda_aberta'
-                              ? 'bg-[#16181b] border-amber-500/40 hover:border-amber-400'
-                              : 'bg-[#111614] border-emerald-500/30 hover:border-emerald-400'
-                          }`}
-                        >
-                          <div className="space-y-1">
-                            <div className="flex items-center justify-between">
-                              <span className="text-[10px] font-extrabold text-slate-400 uppercase">
-                                {table.zone}
-                              </span>
-                              <span
-                                className={`text-[9px] font-black uppercase px-1.5 py-0.5 rounded-md ${
-                                  table.status === 'pedindo_conta'
-                                    ? 'bg-rose-500/20 text-rose-300 animate-pulse'
-                                    : table.status === 'ociosa'
-                                    ? 'bg-orange-500/20 text-orange-300'
-                                    : table.status === 'comanda_aberta'
-                                    ? 'bg-amber-500/20 text-amber-300'
-                                    : 'bg-emerald-500/20 text-emerald-300'
-                                }`}
-                              >
-                                {table.status === 'pedindo_conta'
-                                  ? 'Conta'
-                                  : table.status === 'ociosa'
-                                  ? 'Ociosa'
-                                  : table.status === 'comanda_aberta'
-                                  ? 'Ocupada'
-                                  : 'Livre'}
-                              </span>
-                            </div>
-
-                            <div className="flex items-baseline justify-between pt-0.5">
-                              <h4 className="text-lg font-black text-white">Mesa {table.tableNumber}</h4>
-                              <span className="text-[10px] text-slate-400">{table.waiterName}</span>
-                            </div>
-
-                            {/* VALOR DA MESA EM DESTAQUE */}
-                            <div className="pt-1">
-                              <p className="text-base font-black text-[#F6C945]">
-                                {table.status !== 'livre' ? formatCurrency(table.currentTotal) : 'R$ 0,00'}
-                              </p>
-                              {table.status !== 'livre' && (
-                                <p className="text-[10px] text-slate-300">
-                                  Falta: <strong className="text-white">{formatCurrency(remaining)}</strong>
-                                </p>
-                              )}
-                            </div>
-                          </div>
-
-                          {/* Barra Split Bill ou Status Livre */}
-                          {table.status !== 'livre' ? (
-                            <div className="space-y-1">
-                              <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
-                                <div
-                                  className="h-full rounded-full bg-emerald-400"
-                                  style={{ width: `${splitPercent}%` }}
-                                />
-                              </div>
-                              <div className="flex items-center justify-between text-[9px] text-slate-400">
-                                <span>{table.items.length} itens</span>
-                                <span className="text-emerald-400 font-bold">{splitPercent}% pago</span>
-                              </div>
-                            </div>
-                          ) : (
-                            <span className="text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded-lg text-center">
-                              Pronta p/ Sentar
-                            </span>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                {/* COLUNA DIREITA (5 COLUNAS): COMANDA DETALHADA DA MESA SELECIONADA */}
-                <div className="lg:col-span-5">
-                  {(() => {
-                    const activeTable =
-                      tables.find((t) => t.tableNumber === selectedTableNumber) || tables[0];
-                    const remainingToPay = Math.max(0, activeTable.currentTotal - activeTable.paidSoFar);
-                    const serviceFee10 = activeTable.currentTotal * 0.1;
-
-                    return (
-                      <div className="p-5 rounded-3xl bg-[#141719] border border-[#F6C945]/40 shadow-2xl space-y-4">
-                        <div className="flex items-start justify-between border-b border-white/10 pb-3">
-                          <div>
-                            <span className="text-[10px] font-black uppercase tracking-wider text-[#F6C945]">
-                              COMANDA AO VIVO • {activeTable.zone.toUpperCase()}
-                            </span>
-                            <h4 className="text-2xl font-black text-white mt-0.5">
-                              Mesa {activeTable.tableNumber}
-                            </h4>
-                            <p className="text-xs text-slate-400">
-                              Garçom responsável: <strong className="text-slate-200">{activeTable.waiterName}</strong> •{' '}
-                              {activeTable.openMinutes > 0 ? `Aberta há ${activeTable.openMinutes} min` : 'Mesa Livre'}
-                            </p>
-                          </div>
-
-                          <button
-                            onClick={() => {
-                              setPosTargetTable(activeTable.tableNumber);
-                              setShowManualPos(true);
-                            }}
-                            className="px-3 py-2 rounded-xl bg-[#F6C945] text-slate-950 font-black text-xs hover:brightness-110 transition cursor-pointer shrink-0"
-                          >
-                            + Adicionar Item
-                          </button>
-                        </div>
-
-                        {/* Chamado ativo nessa mesa */}
-                        {activeTable.activeCall && (
-                          <div className="p-3 rounded-2xl bg-amber-500/15 border border-amber-500/40 flex items-center justify-between gap-2">
-                            <span className="text-xs font-bold text-amber-300">{activeTable.activeCall}</span>
-                            <button
-                              onClick={() => handleClearTableCall(activeTable.tableNumber)}
-                              className="px-2.5 py-1 rounded-lg bg-amber-400 text-slate-950 font-black text-[10px] cursor-pointer shrink-0"
-                            >
-                              ✓ Atendido
-                            </button>
-                          </div>
-                        )}
-
-                        {/* Lista de Itens Consumidos na Mesa */}
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 uppercase">
-                            <span>Itens Consumidos na Mesa ({activeTable.items.length})</span>
-                            <span>Subtotal</span>
-                          </div>
-
-                          {activeTable.items.length > 0 ? (
-                            <div className="max-h-52 overflow-y-auto space-y-2 pr-1">
-                              {activeTable.items.map((item) => (
-                                <div
-                                  key={item.id}
-                                  className="p-2.5 rounded-xl bg-black/40 border border-white/5 flex items-center justify-between text-xs"
-                                >
-                                  <div>
-                                    <p className="font-bold text-white">
-                                      <span className="text-[#F6C945]">{item.qty}x</span> {item.name}
-                                    </p>
-                                    <div className="flex items-center gap-2 text-[10px] text-slate-400 mt-0.5">
-                                      <span
-                                        className={
-                                          item.orderedBy === 'NFC Cliente' ? 'text-sky-400 font-bold' : 'text-amber-300 font-bold'
-                                        }
-                                      >
-                                        {item.orderedBy === 'NFC Cliente' ? '📱 Via Placa NFC' : '🧑‍🍳 Garçom (Manual)'}
-                                      </span>
-                                      <span>• {item.time}</span>
-                                    </div>
-                                  </div>
-                                  <strong className="text-white font-black">
-                                    {formatCurrency(item.qty * item.unitPrice)}
-                                  </strong>
-                                </div>
-                              ))}
-                            </div>
-                          ) : (
-                            <div className="p-5 rounded-2xl bg-black/30 border border-white/5 text-center space-y-2">
-                              <p className="text-xs text-slate-400">Nenhum item lançado na Mesa {activeTable.tableNumber} ainda.</p>
-                              <button
-                                onClick={() => {
-                                  setPosTargetTable(activeTable.tableNumber);
-                                  setShowManualPos(true);
-                                }}
-                                className="px-3 py-1.5 rounded-xl bg-white/10 hover:bg-white/15 text-xs font-bold text-[#F6C945] cursor-pointer"
-                              >
-                                + Abrir Mesa & Lançar 1º Pedido
-                              </button>
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Resumo Financeiro da Mesa */}
-                        <div className="p-3.5 rounded-2xl bg-black/50 border border-white/10 space-y-1.5 text-xs">
-                          <div className="flex items-center justify-between text-slate-300">
-                            <span>Consumo da Mesa:</span>
-                            <strong>{formatCurrency(activeTable.currentTotal)}</strong>
-                          </div>
-                          <div className="flex items-center justify-between text-slate-400">
-                            <span>Taxa de Serviço 10% (Opcional):</span>
-                            <span>+{formatCurrency(serviceFee10)}</span>
-                          </div>
-                          <div className="flex items-center justify-between text-emerald-400">
-                            <span>Já Pago (Split Bill NFC / Parcial):</span>
-                            <strong>-{formatCurrency(activeTable.paidSoFar)}</strong>
-                          </div>
-                          <div className="pt-2 border-t border-white/10 flex items-center justify-between text-sm">
-                            <span className="font-black text-white uppercase">Falta Pagar:</span>
-                            <strong className="text-lg font-black text-[#F6C945]">
-                              {formatCurrency(remainingToPay)}
-                            </strong>
-                          </div>
-                        </div>
-
-                        {/* Botões Operacionais da Comanda */}
-                        <div className="grid grid-cols-2 gap-2">
-                          <button
-                            onClick={() => handleReceiveTablePayment(activeTable.tableNumber, 50)}
-                            disabled={remainingToPay <= 0}
-                            className="py-2 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 disabled:opacity-40 text-emerald-300 border border-emerald-500/30 font-bold text-xs transition cursor-pointer"
-                          >
-                            💵 Abater R$ 50 (Parcial)
-                          </button>
-                          <button
-                            onClick={() => handleReceiveTablePayment(activeTable.tableNumber, remainingToPay)}
-                            disabled={remainingToPay <= 0}
-                            className="py-2 px-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 disabled:opacity-40 text-slate-950 font-black text-xs transition cursor-pointer"
-                          >
-                            ✓ Quitar Saldo ({formatCurrency(remainingToPay)})
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleTriggerWaiterCall(
-                                activeTable.tableNumber,
-                                '🔔 Garçom solicitado na Mesa ' + activeTable.tableNumber
-                              )
-                            }
-                            className="py-2 px-3 rounded-xl bg-white/5 hover:bg-white/10 text-amber-300 border border-white/10 font-bold text-xs transition cursor-pointer"
-                          >
-                            🔔 Testar Chamado NFC
-                          </button>
-                          <button
-                            onClick={() => handleCloseTableBill(activeTable.tableNumber)}
-                            className="py-2 px-3 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-300 border border-rose-500/30 font-bold text-xs transition cursor-pointer"
-                          >
-                            🧹 Liberar / Zerar Mesa
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })()}
-                </div>
-              </div>
-
-              {/* 4. FILA DE PEDIDOS EM PREPARO (KDS COZINHA, BAR & DELIVERY) NA MESMA TELA INICIAL */}
-              <div className="pt-2 space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-                  <div>
-                    <h3 className="text-lg font-black text-white">
-                      Fila de Pedidos Ativos — Cozinha, Bar & Delivery ({nicheOrders.length})
+            {/* Chamados de Garçom Clean (Apenas se houver chamados ativos) */}
+            {activeWaiterCalls.length > 0 && (
+              <div className="p-4 rounded-2xl bg-[#121519] border border-white/[0.08] space-y-3">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <BellRing className="w-4 h-4 text-amber-300" />
+                    <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-300">
+                      Quem Chamou o Garçom ({activeWaiterCalls.length})
                     </h3>
-                    <p className="text-xs text-slate-400">
-                      Todos os pedidos vindos das mesas NFC, lançados manualmente pelo garçom ou pedidos via Delivery.
-                    </p>
                   </div>
+                  <span className="text-[11px] text-slate-500">Clique para selecionar a mesa ou confirmar</span>
+                </div>
 
-                  {/* Seletor de Praça KDS */}
-                  <div className="flex items-center gap-1.5 bg-[#141719] p-1 rounded-xl border border-white/10">
-                    {[
-                      { id: 'todas', label: 'Todas as Praças' },
-                      { id: 'cozinha_quente', label: '🔥 Cozinha Quente' },
-                      { id: 'bar_drinks', label: '🍸 Bar & Coquetéis' },
-                    ].map((st) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
+                  {activeWaiterCalls.map((t) => (
+                    <div
+                      key={t.tableNumber}
+                      onClick={() => setSelectedTableNumber(t.tableNumber)}
+                      className="p-3 rounded-xl bg-[#0B0D10] border border-white/[0.07] hover:border-white/20 transition flex items-center justify-between gap-3 cursor-pointer"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <strong className="text-xs font-bold text-white">Mesa {t.tableNumber}</strong>
+                          <span className="text-[10px] text-slate-500">• {t.waiterName}</span>
+                        </div>
+                        <p className="text-xs text-amber-200/90 truncate mt-0.5">{t.activeCall}</p>
+                      </div>
                       <button
-                        key={st.id}
-                        onClick={() => setKdsStation(st.id as 'todas' | 'cozinha_quente' | 'bar_drinks')}
-                        className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer ${
-                          kdsStation === st.id ? 'bg-[#F6C945] text-slate-950' : 'text-slate-400 hover:text-white'
-                        }`}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleClearTableCall(t.tableNumber);
+                        }}
+                        className="px-2.5 py-1.5 rounded-lg bg-white/[0.07] hover:bg-white/[0.15] text-slate-200 font-medium text-[11px] shrink-0 cursor-pointer transition"
                       >
-                        {st.label}
+                        Atender
                       </button>
-                    ))}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Layout Duplo Clean: Mapa de Mesas (7 col) + Comanda da Mesa Selecionada (5 col) */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              {/* Esquerda: Mapa de Mesas */}
+              <div className="lg:col-span-7 space-y-3">
+                <div className="flex items-center justify-between">
+                  <h2 className="text-sm font-semibold text-slate-200">
+                    Mapa de Mesas (Toque na mesa para ver a conta)
+                  </h2>
+                  <div className="flex items-center gap-3 text-[11px] text-slate-400">
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400" /> Livre
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-amber-300" /> Ocupada
+                    </span>
+                    <span className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-sky-400" /> Fechando Conta
+                    </span>
                   </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {nicheOrders.map((order) => {
-                    const badge = getStatusBadge(order.status);
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                  {tables.map((table) => {
+                    const isSelected = selectedTableNumber === table.tableNumber;
+                    const splitPercent =
+                      table.currentTotal > 0 ? Math.round((table.paidSoFar / table.currentTotal) * 100) : 0;
+                    const remaining = Math.max(0, table.currentTotal - table.paidSoFar);
+
+                    const dotColor =
+                      table.status === 'livre'
+                        ? 'bg-emerald-400'
+                        : table.status === 'pedindo_conta'
+                        ? 'bg-sky-400'
+                        : 'bg-amber-300';
+
                     return (
                       <div
-                        key={order.id}
-                        className="p-5 rounded-3xl bg-[#141719] border border-white/10 flex flex-col justify-between space-y-4 shadow-xl"
+                        key={table.tableNumber}
+                        onClick={() => setSelectedTableNumber(table.tableNumber)}
+                        className={`p-4 rounded-2xl border transition cursor-pointer flex flex-col justify-between space-y-3 ${
+                          isSelected
+                            ? 'bg-[#171B21] border-white/40 ring-1 ring-white/20'
+                            : 'bg-[#121519] border-white/[0.06] hover:border-white/[0.15]'
+                        }`}
                       >
-                        <div className="space-y-3">
-                          <div className="flex items-start justify-between">
-                            <div>
-                              <div className="flex items-center gap-2">
-                                <span className="text-xs font-black text-[#F6C945]">{order.orderNumber}</span>
-                                <span className="text-[10px] text-slate-400 flex items-center gap-1">
-                                  <Clock className="w-3 h-3" /> SLA 12m
-                                </span>
-                              </div>
-                              <h4 className="text-base font-bold text-white mt-0.5">{order.customer.name}</h4>
-                            </div>
-                            <span
-                              className={`text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-full border ${badge.bg} ${badge.text}`}
-                            >
-                              {badge.label}
-                            </span>
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between">
+                            <span className="text-[10px] font-medium text-slate-400">{table.zone}</span>
+                            <span className={`w-2 h-2 rounded-full ${dotColor}`} />
                           </div>
 
-                          <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5 space-y-1.5 text-xs">
-                            {order.items.map((i, idx) => (
-                              <div key={idx} className="space-y-0.5">
-                                <div className="flex items-start justify-between">
-                                  <span className="text-slate-100 font-medium">
-                                    <strong className="text-[#F6C945]">{i.quantity}x</strong> {i.name}
-                                  </span>
-                                  <span className="text-slate-400">{formatCurrency(i.subtotal)}</span>
-                                </div>
-                                {i.notes && (
-                                  <p className="text-[10px] text-amber-300 bg-amber-500/10 px-2 py-0.5 rounded">
-                                    ⚠️ {i.notes}
-                                  </p>
-                                )}
-                              </div>
-                            ))}
-                            {order.destination && (
-                              <p className="pt-2 border-t border-white/10 text-[11px] text-emerald-300 font-medium">
-                                📍 {order.destination.detail}
+                          <div className="flex items-baseline justify-between">
+                            <h4 className="text-base font-bold text-white">Mesa {table.tableNumber}</h4>
+                            <span className="text-[10px] text-slate-500">{table.waiterName}</span>
+                          </div>
+
+                          <div className="pt-1">
+                            <p className="text-sm font-bold text-white">
+                              {table.status !== 'livre' ? formatCurrency(table.currentTotal) : 'Livre'}
+                            </p>
+                            {table.status !== 'livre' && (
+                              <p className="text-[11px] text-slate-400">
+                                Falta: {formatCurrency(remaining)}
                               </p>
                             )}
                           </div>
                         </div>
 
-                        <div className="space-y-2 pt-1">
-                          {order.status === 'novo' && (
-                            <button
-                              onClick={() => handleAdvanceStatus(order.id, 'preparando')}
-                              className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition cursor-pointer"
-                            >
-                              Iniciar Preparo na Cozinha
-                            </button>
-                          )}
-                          {order.status === 'confirmado' && (
-                            <button
-                              onClick={() => handleAdvanceStatus(order.id, 'preparando')}
-                              className="w-full py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-slate-950 font-bold text-xs transition cursor-pointer"
-                            >
-                              Mandar para Fogo / Preparo
-                            </button>
-                          )}
-                          {order.status === 'preparando' && (
-                            <button
-                              onClick={() => handleAdvanceStatus(order.id, 'em_rota')}
-                              className="w-full py-2.5 rounded-xl bg-purple-500 hover:bg-purple-600 text-white font-bold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
-                            >
-                              <Send className="w-3.5 h-3.5" />
-                              <span>Pronto! Chamar Garçom / Entregador</span>
-                            </button>
-                          )}
-                          {order.status === 'em_rota' && (
-                            <button
-                              onClick={() => handleAdvanceStatus(order.id, 'concluido')}
-                              className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs transition cursor-pointer"
-                            >
-                              ✓ Confirmar Entrega na Mesa/Pousada
-                            </button>
-                          )}
-                          {order.status === 'concluido' && (
-                            <div className="w-full py-2 rounded-xl bg-emerald-500/10 text-center text-xs font-bold text-emerald-400 border border-emerald-500/20">
-                              ✓ Pedido Entregue & Auditado
+                        {table.status !== 'livre' ? (
+                          <div className="space-y-1">
+                            <div className="w-full h-1 rounded-full bg-white/[0.07] overflow-hidden">
+                              <div
+                                className="h-full rounded-full bg-emerald-400/80"
+                                style={{ width: `${splitPercent}%` }}
+                              />
                             </div>
-                          )}
-                        </div>
+                            <div className="flex items-center justify-between text-[10px] text-slate-500">
+                              <span>{table.items.length} itens</span>
+                              <span>{splitPercent}% pago</span>
+                            </div>
+                          </div>
+                        ) : (
+                          <span className="text-[10px] text-slate-500">Disponível</span>
+                        )}
                       </div>
                     );
                   })}
                 </div>
               </div>
-            </div>
-          )}
 
-          {/* C. VAREJO & LOJAS: FICHA TÉCNICA, CMV & SCAN NFC */}
-          {selectedNiche === 'conveniencia' && (
-            <div className="space-y-6">
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-                <div>
-                  <h3 className="text-lg font-black text-white">Estoque Inteligente, Ficha de Custo (CMV) & Scan-and-Go NFC</h3>
-                  <p className="text-xs text-slate-400">
-                    O turista aproxima o celular da etiqueta NFC na peça, paga no Pix sozinho e recebe na pousada.
-                  </p>
-                </div>
-              </div>
-
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {products.map((product) => {
-                  const profit = product.price - product.costCmv;
-                  const margin = Math.round((profit / product.price) * 100);
-                  const isLowStock = product.stock <= product.minStock;
+              {/* Direita: Comanda Detalhada da Mesa Selecionada */}
+              <div className="lg:col-span-5">
+                {(() => {
+                  const activeTable =
+                    tables.find((t) => t.tableNumber === selectedTableNumber) || tables[0];
+                  const remainingToPay = Math.max(0, activeTable.currentTotal - activeTable.paidSoFar);
+                  const serviceFee10 = activeTable.currentTotal * 0.1;
 
                   return (
-                    <div
-                      key={product.id}
-                      className={`p-5 rounded-3xl bg-[#141719] border space-y-3.5 shadow-xl ${
-                        isLowStock ? 'border-rose-500/50' : 'border-white/10'
-                      }`}
-                    >
-                      <div className="flex items-start justify-between">
-                        <span className="text-[10px] font-bold text-slate-400 uppercase">{product.category}</span>
-                        <span
-                          className={`text-[10px] font-extrabold px-2 py-0.5 rounded-full ${
-                            isLowStock
-                              ? 'bg-rose-500/20 text-rose-300 animate-pulse'
-                              : product.available
-                              ? 'bg-emerald-500/20 text-emerald-400'
-                              : 'bg-slate-700 text-slate-300'
-                          }`}
-                        >
-                          {isLowStock ? '⚠️ Repor Estoque' : product.available ? 'Ativo no Guia' : 'Pausado'}
-                        </span>
-                      </div>
-
-                      <div>
-                        <h4 className="text-sm font-bold text-white leading-snug">{product.name}</h4>
-                        <div className="flex items-baseline justify-between mt-2">
-                          <p className="text-lg font-black text-[#F6C945]">{formatCurrency(product.price)}</p>
-                          <span className="text-[11px] font-bold text-emerald-400">
-                            Margem {margin}% (+{formatCurrency(profit)})
+                    <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.08] space-y-4">
+                      <div className="flex items-start justify-between border-b border-white/[0.06] pb-3.5">
+                        <div>
+                          <span className="text-[11px] font-medium text-slate-400">
+                            Comanda da Mesa • {activeTable.zone}
                           </span>
-                        </div>
-                        <p className="text-[10px] text-slate-400 mt-0.5">
-                          Custo CMV: {formatCurrency(product.costCmv)} • 📱 {product.nfcScansToday} taps NFC hoje
-                        </p>
-                      </div>
-
-                      {/* Controle Rápido de Estoque Inline */}
-                      <div className="flex items-center justify-between pt-2 border-t border-white/10">
-                        <div className="flex items-center gap-2">
-                          <button
-                            onClick={() => handleAdjustStock(product.id, -1)}
-                            className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/15 text-white font-bold text-xs cursor-pointer"
-                          >
-                            -
-                          </button>
-                          <span className={`text-xs font-black ${isLowStock ? 'text-rose-400' : 'text-white'}`}>
-                            {product.stock} un
-                          </span>
-                          <button
-                            onClick={() => handleAdjustStock(product.id, 1)}
-                            className="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/15 text-white font-bold text-xs cursor-pointer"
-                          >
-                            +
-                          </button>
+                          <h3 className="text-xl font-bold text-white mt-0.5">
+                            Mesa {activeTable.tableNumber}
+                          </h3>
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            Garçom: {activeTable.waiterName} •{' '}
+                            {activeTable.openMinutes > 0
+                              ? `Aberta há ${activeTable.openMinutes} min`
+                              : 'Mesa Livre'}
+                          </p>
                         </div>
 
                         <button
-                          onClick={() => handleToggleProduct(product.id)}
-                          className="text-xs font-bold underline cursor-pointer text-slate-300 hover:text-white"
+                          onClick={() => {
+                            setPosTargetTable(activeTable.tableNumber);
+                            setActiveScreen('lancar_pedido');
+                          }}
+                          className="px-3 py-2 rounded-xl bg-white text-slate-950 hover:bg-slate-200 font-semibold text-xs transition cursor-pointer shrink-0"
                         >
-                          {product.available ? 'Pausar' : 'Ativar'}
+                          + Adicionar Pedido
+                        </button>
+                      </div>
+
+                      {/* Itens da Mesa */}
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between text-[11px] font-medium text-slate-400">
+                          <span>Itens lançados ({activeTable.items.length})</span>
+                          <span>Valor</span>
+                        </div>
+
+                        {activeTable.items.length > 0 ? (
+                          <div className="max-h-56 overflow-y-auto space-y-1.5 pr-1">
+                            {activeTable.items.map((item) => (
+                              <div
+                                key={item.id}
+                                className="p-2.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] flex items-center justify-between text-xs"
+                              >
+                                <div>
+                                  <p className="font-medium text-slate-100">
+                                    <strong className="text-white">{item.qty}x</strong> {item.name}
+                                  </p>
+                                  <span className="text-[10px] text-slate-500">
+                                    {item.orderedBy} • {item.time}
+                                  </span>
+                                </div>
+                                <strong className="text-slate-200 font-semibold">
+                                  {formatCurrency(item.qty * item.unitPrice)}
+                                </strong>
+                              </div>
+                            ))}
+                          </div>
+                        ) : (
+                          <div className="p-6 rounded-xl bg-[#0B0D10] border border-white/[0.05] text-center space-y-2">
+                            <p className="text-xs text-slate-400">
+                              Nenhum pedido aberto na Mesa {activeTable.tableNumber}.
+                            </p>
+                            <button
+                              onClick={() => {
+                                setPosTargetTable(activeTable.tableNumber);
+                                setActiveScreen('lancar_pedido');
+                              }}
+                              className="px-3 py-1.5 rounded-lg bg-white/[0.06] hover:bg-white/[0.12] text-xs font-medium text-white cursor-pointer"
+                            >
+                              + Abrir Mesa com Pedido Manual
+                            </button>
+                          </div>
+                        )}
+                      </div>
+
+                      {/* Resumo da Conta */}
+                      <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] space-y-1.5 text-xs">
+                        <div className="flex items-center justify-between text-slate-400">
+                          <span>Subtotal Consumo</span>
+                          <span className="text-slate-200">{formatCurrency(activeTable.currentTotal)}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-slate-400">
+                          <span>Taxa de Serviço (10%)</span>
+                          <span>+{formatCurrency(serviceFee10)}</span>
+                        </div>
+                        <div className="flex items-center justify-between text-emerald-400/90">
+                          <span>Pago via NFC / Parcial</span>
+                          <span>-{formatCurrency(activeTable.paidSoFar)}</span>
+                        </div>
+                        <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between text-sm">
+                          <span className="font-semibold text-white">Restante a Pagar</span>
+                          <strong className="text-base font-bold text-white">
+                            {formatCurrency(remainingToPay)}
+                          </strong>
+                        </div>
+                      </div>
+
+                      {/* Ações da Comanda */}
+                      <div className="grid grid-cols-2 gap-2">
+                        <button
+                          onClick={() => handleReceiveTablePayment(activeTable.tableNumber, 50)}
+                          disabled={remainingToPay <= 0}
+                          className="py-2 px-3 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] disabled:opacity-30 text-slate-200 border border-white/[0.08] font-medium text-xs transition cursor-pointer"
+                        >
+                          Receber R$ 50 (Parcial)
+                        </button>
+                        <button
+                          onClick={() => handleReceiveTablePayment(activeTable.tableNumber, remainingToPay)}
+                          disabled={remainingToPay <= 0}
+                          className="py-2 px-3 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 disabled:opacity-30 text-emerald-300 border border-emerald-500/30 font-semibold text-xs transition cursor-pointer"
+                        >
+                          Quitar Saldo ({formatCurrency(remainingToPay)})
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleTriggerWaiterCall(
+                              activeTable.tableNumber,
+                              'Solicitou atendimento na mesa'
+                            )
+                          }
+                          className="py-2 px-3 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-slate-300 border border-white/[0.06] font-medium text-xs transition cursor-pointer"
+                        >
+                          Simular Chamado
+                        </button>
+                        <button
+                          onClick={() => handleCloseTableBill(activeTable.tableNumber)}
+                          className="py-2 px-3 rounded-xl bg-white/[0.04] hover:bg-rose-500/20 text-slate-300 hover:text-rose-200 border border-white/[0.06] font-medium text-xs transition cursor-pointer"
+                        >
+                          Liberar Mesa
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })()}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================================== */}
+        {/* TELA B: LANÇAR PEDIDO MANUAL — PDV DEDICADO (TELA SEPARADA!)         */}
+        {/* ==================================================================== */}
+        {activeScreen === 'lancar_pedido' && selectedNiche === 'gastronomia' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-bold text-white">
+                  Lançar Pedido Manual (Mesa, Balcão ou Delivery)
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Escolha a mesa ou delivery, selecione os itens abaixo e envie direto para a comanda e cozinha.
+                </p>
+              </div>
+              <button
+                onClick={() => setActiveScreen('salao_mesas')}
+                className="px-3.5 py-2 rounded-xl bg-white/[0.05] hover:bg-white/[0.1] text-xs font-medium text-slate-300 cursor-pointer self-start"
+              >
+                ← Voltar ao Mapa de Mesas
+              </button>
+            </div>
+
+            {posSuccessFeedback && (
+              <div className="p-4 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-xs font-semibold text-emerald-300 flex items-center justify-between">
+                <span>✓ {posSuccessFeedback}</span>
+                <button
+                  onClick={() => setActiveScreen('salao_mesas')}
+                  className="underline text-white ml-4 cursor-pointer"
+                >
+                  Ver na Comanda →
+                </button>
+              </div>
+            )}
+
+            {/* Passo 1: Escolher Mesa ou Delivery */}
+            <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-3">
+              <span className="text-xs font-semibold text-slate-300 block">
+                1. Onde lançar este pedido?
+              </span>
+              <div className="flex flex-wrap items-center gap-2">
+                {tables.map((t) => (
+                  <button
+                    key={t.tableNumber}
+                    onClick={() => setPosTargetTable(t.tableNumber)}
+                    className={`px-3.5 py-2 rounded-xl text-xs font-semibold transition cursor-pointer border ${
+                      posTargetTable === t.tableNumber
+                        ? 'bg-white text-slate-950 border-white'
+                        : 'bg-[#0B0D10] text-slate-300 border-white/[0.07] hover:border-white/20'
+                    }`}
+                  >
+                    Mesa {t.tableNumber}
+                  </button>
+                ))}
+                <button
+                  onClick={() => setPosTargetTable('delivery_pousada')}
+                  className={`px-4 py-2 rounded-xl text-xs font-semibold transition cursor-pointer border ${
+                    posTargetTable === 'delivery_pousada'
+                      ? 'bg-white text-slate-950 border-white'
+                      : 'bg-[#0B0D10] text-slate-300 border-white/[0.07] hover:border-white/20'
+                  }`}
+                >
+                  Delivery / Balcão
+                </button>
+              </div>
+            </div>
+
+            {/* Passo 2: Selecionar Itens do Cardápio */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+              <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
+                {RESTAURANT_QUICK_MENU.map((item) => {
+                  const qty = posCart[item.id] || 0;
+                  return (
+                    <div
+                      key={item.id}
+                      className={`p-4 rounded-2xl border transition flex items-center justify-between gap-3 ${
+                        qty > 0
+                          ? 'bg-[#171B21] border-white/30'
+                          : 'bg-[#121519] border-white/[0.06]'
+                      }`}
+                    >
+                      <div>
+                        <span className="text-[10px] text-slate-500 uppercase font-medium">
+                          {item.category}
+                        </span>
+                        <h4 className="text-xs font-semibold text-white mt-0.5">{item.name}</h4>
+                        <p className="text-xs font-bold text-slate-300 mt-1">
+                          {formatCurrency(item.price)}
+                        </p>
+                      </div>
+
+                      <div className="flex items-center gap-2 shrink-0">
+                        <button
+                          onClick={() => handleAdjustPosCart(item.id, -1)}
+                          className="w-8 h-8 rounded-xl bg-white/[0.05] hover:bg-white/[0.12] text-white font-bold text-xs cursor-pointer"
+                        >
+                          -
+                        </button>
+                        <span className="w-5 text-center text-xs font-bold text-white">{qty}</span>
+                        <button
+                          onClick={() => handleAdjustPosCart(item.id, 1)}
+                          className="w-8 h-8 rounded-xl bg-white text-slate-950 hover:bg-slate-200 font-bold text-xs cursor-pointer"
+                        >
+                          +
                         </button>
                       </div>
                     </div>
@@ -1891,588 +1531,640 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
                 })}
               </div>
 
-              {/* Pedidos de Varejo Recebidos via Scan & Go NFC */}
-              <div className="pt-2 space-y-3">
-                <h4 className="text-sm font-black uppercase tracking-wider text-slate-300">
-                  Encomendas Scan & Go (Entregar na Pousada do Cliente)
-                </h4>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {nicheOrders.map((order) => (
-                    <div key={order.id} className="p-4 rounded-2xl bg-[#141719] border border-white/10 space-y-2">
-                      <div className="flex items-center justify-between">
-                        <strong className="text-sm text-white">
-                          {order.orderNumber} • {order.customer.name}
-                        </strong>
-                        <span className="text-xs font-black text-[#F6C945]">{formatCurrency(order.totalAmount)}</span>
-                      </div>
-                      <p className="text-xs text-slate-300">
-                        {order.items.map((i) => `${i.quantity}x ${i.name}`).join(', ')}
-                      </p>
-                      <p className="text-[11px] text-amber-300">📍 {order.destination?.detail}</p>
-                    </div>
-                  ))}
+              {/* Resumo do Lançamento */}
+              <div className="lg:col-span-4">
+                <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.08] space-y-4 sticky top-28">
+                  <div>
+                    <span className="text-[11px] text-slate-400">Destino Selecionado</span>
+                    <h3 className="text-base font-bold text-white">
+                      {posTargetTable === 'delivery_pousada'
+                        ? 'Delivery / Balcão'
+                        : `Mesa ${posTargetTable}`}
+                    </h3>
+                  </div>
+
+                  <div className="space-y-2">
+                    <input
+                      type="text"
+                      value={posCustomerName}
+                      onChange={(e) => setPosCustomerName(e.target.value)}
+                      placeholder="Nome do cliente (opcional)..."
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#0B0D10] border border-white/[0.08] text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-white/25"
+                    />
+                    <input
+                      type="text"
+                      value={posNotes}
+                      onChange={(e) => setPosNotes(e.target.value)}
+                      placeholder="Observação p/ Cozinha (ex: sem cebola)..."
+                      className="w-full px-3.5 py-2.5 rounded-xl bg-[#0B0D10] border border-white/[0.08] text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-white/25"
+                    />
+                  </div>
+
+                  <div className="pt-2 border-t border-white/[0.06] flex items-center justify-between">
+                    <span className="text-xs text-slate-400">
+                      Total ({posCartTotalItems} itens)
+                    </span>
+                    <strong className="text-lg font-bold text-white">
+                      {formatCurrency(posCartTotalAmount)}
+                    </strong>
+                  </div>
+
+                  <button
+                    onClick={handleSubmitManualPosOrder}
+                    disabled={posCartTotalItems === 0}
+                    className="w-full py-3 rounded-xl bg-white text-slate-950 hover:bg-slate-200 disabled:opacity-30 font-semibold text-xs transition cursor-pointer"
+                  >
+                    Confirmar & Enviar Pedido
+                  </button>
                 </div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* D. NÁUTICA & PASSEIOS: MANIFESTO COM CHECK-IN NFC */}
-          {selectedNiche === 'passeios_barcos' && (
-            <div className="space-y-4">
+        {/* ==================================================================== */}
+        {/* TELA C: KDS COZINHA & BAR (TELA SEPARADA!)                           */}
+        {/* ==================================================================== */}
+        {activeScreen === 'kds_cozinha' && selectedNiche === 'gastronomia' && (
+          <div className="space-y-5">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h3 className="text-lg font-black text-white">Manifesto de Embarque & Check-in Náutico NFC</h3>
+                <h2 className="text-base font-bold text-white">
+                  Fila de Preparo — Cozinha & Bar ({nicheOrders.length})
+                </h2>
                 <p className="text-xs text-slate-400">
-                  O passageiro encosta o celular na placa NFC do marinheiro no píer para validar o embarque.
+                  Pedidos recebidos via placa NFC das mesas, PDV manual ou Delivery no Guia.
                 </p>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {nicheOrders.map((order) => (
-                  <div key={order.id} className="p-5 rounded-3xl bg-[#141719] border border-white/10 space-y-3.5 shadow-xl">
-                    <div className="flex items-start justify-between">
-                      <div>
-                        <span className="text-xs font-black text-sky-400">{order.orderNumber}</span>
-                        <h4 className="text-base font-bold text-white">{order.customer.name}</h4>
-                        <p className="text-xs text-slate-400">{order.bookingDetails?.tourTitle}</p>
-                      </div>
-                      <span className="text-xs font-black px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
-                        Pago • {formatCurrency(order.totalAmount)}
-                      </span>
-                    </div>
-
-                    <div className="p-3 rounded-2xl bg-black/40 border border-white/5 text-xs space-y-1 text-slate-300">
-                      <p>⏰ {order.bookingDetails?.timeSlot}</p>
-                      <p>📍 Embarque: {order.bookingDetails?.departurePoint}</p>
-                      <p>👥 Passageiros: {order.bookingDetails?.guestsCount} pessoas</p>
-                    </div>
-
-                    <button
-                      onClick={() => handleAdvanceStatus(order.id, 'concluido')}
-                      className="w-full py-2.5 rounded-xl bg-sky-500 hover:bg-sky-600 text-slate-950 font-bold text-xs transition cursor-pointer"
-                    >
-                      ✓ Confirmar Embarque via Tap NFC no Píer
-                    </button>
-                  </div>
+              <div className="flex items-center gap-1.5 bg-[#121519] p-1 rounded-xl border border-white/[0.07]">
+                {[
+                  { id: 'todas', label: 'Todas' },
+                  { id: 'cozinha_quente', label: 'Cozinha Quente' },
+                  { id: 'bar_drinks', label: 'Bar & Drinks' },
+                ].map((st) => (
+                  <button
+                    key={st.id}
+                    onClick={() => setKdsStation(st.id as 'todas' | 'cozinha_quente' | 'bar_drinks')}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-medium transition cursor-pointer ${
+                      kdsStation === st.id ? 'bg-white text-slate-950' : 'text-slate-400 hover:text-white'
+                    }`}
+                  >
+                    {st.label}
+                  </button>
                 ))}
               </div>
             </div>
-          )}
-        </main>
-      )}
 
-      {/* ======================================================== */}
-      {/* CONTEÚDO 2: SALÃO TAPTABLE NFC (RESTAURANTES GRANDES)    */}
-      {/* ======================================================== */}
-      {activeTab === 'mesas_taptable' && (
-        <main className="max-w-6xl mx-auto px-4 pt-6 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <h3 className="text-lg font-black text-white">
-                Mapa de Salão TapTable NFC (Split Bill & Chamados Seul Tech)
-              </h3>
-              <p className="text-xs text-slate-400">
-                Acompanhe quais mesas estão dividindo a conta pelo celular, chamados objetivos e tempo de permanência.
-              </p>
-            </div>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {nicheOrders.map((order) => {
+                const badge = getStatusBadge(order.status);
+                return (
+                  <div
+                    key={order.id}
+                    className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] flex flex-col justify-between space-y-4"
+                  >
+                    <div className="space-y-3">
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-bold text-slate-300">{order.orderNumber}</span>
+                            <span className="text-[11px] text-slate-500 flex items-center gap-1">
+                              <Clock className="w-3 h-3" /> 12m
+                            </span>
+                          </div>
+                          <h4 className="text-sm font-bold text-white mt-0.5">{order.customer.name}</h4>
+                        </div>
+                        <span className="text-[10px] font-semibold px-2.5 py-1 rounded-lg bg-white/[0.05] text-slate-300 border border-white/[0.07]">
+                          {badge.label}
+                        </span>
+                      </div>
 
-            <div className="flex flex-wrap items-center gap-3 text-xs">
-              <span className="flex items-center gap-1.5 text-emerald-400 font-bold">
-                <span className="w-2.5 h-2.5 rounded-full bg-emerald-400" /> Livre ({tables.filter((t) => t.status === 'livre').length})
-              </span>
-              <span className="flex items-center gap-1.5 text-[#F6C945] font-bold">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#F6C945]" /> Consumindo ({tables.filter((t) => t.status === 'comanda_aberta').length})
-              </span>
-              <span className="flex items-center gap-1.5 text-rose-400 font-bold">
-                <span className="w-2.5 h-2.5 rounded-full bg-rose-400" /> Split Bill / Conta ({tables.filter((t) => t.status === 'pedindo_conta').length})
-              </span>
-            </div>
-          </div>
-
-          {/* Grid Interativo das Mesas com Split Bill & Chamados */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {tables.map((table) => {
-              const splitPercent = table.currentTotal > 0 ? Math.round((table.paidSoFar / table.currentTotal) * 100) : 0;
-              return (
-                <div
-                  key={table.tableNumber}
-                  className={`p-5 rounded-3xl border transition shadow-xl flex flex-col justify-between space-y-3.5 relative ${
-                    table.status === 'pedindo_conta'
-                      ? 'bg-[#211414] border-rose-500/50 ring-1 ring-rose-500/30'
-                      : table.status === 'ociosa'
-                      ? 'bg-[#211a12] border-orange-500/50'
-                      : table.status === 'comanda_aberta'
-                      ? 'bg-[#1a1812] border-amber-500/40'
-                      : 'bg-[#121614] border-emerald-500/30'
-                  }`}
-                >
-                  <div className="space-y-2">
-                    <div className="flex items-center justify-between">
-                      <span className="text-[10px] uppercase font-bold text-slate-400">
-                        {table.zone} • Garçom {table.waiterName}
-                      </span>
-                      <span
-                        className={`text-[9px] font-extrabold uppercase px-2 py-0.5 rounded-full ${
-                          table.status === 'pedindo_conta'
-                            ? 'bg-rose-500/20 text-rose-300 animate-pulse'
-                            : table.status === 'ociosa'
-                            ? 'bg-orange-500/20 text-orange-300'
-                            : table.status === 'comanda_aberta'
-                            ? 'bg-amber-500/20 text-amber-300'
-                            : 'bg-emerald-500/20 text-emerald-300'
-                        }`}
-                      >
-                        {table.status === 'pedindo_conta'
-                          ? 'Pagando NFC'
-                          : table.status === 'ociosa'
-                          ? 'Ociosa >80m'
-                          : table.status === 'comanda_aberta'
-                          ? 'Ativa'
-                          : 'Livre'}
-                      </span>
-                    </div>
-
-                    <div className="flex items-baseline justify-between pt-1">
-                      <h4 className="text-2xl font-black text-white">Mesa {table.tableNumber}</h4>
-                      <div className="text-right">
-                        <p className="text-base font-black text-[#F6C945]">
-                          {table.status !== 'livre' ? formatCurrency(table.currentTotal) : 'R$ 0,00'}
-                        </p>
-                        {table.peopleTapCount > 0 && (
-                          <span className="text-[10px] text-slate-400">
-                            📱 {table.peopleTapCount} celulares conectados
-                          </span>
+                      <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] space-y-1.5 text-xs">
+                        {order.items.map((i, idx) => (
+                          <div key={idx} className="space-y-0.5">
+                            <div className="flex items-start justify-between">
+                              <span className="text-slate-200">
+                                <strong className="text-white">{i.quantity}x</strong> {i.name}
+                              </span>
+                              <span className="text-slate-500">{formatCurrency(i.subtotal)}</span>
+                            </div>
+                            {i.notes && (
+                              <p className="text-[11px] text-amber-200/90 pt-0.5">Obs: {i.notes}</p>
+                            )}
+                          </div>
+                        ))}
+                        {order.destination && (
+                          <p className="pt-2 border-t border-white/[0.05] text-[11px] text-slate-400">
+                            Destino: {order.destination.detail}
+                          </p>
                         )}
                       </div>
                     </div>
 
-                    {/* Barra de Progresso de Split Bill (Divisão de Conta na Mesa) */}
-                    {table.status !== 'livre' && (
-                      <div className="space-y-1 pt-1">
-                        <div className="flex items-center justify-between text-[10px]">
-                          <span className="text-slate-400">Split Bill NFC Pago:</span>
-                          <span className="text-emerald-400 font-bold">
-                            {formatCurrency(table.paidSoFar)} ({splitPercent}%)
-                          </span>
-                        </div>
-                        <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
-                          <div
-                            className="h-full rounded-full bg-emerald-400 transition-all"
-                            style={{ width: `${splitPercent}%` }}
-                          />
-                        </div>
-                      </div>
-                    )}
-
-                    {/* Chamado Inteligente Seul Tech */}
-                    {table.activeCall && (
-                      <div className="p-2.5 rounded-xl bg-black/50 border border-amber-500/30 flex items-center justify-between gap-2">
-                        <span className="text-[11px] font-bold text-amber-300 leading-tight">
-                          {table.activeCall}
-                        </span>
+                    <div>
+                      {(order.status === 'novo' || order.status === 'confirmado') && (
                         <button
-                          onClick={() => handleClearTableCall(table.tableNumber)}
-                          className="text-[10px] font-black px-2 py-1 rounded bg-amber-500 text-slate-950 shrink-0 cursor-pointer"
+                          onClick={() => handleAdvanceStatus(order.id, 'preparando')}
+                          className="w-full py-2.5 rounded-xl bg-white text-slate-950 hover:bg-slate-200 font-semibold text-xs transition cursor-pointer"
                         >
-                          Atender
+                          Iniciar Preparo
                         </button>
-                      </div>
-                    )}
-                  </div>
-
-                  {table.status !== 'livre' ? (
-                    <button
-                      onClick={() => handleCloseTableBill(table.tableNumber)}
-                      className="w-full py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs transition cursor-pointer"
-                    >
-                      Liberar Mesa / Fechar Saldo
-                    </button>
-                  ) : (
-                    <div className="py-2 text-center text-[10px] font-bold text-emerald-400 bg-emerald-500/10 rounded-xl">
-                      Placa NFC Pronta p/ Aproximação
+                      )}
+                      {order.status === 'preparando' && (
+                        <button
+                          onClick={() => handleAdvanceStatus(order.id, 'em_rota')}
+                          className="w-full py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.14] text-white font-semibold text-xs transition flex items-center justify-center gap-1.5 cursor-pointer"
+                        >
+                          <Send className="w-3.5 h-3.5" />
+                          <span>Pronto p/ Servir ou Entregar</span>
+                        </button>
+                      )}
+                      {order.status === 'em_rota' && (
+                        <button
+                          onClick={() => handleAdvanceStatus(order.id, 'concluido')}
+                          className="w-full py-2.5 rounded-xl bg-emerald-500/20 hover:bg-emerald-500/30 text-emerald-300 border border-emerald-500/30 font-semibold text-xs transition cursor-pointer"
+                        >
+                          Confirmar Entrega
+                        </button>
+                      )}
+                      {order.status === 'concluido' && (
+                        <div className="w-full py-2 rounded-xl bg-white/[0.03] text-center text-xs text-slate-500">
+                          Pedido Finalizado
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-
-          {/* Simulador de Rateio de Gorjetas 10% & Ranking de Garçons */}
-          <div className="p-5 rounded-3xl bg-[#141719] border border-white/10 space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
-              <div>
-                <h4 className="text-sm font-black uppercase tracking-wider text-[#F6C945] flex items-center gap-1.5">
-                  <Award className="w-4 h-4" /> Rateio Automático de Gorjetas 10% (Convenção Coletiva)
-                </h4>
-                <p className="text-xs text-slate-400">
-                  Total de Gorjetas no Turno: <strong className="text-white">{formatCurrency(serviceTipPool)}</strong> — dividido sem erro no fechamento.
-                </p>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5 flex items-center justify-between">
-                <span>🕺 Equipe de Salão (70%)</span>
-                <strong className="text-emerald-400 font-black">{formatCurrency(serviceTipPool * 0.7)}</strong>
-              </div>
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5 flex items-center justify-between">
-                <span>👨‍🍳 Cozinha & Bar (20%)</span>
-                <strong className="text-sky-400 font-black">{formatCurrency(serviceTipPool * 0.2)}</strong>
-              </div>
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5 flex items-center justify-between">
-                <span>🧹 Cumins & Apoio (10%)</span>
-                <strong className="text-amber-400 font-black">{formatCurrency(serviceTipPool * 0.1)}</strong>
-              </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
-        </main>
-      )}
+        )}
 
-      {/* ======================================================== */}
-      {/* CONTEÚDO 3: DRE EM TEMPO REAL (`+` `-` `=`) & RELATÓRIOS */}
-      {/* ======================================================== */}
-      {activeTab === 'financeiro' && (
-        <main className="max-w-6xl mx-auto px-4 pt-6 space-y-6">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+        {/* ==================================================================== */}
+        {/* TELA INICIAL DOS OUTROS 3 NICHOS (POUSADA, NÁUTICA, VAREJO)          */}
+        {/* ==================================================================== */}
+        {activeScreen === 'salao_mesas' && selectedNiche === 'hospedagem' && (
+          <div className="space-y-5">
             <div>
-              <h3 className="text-lg font-black text-white">
-                DRE Operacional ao Vivo (`+` `-` `=`) & Fechamento Fiscal
-              </h3>
+              <h2 className="text-base font-bold text-white">Mapa de Suítes & Governança (Mini PMS)</h2>
               <p className="text-xs text-slate-400">
-                Demonstrativo automático descontando taxas de meios de pagamento e custo de ficha técnica (CMV).
+                Controle de estadias, limpeza de quartos e chamados feitos na placa NFC de cabeceira.
               </p>
             </div>
 
-            <button
-              onClick={handleCopyShiftReport}
-              className="px-4 py-2.5 rounded-xl bg-[#F6C945] text-slate-950 font-black text-xs flex items-center gap-2 cursor-pointer shadow-lg shadow-[#F6C945]/20"
-            >
-              {copiedReport ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
-              <span>{copiedReport ? 'Copiado para o WhatsApp!' : 'Exportar Fechamento no WhatsApp'}</span>
-            </button>
-          </div>
-
-          {/* Cascata Visual DRE (+ - =) */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="p-6 rounded-3xl bg-[#141719] border border-white/10 space-y-4 shadow-xl">
-              <h4 className="text-xs font-black uppercase tracking-wider text-slate-400">
-                Cascata de Apuração de Lucro Real
-              </h4>
-
-              <div className="space-y-3 text-sm">
-                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/5 flex items-center justify-between">
-                  <span className="text-slate-200 font-bold">(+) Receita Bruta Total</span>
-                  <strong className="text-base font-black text-white">{formatCurrency(totalGross)}</strong>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-between">
-                  <div>
-                    <span className="text-rose-300 font-bold">(-) Taxas de Pagamento (Pix 0,89% / Card 2,89%)</span>
-                    <p className="text-[10px] text-slate-400">Economia de R$ 28,00 usando Pix NFC na mesa</p>
-                  </div>
-                  <strong className="text-rose-400 font-bold">- {formatCurrency(gatewayFees)}</strong>
-                </div>
-
-                <div className="p-3.5 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-between">
-                  <div>
-                    <span className="text-amber-300 font-bold">(-) CMV / Custo de Insumos & Operação</span>
-                    <p className="text-[10px] text-slate-400">Cálculo automático pela ficha técnica do nicho</p>
-                  </div>
-                  <strong className="text-amber-400 font-bold">- {formatCurrency(cmvEstimated)}</strong>
-                </div>
-
-                <div className="p-4 rounded-2xl bg-gradient-to-r from-emerald-950 to-emerald-900/40 border-2 border-emerald-500/40 flex items-center justify-between">
-                  <div>
-                    <span className="text-xs font-black uppercase tracking-wider text-emerald-300">
-                      (=) LUCRO OPERACIONAL LÍQUIDO
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {suites.map((suite) => (
+                <div
+                  key={suite.id}
+                  className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-4"
+                >
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <span className="text-[10px] font-medium uppercase tracking-wider text-slate-400">
+                        {suite.category} • Diária {formatCurrency(suite.dailyRate)}
+                      </span>
+                      <h4 className="text-base font-bold text-white mt-0.5">{suite.name}</h4>
+                    </div>
+                    <span className="px-2.5 py-1 rounded-lg bg-white/[0.05] border border-white/[0.08] text-[11px] font-medium text-slate-300">
+                      {suite.status === 'ocupado'
+                        ? 'Ocupado'
+                        : suite.status === 'checkin_hoje'
+                        ? 'Check-in Hoje'
+                        : suite.status === 'limpeza'
+                        ? 'Em Limpeza'
+                        : 'Disponível'}
                     </span>
-                    <p className="text-[11px] text-slate-300">Margem líquida real de {netMarginPercent}%</p>
                   </div>
-                  <strong className="text-2xl font-black text-emerald-400">
+
+                  {suite.currentGuest ? (
+                    <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] space-y-2 text-xs">
+                      <div className="flex items-center justify-between">
+                        <strong className="text-white">{suite.currentGuest.name}</strong>
+                        <span className="text-emerald-400 font-medium">
+                          Pago: {formatCurrency(suite.currentGuest.paidAmount)}
+                        </span>
+                      </div>
+                      <p className="text-[11px] text-slate-400">
+                        {suite.currentGuest.checkIn} até {suite.currentGuest.checkOut} ({suite.currentGuest.guests} hóspedes)
+                      </p>
+                      {suite.nfcRequests && suite.nfcRequests.length > 0 && (
+                        <div className="pt-2 border-t border-white/[0.05] space-y-1">
+                          <span className="text-[10px] text-slate-400 font-medium block">
+                            Solicitações via NFC do Quarto:
+                          </span>
+                          {suite.nfcRequests.map((req, i) => (
+                            <p key={i} className="text-[11px] text-amber-200/90">
+                              • {req}
+                            </p>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  ) : (
+                    <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] text-xs text-slate-400 flex items-center justify-between">
+                      <span>Sincronizado com Guia Caraíva</span>
+                      <span className="text-emerald-400">Livre</span>
+                    </div>
+                  )}
+
+                  <div className="flex items-center gap-2">
+                    {suite.status === 'limpeza' && (
+                      <button
+                        onClick={() => handleToggleSuiteStatus(suite.id, 'disponivel')}
+                        className="w-full py-2 rounded-xl bg-white text-slate-950 font-semibold text-xs cursor-pointer"
+                      >
+                        Marcar Quarto Limpo
+                      </button>
+                    )}
+                    {suite.status === 'checkin_hoje' && (
+                      <button
+                        onClick={() => handleToggleSuiteStatus(suite.id, 'ocupado')}
+                        className="w-full py-2 rounded-xl bg-white text-slate-950 font-semibold text-xs cursor-pointer flex items-center justify-center gap-1.5"
+                      >
+                        <DoorOpen className="w-3.5 h-3.5" />
+                        <span>Confirmar Check-in</span>
+                      </button>
+                    )}
+                    {suite.status === 'ocupado' && (
+                      <button
+                        onClick={() => handleToggleSuiteStatus(suite.id, 'limpeza')}
+                        className="w-full py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.1] text-slate-200 font-medium text-xs cursor-pointer"
+                      >
+                        Encerrar Estadia (Check-out)
+                      </button>
+                    )}
+                    {suite.status === 'disponivel' && (
+                      <button
+                        onClick={() => handleToggleSuiteStatus(suite.id, 'limpeza')}
+                        className="w-full py-2 rounded-xl bg-white/[0.04] text-slate-400 text-xs cursor-pointer"
+                      >
+                        Enviar Governança
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {activeScreen === 'salao_mesas' && selectedNiche === 'conveniencia' && (
+          <div className="space-y-5">
+            <div>
+              <h2 className="text-base font-bold text-white">Catálogo, CMV & Etiquetas Scan-and-Go NFC</h2>
+              <p className="text-xs text-slate-400">
+                Controle de estoque, margem de lucro e pedidos feitos pelos turistas via etiqueta NFC.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {products.map((product) => {
+                const profit = product.price - product.costCmv;
+                const margin = Math.round((profit / product.price) * 100);
+                const isLowStock = product.stock <= product.minStock;
+
+                return (
+                  <div
+                    key={product.id}
+                    className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-3.5"
+                  >
+                    <div className="flex items-center justify-between text-[10px] text-slate-400">
+                      <span>{product.category}</span>
+                      <span className={isLowStock ? 'text-amber-300 font-semibold' : 'text-emerald-400'}>
+                        {isLowStock ? 'Estoque Baixo' : 'Ativo'}
+                      </span>
+                    </div>
+
+                    <div>
+                      <h4 className="text-sm font-bold text-white">{product.name}</h4>
+                      <div className="flex items-baseline justify-between mt-1.5">
+                        <strong className="text-base font-bold text-white">{formatCurrency(product.price)}</strong>
+                        <span className="text-[11px] text-emerald-400">Margem {margin}%</span>
+                      </div>
+                      <p className="text-[11px] text-slate-500 mt-0.5">
+                        CMV: {formatCurrency(product.costCmv)} • {product.nfcScansToday} leituras NFC
+                      </p>
+                    </div>
+
+                    <div className="flex items-center justify-between pt-2 border-t border-white/[0.06]">
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={() => handleAdjustStock(product.id, -1)}
+                          className="w-7 h-7 rounded-lg bg-white/[0.05] text-white text-xs cursor-pointer"
+                        >
+                          -
+                        </button>
+                        <span className="text-xs font-bold text-white">{product.stock} un</span>
+                        <button
+                          onClick={() => handleAdjustStock(product.id, 1)}
+                          className="w-7 h-7 rounded-lg bg-white/[0.05] text-white text-xs cursor-pointer"
+                        >
+                          +
+                        </button>
+                      </div>
+                      <button
+                        onClick={() => handleToggleProduct(product.id)}
+                        className="text-xs text-slate-400 hover:text-white cursor-pointer"
+                      >
+                        {product.available ? 'Pausar' : 'Ativar'}
+                      </button>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
+
+        {activeScreen === 'salao_mesas' && selectedNiche === 'passeios_barcos' && (
+          <div className="space-y-5">
+            <div>
+              <h2 className="text-base font-bold text-white">Manifesto de Embarque & Check-in NFC no Píer</h2>
+              <p className="text-xs text-slate-400">
+                Passageiros confirmados com validação de voucher por aproximação NFC.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {nicheOrders.map((order) => (
+                <div key={order.id} className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-3.5">
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <span className="text-xs text-slate-400">{order.orderNumber}</span>
+                      <h4 className="text-base font-bold text-white">{order.customer.name}</h4>
+                      <p className="text-xs text-slate-400">{order.bookingDetails?.tourTitle}</p>
+                    </div>
+                    <strong className="text-sm font-bold text-emerald-400">
+                      {formatCurrency(order.totalAmount)}
+                    </strong>
+                  </div>
+
+                  <div className="p-3 rounded-xl bg-[#0B0D10] border border-white/[0.05] text-xs space-y-1 text-slate-300">
+                    <p>Horário: {order.bookingDetails?.timeSlot}</p>
+                    <p>Embarque: {order.bookingDetails?.departurePoint}</p>
+                    <p>Passageiros: {order.bookingDetails?.guestsCount} pessoas</p>
+                  </div>
+
+                  <button
+                    onClick={() => handleAdvanceStatus(order.id, 'concluido')}
+                    className="w-full py-2.5 rounded-xl bg-white text-slate-950 font-semibold text-xs cursor-pointer"
+                  >
+                    Confirmar Embarque NFC
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================================== */}
+        {/* TELA D: DRE & FINANCEIRO CLEAN (TELA SEPARADA)                       */}
+        {/* ==================================================================== */}
+        {activeScreen === 'financeiro' && (
+          <div className="space-y-6">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div>
+                <h2 className="text-base font-bold text-white">
+                  DRE Operacional & Relatório Financeiro
+                </h2>
+                <p className="text-xs text-slate-400">
+                  Apuração em tempo real descontando taxas de transação e custo de mercadoria (CMV).
+                </p>
+              </div>
+
+              <button
+                onClick={handleCopyShiftReport}
+                className="px-4 py-2 rounded-xl bg-white text-slate-950 font-semibold text-xs flex items-center gap-2 cursor-pointer self-start"
+              >
+                {copiedReport ? <Check className="w-3.5 h-3.5" /> : <Copy className="w-3.5 h-3.5" />}
+                <span>{copiedReport ? 'Relatório Copiado!' : 'Copiar Fechamento p/ WhatsApp'}</span>
+              </button>
+            </div>
+
+            {/* 3 Indicadores Visuais Sóbrios */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-2">
+                <span className="text-xs text-slate-400">{occupancyWidgetData.title}</span>
+                <div className="flex items-baseline justify-between">
+                  <strong className="text-2xl font-bold text-white">{occupancyWidgetData.rate}%</strong>
+                  <span className="text-xs text-slate-400">{occupancyWidgetData.subtitle}</span>
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-white/[0.07] overflow-hidden">
+                  <div
+                    className="h-full rounded-full bg-white"
+                    style={{ width: `${occupancyWidgetData.rate}%` }}
+                  />
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-2">
+                <span className="text-xs text-slate-400">Curva de Demanda por Horário</span>
+                <div className="flex items-end justify-between gap-2 pt-2 h-14">
+                  {hourlyBars.map((bar, i) => (
+                    <div key={i} className="flex-1 flex flex-col items-center justify-end gap-1">
+                      <div
+                        className={`w-full rounded-t ${bar.hot ? 'bg-white' : 'bg-slate-700'}`}
+                        style={{ height: `${bar.px}px` }}
+                      />
+                      <span className="text-[9px] text-slate-400">{bar.label}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-1">
+                <span className="text-xs text-slate-400">Economia vs Apps Tradicionais (25%)</span>
+                <strong className="text-2xl font-bold text-emerald-400 block pt-1">
+                  +{formatCurrency(estimatedIfoodLoss)}
+                </strong>
+                <p className="text-[11px] text-slate-500">Preservados no caixa do estabelecimento hoje</p>
+              </div>
+            </div>
+
+            {/* Equação DRE (+ - =) Clean */}
+            <div className="p-6 rounded-2xl bg-[#121519] border border-white/[0.07] space-y-3">
+              <h3 className="text-xs font-semibold uppercase tracking-wider text-slate-400">
+                Demonstrativo de Resultado do Turno (`+` `-` `=`)
+              </h3>
+
+              <div className="space-y-2 text-xs">
+                <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] flex items-center justify-between">
+                  <span className="text-slate-200 font-medium">(+) Receita Bruta Total</span>
+                  <strong className="text-sm font-bold text-white">{formatCurrency(totalGross)}</strong>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] flex items-center justify-between">
+                  <span className="text-slate-400">(-) Taxas Pix (0,89%) & Cartão (2,89%)</span>
+                  <span className="text-slate-300 font-medium">-{formatCurrency(gatewayFees)}</span>
+                </div>
+
+                <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] flex items-center justify-between">
+                  <span className="text-slate-400">(-) Custo de Mercadoria / Insumos (CMV Estimado)</span>
+                  <span className="text-slate-300 font-medium">-{formatCurrency(cmvEstimated)}</span>
+                </div>
+
+                {selectedNiche === 'gastronomia' && (
+                  <div className="p-3.5 rounded-xl bg-[#0B0D10] border border-white/[0.05] flex items-center justify-between">
+                    <span className="text-slate-400">
+                      (i) Gorjeta 10% Equipe (70% Salão: {formatCurrency(serviceTipPool * 0.7)} • 20% Cozinha: {formatCurrency(serviceTipPool * 0.2)})
+                    </span>
+                    <span className="text-slate-300 font-medium">{formatCurrency(serviceTipPool)}</span>
+                  </div>
+                )}
+
+                <div className="p-4 rounded-xl bg-white/[0.04] border border-white/15 flex items-center justify-between">
+                  <div>
+                    <span className="text-sm font-bold text-white">(=) Lucro Líquido Real</span>
+                    <p className="text-[11px] text-slate-400">Margem líquida de {netMarginPercent}%</p>
+                  </div>
+                  <strong className="text-xl font-bold text-emerald-400">
                     {formatCurrency(netOperatingProfit)}
                   </strong>
                 </div>
               </div>
             </div>
-
-            {/* Comparativo de Economia vs Concorrentes de Mercado */}
-            <div className="p-6 rounded-3xl bg-[#141719] border border-white/10 space-y-4 shadow-xl flex flex-col justify-between">
-              <div className="space-y-2">
-                <h4 className="text-xs font-black uppercase tracking-wider text-[#F6C945]">
-                  Comparativo de Retenção de Caixa (Sua Economia)
-                </h4>
-                <p className="text-xs text-slate-400">
-                  Veja quanto dinheiro permanece no seu estabelecimento usando o TapTable & Caraíva Digital vs. plataformas com comissão abusiva:
-                </p>
-              </div>
-
-              <div className="space-y-3 my-auto">
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-slate-300">No Nosso Sistema (Taxa 0% de comissão):</span>
-                    <strong className="text-emerald-400">{formatCurrency(totalGross - gatewayFees)} no seu bolso</strong>
-                  </div>
-                  <div className="w-full h-3 rounded-full bg-white/10 overflow-hidden">
-                    <div className="h-full bg-emerald-400 rounded-full" style={{ width: '98%' }} />
-                  </div>
-                </div>
-
-                <div className="space-y-1">
-                  <div className="flex justify-between text-xs">
-                    <span className="text-slate-400">No iFood / OTAs Tradicionais (-25% comissão):</span>
-                    <strong className="text-rose-400">{formatCurrency(totalGross * 0.75)} (Perde {formatCurrency(estimatedIfoodLoss)})</strong>
-                  </div>
-                  <div className="w-full h-3 rounded-full bg-white/10 overflow-hidden">
-                    <div className="h-full bg-rose-500 rounded-full" style={{ width: '75%' }} />
-                  </div>
-                </div>
-              </div>
-
-              <div className="p-3.5 rounded-2xl bg-black/40 border border-white/5 flex items-center justify-between text-xs">
-                <span className="text-slate-300 flex items-center gap-1.5">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400" /> SEFAZ NFC-e / Relatório Contábil:
-                </span>
-                <span className="text-emerald-400 font-bold">100% Sincronizado</span>
-              </div>
-            </div>
           </div>
-        </main>
-      )}
+        )}
 
-      {/* ======================================================== */}
-      {/* CONTEÚDO 4: CRM DIRETO                                   */}
-      {/* ======================================================== */}
-      {activeTab === 'crm' && (
-        <main className="max-w-6xl mx-auto px-4 pt-6 space-y-6">
-          <div className="space-y-1">
-            <h3 className="text-lg font-black text-white">CRM Proprietário & Reativação de Clientes</h3>
-            <p className="text-xs text-slate-400">
-              Cada pessoa que aproxima o celular na placa NFC ou faz uma reserva entra automaticamente para a sua base própria.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-            {uniqueCustomers.map((c, idx) => (
-              <div key={idx} className="p-5 rounded-3xl bg-[#141719] border border-white/10 space-y-3.5 shadow-xl">
-                <div className="flex items-start justify-between">
-                  <div>
-                    <h4 className="text-base font-bold text-white">{c.name}</h4>
-                    <p className="text-xs text-slate-400">{c.phone}</p>
-                  </div>
-                  <span className="text-[10px] font-extrabold px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400">
-                    {c.ordersCount} interações
-                  </span>
-                </div>
-
-                <div className="p-3 rounded-2xl bg-black/40 text-xs flex items-center justify-between">
-                  <span className="text-slate-400">LTV (Total Gasto):</span>
-                  <strong className="text-base font-black text-[#F6C945]">{formatCurrency(c.totalSpent)}</strong>
-                </div>
-
-                <a
-                  href={`https://wa.me/${c.whatsappFormatted}?text=${encodeURIComponent(
-                    `Olá ${c.name}! Que alegria ter você conosco em Caraíva. Preparamos um mimo especial para sua próxima visita hoje!`
-                  )}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="w-full py-2.5 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-slate-950 font-bold text-xs flex items-center justify-center gap-2 transition"
-                >
-                  <MessageCircle className="w-4 h-4 fill-slate-950" />
-                  <span>Disparar Convite VIP no WhatsApp</span>
-                </a>
-              </div>
-            ))}
-          </div>
-        </main>
-      )}
-
-      {/* ======================================================== */}
-      {/* CONTEÚDO 5: INOVAÇÃO NFC PARA CADA NICHO (DIFERENCIAL!)  */}
-      {/* ======================================================== */}
-      {activeTab === 'placa_nfc' && (
-        <main className="max-w-5xl mx-auto px-4 pt-6 space-y-6">
-          <div className="text-center space-y-1">
-            <span className="text-[10px] font-black uppercase tracking-widest text-[#F6C945] px-2.5 py-1 rounded-full bg-[#F6C945]/15 border border-[#F6C945]/30">
-              Muito Além de um QR Code Comum
-            </span>
-            <h3 className="text-xl font-black text-white pt-1">
-              Como a Placa NFC Black Piano Revoluciona Este Nicho
-            </h3>
-            <p className="text-xs text-slate-400 max-w-xl mx-auto">
-              Enquanto concorrentes vendem apenas um pedaço de acrílico com link estático, nossa placa NTAG213 ativa fluxos operacionais e pagamentos em 1 toque.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
-            {/* Mockup Físico da Placa */}
-            <div className="max-w-sm mx-auto w-full p-8 rounded-3xl bg-gradient-to-b from-[#181C20] via-[#0D1012] to-[#060809] border-2 border-[#F6C945]/40 shadow-2xl text-center space-y-6 relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-transparent via-[#F6C945] to-transparent" />
-
-              <div className="space-y-1">
-                <span className="text-[10px] uppercase font-black tracking-widest text-[#F6C945]">
-                  TapTable • NXP NTAG213 Criptografado
-                </span>
-                <h4 className="text-xl font-black text-white">
-                  {selectedNiche === 'hospedagem'
-                    ? 'Bangalô das Águas'
-                    : selectedNiche === 'passeios_barcos'
-                    ? 'Píer de Embarque #01'
-                    : selectedNiche === 'conveniencia'
-                    ? 'Tag Scan & Go Peça #04'
-                    : 'Mesa 08 • Beira-Rio'}
-                </h4>
-                <p className="text-xs text-slate-400">
-                  {selectedNiche === 'hospedagem'
-                    ? 'Pousada Casa da Praia'
-                    : selectedNiche === 'passeios_barcos'
-                    ? 'Caraíva Brasil Turismo'
-                    : selectedNiche === 'conveniencia'
-                    ? 'Ateliê Arte da Terra'
-                    : 'Boteco do Pará'}
-                </p>
-              </div>
-
-              <div className="w-44 h-44 mx-auto p-3 rounded-2xl bg-white flex items-center justify-center shadow-inner">
-                <QrCode className="w-36 h-36 text-slate-950" />
-              </div>
-
-              <div className="space-y-2">
-                <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#F6C945]/15 border border-[#F6C945]/30 text-xs font-bold text-[#F6C945]">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  <span>Encoste o Smartphone Aqui (NFC)</span>
-                </div>
-                <p className="text-[11px] text-slate-400">
-                  Abre em 0.4s no iPhone & Android sem baixar aplicativo
-                </p>
-              </div>
+        {/* ==================================================================== */}
+        {/* TELA E: CRM & CLIENTES (TELA SEPARADA)                               */}
+        {/* ==================================================================== */}
+        {activeScreen === 'crm' && (
+          <div className="space-y-5">
+            <div>
+              <h2 className="text-base font-bold text-white">
+                Base de Clientes & Fidelização ({uniqueCustomers.length})
+              </h2>
+              <p className="text-xs text-slate-400">
+                Clientes capturados automaticamente ao pagarem na placa NFC ou pedirem pelo Guia.
+              </p>
             </div>
 
-            {/* As 4 Super-Funções Exclusivas do NFC por Nicho */}
-            <div className="space-y-3.5">
-              <div className="p-4 rounded-2xl bg-[#141719] border border-white/10 space-y-1">
-                <div className="flex items-center gap-2 text-xs font-black text-[#F6C945]">
-                  <Utensils className="w-4 h-4" />
-                  <span>1. Em Restaurantes Grandes (Split Bill & Giro +35%)</span>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Várias pessoas na mesma mesa encostam o celular, pedem direto para a cozinha, acionam chamados específicos (<em>"Trazer Gelo"</em>) e <strong>dividem a conta por item (Split Bill)</strong> pagando com Apple Pay ou Pix sem esperar a maquininha.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#141719] border border-white/10 space-y-1">
-                <div className="flex items-center gap-2 text-xs font-black text-sky-400">
-                  <Wifi className="w-4 h-4" />
-                  <span>2. Em Pousadas & Hotéis (Concierge de Cabeceira)</span>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  Colada na cabeceira da cama: o hóspede encosta o celular para conectar no Wi-Fi automaticamente, pedir café da manhã no quarto, solicitar toalhas extras ou comprar passeios com comissão para a pousada.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#141719] border border-white/10 space-y-1">
-                <div className="flex items-center gap-2 text-xs font-black text-emerald-400">
-                  <Package className="w-4 h-4" />
-                  <span>3. Em Lojas & Ateliês (Scan & Go "Mãos Livres na Praia")</span>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  O turista encosta o celular na peça artesanal, assiste à história do artista, paga no Pix na hora e seleciona <strong>"Entregar na recepção da minha pousada"</strong> para não carregar sacolas na areia.
-                </p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-[#141719] border border-white/10 space-y-1">
-                <div className="flex items-center gap-2 text-xs font-black text-purple-400">
-                  <Compass className="w-4 h-4" />
-                  <span>4. Em Passeios & Lanchas (Fast Boarding Pass)</span>
-                </div>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  No píer de embarque, o turista encosta o celular no cartão NFC do marinheiro para validar o ingresso, confirmar presença na lista da Capitania e receber alertas de retorno da maré.
-                </p>
-              </div>
-            </div>
-          </div>
-        </main>
-      )}
-
-      {/* ======================================================== */}
-      {/* CONTEÚDO 6: HUB DE CHAVES & INTEGRAÇÕES API              */}
-      {/* ======================================================== */}
-      {activeTab === 'integracoes_api' && (
-        <main className="max-w-4xl mx-auto px-4 pt-6 space-y-6">
-          <div className="space-y-1">
-            <h3 className="text-lg font-black text-white">Hub de Conectores & Chaves de API</h3>
-            <p className="text-xs text-slate-400">
-              Arquitetura plug-and-play para ativar exatamente o que cada estabelecimento precisa.
-            </p>
-          </div>
-
-          <div className="space-y-3">
-            {[
-              {
-                key: 'asaasPixSplit',
-                badge: 'Pix',
-                color: 'bg-amber-400/20 text-amber-400',
-                title: 'Gateway Subadquirente & Split Automático (Asaas / Pagar.me)',
-                desc: 'Liquidação D+0 no Pix da mesa e divisão automática de comissões e gorjetas.',
-              },
-              {
-                key: 'whatsappCloud',
-                badge: 'WA',
-                color: 'bg-emerald-500/20 text-emerald-400',
-                title: 'Meta WhatsApp Cloud API Oficial',
-                desc: 'Envio automático de comprovantes, senhas de portão da pousada e status de delivery.',
-              },
-              {
-                key: 'thermalPrinter',
-                badge: 'KDS',
-                color: 'bg-sky-500/20 text-sky-400',
-                title: 'Impressora Térmica ESC/POS & KDS Sonoro',
-                desc: 'Disparo imediato de comandas na cozinha quente e no bar de drinks.',
-              },
-              {
-                key: 'kamraChannelManager',
-                badge: 'PMS',
-                color: 'bg-purple-500/20 text-purple-400',
-                title: 'Webhook Kamra PMS / Booking / Airbnb Sync',
-                desc: 'Sincronização de calendário de suítes para impedir overbooking.',
-              },
-              {
-                key: 'sefazNfce',
-                badge: 'NFe',
-                color: 'bg-rose-500/20 text-rose-400',
-                title: 'Emissor Fiscal SEFAZ NFC-e / SPED Contábil',
-                desc: 'Emissão automática de nota fiscal de consumidor após pagamento na placa NFC.',
-              },
-            ].map((item) => {
-              const isActive = apiConnections[item.key as keyof typeof apiConnections];
-              return (
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {uniqueCustomers.map((c) => (
                 <div
-                  key={item.key}
-                  className="p-5 rounded-3xl bg-[#141719] border border-white/10 flex items-center justify-between gap-4 shadow-lg"
+                  key={c.phone}
+                  className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] flex items-center justify-between gap-4"
                 >
-                  <div className="flex items-center gap-3.5">
-                    <div className={`w-11 h-11 rounded-2xl ${item.color} flex items-center justify-center font-black text-xs shrink-0`}>
-                      {item.badge}
-                    </div>
-                    <div>
-                      <h4 className="text-sm font-bold text-white">{item.title}</h4>
+                  <div className="space-y-1">
+                    <h4 className="text-sm font-bold text-white">{c.name}</h4>
+                    <p className="text-xs text-slate-400">
+                      {c.ordersCount} pedido(s) • Total gasto:{' '}
+                      <strong className="text-white">{formatCurrency(c.totalSpent)}</strong>
+                    </p>
+                  </div>
+
+                  <a
+                    href={`https://wa.me/${c.whatsappFormatted}?text=${encodeURIComponent(
+                      `Olá ${c.name}! Tudo bem? Aqui é do ${currentBusinessUnit.name} em Caraíva.`
+                    )}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="px-3.5 py-2 rounded-xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/[0.08] text-xs font-medium text-white flex items-center gap-1.5 shrink-0"
+                  >
+                    <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>WhatsApp</span>
+                  </a>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* ==================================================================== */}
+        {/* TELA F: HARDWARE NFC & CHAVES API (TELA SEPARADA)                    */}
+        {/* ==================================================================== */}
+        {activeScreen === 'nfc_api' && (
+          <div className="space-y-6">
+            <div>
+              <h2 className="text-base font-bold text-white">
+                Placas NFC Inteligentes & Chaves de Integração API
+              </h2>
+              <p className="text-xs text-slate-400">
+                Configuração das tags NFC de {currentBusinessUnit.name} e conectores externos.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {[
+                {
+                  key: 'asaasPixSplit',
+                  title: 'Gateway Pix Direct & Split NFC',
+                  desc: 'Liquidação instantânea na conta do estabelecimento ao aproximar o celular.',
+                },
+                {
+                  key: 'whatsappCloud',
+                  title: 'WhatsApp Cloud Notificações',
+                  desc: 'Disparo automático de comprovante, voucher e status do pedido.',
+                },
+                {
+                  key: 'thermalPrinter',
+                  title: 'Impressora Térmica ESC/POS & KDS',
+                  desc: 'Envio direto para produção na cozinha e bar sem redigitação.',
+                },
+                {
+                  key: 'sefazNfce',
+                  title: 'Emissão Fiscal NFC-e Automática',
+                  desc: 'Geração de nota fiscal após confirmação do pagamento.',
+                },
+              ].map((item) => {
+                const isActive = apiConnections[item.key as keyof typeof apiConnections];
+                return (
+                  <div
+                    key={item.key}
+                    className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] flex items-center justify-between gap-4"
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2">
+                        <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                        <h4 className="text-sm font-bold text-white">{item.title}</h4>
+                      </div>
                       <p className="text-xs text-slate-400">{item.desc}</p>
                     </div>
+                    <button
+                      onClick={() =>
+                        setApiConnections((prev) => ({
+                          ...prev,
+                          [item.key]: !prev[item.key as keyof typeof apiConnections],
+                        }))
+                      }
+                      className={`px-3 py-1.5 rounded-xl text-xs font-semibold cursor-pointer border ${
+                        isActive
+                          ? 'bg-emerald-500/15 text-emerald-300 border-emerald-500/30'
+                          : 'bg-white/5 text-slate-400 border-white/10'
+                      }`}
+                    >
+                      {isActive ? 'Conectado' : 'Desativado'}
+                    </button>
                   </div>
-                  <button
-                    onClick={() =>
-                      setApiConnections((p) => ({ ...p, [item.key]: !p[item.key as keyof typeof apiConnections] }))
-                    }
-                    className={`px-3.5 py-1.5 rounded-xl text-xs font-bold transition cursor-pointer shrink-0 ${
-                      isActive ? 'bg-emerald-500 text-slate-950' : 'bg-white/10 text-slate-400'
-                    }`}
-                  >
-                    {isActive ? '✓ Chave Ativa' : 'Desativado'}
-                  </button>
+                );
+              })}
+            </div>
+
+            {/* Resumo das Placas NFC do Estabelecimento */}
+            <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.07] flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1">
+                <div className="flex items-center gap-2 text-xs text-slate-300 font-semibold">
+                  <Wifi className="w-4 h-4 text-slate-400" />
+                  <span>{currentBusinessUnit.nfcPlatesActive} Placas / Smart Tags NFC Vinculadas</span>
                 </div>
-              );
-            })}
+                <p className="text-xs text-slate-400">
+                  Link direto gravado no chip NTAG215: <code className="text-slate-200">caraiva.digital/guia?biz={currentBusinessUnit.id}</code>
+                </p>
+              </div>
+              <Link
+                to="/guia"
+                className="px-4 py-2 rounded-xl bg-white text-slate-950 font-semibold text-xs flex items-center gap-1.5 shrink-0"
+              >
+                <span>Simular Leitura do Cliente</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </Link>
+            </div>
           </div>
-        </main>
-      )}
+        )}
+      </main>
     </div>
   );
 };
+export default CaraivaUniversalBusinessApp;
