@@ -57,49 +57,49 @@ interface BusinessUnitDirectoryItem {
 
 const BUSINESS_DIRECTORY: BusinessUnitDirectoryItem[] = [
   {
-    id: 'boteco-do-para',
-    name: 'Boteco do Pará',
+    id: 'restaurante-taptable',
+    name: 'Sistema Gastronomia & TapTable NFC',
     niche: 'gastronomia',
-    categoryLabel: 'Restaurante & Bar',
-    systemModuleTitle: 'TapTable Salão NFC + PDV + KDS',
-    location: 'Beira-Rio • Caraíva',
-    statusText: '5 de 8 mesas ocupadas • 3 chamados',
+    categoryLabel: 'Módulo Restaurantes & Bares',
+    systemModuleTitle: 'Gestão de Mesas NFC + PDV + KDS Cozinha',
+    location: 'Salão, Balcão & Delivery',
+    statusText: '5 de 8 mesas ativas • 3 chamados pendentes',
     activeAlerts: 3,
     todayRevenuePreview: 1845,
     nfcPlatesActive: 12,
   },
   {
-    id: 'pousada-casa-da-praia',
-    name: 'Pousada Casa da Praia',
+    id: 'pousada-pms',
+    name: 'Sistema Hotelaria & Mini PMS',
     niche: 'hospedagem',
-    categoryLabel: 'Hospedagem & Pousada',
-    systemModuleTitle: 'Mini PMS + Quarto NFC Concierge',
-    location: 'Praia de Caraíva',
+    categoryLabel: 'Módulo Pousadas & Hotéis',
+    systemModuleTitle: 'Gestão de Suítes + Governança + Concierge NFC',
+    location: 'Recepção & Quartos',
     statusText: '3 de 4 suítes ocupadas • 1 check-in hoje',
     activeAlerts: 2,
     todayRevenuePreview: 3910,
     nfcPlatesActive: 8,
   },
   {
-    id: 'caraiva-brasil-turismo',
-    name: 'Caraíva Brasil Turismo',
+    id: 'nautica-passeios',
+    name: 'Sistema Náutica & Passeios',
     niche: 'passeios_barcos',
-    categoryLabel: 'Passeios & Náutica',
-    systemModuleTitle: 'Manifesto de Embarque & Píer NFC',
-    location: 'Porto Beira-Rio',
-    statusText: '9 de 12 vagas vendidas • Maré 0.2m',
+    categoryLabel: 'Módulo Passeios, Barcos & Buggy',
+    systemModuleTitle: 'Manifesto de Embarque & Check-in NFC no Píer',
+    location: 'Píer & Embarcações',
+    statusText: '9 de 12 vagas vendidas • Maré favorável',
     activeAlerts: 1,
     todayRevenuePreview: 1420,
     nfcPlatesActive: 4,
   },
   {
-    id: 'atelie-arte-da-terra',
-    name: 'Ateliê Arte da Terra',
+    id: 'varejo-loja',
+    name: 'Sistema Varejo & Ateliê',
     niche: 'conveniencia',
-    categoryLabel: 'Loja & Artesanato',
-    systemModuleTitle: 'Estoque, CMV & Scan-and-Go NFC',
-    location: 'Beco da Lua',
-    statusText: '104 leituras NFC hoje • 1 item estoque baixo',
+    categoryLabel: 'Módulo Lojas & Comércio',
+    systemModuleTitle: 'Estoque, Ficha CMV & Scan-and-Go NFC',
+    location: 'Loja Física & Guia',
+    statusText: '104 leituras NFC hoje • 1 reposição de estoque',
     activeAlerts: 1,
     todayRevenuePreview: 685,
     nfcPlatesActive: 25,
@@ -778,11 +778,11 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">
-                    Caraíva Digital • Centralizador B2B
+                    Centralizador de Sistemas B2B
                   </span>
                 </div>
                 <h1 className="text-base font-bold text-white tracking-tight">
-                  Central de Negócios & Sistemas por Nicho
+                  Painel Central dos 4 Sistemas Operacionais
                 </h1>
               </div>
             </div>
@@ -799,7 +799,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
                 to="/guia"
                 className="px-3.5 py-2 rounded-xl bg-white text-slate-950 hover:bg-slate-200 text-xs font-semibold transition"
               >
-                Abrir Guia Caraíva
+                Abrir Guia
               </Link>
             </div>
           </div>
@@ -809,39 +809,39 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
           {/* Resumo Executivo Clean da Plataforma */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.06] space-y-1">
-              <span className="text-xs font-medium text-slate-400">Negócios Integrados na Rede</span>
+              <span className="text-xs font-medium text-slate-400">Sistemas do Ecossistema</span>
               <div className="flex items-baseline justify-between pt-1">
-                <strong className="text-2xl font-bold text-white">{BUSINESS_DIRECTORY.length} unidades</strong>
-                <span className="text-xs text-emerald-400 font-medium">100% Online</span>
+                <strong className="text-2xl font-bold text-white">4 Módulos Ativos</strong>
+                <span className="text-xs text-emerald-400 font-medium">100% Operacional</span>
               </div>
-              <p className="text-[11px] text-slate-500">Gastronomia, Pousadas, Náutica e Varejo</p>
+              <p className="text-[11px] text-slate-500">Gastronomia, Hotelaria, Náutica e Varejo</p>
             </div>
 
             <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.06] space-y-1">
-              <span className="text-xs font-medium text-slate-400">Volume Transacionado Hoje (GMV)</span>
+              <span className="text-xs font-medium text-slate-400">Volume Total Simulado Hoje</span>
               <div className="flex items-baseline justify-between pt-1">
                 <strong className="text-2xl font-bold text-white">{formatCurrency(networkTotalGmv)}</strong>
                 <span className="text-xs text-slate-400 font-medium">Pix & Tap NFC</span>
               </div>
-              <p className="text-[11px] text-slate-500">Liquidação direta na conta de cada parceiro</p>
+              <p className="text-[11px] text-slate-500">Fluxos transacionais unificados</p>
             </div>
 
             <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.06] space-y-1">
-              <span className="text-xs font-medium text-slate-400">Placas & Smart Tags NFC Ativas</span>
+              <span className="text-xs font-medium text-slate-400">Pontos de Toque NFC Ativos</span>
               <div className="flex items-baseline justify-between pt-1">
-                <strong className="text-2xl font-bold text-white">{networkTotalPlates} tags NFC</strong>
-                <span className="text-xs text-slate-300 font-medium">Mesas, Suítes e Lojas</span>
+                <strong className="text-2xl font-bold text-white">{networkTotalPlates} tags / placas</strong>
+                <span className="text-xs text-slate-300 font-medium">Salão, Quartos & Peças</span>
               </div>
-              <p className="text-[11px] text-slate-500">Zero necessidade de aplicativo nativo</p>
+              <p className="text-[11px] text-slate-500">Abertura instantânea no smartphone</p>
             </div>
           </div>
 
           {/* Barra de Busca e Instrução de Redirecionamento */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
             <div>
-              <h2 className="text-lg font-bold text-white">Selecione o Estabelecimento para Gerenciar</h2>
+              <h2 className="text-lg font-bold text-white">Selecione o Sistema para Visualizar e Editar</h2>
               <p className="text-xs text-slate-400 mt-0.5">
-                Cada estabelecimento abre seu próprio sistema dedicado (Salão NFC, Mini PMS, Embarque ou Varejo).
+                Acesse o ambiente operacional dedicado de cada nicho de mercado.
               </p>
             </div>
 
@@ -851,7 +851,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
                 type="text"
                 value={hubSearch}
                 onChange={(e) => setHubSearch(e.target.value)}
-                placeholder="Buscar negócio ou nicho..."
+                placeholder="Buscar módulo ou nicho..."
                 className="w-full pl-9 pr-4 py-2 rounded-xl bg-[#121519] border border-white/[0.08] text-xs text-white placeholder:text-slate-500 focus:outline-none focus:border-white/25"
               />
             </div>
@@ -2057,7 +2057,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
 
                   <a
                     href={`https://wa.me/${c.whatsappFormatted}?text=${encodeURIComponent(
-                      `Olá ${c.name}! Tudo bem? Aqui é do ${currentBusinessUnit.name} em Caraíva.`
+                      `Olá ${c.name}! Tudo bem? Entramos em contato a respeito do seu pedido.`
                     )}`}
                     target="_blank"
                     rel="noreferrer"
