@@ -27,8 +27,10 @@ import {
   Search,
   ChevronRight,
   Settings,
-  X
+  X,
+  Sparkles
 } from 'lucide-react';
+import { CaraivaSpatialSuite3D } from './CaraivaSpatialSuite3D';
 import {
   getUnifiedOrders,
   updateOrderStatus,
@@ -382,6 +384,7 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
   const [activeUniversalTab, setActiveUniversalTab] = useState<SystemUniversalTab>('operacao_principal');
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
   const [showPosLauncher, setShowPosLauncher] = useState<boolean>(false);
+  const [spatialViewActive, setSpatialViewActive] = useState<boolean>(true);
 
   const [suites, setSuites] = useState<SuiteRoom[]>(INITIAL_SUITES);
   const [tables, setTables] = useState<TapTableFloorSeat[]>(INITIAL_TABLES);
@@ -1073,22 +1076,70 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
             </button>
           </div>
 
-          <button
-            onClick={() => setShowConfigModal((prev) => !prev)}
-            className={`px-3 py-2 rounded-xl text-xs font-medium transition shrink-0 flex items-center gap-1.5 cursor-pointer border ${
-              showConfigModal
-                ? 'bg-white text-slate-950 border-white'
-                : 'bg-white/[0.03] hover:bg-white/[0.08] text-slate-300 border-white/[0.07]'
-            }`}
-          >
-            <Settings className="w-3.5 h-3.5" />
-            <span>Configurações & NFC</span>
-          </button>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 p-1 rounded-xl bg-white/[0.04] border border-white/[0.08]">
+              <button
+                onClick={() => setSpatialViewActive(true)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition cursor-pointer flex items-center gap-1.5 ${
+                  spatialViewActive
+                    ? 'bg-gradient-to-r from-[#4EEDB2] to-[#38BDF8] text-slate-950 shadow-[0_0_15px_rgba(78,237,178,0.3)]'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>Espacial 3D</span>
+              </button>
+              <button
+                onClick={() => setSpatialViewActive(false)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition cursor-pointer flex items-center gap-1.5 ${
+                  !spatialViewActive
+                    ? 'bg-white text-slate-950'
+                    : 'text-slate-400 hover:text-white'
+                }`}
+              >
+                <LayoutGrid className="w-3.5 h-3.5" />
+                <span>Painel 2D</span>
+              </button>
+            </div>
+
+            <button
+              onClick={() => setShowConfigModal((prev) => !prev)}
+              className={`px-3 py-2 rounded-xl text-xs font-medium transition shrink-0 flex items-center gap-1.5 cursor-pointer border ${
+                showConfigModal
+                  ? 'bg-white text-slate-950 border-white'
+                  : 'bg-white/[0.03] hover:bg-white/[0.08] text-slate-300 border-white/[0.07]'
+              }`}
+            >
+              <Settings className="w-3.5 h-3.5" />
+              <span>Configurações & NFC</span>
+            </button>
+          </div>
         </div>
       </header>
 
       {/* CONTEÚDO PRINCIPAL DO NEGÓCIO */}
       <main className="max-w-6xl mx-auto px-6 pt-6 space-y-6">
+        {/* ==================================================================== */}
+        {/* SUÍTE ESPACIAL 3D (APPLE VISIONOS & CLAYMORPHISM TÁTIL)              */}
+        {/* ==================================================================== */}
+        {spatialViewActive && !showPosLauncher && (
+          <CaraivaSpatialSuite3D
+            niche={selectedNiche}
+            businessName={currentBusinessUnit.name}
+            totalGross={totalGross}
+            totalPix={totalPix}
+            activeWaiterCallsCount={activeWaiterCalls.length}
+            onSimulateOrder={() => {
+              setPosTargetTable(selectedTableNumber);
+              setShowPosLauncher(true);
+            }}
+            onOpenTable={(tableNum) => {
+              setSelectedTableNumber(tableNum);
+              setActiveUniversalTab('operacao_principal');
+            }}
+          />
+        )}
+
         {/* ==================================================================== */}
         {/* ABA 1: OPERAÇÃO PRINCIPAL — SALÃO & MESAS (GASTRONOMIA)             */}
         {/* ==================================================================== */}
