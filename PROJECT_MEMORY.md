@@ -301,3 +301,24 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
   2. **Efeitos Tridimensionais nos Cards:** Profundidade física 2.5D, anéis de telemetria, iluminação ambiente, placa NFC em acrílico Black Piano e hover tátil suave (`y: -3, scale: 1.01`) concentrados exclusivamente nos **cards individuais**.
   3. **Isolamento Estrito de Abas:** `CaraivaSpatialSuite3D` é exibido estritamente na Aba 1 (`operacao_principal`). Ao clicar na Aba 2 (Fila de Pedidos & KDS), Aba 3 (Caixa & DRE) ou Aba 4 (Clientes), o conteúdo surge imediatamente no topo com acesso direto e sem componentes invasivos.
 * **Armadilhas Evitadas:** Fim da sensação de abas inoperantes e zero fadiga de movimento na navegação.
+
+### Gate de MVP — 18/10/2026
+- Auditoria output/VALIDACAO-MVP-CARAIVA-2026-10-18.md. Build cloud local passou (12 ativação, geometria, TS/Vite,55 arquivos); cinco testes journey passaram. Produção: busca pousada, perfil, reserva interna bloqueada sem agenda, Business exige login, onboarding local persiste em390 sem overflow. Google2D falhou com chave ausente, filtro Comer19→7 funcionou. Banco ainda18negócios/0ofertas/0pedidos/0reservas/0drafts, nenhum accepting_orders.
+- Novas ADRs locais de Rider/Pix não são prova de operação: handler Pix só setState; villageUnifiedOrdersService usa INITIAL_MOCK_ORDERS e localStorage; radar local inicia3online. Não publicar como financeiro/telemetria reais. Fonte local difere do público; GuideEntry tinha modificação externa preservada. Nenhum deploy/migração realizado; critérios P0/P1 e recorte restaurante+pousada recomendados, demais nichos homologação separada.
+
+### Consolidação técnica do MVP — 18/10/2026
+- Branch codex/mvp-connected-operations; autorização do usuário para consolidar código, isolar demos, conectar Business e revisar CTAs. /business e /parceiros/painel agora usam GuideBusinessWorkspace cloud; cockpit recente preservado em /demonstracao/business com aviso/opt-in. Pedidos antigos redirecionam à central autenticada; wrappers legados de reserva/carrinho/menu não geram mais paid local nem WhatsApp.
+- Business ganhou realtime/polling, guarda de geração/escopo para respostas antigas, remount por usuário, papel owner/manager na UI e trava de mutação. Rider oficial informa homologação; demo não simula saque bancário como realizado e não abre mensageiro/navegador externo. Radar rotulado demo. Google sem configuração desabilitado, fallbackleve e níveis de preço corrigidos.
+- Buildcloud final aprovado:12ativação+geometria+3concorrência/permissões+5journey,59arquivos. Browser compiled em5199 validou login, redirectpedidos, guarddemo, entregashomologação, reservasemagenda, filtro19→7 mobile390semoverflow. Prévia ocultaPID2084. Relatório output/MVP-CONSOLIDACAO-2026-10-18.md. Não houve deploy/commit/migração/pedido/ativação de negócio. GuideEntry já tinha alteração externaSW preservada. Falta piloto real, decisãopagamentos e validação entre contas; não declarar100%.
+
+### ADR 013: Sliding Bubble Navigation & Caraíva Delivery Express (Clone iFood Clean + Logística Nativa) — 19/10/2026
+* **Contexto:** Necessidade de unir uma barra de navegação tátil premium com física de mola e Pointer Events (`BubbleNavigation`) a uma plataforma completa de Delivery & Logística inspirada no iFood Clean e adaptada às particularidades geográficas de Caraíva (zonas sem carros, pousadas, praias e entregadores nativos).
+* **Decisão Tomada:**
+  1. **Sliding Bubble Navigation (`src/components/navigation/`):**
+     - Implementada em React 19 + `motion/react` (`stiffness: 320, damping: 28, mass: 0.8`) com suporte completo a `pointerdown`, `pointermove`, `pointerup`, `pointercancel`, `setPointerCapture`, snap euclidiano e glow dinâmico sincronizado via CSS Custom Properties (`--bubble-active-color`).
+  2. **Caraíva Delivery Express (`src/components/delivery/` nas rotas `/delivery`, `/ifood` e `/pedidos`):**
+     - **Marketplace Home:** Seletor de Zona Logística (Beira-Rio, Centro Histórico, Praia da Barra, Xandó, Aldeia), filtros rápidos (*Entrega Grátis*, *Super Restaurantes*), carrossel de categorias, vitrine *Peça em 1 Toque* e catálogo de restaurantes autênticos.
+     - **Modal de Loja & Personalização (`DeliveryStoreModal.tsx`):** Escolha de complementos obrigatórios e opcionais com validação em tempo real (`minSelect`/`maxSelect`) e observações para a cozinha.
+     - **Sacola & Checkout Pix 1-Click (`DeliveryCartDrawer.tsx`):** Alternância Entrega vs. Retirada, motor de cupons (`CARAIVAVIP`, `MARESIA15`, `FRETEZERO`), geração real de QR Code Pix EMV via `qrcode` e disparo sonoro tático (`playRiderTacticalSound`).
+     - **Rastreio em Tempo Real (`DeliveryLiveTracker.tsx`):** Timeline interativa de 4 estágios (*Confirmado ➔ No Preparo ➔ A Caminho ➔ Entregue*), mapa tático SVG das trilhas de areia de Caraíva, cartão de telemetria do entregador e **PIN de Segurança de 4 dígitos** estilo iFood.
+
