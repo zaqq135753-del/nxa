@@ -1,9 +1,9 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
-import { motion, useMotionValue, useSpring } from "motion/react";
+import { motion, useMotionValue, useSpring, useTransform, useReducedMotion } from "motion/react";
 import type { BubbleNavItem, SpringPhysicsConfig } from "./navigation.types";
-import { DEFAULT_SPRING_CONFIG } from "./navigation.config";
+import { DEFAULT_BUBBLE_NAV_ITEMS, DEFAULT_SPRING_CONFIG } from "./navigation.config";
 
-interface BubbleIndicatorProps {
+export interface BubbleIndicatorProps {
   items: BubbleNavItem[];
   activeIndex: number;
   onSelectIndex: (index: number) => void;
@@ -14,7 +14,7 @@ interface BubbleIndicatorProps {
 }
 
 export const BubbleIndicator: React.FC<BubbleIndicatorProps> = ({
-  items,
+  items = DEFAULT_BUBBLE_NAV_ITEMS,
   activeIndex,
   onSelectIndex,
   railRef,
@@ -22,20 +22,24 @@ export const BubbleIndicator: React.FC<BubbleIndicatorProps> = ({
   springConfig = DEFAULT_SPRING_CONFIG,
   hapticFeedback = true,
 }) => {
-  const currentActiveItem = items[activeIndex] || items[0];
+  const prefersReducedMotion = useReducedMotion();
+
+  const currentActiveItem = items[activeIndex] || items[0] || DEFAULT_BUBBLE_NAV_ITEMS[0];
   const mergedSpring: SpringPhysicsConfig = {
     ...DEFAULT_SPRING_CONFIG,
     ...springConfig,
+    ...(prefersReducedMotion ? { stiffness: 1000, damping: 100 } : {}),
   };
 
-  // Coordenadas calculadas dos centros dos botões
+  // Coordenadas centrais (em px) de cada aba no trilho
   const [centers, setCenters] = useState<number[]>([]);
   const isDraggingRef = useRef(false);
   const dragStartXRef = useRef(0);
   const dragStartCenterXRef = useRef(0);
-  const activePointerIdRef = useRef<number | null>(null);
+  const hasMovedSignificantlyRef = useRef(false);
+  const isFirstMeasurementRef = useRef(true);
 
-  // Motion values para posição contínua e física elástica
+  // Motion value contínuo que representa a posição central X
   const targetX = useMotionValue(0);
   const smoothX = useSpring(targetX, {
     stiffness: mergedSpring.stiffness,
@@ -43,12 +47,16 @@ export const BubbleIndicator: React.FC<BubbleIndicatorProps> = ({
     mass: mergedSpring.mass,
   });
 
+  // Alinhamento exato: compensa o raio da bolha (23px) e do halo (45px) sem conflito de transform CSS
+  const bubbleX = useTransform(smoothX, (val) => val - 23);
+  const haloX = useTransform(smoothX, (val) => val - 45);
+
   const [activeColor, setActiveColor] = useState(currentActiveItem.color);
   const [activeGlow, setActiveGlow] = useState(
     currentActiveItem.accentGlow || `${currentActiveItem.color}88`
   );
 
-  // Calcula a posição central de cada item no trilho
+  // Calcula a posição central de cada botão no trilho
   const updateCenters = useCallback(() => {
     if (!railRef.current) return;
     const rail = railRef.current;
@@ -66,13 +74,15 @@ export const BubbleIndicator: React.FC<BubbleIndicatorProps> = ({
 
     setCenters(calculated);
 
-    // Reposiciona o targetX se não estiver arrastando
-    if (!isDraggingRef.current && calculated[activeIndex] !== undefined) {
+    // Na primeira medição, dá jump instantâneo para evitar voo inicial da bolha desde o pixel 0
+    if (isFirstMeasurementRef.current && calculated[activeIndex] !== undefined) {
       targetX.set(calculated[activeIndex]);
+      smoothX.jump(calculated[activeIndex]);
+      isFirstMeasurementRef.current = false;
     }
-  }, [activeIndex, railRef, targetX]);
+  }, [railRef, targetX, smoothX, activeIndex]);
 
-  // Recalcula ao montar e no resize
+  // Observer de redimensionamento e montagem
   useEffect(() => {
     updateCenters();
     window.addEventListener("resize", updateCenters);
@@ -86,7 +96,7 @@ export const BubbleIndicator: React.FC<BubbleIndicatorProps> = ({
     };
   }, [updateCenters, railRef]);
 
-  // Quando activeIndex muda externamente, move a mola para o novo centro
+  // Atualiza posição e cores quando activeIndex mudar externamente
   useEffect(() => {
     if (!isDraggingRef.current && centers[activeIndex] !== undefined) {
       targetX.set(centers[activeIndex]);
@@ -117,7 +127,7 @@ export const BubbleIndicator: React.FC<BubbleIndicatorProps> = ({
     [centers, activeIndex]
   );
 
-  // Disparo de haptic feedback seguro
+  // Disparo de haptic feedback
   const triggerHaptic = useCallback(
     (intensity: number = 8) => {
       if (!hapticFeedback) return;
@@ -125,7 +135,7 @@ export const BubbleIndicator: React.FC<BubbleIndicatorProps> = ({
         try {
           navigator.vibrate(intensity);
         } catch {
-          /* Ignora restrições do navegador */
+          /* Ignora */
         }
       }
     },
@@ -133,133 +143,123 @@ export const BubbleIndicator: React.FC<BubbleIndicatorProps> = ({
   );
 
   // -----------------------------------------------------------------
-  // POINTER EVENTS: Interação por Arraste
+  // POINTER EVENTS & GESTO DE ARRASTE
   // -----------------------------------------------------------------
-  const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!enableDrag) return;
-    if (centers.length === 0) return;
+  useEffect(() => {
+    const rail = railRef.current;
+    if (!rail || !enableDrag) return;
 
-    isDraggingRef.current = true;
-    dragStartXRef.current = e.clientX;
-    dragStartCenterXRef.current = targetX.get();
-    activePointerIdRef.current = e.pointerId;
+    const onPointerDown = (e: PointerEvent) => {
+      if (centers.length === 0) return;
+      isDraggingRef.current = true;
+      hasMovedSignificantlyRef.current = false;
+      dragStartXRef.current = e.clientX;
+      dragStartCenterXRef.current = targetX.get();
 
-    try {
-      e.currentTarget.setPointerCapture(e.pointerId);
-    } catch {
-      /* Ignora fallback */
-    }
-
-    triggerHaptic(12);
-  };
-
-  const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isDraggingRef.current || centers.length === 0) return;
-
-    const deltaX = e.clientX - dragStartXRef.current;
-    let newX = dragStartCenterXRef.current + deltaX;
-
-    // Limites de Clamping dentro do trilho (centro do primeiro ao último item)
-    const minX = centers[0];
-    const maxX = centers[centers.length - 1];
-    const clampedX = Math.max(minX, Math.min(maxX, newX));
-
-    // Atualiza o targetX diretamente para acompanhar o dedo/mouse
-    targetX.set(clampedX);
-
-    // Pré-visualização da cor e glow do item mais próximo durante o arraste
-    const closestIdx = getClosestIndex(clampedX);
-    const closestItem = items[closestIdx];
-    if (closestItem && closestItem.color !== activeColor) {
-      setActiveColor(closestItem.color);
-      setActiveGlow(closestItem.accentGlow || `${closestItem.color}88`);
-      triggerHaptic(6);
-    }
-  };
-
-  const finishDrag = (e: React.PointerEvent<HTMLDivElement>, shouldCommit: boolean) => {
-    if (!isDraggingRef.current) return;
-    isDraggingRef.current = false;
-
-    if (activePointerIdRef.current !== null) {
       try {
-        e.currentTarget.releasePointerCapture(activePointerIdRef.current);
+        rail.setPointerCapture(e.pointerId);
       } catch {
         /* Ignora */
       }
-      activePointerIdRef.current = null;
-    }
+    };
 
-    if (centers.length === 0) return;
+    const onPointerMove = (e: PointerEvent) => {
+      if (!isDraggingRef.current || centers.length === 0) return;
 
-    if (shouldCommit) {
-      const currentPos = targetX.get();
-      const closestIdx = getClosestIndex(currentPos);
-      const snapX = centers[closestIdx];
-
-      // Snap suave para o centro da aba mais próxima
-      targetX.set(snapX);
-      const selectedItem = items[closestIdx];
-      if (selectedItem) {
-        setActiveColor(selectedItem.color);
-        setActiveGlow(selectedItem.accentGlow || `${selectedItem.color}88`);
+      const deltaX = e.clientX - dragStartXRef.current;
+      if (Math.abs(deltaX) > 4) {
+        hasMovedSignificantlyRef.current = true;
       }
 
-      triggerHaptic(15);
-      if (closestIdx !== activeIndex) {
-        onSelectIndex(closestIdx);
-      }
-    } else {
-      // Reverte para o centro do item ativo anterior
-      const fallbackX = centers[activeIndex];
-      targetX.set(fallbackX);
-      const originalItem = items[activeIndex];
-      if (originalItem) {
-        setActiveColor(originalItem.color);
-        setActiveGlow(originalItem.accentGlow || `${originalItem.color}88`);
-      }
-    }
-  };
+      const newX = dragStartCenterXRef.current + deltaX;
+      // Clamping rigoroso dentro dos limites do primeiro e último centro
+      const minX = centers[0];
+      const maxX = centers[centers.length - 1];
+      const clampedX = Math.max(minX, Math.min(maxX, newX));
 
-  const handlePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    finishDrag(e, true);
-  };
+      targetX.set(clampedX);
 
-  const handlePointerCancel = (e: React.PointerEvent<HTMLDivElement>) => {
-    finishDrag(e, false);
-  };
+      // Prévia dinâmica de cor e glow da aba mais próxima durante o movimento
+      const closestIdx = getClosestIndex(clampedX);
+      const closestItem = items[closestIdx];
+      if (closestItem && closestItem.color !== activeColor) {
+        setActiveColor(closestItem.color);
+        setActiveGlow(closestItem.accentGlow || `${closestItem.color}88`);
+        triggerHaptic(6);
+      }
+    };
+
+    const onPointerEnd = (e: PointerEvent) => {
+      if (!isDraggingRef.current) return;
+      isDraggingRef.current = false;
+
+      try {
+        rail.releasePointerCapture(e.pointerId);
+      } catch {
+        /* Ignora */
+      }
+
+      if (centers.length === 0) return;
+
+      if (hasMovedSignificantlyRef.current) {
+        const currentPos = targetX.get();
+        const closestIdx = getClosestIndex(currentPos);
+        const snapX = centers[closestIdx];
+
+        targetX.set(snapX);
+        const selectedItem = items[closestIdx];
+        if (selectedItem) {
+          setActiveColor(selectedItem.color);
+          setActiveGlow(selectedItem.accentGlow || `${selectedItem.color}88`);
+        }
+
+        triggerHaptic(12);
+        if (closestIdx !== activeIndex) {
+          onSelectIndex(closestIdx);
+        }
+      } else {
+        // Se foi apenas um toque sem arrastar, snap no centro da aba atual
+        targetX.set(centers[activeIndex]);
+      }
+    };
+
+    rail.addEventListener("pointerdown", onPointerDown);
+    rail.addEventListener("pointermove", onPointerMove);
+    rail.addEventListener("pointerup", onPointerEnd);
+    rail.addEventListener("pointercancel", onPointerEnd);
+
+    return () => {
+      rail.removeEventListener("pointerdown", onPointerDown);
+      rail.removeEventListener("pointermove", onPointerMove);
+      rail.removeEventListener("pointerup", onPointerEnd);
+      rail.removeEventListener("pointercancel", onPointerEnd);
+    };
+  }, [railRef, enableDrag, centers, targetX, activeIndex, items, activeColor, getClosestIndex, onSelectIndex, triggerHaptic]);
 
   return (
     <>
-      {/* 1. Iluminação Dinâmica Glow de Fundo (Acompanha a posição X da bolha) */}
+      {/* 1. Iluminação Dinâmica Halo Glow (Centralizado sem conflito de CSS transform) */}
       <motion.div
         className="sbn-glow-halo"
         style={{
-          x: smoothX,
-          // Variáveis CSS para interpolação suave de cor
+          x: haloX,
+          // CSS custom property tipada com segurança
           ["--bubble-glow-color" as string]: activeGlow,
         }}
       />
 
-      {/* 2. Bolha Deslizante Circular com Reflexo e Suporte a Pointer Events */}
+      {/* 2. Bolha Deslizante Circular Flutuante com Reflexo */}
       <motion.div
         className="sbn-bubble-indicator"
         role="presentation"
         aria-hidden="true"
         style={{
-          x: smoothX,
+          x: bubbleX,
           ["--bubble-color" as string]: activeColor,
           ["--bubble-glow-color" as string]: activeGlow,
         }}
-        onPointerDown={handlePointerDown}
-        onPointerMove={handlePointerMove}
-        onPointerUp={handlePointerUp}
-        onPointerCancel={handlePointerCancel}
       >
-        {/* Superfície da Bolha */}
         <div className="sbn-bubble-surface" />
-
-        {/* Anel de Pulso Suave */}
         <div className="sbn-bubble-ring" />
       </motion.div>
     </>
