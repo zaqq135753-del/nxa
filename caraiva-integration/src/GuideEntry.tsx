@@ -75,8 +75,10 @@ function DemoPage({type}: {type: 'business'|'rider'|'radar'}) {
 }
 
 
+import { CaraivaUniversalBusinessApp } from './components/partner/CaraivaUniversalBusinessApp';
+
 function PartnerDashboardPage() {
-  return <main style={{minHeight:'100vh'}}><GuideBusinessWorkspace /></main>;
+  return <main style={{minHeight:'100vh'}}><CaraivaUniversalBusinessApp /></main>;
 }
 function PartnerDashboardWorkspacePage() {
   return <main style={{minHeight:'100vh'}}><GuideBusinessWorkspace /></main>;

@@ -322,3 +322,17 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
      - **Sacola & Checkout Pix 1-Click (`DeliveryCartDrawer.tsx`):** Alternância Entrega vs. Retirada, motor de cupons (`CARAIVAVIP`, `MARESIA15`, `FRETEZERO`), geração real de QR Code Pix EMV via `qrcode` e disparo sonoro tático (`playRiderTacticalSound`).
      - **Rastreio em Tempo Real (`DeliveryLiveTracker.tsx`):** Timeline interativa de 4 estágios (*Confirmado ➔ No Preparo ➔ A Caminho ➔ Entregue*), mapa tático SVG das trilhas de areia de Caraíva, cartão de telemetria do entregador e **PIN de Segurança de 4 dígitos** estilo iFood.
 
+
+### ADR 014: Zero Telas Mortas no Cockpit Parceiro, 3D On-Demand e Alternancia de Tema Clean / Dark — 19/10/2026
+* **Contexto:** Relato de tela preta e erro de conexao no painel de parceiros (/parceiros/painel / /business), necessidade de garantir 100% de disponibilidade operacional sem telas mortas, motor Three.js 3D otimizado sem sobreaquecer dispositivos moveis, e alternancia entre tema Clean Light (estilo Apple/iFood) e Dark Luxury OLED.
+* **Decisao Tomada:**
+  1. **Resolucao de Variaveis de Ambiente no Vite:**
+     - O Vite nao carrega arquivos .env.cloud.local por padrao (apenas .env, .env.local, .env.[mode]). Sincronizadas as chaves Supabase em .env e .env.local.
+     - Implementado fallback em caraiva-integration/src/services/ecosystemCloud.ts para que ecosystemCloud nunca seja null, evitando telas mortas em qualquer ambiente de preview ou dev.
+  2. **Restauracao Operacional do Cockpit Parceiro (/parceiros/painel e /business):**
+     - O PartnerDashboardPage em GuideEntry.tsx foi restaurado para renderizar diretamente o CaraivaUniversalBusinessApp (com 4 abas interativas: Salao/Mesas NFC, KDS Cozinha, Caixa DRE com Split Pix, Clientes CRM, e 3D Spatial Suite), enquanto /parceiros/painel-workspace permanece disponivel para autenticacao cloud multi-tenant de donos de estabelecimentos.
+  3. **Motor Three.js 3D com Dirty-Flag Rendering & VRAM Disposal:**
+     - CaraivaDelivery3DHero.tsx implementa renderizacao sob demanda: renderiza apenas quando ha rotacao do mouse/toque ou troca de aba/categoria, pausando o loop quando ocioso para economizar bateria e GPU sob o sol de Caraiva.
+     - DeliveryLiveTracker.tsx recebeu mapa 3D com relevo topografico das trilhas de areia, curva tubular de neon e beacon animado do entregador.
+  4. **Alternancia de Tema Clean Light vs. Dark Luxury:**
+     - Adicionado alternador dinamico de tema (icones Sun/Moon) no topo do /delivery com persistencia em localStorage, alternando entre o modo Apple Clean Light (bg-[#F8FAFC]) e Dark Luxury OLED (bg-[#090B0C]).
