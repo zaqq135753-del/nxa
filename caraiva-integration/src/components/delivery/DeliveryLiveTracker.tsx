@@ -1,5 +1,6 @@
-import React, { useState } from "react";
-import { motion } from "motion/react";
+import React, { useState, useEffect, useRef } from "react";
+import * as THREE from "three";
+import { OrbitControls } from "three/addons/controls/OrbitControls.js";
 import {
   CheckCircle2,
   ChefHat,
@@ -14,6 +15,7 @@ import {
   RotateCcw,
   Clock,
   Receipt,
+  Rotate3d,
 } from "lucide-react";
 import type { ActiveDeliveryOrder, DeliveryOrderStatus } from "./delivery.types";
 import { playRiderTacticalSound } from "../../services/riderDispatchService";
@@ -65,9 +67,281 @@ export const DeliveryLiveTracker: React.FC<DeliveryLiveTrackerProps> = ({
   onUpdateStatus,
 }) => {
   const [chatMessageSent, setChatMessageSent] = useState<string | null>(null);
+  const mapMountRef = useRef<HTMLDivElement | null>(null);
+  const progressRef = useRef<number>(order.courier.progressPct);
+  const wakeUpMapRef = useRef<((ms?: number) => void) | null>(null);
 
   const currentStepIndex = STATUS_STEPS.findIndex((s) => s.key === order.status);
   const activeStep = STATUS_STEPS[currentStepIndex] ?? STATUS_STEPS[0];
+
+  useEffect(() => {
+    progressRef.current = order.courier.progressPct;
+    wakeUpMapRef.current?.(2200);
+  }, [order.courier.progressPct, order.status]);
+
+  // Motor Three.js 3D para o Mapa Tático de Entrega na Areia
+  useEffect(() => {
+    const container = mapMountRef.current;
+    if (!container) return;
+
+    let renderer: THREE.WebGLRenderer | null = null;
+    let frameId = 0;
+    let activeUntil = performance.now() + 3000;
+
+    const disposables: {
+      geometries: THREE.BufferGeometry[];
+      materials: THREE.Material[];
+    } = { geometries: [], materials: [] };
+
+    const trackGeo = <T extends THREE.BufferGeometry>(g: T): T => {
+      disposables.geometries.push(g);
+      return g;
+    };
+    const trackMat = <T extends THREE.Material>(m: T): T => {
+      disposables.materials.push(m);
+      return m;
+    };
+
+    try {
+      const width = container.clientWidth || 600;
+      const height = container.clientHeight || 256;
+
+      renderer = new THREE.WebGLRenderer({
+        antialias: true,
+        alpha: false,
+        powerPreference: "high-performance",
+      });
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(width, height);
+      renderer.outputColorSpace = THREE.SRGBColorSpace;
+      renderer.toneMapping = THREE.ACESFilmicToneMapping;
+      renderer.toneMappingExposure = 1.25;
+
+      container.innerHTML = "";
+      container.appendChild(renderer.domElement);
+
+      const scene = new THREE.Scene();
+      scene.background = new THREE.Color("#070B0E");
+      scene.fog = new THREE.FogExp2("#070B0E", 0.055);
+
+      const camera = new THREE.PerspectiveCamera(38, width / height, 0.1, 60);
+      camera.position.set(0, 5.2, 7.8);
+
+      const controls = new OrbitControls(camera, renderer.domElement);
+      controls.enableDamping = true;
+      controls.dampingFactor = 0.07;
+      controls.enableZoom = false;
+      controls.enablePan = false;
+      controls.minPolarAngle = Math.PI / 5;
+      controls.maxPolarAngle = Math.PI / 2.4;
+      controls.target.set(0, 0, 0);
+
+      const hemiLight = new THREE.HemisphereLight("#FFF4ED", "#090B0C", 1.8);
+      scene.add(hemiLight);
+
+      const dirLight = new THREE.DirectionalLight("#F6C945", 2.4);
+      dirLight.position.set(5, 8, 4);
+      scene.add(dirLight);
+
+      // 1. Terreno Topográfico da Península de Areia (Caraíva)
+      const sandGeo = trackGeo(new THREE.PlaneGeometry(14, 8, 40, 24));
+      const pos = sandGeo.attributes.position;
+      for (let i = 0; i < pos.count; i++) {
+        const x = pos.getX(i);
+        const y = pos.getY(i);
+        const dune =
+          Math.sin(x * 0.55) * 0.16 +
+          Math.cos(y * 0.8) * 0.12 -
+          (y > 1.6 ? 0.35 : 0);
+        pos.setZ(i, dune);
+      }
+      sandGeo.computeVertexNormals();
+
+      const sandMat = trackMat(
+        new THREE.MeshStandardMaterial({
+          color: "#151C21",
+          roughness: 0.78,
+          metalness: 0.15,
+          wireframe: false,
+        })
+      );
+      const sandMesh = new THREE.Mesh(sandGeo, sandMat);
+      sandMesh.rotation.x = -Math.PI / 2;
+      scene.add(sandMesh);
+
+      // Grade Tática Sutil sobre o Terreno
+      const gridHelper = new THREE.GridHelper(14, 24, "#F6C945", "#1E293B");
+      gridHelper.position.y = 0.02;
+      (gridHelper.material as THREE.Material).transparent = true;
+      (gridHelper.material as THREE.Material).opacity = 0.22;
+      scene.add(gridHelper);
+
+      // 2. Rio Caraíva ao Fundo
+      const riverGeo = trackGeo(new THREE.PlaneGeometry(14, 2.6, 24, 8));
+      const riverMat = trackMat(
+        new THREE.MeshPhysicalMaterial({
+          color: "#0369A1",
+          emissive: "#0284C7",
+          emissiveIntensity: 0.2,
+          roughness: 0.15,
+          metalness: 0.4,
+          clearcoat: 0.9,
+        })
+      );
+      const riverMesh = new THREE.Mesh(riverGeo, riverMat);
+      riverMesh.rotation.x = -Math.PI / 2;
+      riverMesh.position.set(0, -0.14, -2.5);
+      scene.add(riverMesh);
+
+      // 3. Curva 3D da Trilha de Areia (Restaurante -> Pousada)
+      const routeCurve = new THREE.CatmullRomCurve3([
+        new THREE.Vector3(-4.2, 0.22, 1.3),
+        new THREE.Vector3(-1.8, 0.28, 0.2),
+        new THREE.Vector3(0.4, 0.25, 0.85),
+        new THREE.Vector3(2.3, 0.3, -0.35),
+        new THREE.Vector3(4.1, 0.24, -0.6),
+      ]);
+
+      const fullTubeGeo = trackGeo(
+        new THREE.TubeGeometry(routeCurve, 64, 0.065, 12, false)
+      );
+      const fullTubeMat = trackMat(
+        new THREE.MeshStandardMaterial({
+          color: "#EA1D2C",
+          emissive: "#EA1D2C",
+          emissiveIntensity: 0.55,
+          roughness: 0.25,
+        })
+      );
+      const routeTube = new THREE.Mesh(fullTubeGeo, fullTubeMat);
+      scene.add(routeTube);
+
+      // Pino de Origem (Restaurante #EA1D2C)
+      const originGeo = trackGeo(new THREE.CylinderGeometry(0.24, 0.24, 0.16, 24));
+      const originMat = trackMat(
+        new THREE.MeshStandardMaterial({
+          color: "#EA1D2C",
+          emissive: "#EA1D2C",
+          emissiveIntensity: 0.7,
+        })
+      );
+      const originPin = new THREE.Mesh(originGeo, originMat);
+      originPin.position.copy(routeCurve.getPointAt(0));
+      scene.add(originPin);
+
+      // Pino de Destino (Pousada #22C55E)
+      const destGeo = trackGeo(new THREE.CylinderGeometry(0.28, 0.28, 0.18, 24));
+      const destMat = trackMat(
+        new THREE.MeshStandardMaterial({
+          color: "#22C55E",
+          emissive: "#22C55E",
+          emissiveIntensity: 0.8,
+        })
+      );
+      const destPin = new THREE.Mesh(destGeo, destMat);
+      destPin.position.copy(routeCurve.getPointAt(1));
+      scene.add(destPin);
+
+      // 4. Entregador 3D Beacon (Esfera Dourada + Halo Pulsante)
+      const courierGroup = new THREE.Group();
+      const riderSphereGeo = trackGeo(new THREE.SphereGeometry(0.24, 24, 24));
+      const riderSphereMat = trackMat(
+        new THREE.MeshPhysicalMaterial({
+          color: "#F6C945",
+          emissive: "#F59E0B",
+          emissiveIntensity: 0.9,
+          roughness: 0.1,
+          clearcoat: 1,
+        })
+      );
+      const riderSphere = new THREE.Mesh(riderSphereGeo, riderSphereMat);
+      riderSphere.position.y = 0.16;
+      courierGroup.add(riderSphere);
+
+      const haloGeo = trackGeo(new THREE.RingGeometry(0.32, 0.48, 32));
+      const haloMat = trackMat(
+        new THREE.MeshBasicMaterial({
+          color: "#F6C945",
+          side: THREE.DoubleSide,
+          transparent: true,
+          opacity: 0.75,
+        })
+      );
+      const haloRing = new THREE.Mesh(haloGeo, haloMat);
+      haloRing.rotation.x = Math.PI / 2;
+      haloRing.position.y = 0.04;
+      courierGroup.add(haloRing);
+
+      const riderLight = new THREE.PointLight("#F6C945", 4, 3.5);
+      riderLight.position.y = 0.5;
+      courierGroup.add(riderLight);
+
+      scene.add(courierGroup);
+
+      let displayedT = Math.max(0.05, Math.min(1, progressRef.current / 100));
+
+      const wakeUpMap = (ms = 1800) => {
+        const target = performance.now() + ms;
+        if (target > activeUntil) activeUntil = target;
+        if (frameId === 0 && !document.hidden) {
+          frameId = requestAnimationFrame(animate);
+        }
+      };
+      wakeUpMapRef.current = wakeUpMap;
+
+      controls.addEventListener("change", () => wakeUpMap(1200));
+
+      const animate = (now: number) => {
+        frameId = 0;
+        if (!renderer || document.hidden) return;
+
+        const targetT = Math.max(0.05, Math.min(1, progressRef.current / 100));
+        displayedT += (targetT - displayedT) * 0.08;
+
+        const pt = routeCurve.getPointAt(displayedT);
+        courierGroup.position.set(pt.x, pt.y, pt.z);
+
+        const pulse = 1 + Math.sin(now * 0.006) * 0.18;
+        haloRing.scale.set(pulse, pulse, 1);
+
+        controls.update();
+        renderer.render(scene, camera);
+
+        if (now < activeUntil || Math.abs(targetT - displayedT) > 0.002) {
+          frameId = requestAnimationFrame(animate);
+        }
+      };
+
+      const resizeObs = new ResizeObserver(() => {
+        if (!container || !renderer) return;
+        const w = container.clientWidth || 600;
+        const h = container.clientHeight || 256;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+        wakeUpMap(800);
+      });
+      resizeObs.observe(container);
+
+      frameId = requestAnimationFrame(animate);
+
+      return () => {
+        if (frameId) cancelAnimationFrame(frameId);
+        resizeObs.disconnect();
+        controls.dispose();
+        disposables.geometries.forEach((g) => g.dispose());
+        disposables.materials.forEach((m) => m.dispose());
+        scene.clear();
+        if (renderer) {
+          renderer.dispose();
+          renderer.forceContextLoss();
+          renderer.domElement.remove();
+        }
+      };
+    } catch {
+      return undefined;
+    }
+  }, []);
 
   const handleAdvanceStep = () => {
     const nextIdx = (currentStepIndex + 1) % STATUS_STEPS.length;
@@ -83,89 +357,21 @@ export const DeliveryLiveTracker: React.FC<DeliveryLiveTrackerProps> = ({
 
   return (
     <div className="space-y-5">
-      {/* Top Live Status Banner */}
-      <div className="overflow-hidden rounded-3xl border border-white/10 bg-[#141719] shadow-xl">
-        {/* Tactical Sand Route Map Simulation */}
-        <div className="relative h-56 w-full overflow-hidden bg-[#0B1014]">
-          {/* Subtle Coastal Grid & River Curve */}
-          <svg
-            viewBox="0 0 600 240"
-            className="h-full w-full object-cover opacity-90"
-            aria-label="Mapa em tempo real da entrega em Caraíva"
-          >
-            <defs>
-              <linearGradient id="riverGrad" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0%" stopColor="#0284c7" stopOpacity="0.22" />
-                <stop offset="100%" stopColor="#0ea5e9" stopOpacity="0.05" />
-              </linearGradient>
-              <linearGradient id="routeActive" x1="0" y1="0" x2="1" y2="0">
-                <stop offset="0%" stopColor="#EA1D2C" />
-                <stop offset="100%" stopColor="#F6C945" />
-              </linearGradient>
-            </defs>
-
-            {/* Rio Caraíva Waterbody */}
-            <path
-              d="M -20 35 Q 180 90, 340 40 T 620 85 L 620 0 L -20 0 Z"
-              fill="url(#riverGrad)"
-            />
-
-            {/* Dashed Sand Trail Background */}
-            <path
-              d="M 85 165 C 210 165, 250 95, 360 115 C 440 130, 470 95, 515 90"
-              fill="none"
-              stroke="rgba(255,255,255,0.16)"
-              strokeWidth="5"
-              strokeDasharray="8 8"
-              strokeLinecap="round"
-            />
-
-            {/* Animated Active Route */}
-            <motion.path
-              d="M 85 165 C 210 165, 250 95, 360 115 C 440 130, 470 95, 515 90"
-              fill="none"
-              stroke="url(#routeActive)"
-              strokeWidth="5"
-              strokeLinecap="round"
-              initial={{ pathLength: 0.15 }}
-              animate={{ pathLength: order.courier.progressPct / 100 }}
-              transition={{ type: "spring", stiffness: 120, damping: 22 }}
-            />
-
-            {/* Origin Node (Merchant) */}
-            <g transform="translate(85, 165)">
-              <circle r="14" fill="#EA1D2C" fillOpacity="0.25" />
-              <circle r="7" fill="#EA1D2C" stroke="#FFF4ED" strokeWidth="2" />
-            </g>
-
-            {/* Destination Node (Pousada/Cliente) */}
-            <g transform="translate(515, 90)">
-              <circle r="16" fill="#22C55E" fillOpacity="0.22" />
-              <circle r="8" fill="#22C55E" stroke="#FFF4ED" strokeWidth="2" />
-            </g>
-          </svg>
-
-          {/* Floating Courier Marker on Map */}
-          <motion.div
-            className="pointer-events-none absolute top-1/2 left-0 -translate-y-1/2"
-            animate={{
-              left: `${Math.min(82, Math.max(12, order.courier.progressPct * 0.78 + 8))}%`,
-              top: order.courier.progressPct > 50 ? "42%" : "60%",
-            }}
-            transition={{ type: "spring", stiffness: 140, damping: 20 }}
-          >
-            <div className="flex items-center gap-2 rounded-full border border-[#F6C945]/60 bg-[#090B0C]/90 px-3 py-1.5 text-xs font-bold text-white shadow-xl backdrop-blur-md">
-              <span className="relative flex h-2.5 w-2.5">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
-              </span>
-              <Bike className="h-3.5 w-3.5 text-[#F6C945]" />
-              <span>{order.courier.name.split("•")[0].trim()}</span>
-            </div>
-          </motion.div>
+      {/* Top Live Status Banner with Three.js 3D Tactical Route Map */}
+      <div className="overflow-hidden rounded-[28px] border border-white/12 bg-[#141719] shadow-2xl">
+        <div
+          onMouseEnter={() => wakeUpMapRef.current?.(2000)}
+          onTouchStart={() => wakeUpMapRef.current?.(2500)}
+          className="relative h-64 w-full overflow-hidden bg-[#070B0E]"
+        >
+          <div
+            ref={mapMountRef}
+            className="h-full w-full cursor-grab active:cursor-grabbing"
+            title="Arraste para orbitar o Mapa 3D da entrega em Caraíva"
+          />
 
           {/* Top Left Order Badge */}
-          <div className="absolute top-3.5 left-4 flex items-center gap-2 rounded-full border border-white/10 bg-black/70 px-3 py-1 text-xs font-bold text-white backdrop-blur-md">
+          <div className="pointer-events-none absolute top-4 left-4 flex items-center gap-2 rounded-full border border-white/15 bg-black/75 px-3.5 py-1.5 text-xs font-bold text-white backdrop-blur-md">
             <span className="text-[#F6C945]">#{order.orderId}</span>
             <span className="text-white/40">•</span>
             <Clock className="h-3.5 w-3.5 text-emerald-400" />
@@ -176,43 +382,44 @@ export const DeliveryLiveTracker: React.FC<DeliveryLiveTrackerProps> = ({
           <button
             type="button"
             onClick={handleAdvanceStep}
-            className="
-              absolute top-3.5 right-4 flex items-center gap-1.5 rounded-full
-              border border-[#F6C945]/40 bg-[#090B0C]/85 px-3 py-1.5
-              text-[11px] font-bold text-[#F6C945] backdrop-blur-md
-              transition hover:bg-[#F6C945] hover:text-black
-            "
+            className="absolute top-4 right-4 flex items-center gap-1.5 rounded-full border border-[#F6C945]/50 bg-[#090B0C]/90 px-3.5 py-1.5 text-xs font-bold text-[#F6C945] shadow-lg backdrop-blur-md transition hover:bg-[#F6C945] hover:text-black"
           >
             {order.status === "DELIVERED" ? (
               <>
                 <RotateCcw className="h-3.5 w-3.5" />
-                Reiniciar Simulação
+                Reiniciar Simulação 3D
               </>
             ) : (
               <>
                 <FastForward className="h-3.5 w-3.5" />
-                Simular Próxima Etapa
+                Avançar Etapa 3D
               </>
             )}
           </button>
 
-          {/* Bottom Map Labels */}
-          <div className="absolute right-4 bottom-3 left-4 flex items-center justify-between text-[11px] text-white/75">
-            <span className="rounded-lg bg-black/65 px-2.5 py-1 backdrop-blur-sm">
+          {/* Bottom Map Telemetry Overlay */}
+          <div className="pointer-events-none absolute right-4 bottom-3 left-4 flex flex-wrap items-center justify-between gap-2 text-[11px] text-white/80">
+            <span className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/70 px-3 py-1 backdrop-blur-md">
+              <span className="h-2 w-2 rounded-full bg-[#EA1D2C]" />
               Origem: <strong className="text-white">{order.merchantName}</strong>
             </span>
-            <span className="rounded-lg bg-black/65 px-2.5 py-1 backdrop-blur-sm">
+            <span className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/70 px-3 py-1 backdrop-blur-md">
+              <Rotate3d className="h-3.5 w-3.5 text-[#F6C945]" />
+              <span>Rota 3D Interativa ({order.courier.progressPct}%)</span>
+            </span>
+            <span className="flex items-center gap-1.5 rounded-xl border border-white/10 bg-black/70 px-3 py-1 backdrop-blur-md">
+              <span className="h-2 w-2 rounded-full bg-emerald-400" />
               Destino: <strong className="text-emerald-400">{order.pousadaOrAddress}</strong>
             </span>
           </div>
         </div>
 
         {/* 4-Stage iFood Progress Timeline */}
-        <div className="p-5">
+        <div className="p-5 sm:p-6">
           <div className="mb-4 flex items-center justify-between">
             <div>
               <span className="text-[11px] font-bold tracking-wider text-[#EA1D2C] uppercase">
-                Status em Tempo Real
+                Telemetria em Tempo Real • Three.js Spatial Track
               </span>
               <h3 className="text-lg font-extrabold text-white">
                 {activeStep.label} — {activeStep.subtitle}
@@ -220,7 +427,7 @@ export const DeliveryLiveTracker: React.FC<DeliveryLiveTrackerProps> = ({
             </div>
           </div>
 
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
             {STATUS_STEPS.map((step, index) => {
               const Icon = step.icon;
               const isCompleted = index <= currentStepIndex;
@@ -235,12 +442,12 @@ export const DeliveryLiveTracker: React.FC<DeliveryLiveTrackerProps> = ({
                     );
                     onUpdateStatus(step.key, step.progress);
                   }}
-                  className={`flex flex-col items-start rounded-2xl border p-3 text-left transition ${
+                  className={`flex flex-col items-start rounded-2xl border p-3.5 text-left transition ${
                     isCurrent
-                      ? "border-[#EA1D2C] bg-[#EA1D2C]/10"
+                      ? "border-[#EA1D2C] bg-[#EA1D2C]/15 shadow-lg shadow-[#EA1D2C]/10"
                       : isCompleted
-                      ? "border-emerald-500/30 bg-emerald-500/5"
-                      : "border-white/5 bg-[#090B0C]/60 opacity-50"
+                      ? "border-emerald-500/35 bg-emerald-500/10"
+                      : "border-white/5 bg-[#090B0C]/60 opacity-55 hover:opacity-85"
                   }`}
                 >
                   <div className="mb-2 flex w-full items-center justify-between">
@@ -253,12 +460,12 @@ export const DeliveryLiveTracker: React.FC<DeliveryLiveTrackerProps> = ({
                           : "text-white/40"
                       }`}
                     />
-                    <span className="text-[10px] font-bold text-white/40">
+                    <span className="font-mono text-[10px] font-bold text-white/45">
                       0{index + 1}
                     </span>
                   </div>
                   <span className="text-xs font-bold text-white">{step.label}</span>
-                  <div className="mt-2 h-1 w-full overflow-hidden rounded-full bg-white/10">
+                  <div className="mt-2 h-1.5 w-full overflow-hidden rounded-full bg-white/10">
                     <div
                       className={`h-full transition-all duration-500 ${
                         isCurrent
@@ -279,7 +486,7 @@ export const DeliveryLiveTracker: React.FC<DeliveryLiveTrackerProps> = ({
       {/* Security PIN + Courier Telemetry Grid */}
       <div className="grid gap-4 sm:grid-cols-2">
         {/* iFood 4-Digit Confirmation Code Card */}
-        <div className="flex flex-col justify-between rounded-3xl border border-[#F6C945]/30 bg-gradient-to-br from-[#141719] to-[#090B0C] p-5">
+        <div className="flex flex-col justify-between rounded-[28px] border border-[#F6C945]/30 bg-gradient-to-br from-[#141719] to-[#090B0C] p-5">
           <div className="flex items-start justify-between gap-3">
             <div>
               <span className="inline-flex items-center gap-1 rounded-full bg-[#F6C945]/15 px-2.5 py-0.5 text-[10px] font-bold text-[#F6C945] uppercase">
@@ -311,7 +518,7 @@ export const DeliveryLiveTracker: React.FC<DeliveryLiveTrackerProps> = ({
         </div>
 
         {/* Courier Telemetry Card */}
-        <div className="flex flex-col justify-between rounded-3xl border border-white/10 bg-[#141719] p-5">
+        <div className="flex flex-col justify-between rounded-[28px] border border-white/10 bg-[#141719] p-5">
           <div className="flex items-center gap-3.5">
             <img
               src={order.courier.avatar}
@@ -367,7 +574,7 @@ export const DeliveryLiveTracker: React.FC<DeliveryLiveTrackerProps> = ({
       </div>
 
       {/* Order Receipt Summary */}
-      <div className="rounded-3xl border border-white/10 bg-[#141719] p-5">
+      <div className="rounded-[28px] border border-white/10 bg-[#141719] p-5">
         <div className="mb-3 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
             <img
