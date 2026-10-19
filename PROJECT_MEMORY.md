@@ -352,3 +352,23 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
      - Adicao de cabecalho HTTP X-Robots-Tag: noindex, nofollow, noarchive no vercel.json.
      - Banner de console juridico com advertencia formal de propriedade intelectual da NXA Corp e Caraiva Digital.
      - Verificacao de zero sourcemaps e zero chaves secretas no bundle do cliente.
+
+### ADR 016: Redesenho Big Tech Apple Dynamic Glass Bar, 3D Hero Sem Molduras, Topografia Dark Luxury e KDS com PIN — 19/10/2026
+* **Contexto:** Relato do usuario com screenshots comprovando que o header do delivery quebrava em 3 linhas desalinhadas, categorias pesadas tipo tijolo, palco 3D do hero preso em moldura escura e mapa 3D com grid de laboratorio antigo, alem de necessidade de elevar a gestao da cozinha para superar iFood Gestor e Toast POS.
+* **Decisao Tomada:**
+  1. **Header Unificado Linha Unica (Single-Row Glass Bar):**
+     - Altura fixa de 56px (h-14), eliminando o flex-wrap fragmentado.
+     - Bloco esquerdo: Voltar + Seletor de Endereco compacto integrado com MapPin e Chevron.
+     - Bloco central: Tabs em capsula flutuante (Início, Buscar, Pedidos, Cupons).
+     - Bloco direito: Rastreamento com badge viva piscante, alternador de tema e Sacola compacta com contador.
+  2. **Categorias Glass Chips & Busca Spotlight:**
+     - Substituidas as caixas pretas pesadas por chips tateis com cantos arredondados, micro-hover nos emojis e glow suave de categoria ativa.
+  3. **Hero 3D Sem Molduras (Seamless Atmospheric Fusion):**
+     - Background WebGL transparente com renderer.setClearColor(0x000000, 0).
+     - Removida a caixa preta interna, criando fusao pura com iluminacao de estudio.
+  4. **Mapa 3D Topografico de Alta Definicao:**
+     - Eliminado o GridHelper cru de laboratorio. Terreno escuro com reflexo suave de areia e agua translucida do Rio Caraiva (transmission 0.65, clearcoat 1.0) e halo pulsante do entregador.
+  5. **Padding Dinamico & Oclusao Zero:**
+     - pb-60 dinamico no wrapper de delivery e navegacao docked no mobile-first com md:hidden para nao cobrir cards no desktop.
+  6. **KDS com Validacao Anti-Fraude de PIN 4 Digitos:**
+     - Protocolo de entrega segura no KDS: operador confere e digita os 4 digitos da tela do cliente para liberar o pedido com baixa em estoque e som C6 de expedicao.

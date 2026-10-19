@@ -159,38 +159,34 @@ export const DeliveryLiveTracker: React.FC<DeliveryLiveTrackerProps> = ({
 
       const sandMat = trackMat(
         new THREE.MeshStandardMaterial({
-          color: "#151C21",
-          roughness: 0.78,
-          metalness: 0.15,
+          color: "#0F1316",
+          roughness: 0.72,
+          metalness: 0.2,
           wireframe: false,
         })
       );
       const sandMesh = new THREE.Mesh(sandGeo, sandMat);
       sandMesh.rotation.x = -Math.PI / 2;
+      sandMesh.receiveShadow = true;
       scene.add(sandMesh);
 
-      // Grade Tática Sutil sobre o Terreno
-      const gridHelper = new THREE.GridHelper(14, 24, "#F6C945", "#1E293B");
-      gridHelper.position.y = 0.02;
-      (gridHelper.material as THREE.Material).transparent = true;
-      (gridHelper.material as THREE.Material).opacity = 0.22;
-      scene.add(gridHelper);
-
-      // 2. Rio Caraíva ao Fundo
-      const riverGeo = trackGeo(new THREE.PlaneGeometry(14, 2.6, 24, 8));
+      // 2. Rio Caraíva ao Fundo (Água Turquesa Translúcida de Caraíva)
+      const riverGeo = trackGeo(new THREE.PlaneGeometry(14, 2.8, 32, 12));
       const riverMat = trackMat(
         new THREE.MeshPhysicalMaterial({
-          color: "#0369A1",
-          emissive: "#0284C7",
-          emissiveIntensity: 0.2,
-          roughness: 0.15,
-          metalness: 0.4,
-          clearcoat: 0.9,
+          color: "#0284C7",
+          emissive: "#0369A1",
+          emissiveIntensity: 0.35,
+          roughness: 0.08,
+          metalness: 0.1,
+          transmission: 0.65,
+          ior: 1.33,
+          clearcoat: 1.0,
         })
       );
       const riverMesh = new THREE.Mesh(riverGeo, riverMat);
       riverMesh.rotation.x = -Math.PI / 2;
-      riverMesh.position.set(0, -0.14, -2.5);
+      riverMesh.position.set(0, -0.12, -2.4);
       scene.add(riverMesh);
 
       // 3. Curva 3D da Trilha de Areia (Restaurante -> Pousada)
@@ -442,12 +438,12 @@ export const DeliveryLiveTracker: React.FC<DeliveryLiveTrackerProps> = ({
                     );
                     onUpdateStatus(step.key, step.progress);
                   }}
-                  className={`flex flex-col items-start rounded-2xl border p-3.5 text-left transition ${
+                  className={`flex flex-col items-start rounded-2xl border p-3.5 text-left transition-all active:scale-[0.98] ${
                     isCurrent
-                      ? "border-[#EA1D2C] bg-[#EA1D2C]/15 shadow-lg shadow-[#EA1D2C]/10"
+                      ? "border-[#EA1D2C] bg-[#EA1D2C]/15 shadow-lg shadow-[#EA1D2C]/15 ring-1 ring-[#EA1D2C]/30"
                       : isCompleted
-                      ? "border-emerald-500/35 bg-emerald-500/10"
-                      : "border-white/5 bg-[#090B0C]/60 opacity-55 hover:opacity-85"
+                      ? "border-emerald-500/40 bg-emerald-500/10 shadow-sm"
+                      : "border-white/[0.06] bg-[#090B0C]/60 opacity-60 hover:opacity-90"
                   }`}
                 >
                   <div className="mb-2 flex w-full items-center justify-between">
