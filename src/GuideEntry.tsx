@@ -1,4 +1,4 @@
-import { StrictMode, Suspense, lazy } from 'react';
+import { StrictMode, Suspense, lazy, useState, useEffect } from 'react';
 import { createRoot } from 'react-dom/client';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import GuiaCaraivaApp from './screens/GuiaCaraivaApp';
@@ -13,25 +13,14 @@ import { CaraivaGuestNfcView } from './components/guia/CaraivaGuestNfcView';
 
 import { CaraivaExperienceShowcase } from './components/experience/CaraivaExperienceShowcase';
 import { CaraivaMagicOnboardingExperience } from './components/partner/onboarding-magic';
-import { CaraivaMaintenanceScreen } from './components/maintenance/CaraivaMaintenanceScreen';
 import { BubbleNavigationShowcase } from './components/navigation/BubbleNavigationShowcase';
 import { CaraivaDeliveryApp } from './components/delivery/CaraivaDeliveryApp';
+import { ProjectAccessGate } from './components/security/ProjectAccessGate';
+import { ProjectLockBadge } from './components/security/ProjectLockBadge';
+import { isProjectUnlocked, initConsoleSecurityBanner } from './services/projectSecurityService';
 import './index.css';
 import './theme/caraiva-design-system.css';
 import './components/guia/caraiva-mobile-layout.css';
-
-// MODO DE MANUTENÇÃO ATIVADO A PEDIDO
-const MAINTENANCE_ACTIVE = true;
-
-function checkMaintenanceBypass(): boolean {
-  if (typeof window === 'undefined') return false;
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('bypass') === 'nxa' || params.get('bypass') === 'true' || params.get('dev') === '1') {
-    sessionStorage.setItem('caraiva_maintenance_bypass', 'true');
-    return true;
-  }
-  return sessionStorage.getItem('caraiva_maintenance_bypass') === 'true' || localStorage.getItem('caraiva_maintenance_bypass') === 'true';
-}
 
 function GuideRoute() {
   const query = new URLSearchParams(location.search);
@@ -87,13 +76,21 @@ function PartnerDashboardClassicPage() {
   return <main style={{minHeight:'100vh'}}><MvpDemoBoundary title="Business clássico"><PartnerPremiumDashboard onBackToGuide={() => location.assign('/parceiros/painel')} /></MvpDemoBoundary></main>;
 }
 function RootApp() {
-  if (MAINTENANCE_ACTIVE && !checkMaintenanceBypass()) {
-    return <CaraivaMaintenanceScreen onUnlock={() => window.location.reload()} />;
+  const [unlocked, setUnlocked] = useState(() => isProjectUnlocked());
+
+  useEffect(() => {
+    initConsoleSecurityBanner();
+  }, []);
+
+  if (!unlocked) {
+    return <ProjectAccessGate onUnlock={() => setUnlocked(true)} />;
   }
 
   return (
-    <BrowserRouter>
-      <Routes>
+    <>
+      <ProjectLockBadge />
+      <BrowserRouter>
+        <Routes>
         <Route path="/delivery" element={<CaraivaDeliveryApp />} />
         <Route path="/ifood" element={<CaraivaDeliveryApp />} />
         <Route path="/demonstracao/business" element={<DemoPage type="business" />} />
@@ -125,6 +122,7 @@ function RootApp() {
         <Route path="*" element={<main style={{padding:40,color:'white'}}>Página indisponível. <a href="/guia">Abrir guia</a></main>} />
       </Routes>
     </BrowserRouter>
+    </>
   );
 }
 
