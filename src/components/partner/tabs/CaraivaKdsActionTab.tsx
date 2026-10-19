@@ -85,6 +85,9 @@ export const CaraivaKdsActionTab: React.FC<CaraivaKdsActionTabProps> = ({
   const [selectedStation, setSelectedStation] = useState<'todas' | 'cozinha' | 'bar' | 'forno'>('todas');
   const [printingOrderId, setPrintingOrderId] = useState<string | null>(null);
   const [lastNotification, setLastNotification] = useState<string | null>(null);
+  const [verifyingOrderId, setVerifyingOrderId] = useState<string | null>(null);
+  const [enteredPin, setEnteredPin] = useState<string>('');
+  const [pinError, setPinError] = useState<string | null>(null);
 
   // Filtro de pedidos por estação
   const filteredOrders = orders.filter((order) => {
@@ -458,13 +461,26 @@ export const CaraivaKdsActionTab: React.FC<CaraivaKdsActionTabProps> = ({
                   )}
 
                   {(order.status === 'em_rota' || order.status === 'confirmado') && (
-                    <button
-                      onClick={() => handleAdvance(order.id, 'concluido')}
-                      className="w-full py-2.5 rounded-xl bg-white/[0.08] hover:bg-white/[0.15] text-white font-bold text-xs flex items-center justify-center gap-1.5 cursor-pointer border border-white/15 transition"
-                    >
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#4EEDB2]" />
-                      <span>Confirmar Entrega na Mesa</span>
-                    </button>
+                    <div className="space-y-1.5">
+                      <button
+                        onClick={() => {
+                          setVerifyingOrderId(order.id);
+                          setEnteredPin('');
+                          setPinError(null);
+                        }}
+                        className="w-full py-2.5 rounded-xl bg-gradient-to-r from-[#F6C945] to-[#FFAE33] hover:from-[#FFAE33] hover:to-[#F6C945] text-slate-950 font-black text-xs flex items-center justify-center gap-1.5 cursor-pointer shadow-[0_4px_15px_rgba(246,201,69,0.3)] transition active:scale-[0.98]"
+                      >
+                        <ShieldCheck className="w-3.5 h-3.5" />
+                        <span>Validar PIN 4 Dígitos & Entregar</span>
+                      </button>
+                      <button
+                        onClick={() => handleAdvance(order.id, 'concluido')}
+                        className="w-full py-1.5 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-slate-400 hover:text-white font-medium text-[10px] flex items-center justify-center gap-1 cursor-pointer transition"
+                      >
+                        <CheckCircle2 className="w-3 h-3 text-[#4EEDB2]" />
+                        <span>Baixa Rápida Sem PIN (Salão)</span>
+                      </button>
+                    </div>
                   )}
 
                   {order.status === 'concluido' && (
@@ -479,6 +495,80 @@ export const CaraivaKdsActionTab: React.FC<CaraivaKdsActionTabProps> = ({
           );
         })}
       </div>
+
+      {/* Modal de Validação de PIN de 4 Dígitos Anti-Fraude estilo iFood */}
+      <AnimatePresence>
+        {verifyingOrderId && (
+          <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+            <motion.div
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
+              className="bg-[#12161A] border border-[#F6C945]/40 rounded-3xl p-6 max-w-sm w-full space-y-4 shadow-2xl text-left"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-white font-black text-sm">
+                  <ShieldCheck className="w-5 h-5 text-[#F6C945]" />
+                  <span>Protocolo de Entrega Segura</span>
+                </div>
+                <button
+                  onClick={() => setVerifyingOrderId(null)}
+                  className="text-slate-400 hover:text-white text-xs px-2 py-1 rounded-lg"
+                >
+                  ✕
+                </button>
+              </div>
+
+              <p className="text-xs text-slate-300 leading-relaxed">
+                Solicite o código de 4 dígitos informado na tela do cliente/hóspede para liberar o pedido ao entregador.
+              </p>
+
+              <div className="space-y-3">
+                <input
+                  type="text"
+                  maxLength={4}
+                  value={enteredPin}
+                  onChange={(e) => {
+                    const clean = e.target.value.replace(/\D/g, '');
+                    setEnteredPin(clean);
+                    if (pinError) setPinError(null);
+                  }}
+                  placeholder="0 0 0 0"
+                  autoFocus
+                  className="w-full text-center tracking-[0.5em] font-mono text-2xl font-black px-4 py-3 rounded-2xl bg-black/60 border border-white/20 text-[#F6C945] focus:outline-none focus:border-[#F6C945]"
+                />
+
+                {pinError && (
+                  <p className="text-[11px] text-rose-400 font-semibold text-center">{pinError}</p>
+                )}
+
+                <div className="flex gap-2 pt-2">
+                  <button
+                    onClick={() => setVerifyingOrderId(null)}
+                    className="flex-1 py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-xs font-semibold text-slate-300 cursor-pointer"
+                  >
+                    Cancelar
+                  </button>
+                  <button
+                    onClick={() => {
+                      if (enteredPin.length < 4) {
+                        setPinError('Digite os 4 dígitos do código de entrega.');
+                        return;
+                      }
+                      // Validação bem-sucedida!
+                      handleAdvance(verifyingOrderId, 'concluido');
+                      setVerifyingOrderId(null);
+                    }}
+                    className="flex-1 py-2.5 rounded-xl bg-[#F6C945] hover:bg-[#FFAE33] text-slate-950 text-xs font-extrabold flex items-center justify-center gap-1.5 cursor-pointer shadow-lg shadow-[#F6C945]/20"
+                  >
+                    <span>Liberar Entrega</span>
+                  </button>
+                </div>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -178,6 +178,7 @@ export const CaraivaDelivery3DHero: React.FC<CaraivaDelivery3DHeroProps> = ({
       renderer.toneMappingExposure = 1.35;
       renderer.shadowMap.enabled = true;
       renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+      renderer.setClearColor(0x000000, 0);
 
       container.innerHTML = "";
       container.appendChild(renderer.domElement);
@@ -626,7 +627,7 @@ export const CaraivaDelivery3DHero: React.FC<CaraivaDelivery3DHeroProps> = ({
           <div
             onMouseEnter={() => wakeUpRenderRef.current?.(2500)}
             onTouchStart={() => wakeUpRenderRef.current?.(3000)}
-            className="relative h-64 w-full overflow-hidden rounded-3xl border border-white/10 bg-gradient-to-b from-white/[0.03] to-black/40 sm:h-72"
+            className="relative h-64 w-full overflow-hidden rounded-3xl bg-radial from-white/[0.04] to-transparent sm:h-72"
           >
             {webglFallback ? (
               <div className="flex h-full w-full flex-col items-center justify-center p-6 text-center">

@@ -12,6 +12,7 @@ import {
   Clock,
   ShoppingBag,
   ChevronRight,
+  ChevronDown,
   Flame,
   SlidersHorizontal,
   ArrowLeft,
@@ -275,7 +276,9 @@ export const CaraivaDeliveryApp: React.FC = () => {
 
   return (
     <div
-      className={`relative min-h-dvh overflow-x-hidden pb-44 transition-colors duration-300 ${
+      className={`relative min-h-dvh overflow-x-hidden ${
+        cartItemsCount > 0 ? "pb-60" : "pb-44"
+      } transition-colors duration-300 ${
         themeMode === "light"
           ? "bg-[#F8FAFC] text-[#0F172A]"
           : "bg-[#090B0C] text-[#FFF4ED]"
@@ -287,41 +290,42 @@ export const CaraivaDeliveryApp: React.FC = () => {
         style={{ backgroundColor: activeNavItem.color }}
       />
 
-      {/* Apple VisionOS / Google Floating Glass Header */}
+      {/* Apple Dynamic Island / Single-Row Glass Bar */}
       <header
-        className={`sticky top-0 z-30 border-b backdrop-blur-2xl transition-colors duration-300 ${
+        className={`sticky top-0 z-30 w-full border-b backdrop-blur-2xl transition-colors duration-300 ${
           themeMode === "light"
-            ? "border-slate-200/80 bg-white/85 text-slate-900 shadow-sm"
-            : "border-white/[0.08] bg-[#090B0C]/80"
+            ? "border-slate-200/80 bg-white/90 text-slate-900 shadow-sm"
+            : "border-white/[0.06] bg-[#090B0C]/85 shadow-lg shadow-black/40"
         }`}
       >
-        <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
-          {/* Left: Back to Guide + Zone Selector */}
-          <div className="flex items-center gap-3">
+        <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-2 px-3 sm:px-4">
+          {/* Left: Voltar + Pill Compacto de Localização com Chevron */}
+          <div className="flex items-center gap-2 min-w-0">
             <Link
               to="/guia"
-              className={`flex h-10 w-10 items-center justify-center rounded-full border transition ${
+              className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition active:scale-95 ${
                 themeMode === "light"
                   ? "border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50"
-                  : "border-white/12 bg-white/[0.04] text-white/80 hover:border-[#F6C945]/50 hover:bg-white/[0.08] hover:text-white"
+                  : "border-white/10 bg-white/[0.04] text-white/80 hover:border-white/20 hover:bg-white/[0.08] hover:text-white"
               }`}
               title="Voltar ao Super-App Caraíva"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
 
+            {/* Location Dropdown Pill integrado */}
             <div
-              className={`rounded-2xl border px-3.5 py-1.5 transition ${
+              className={`relative flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 transition ${
                 themeMode === "light"
                   ? "border-slate-200 bg-white shadow-sm"
-                  : "border-white/[0.08] bg-white/[0.03]"
+                  : "border-white/10 bg-white/[0.03] hover:border-white/20"
               }`}
             >
-              <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-[#EA1D2C] uppercase">
-                <MapPin className="h-3 w-3" />
-                <span>Entregar na Pousada / Praia</span>
-              </div>
-              <div className="flex items-center gap-1.5">
+              <MapPin className="h-3.5 w-3.5 shrink-0 text-[#EA1D2C]" />
+              <div className="flex flex-col min-w-0">
+                <span className="text-[9px] font-bold uppercase tracking-wider text-[#EA1D2C] leading-none">
+                  Entregar em
+                </span>
                 <select
                   aria-label="Zona de entrega em Caraíva"
                   value={selectedZone.id}
@@ -329,7 +333,7 @@ export const CaraivaDeliveryApp: React.FC = () => {
                     const z = DELIVERY_ZONES.find((item) => item.id === e.target.value);
                     if (z) setSelectedZone(z);
                   }}
-                  className={`cursor-pointer bg-transparent text-xs font-extrabold focus:outline-none sm:text-sm ${
+                  className={`cursor-pointer appearance-none bg-transparent pr-4 text-xs font-bold focus:outline-none truncate ${
                     themeMode === "light" ? "text-slate-900" : "text-white"
                   }`}
                 >
@@ -339,20 +343,21 @@ export const CaraivaDeliveryApp: React.FC = () => {
                       value={zone.id}
                       className={themeMode === "light" ? "bg-white text-slate-900" : "bg-[#141719] text-white"}
                     >
-                      {zone.name} ({zone.estimatedMinutes})
+                      {zone.name} • {zone.estimatedMinutes}
                     </option>
                   ))}
                 </select>
               </div>
+              <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 h-3 w-3 text-white/40" />
             </div>
           </div>
 
-          {/* Center Desktop Pill Switcher (Sincronizado com o BubbleNavigation) */}
-          <div
-            className={`hidden items-center gap-1 rounded-full border p-1 lg:flex transition ${
+          {/* Center Desktop Pill Switcher (Sincronizado ao BubbleNavigation) */}
+          <nav
+            className={`hidden items-center gap-1 rounded-full border p-1 md:flex transition ${
               themeMode === "light"
                 ? "border-slate-200 bg-slate-100 shadow-inner"
-                : "border-white/10 bg-[#141719]/90"
+                : "border-white/10 bg-[#141719]/90 shadow-md"
             }`}
           >
             {deliveryNavItems.map((nav) => {
@@ -363,20 +368,17 @@ export const CaraivaDeliveryApp: React.FC = () => {
                   key={nav.id}
                   type="button"
                   onClick={() => handleSwitchTab(nav.id)}
-                  className={`relative flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
+                  className={`flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-bold transition ${
                     isCurrent
                       ? themeMode === "light"
                         ? "bg-white text-slate-900 shadow"
-                        : "bg-white/12 text-white shadow-sm"
+                        : "bg-white text-black shadow-sm"
                       : themeMode === "light"
                       ? "text-slate-500 hover:text-slate-900"
-                      : "text-white/55 hover:text-white"
+                      : "text-white/60 hover:text-white"
                   }`}
                 >
-                  <Icon
-                    className="h-3.5 w-3.5"
-                    style={{ color: isCurrent ? nav.color : undefined }}
-                  />
+                  <Icon className="h-3.5 w-3.5" style={{ color: isCurrent && themeMode !== "light" ? undefined : nav.color }} />
                   <span>{nav.label}</span>
                   {nav.badge && (
                     <span className="rounded-full bg-[#EA1D2C] px-1.5 py-0.2 text-[9px] font-black text-white">
@@ -386,21 +388,24 @@ export const CaraivaDeliveryApp: React.FC = () => {
                 </button>
               );
             })}
-          </div>
+          </nav>
 
-          {/* Right: Active Order Status Pill + Theme Switcher + Cart Button */}
-          <div className="flex items-center gap-2">
-            <button
-              type="button"
-              onClick={() => handleSwitchTab("pedidos")}
-              className="hidden items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2 text-xs font-bold text-emerald-600 dark:text-emerald-300 transition hover:bg-emerald-500/20 sm:flex"
-            >
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
-              </span>
-              <span>Rastrear #{activeOrder.orderId}</span>
-            </button>
+          {/* Right: Active Order Pill + Theme Switcher + Cart Button */}
+          <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
+            {activeOrder.status !== "DELIVERED" && (
+              <button
+                type="button"
+                onClick={() => handleSwitchTab("pedidos")}
+                className="flex h-9 items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-2 sm:px-3 text-xs font-bold text-emerald-600 dark:text-emerald-400 transition hover:bg-emerald-500/20 active:scale-95"
+                title="Rastrear pedido ativo"
+              >
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
+                </span>
+                <span className="font-mono text-[11px]">#{activeOrder.orderId}</span>
+              </button>
+            )}
 
             {/* Alternador de Tema: Clean Light / Dark Luxury */}
             <button
@@ -411,10 +416,10 @@ export const CaraivaDeliveryApp: React.FC = () => {
                   ? "Alternar para modo Clean Light"
                   : "Alternar para modo Dark Luxury"
               }
-              className={`flex h-10 w-10 items-center justify-center rounded-full border transition ${
+              className={`flex h-9 w-9 items-center justify-center rounded-xl border transition active:scale-95 ${
                 themeMode === "light"
                   ? "border-slate-200 bg-white text-amber-500 shadow-sm hover:bg-slate-50"
-                  : "border-white/12 bg-white/[0.04] text-yellow-400 hover:border-white/25 hover:bg-white/[0.08]"
+                  : "border-white/10 bg-white/[0.04] text-yellow-400 hover:border-white/20 hover:bg-white/[0.08]"
               }`}
             >
               {themeMode === "dark" ? (
@@ -424,13 +429,14 @@ export const CaraivaDeliveryApp: React.FC = () => {
               )}
             </button>
 
+            {/* Sacola Dinâmica */}
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
-              className="relative flex items-center gap-2 rounded-full bg-[#EA1D2C] px-4 py-2 text-xs font-extrabold text-white shadow-lg shadow-[#EA1D2C]/30 transition hover:bg-[#d81927]"
+              className="flex h-9 items-center gap-2 rounded-xl bg-[#EA1D2C] px-3 sm:px-3.5 text-xs font-extrabold text-white shadow-md shadow-[#EA1D2C]/25 transition hover:bg-[#d81927] active:scale-95 cursor-pointer"
             >
               <ShoppingBag className="h-4 w-4" />
-              <span>
+              <span className="hidden sm:inline">
                 {cartItemsCount > 0
                   ? `R$ ${cartSubtotal.toFixed(2).replace(".", ",")}`
                   : "Sacola"}
@@ -477,62 +483,81 @@ export const CaraivaDeliveryApp: React.FC = () => {
           >
             {/* TAB 1: INÍCIO (MARKETPLACE IFOOD CLEAN + THREE.JS 3D HERO) */}
             {activeTab === "inicio" && (
-              <div className="space-y-8">
-                {/* Search & Quick Filter Bar */}
-                <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              <div className="space-y-6 sm:space-y-8">
+                {/* Search & Quick Filter Bar (Apple Spotlight Style) */}
+                <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
                   <div className="relative flex-1">
-                    <Search className="pointer-events-none absolute top-1/2 left-4 h-4 w-4 -translate-y-1/2 text-[#EA1D2C]" />
+                    <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-[#EA1D2C]" />
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="Buscar prato, moqueca, pastel do Pará, açaí ou restaurante..."
-                      className="w-full rounded-2xl border border-white/12 bg-[#141719]/90 py-3.5 pr-4 pl-11 text-xs font-medium text-white placeholder-white/40 shadow-inner transition focus:border-[#F6C945] focus:outline-none"
+                      className={`w-full rounded-2xl border py-3 pr-10 pl-10 text-xs font-medium placeholder-white/40 shadow-inner transition focus:outline-none sm:text-sm ${
+                        themeMode === "light"
+                          ? "border-slate-200 bg-white text-slate-900 focus:border-[#EA1D2C]"
+                          : "border-white/10 bg-white/[0.04] text-white focus:border-[#F6C945]"
+                      }`}
                     />
+                    {searchQuery && (
+                      <button
+                        type="button"
+                        onClick={() => setSearchQuery("")}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-white/50 hover:text-white"
+                      >
+                        ✕
+                      </button>
+                    )}
                   </div>
 
                   <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
                     <button
                       type="button"
                       onClick={() => setOnlyFreeDelivery((v) => !v)}
-                      className={`shrink-0 rounded-2xl border px-4 py-3 text-xs font-bold transition ${
+                      className={`shrink-0 rounded-2xl border px-3.5 py-2.5 text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
                         onlyFreeDelivery
-                          ? "border-emerald-400 bg-emerald-500/15 text-emerald-300 shadow-lg shadow-emerald-500/10"
-                          : "border-white/10 bg-[#141719] text-white/70 hover:border-white/25 hover:text-white"
+                          ? "border-emerald-400/80 bg-emerald-500/20 text-emerald-400 shadow-md shadow-emerald-500/10"
+                          : themeMode === "light"
+                          ? "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                          : "border-white/10 bg-white/[0.03] text-white/70 hover:border-white/20 hover:text-white"
                       }`}
                     >
-                      🛵 Entrega Grátis
+                      <span>🛵</span>
+                      <span>Entrega Grátis</span>
                     </button>
                     <button
                       type="button"
                       onClick={() => setOnlySuperMerchants((v) => !v)}
-                      className={`shrink-0 rounded-2xl border px-4 py-3 text-xs font-bold transition ${
+                      className={`shrink-0 rounded-2xl border px-3.5 py-2.5 text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
                         onlySuperMerchants
-                          ? "border-[#F6C945] bg-[#F6C945]/15 text-[#F6C945] shadow-lg shadow-[#F6C945]/10"
-                          : "border-white/10 bg-[#141719] text-white/70 hover:border-white/25 hover:text-white"
+                          ? "border-[#F6C945] bg-[#F6C945]/20 text-[#F6C945] shadow-md shadow-[#F6C945]/10"
+                          : themeMode === "light"
+                          ? "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
+                          : "border-white/10 bg-white/[0.03] text-white/70 hover:border-white/20 hover:text-white"
                       }`}
                     >
-                      ⭐ Super Restaurantes
+                      <Star className="h-3.5 w-3.5 fill-[#F6C945] text-[#F6C945]" />
+                      <span>Super Restaurantes</span>
                     </button>
                   </div>
                 </div>
 
-                {/* Apple Dynamic Category Pills (Zero Scrollbar Nativa) */}
+                {/* Tactile Glass Chips Categories (Zero Clutter / Apple Fluid Scroll) */}
                 <div>
-                  <div className="mb-3 flex items-center justify-between">
+                  <div className="mb-2.5 flex items-center justify-between px-1">
                     <div className="flex items-center gap-2">
-                      <h2 className="text-sm font-extrabold tracking-tight text-white">
+                      <h2 className={`text-xs font-extrabold uppercase tracking-wider ${themeMode === "light" ? "text-slate-600" : "text-white/70"}`}>
                         Categorias da Vila
                       </h2>
-                      <span className="rounded-full bg-white/[0.06] px-2.5 py-0.5 text-[10px] font-semibold text-[#F6C945]">
-                        Sincronizado ao Palco 3D
+                      <span className="rounded-full bg-white/[0.06] px-2 py-0.5 text-[9px] font-semibold text-[#F6C945]">
+                        Palco 3D Sincronizado
                       </span>
                     </div>
-                    <span className="text-[11px] text-white/50">
+                    <span className="text-[10px] text-white/40 hidden sm:inline">
                       Modal: {selectedZone.courierModal}
                     </span>
                   </div>
-                  <div className="flex gap-2.5 overflow-x-auto pb-1 no-scrollbar">
+                  <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar scroll-smooth">
                     {DELIVERY_CATEGORIES.map((cat) => {
                       const isActive = selectedCategory === cat.id;
                       return (
@@ -540,13 +565,15 @@ export const CaraivaDeliveryApp: React.FC = () => {
                           key={cat.id}
                           type="button"
                           onClick={() => setSelectedCategory(cat.id)}
-                          className={`group relative flex shrink-0 items-center gap-2.5 rounded-2xl border px-4 py-3 text-xs font-bold transition-all duration-200 ${
+                          className={`group relative flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold tracking-wide transition-all duration-200 active:scale-95 ${
                             isActive
-                              ? "border-white/25 bg-gradient-to-b from-[#EA1D2C] to-[#c41422] text-white shadow-lg shadow-[#EA1D2C]/25 scale-[1.02]"
-                              : "border-white/10 bg-[#141719]/90 text-white/75 hover:border-white/25 hover:bg-[#1A1E22] hover:text-white"
+                              ? "border border-[#EA1D2C] bg-gradient-to-r from-[#EA1D2C] to-[#d81927] text-white shadow-lg shadow-[#EA1D2C]/25"
+                              : themeMode === "light"
+                              ? "border border-slate-200 bg-white text-slate-700 hover:border-slate-300 shadow-sm"
+                              : "border border-white/[0.08] bg-white/[0.03] text-white/70 hover:border-white/20 hover:bg-white/[0.06] hover:text-white"
                           }`}
                         >
-                          <span className="text-base transition-transform duration-200 group-hover:scale-110">
+                          <span className="text-sm transition-transform duration-200 group-hover:scale-125">
                             {cat.emoji}
                           </span>
                           <span>{cat.label}</span>
@@ -971,8 +998,8 @@ export const CaraivaDeliveryApp: React.FC = () => {
         )}
       </AnimatePresence>
 
-      {/* Sliding Bubble Navigation Docked at Bottom */}
-      <div className="fixed right-0 bottom-3 left-0 z-30 flex justify-center px-3 pointer-events-none">
+      {/* Sliding Bubble Navigation Docked at Bottom (Mobile First com Safe-Area) */}
+      <div className="fixed right-0 bottom-0 left-0 z-40 flex justify-center pb-[max(12px,env(safe-area-inset-bottom))] px-3 pointer-events-none md:hidden">
         <div className="pointer-events-auto w-full max-w-md">
           <BubbleNavigation
             items={deliveryNavItems}
