@@ -108,9 +108,9 @@ export const BubbleNavigation: React.FC<BubbleNavigationProps> = ({
       className={`sbn-wrapper ${theme === "light" ? "sbn-theme-light" : "sbn-theme-dark"} ${className}`}
       data-testid="bubble-navigation"
     >
-      {/* 1. Título Dinâmico Superior com Transição Suave */}
+      {/* 1. Título Dinâmico Superior com Transição Suave (Decorativo para screen readers) */}
       {showTitleHeader && currentItem && (
-        <header className="sbn-title-header" aria-live="polite">
+        <header className="sbn-title-header" aria-hidden="true">
           <AnimatePresence mode="wait">
             <motion.span
               key={currentItem.id}
@@ -133,7 +133,14 @@ export const BubbleNavigation: React.FC<BubbleNavigationProps> = ({
         role="tablist"
         aria-label="Navegação com bolha deslizante"
       >
-        <div ref={railRef} className="sbn-rail">
+        <div
+          ref={railRef}
+          className="sbn-rail"
+          style={{
+            gridTemplateColumns: `repeat(${items.length}, minmax(0, 1fr))`,
+            touchAction: enableDrag ? "none" : "auto",
+          }}
+        >
           {/* Indicador de Bolha Deslizante e Iluminação Glow */}
           <BubbleIndicator
             items={items}
