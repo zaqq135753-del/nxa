@@ -46,6 +46,7 @@ import { CaraivaInteractiveIntro } from "../components/guia/CaraivaInteractiveIn
 import { CaraivaLivingHeader } from "../components/guia/CaraivaLivingHeader";
 import { CaraivaDock } from "../components/guia/CaraivaDock";
 import { CaraivaOrb } from "../components/guia/CaraivaOrb";
+import { BubbleNavigation, CARAIVA_ECOSYSTEM_NAV_ITEMS } from "../components/navigation";
 import { useCaraivaMoment } from "../components/guia/useCaraivaMoment";
 import "../components/guia/caraiva-shell.css";
 import "../components/guia/caraiva-sand.css";
@@ -164,6 +165,18 @@ export const GuiaCaraivaApp: React.FC = () => {
       // ignora em navegadores com restrições
     }
   }, []);
+
+  const [useBubbleNav] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    const nav = new URLSearchParams(window.location.search).get("nav");
+    if (nav === "dock") return false;
+    if (nav === "bubble") return true;
+    try {
+      return localStorage.getItem("caraiva_nav_style") === "bubble";
+    } catch {
+      return false;
+    }
+  });
 
   const handleReplayIntro = useCallback(() => {
     setIsIntroOpen(true);
@@ -972,7 +985,22 @@ export const GuiaCaraivaApp: React.FC = () => {
 
       {activeTab !== "business" && !overlayOpen && (
         <>
-          <CaraivaDock activeTab={activeTab} onNavigate={navigateGuide} favoritesCount={favoritesCount} moment={moment} />
+          {useBubbleNav ? (
+            <div className="fixed bottom-5 left-0 right-0 z-40 flex justify-center px-4 pointer-events-none">
+              <div className="pointer-events-auto max-w-md w-full">
+                <BubbleNavigation
+                  items={CARAIVA_ECOSYSTEM_NAV_ITEMS}
+                  activeId={activeTab === "agora" ? "explorar" : activeTab}
+                  onChange={(id) => navigateGuide(id as GuiaTab)}
+                  showTitleHeader={false}
+                  showLabels={false}
+                  enableDrag={true}
+                />
+              </div>
+            </div>
+          ) : (
+            <CaraivaDock activeTab={activeTab} onNavigate={navigateGuide} favoritesCount={favoritesCount} moment={moment} />
+          )}
           {activeTab !== "inicio" && activeTab !== "concierge" && activeTab !== "mapa" && (
             <CaraivaOrb
               key={activeTab}
