@@ -19,6 +19,8 @@ import {
   CheckCircle2,
   Plus,
   Sparkles,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { BubbleNavigation } from "../navigation/BubbleNavigation";
 import type { BubbleNavItem } from "../navigation/navigation.types";
@@ -44,6 +46,26 @@ import { DeliveryLiveTracker } from "./DeliveryLiveTracker";
 const TAB_ORDER = ["inicio", "busca", "pedidos", "cupons", "perfil"] as const;
 
 export const CaraivaDeliveryApp: React.FC = () => {
+  const [themeMode, setThemeMode] = useState<"dark" | "light">(() => {
+    if (typeof window !== "undefined") {
+      const saved = localStorage.getItem("caraiva_delivery_theme");
+      if (saved === "light" || saved === "dark") return saved;
+    }
+    return "dark";
+  });
+
+  const toggleTheme = () => {
+    setThemeMode((prev) => {
+      const next = prev === "dark" ? "light" : "dark";
+      try {
+        localStorage.setItem("caraiva_delivery_theme", next);
+      } catch {
+        /* ignore */
+      }
+      return next;
+    });
+  };
+
   const [activeTab, setActiveTab] = useState<string>("inicio");
   const [tabDirection, setTabDirection] = useState<number>(1);
   const [selectedCategory, setSelectedCategory] = useState<string>("todos");
@@ -252,7 +274,13 @@ export const CaraivaDeliveryApp: React.FC = () => {
   );
 
   return (
-    <div className="relative min-h-dvh overflow-x-hidden bg-[#090B0C] pb-44 text-[#FFF4ED] selection:bg-[#EA1D2C] selection:text-white">
+    <div
+      className={`relative min-h-dvh overflow-x-hidden pb-44 transition-colors duration-300 ${
+        themeMode === "light"
+          ? "bg-[#F8FAFC] text-[#0F172A]"
+          : "bg-[#090B0C] text-[#FFF4ED]"
+      } selection:bg-[#EA1D2C] selection:text-white`}
+    >
       {/* Subtle Ambient Top Glow synced with Active Tab */}
       <div
         className="pointer-events-none fixed top-0 left-1/2 z-0 h-64 w-[680px] -translate-x-1/2 rounded-full opacity-15 blur-[110px] transition-colors duration-700"
@@ -260,19 +288,35 @@ export const CaraivaDeliveryApp: React.FC = () => {
       />
 
       {/* Apple VisionOS / Google Floating Glass Header */}
-      <header className="sticky top-0 z-30 border-b border-white/[0.08] bg-[#090B0C]/80 backdrop-blur-2xl">
+      <header
+        className={`sticky top-0 z-30 border-b backdrop-blur-2xl transition-colors duration-300 ${
+          themeMode === "light"
+            ? "border-slate-200/80 bg-white/85 text-slate-900 shadow-sm"
+            : "border-white/[0.08] bg-[#090B0C]/80"
+        }`}
+      >
         <div className="mx-auto flex max-w-5xl flex-wrap items-center justify-between gap-3 px-4 py-3">
           {/* Left: Back to Guide + Zone Selector */}
           <div className="flex items-center gap-3">
             <Link
               to="/guia"
-              className="flex h-10 w-10 items-center justify-center rounded-full border border-white/12 bg-white/[0.04] text-white/80 transition hover:border-[#F6C945]/50 hover:bg-white/[0.08] hover:text-white"
+              className={`flex h-10 w-10 items-center justify-center rounded-full border transition ${
+                themeMode === "light"
+                  ? "border-slate-200 bg-white text-slate-700 shadow-sm hover:bg-slate-50"
+                  : "border-white/12 bg-white/[0.04] text-white/80 hover:border-[#F6C945]/50 hover:bg-white/[0.08] hover:text-white"
+              }`}
               title="Voltar ao Super-App Caraíva"
             >
               <ArrowLeft className="h-4 w-4" />
             </Link>
 
-            <div className="rounded-2xl border border-white/[0.08] bg-white/[0.03] px-3.5 py-1.5">
+            <div
+              className={`rounded-2xl border px-3.5 py-1.5 transition ${
+                themeMode === "light"
+                  ? "border-slate-200 bg-white shadow-sm"
+                  : "border-white/[0.08] bg-white/[0.03]"
+              }`}
+            >
               <div className="flex items-center gap-1.5 text-[10px] font-bold tracking-wider text-[#EA1D2C] uppercase">
                 <MapPin className="h-3 w-3" />
                 <span>Entregar na Pousada / Praia</span>
@@ -285,13 +329,15 @@ export const CaraivaDeliveryApp: React.FC = () => {
                     const z = DELIVERY_ZONES.find((item) => item.id === e.target.value);
                     if (z) setSelectedZone(z);
                   }}
-                  className="cursor-pointer bg-transparent text-xs font-extrabold text-white focus:outline-none sm:text-sm"
+                  className={`cursor-pointer bg-transparent text-xs font-extrabold focus:outline-none sm:text-sm ${
+                    themeMode === "light" ? "text-slate-900" : "text-white"
+                  }`}
                 >
                   {DELIVERY_ZONES.map((zone) => (
                     <option
                       key={zone.id}
                       value={zone.id}
-                      className="bg-[#141719] text-white"
+                      className={themeMode === "light" ? "bg-white text-slate-900" : "bg-[#141719] text-white"}
                     >
                       {zone.name} ({zone.estimatedMinutes})
                     </option>
@@ -302,7 +348,13 @@ export const CaraivaDeliveryApp: React.FC = () => {
           </div>
 
           {/* Center Desktop Pill Switcher (Sincronizado com o BubbleNavigation) */}
-          <div className="hidden items-center gap-1 rounded-full border border-white/10 bg-[#141719]/90 p-1 lg:flex">
+          <div
+            className={`hidden items-center gap-1 rounded-full border p-1 lg:flex transition ${
+              themeMode === "light"
+                ? "border-slate-200 bg-slate-100 shadow-inner"
+                : "border-white/10 bg-[#141719]/90"
+            }`}
+          >
             {deliveryNavItems.map((nav) => {
               const Icon = nav.icon;
               const isCurrent = activeTab === nav.id;
@@ -313,7 +365,11 @@ export const CaraivaDeliveryApp: React.FC = () => {
                   onClick={() => handleSwitchTab(nav.id)}
                   className={`relative flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-xs font-bold transition ${
                     isCurrent
-                      ? "bg-white/12 text-white shadow-sm"
+                      ? themeMode === "light"
+                        ? "bg-white text-slate-900 shadow"
+                        : "bg-white/12 text-white shadow-sm"
+                      : themeMode === "light"
+                      ? "text-slate-500 hover:text-slate-900"
                       : "text-white/55 hover:text-white"
                   }`}
                 >
@@ -332,18 +388,40 @@ export const CaraivaDeliveryApp: React.FC = () => {
             })}
           </div>
 
-          {/* Right: Active Order Status Pill + Cart Button */}
-          <div className="flex items-center gap-2.5">
+          {/* Right: Active Order Status Pill + Theme Switcher + Cart Button */}
+          <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => handleSwitchTab("pedidos")}
-              className="hidden items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2 text-xs font-bold text-emerald-300 transition hover:bg-emerald-500/20 sm:flex"
+              className="hidden items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-2 text-xs font-bold text-emerald-600 dark:text-emerald-300 transition hover:bg-emerald-500/20 sm:flex"
             >
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-500" />
               </span>
               <span>Rastrear #{activeOrder.orderId}</span>
+            </button>
+
+            {/* Alternador de Tema: Clean Light / Dark Luxury */}
+            <button
+              type="button"
+              onClick={toggleTheme}
+              title={
+                themeMode === "dark"
+                  ? "Alternar para modo Clean Light"
+                  : "Alternar para modo Dark Luxury"
+              }
+              className={`flex h-10 w-10 items-center justify-center rounded-full border transition ${
+                themeMode === "light"
+                  ? "border-slate-200 bg-white text-amber-500 shadow-sm hover:bg-slate-50"
+                  : "border-white/12 bg-white/[0.04] text-yellow-400 hover:border-white/25 hover:bg-white/[0.08]"
+              }`}
+            >
+              {themeMode === "dark" ? (
+                <Sun className="h-4 w-4" />
+              ) : (
+                <Moon className="h-4 w-4 text-slate-700" />
+              )}
             </button>
 
             <button
@@ -900,6 +978,7 @@ export const CaraivaDeliveryApp: React.FC = () => {
             items={deliveryNavItems}
             activeId={activeTab}
             onChange={(id) => handleSwitchTab(id)}
+            theme={themeMode}
             enableDrag={true}
             showLabels={true}
             showTitleHeader={false}
