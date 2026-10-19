@@ -75,12 +75,52 @@
     {
       "source": "/admin/radar",
       "destination": "/index.html"
+    },
+    {
+      "source": "/demonstracao/:path*",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/entregas",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/motoboy",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/entregador",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/rider",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/delivery",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/delivery/",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/ifood",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/navegacao",
+      "destination": "/index.html"
     }
   ],
   "headers": [
     {
       "source": "/(.*)",
       "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow, noarchive"
+        },
         {
           "key": "X-Content-Type-Options",
           "value": "nosniff"

@@ -336,3 +336,19 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
      - DeliveryLiveTracker.tsx recebeu mapa 3D com relevo topografico das trilhas de areia, curva tubular de neon e beacon animado do entregador.
   4. **Alternancia de Tema Clean Light vs. Dark Luxury:**
      - Adicionado alternador dinamico de tema (icones Sun/Moon) no topo do /delivery com persistencia em localStorage, alternando entre o modo Apple Clean Light (bg-[#F8FAFC]) e Dark Luxury OLED (bg-[#090B0C]).
+
+### ADR 015: Passcode Gatekeeper Global, Blindagem Anti-Clonagem e Seguranca Defensiva — 19/10/2026
+* **Contexto:** Solicitacao do fundador para bloquear o acesso aberto a estranhos (evitando que terceiros visualizem, copiem ou clonem a plataforma), exigindo senha de acesso obrigatoria em qualquer tela, com estudo completo de seguranca aplicada em todas as camadas.
+* **Decisao Tomada:**
+  1. **Passcode Gatekeeper Global (ProjectAccessGate.tsx):**
+     - Interceptador de entrada no RootApp de GuideEntry.tsx: se o dispositivo nao estiver autorizado, nenhum componente, rota ou dado de negocio e montado no DOM.
+     - Chaves mestras autorizadas: caraiva2026, nxa2026, zaq2026 e variaveis de ambiente (.env).
+     - Link VIP direto com token (?key=caraiva2026 ou ?token=...) que desbloqueia automaticamente e limpa a URL do historico para compartilhamento com parceiros autorizados sem expor senhas.
+     - Protecao anti-brute-force: bloqueio temporal progressivo apos 5 erros consecutivos (cooldown de 30s) e retardo artificial perceptivo anti-timing-attack.
+     - Opcao de persistencia de 30 dias (localStorage) ou sessao unica.
+     - Botao flutuante ProjectLockBadge (Privado) permitindo trancar a sessao com 1 clique a qualquer momento.
+  2. **Blindagem Anti-Indexacao e Anti-Copia:**
+     - Insercao de <meta name="robots" content="noindex, nofollow, noarchive, nosnippet"/> no index.html.
+     - Adicao de cabecalho HTTP X-Robots-Tag: noindex, nofollow, noarchive no vercel.json.
+     - Banner de console juridico com advertencia formal de propriedade intelectual da NXA Corp e Caraiva Digital.
+     - Verificacao de zero sourcemaps e zero chaves secretas no bundle do cliente.
