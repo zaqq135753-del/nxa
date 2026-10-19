@@ -143,7 +143,7 @@ export const BubbleIndicator: React.FC<BubbleIndicatorProps> = ({
   );
 
   // -----------------------------------------------------------------
-  // POINTER EVENTS & GESTO DE ARRASTE
+  // POINTER EVENTS & GESTO DE ARRASTE + CLIQUE DIRETO
   // -----------------------------------------------------------------
   useEffect(() => {
     const rail = railRef.current;
@@ -155,21 +155,22 @@ export const BubbleIndicator: React.FC<BubbleIndicatorProps> = ({
       hasMovedSignificantlyRef.current = false;
       dragStartXRef.current = e.clientX;
       dragStartCenterXRef.current = targetX.get();
-
-      try {
-        rail.setPointerCapture(e.pointerId);
-      } catch {
-        /* Ignora */
-      }
     };
 
     const onPointerMove = (e: PointerEvent) => {
       if (!isDraggingRef.current || centers.length === 0) return;
 
       const deltaX = e.clientX - dragStartXRef.current;
-      if (Math.abs(deltaX) > 4) {
+      if (!hasMovedSignificantlyRef.current && Math.abs(deltaX) > 6) {
         hasMovedSignificantlyRef.current = true;
+        try {
+          rail.setPointerCapture(e.pointerId);
+        } catch {
+          /* Ignora */
+        }
       }
+
+      if (!hasMovedSignificantlyRef.current) return;
 
       const newX = dragStartCenterXRef.current + deltaX;
       // Clamping rigoroso dentro dos limites do primeiro e último centro
@@ -189,14 +190,16 @@ export const BubbleIndicator: React.FC<BubbleIndicatorProps> = ({
       }
     };
 
-    const onPointerEnd = (e: PointerEvent) => {
+    const onPointerUp = (e: PointerEvent) => {
       if (!isDraggingRef.current) return;
       isDraggingRef.current = false;
 
-      try {
-        rail.releasePointerCapture(e.pointerId);
-      } catch {
-        /* Ignora */
+      if (hasMovedSignificantlyRef.current) {
+        try {
+          rail.releasePointerCapture(e.pointerId);
+        } catch {
+          /* Ignora */
+        }
       }
 
       if (centers.length === 0) return;
@@ -218,21 +221,49 @@ export const BubbleIndicator: React.FC<BubbleIndicatorProps> = ({
           onSelectIndex(closestIdx);
         }
       } else {
-        // Se foi apenas um toque sem arrastar, snap no centro da aba atual
+        // Clique ou toque rápido em qualquer ponto da barra: seleciona a aba clicada imediatamente
+        const railRect = rail.getBoundingClientRect();
+        const tapX = e.clientX - railRect.left;
+        const tappedIdx = getClosestIndex(tapX);
+        const snapX = centers[tappedIdx];
+        if (typeof snapX === "number") {
+          targetX.set(snapX);
+        }
+        const selectedItem = items[tappedIdx];
+        if (selectedItem) {
+          setActiveColor(selectedItem.color);
+          setActiveGlow(selectedItem.accentGlow || `${selectedItem.color}88`);
+        }
+        triggerHaptic(10);
+        if (tappedIdx !== activeIndex) {
+          onSelectIndex(tappedIdx);
+        }
+      }
+    };
+
+    const onPointerCancel = (e: PointerEvent) => {
+      if (!isDraggingRef.current) return;
+      isDraggingRef.current = false;
+      try {
+        rail.releasePointerCapture(e.pointerId);
+      } catch {
+        /* Ignora */
+      }
+      if (centers[activeIndex] !== undefined) {
         targetX.set(centers[activeIndex]);
       }
     };
 
     rail.addEventListener("pointerdown", onPointerDown);
     rail.addEventListener("pointermove", onPointerMove);
-    rail.addEventListener("pointerup", onPointerEnd);
-    rail.addEventListener("pointercancel", onPointerEnd);
+    rail.addEventListener("pointerup", onPointerUp);
+    rail.addEventListener("pointercancel", onPointerCancel);
 
     return () => {
       rail.removeEventListener("pointerdown", onPointerDown);
       rail.removeEventListener("pointermove", onPointerMove);
-      rail.removeEventListener("pointerup", onPointerEnd);
-      rail.removeEventListener("pointercancel", onPointerEnd);
+      rail.removeEventListener("pointerup", onPointerUp);
+      rail.removeEventListener("pointercancel", onPointerCancel);
     };
   }, [railRef, enableDrag, centers, targetX, activeIndex, items, activeColor, getClosestIndex, onSelectIndex, triggerHaptic]);
 
