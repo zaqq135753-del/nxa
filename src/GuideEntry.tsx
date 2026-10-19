@@ -15,6 +15,7 @@ import { CaraivaExperienceShowcase } from './components/experience/CaraivaExperi
 import { CaraivaMagicOnboardingExperience } from './components/partner/onboarding-magic';
 import { CaraivaMaintenanceScreen } from './components/maintenance/CaraivaMaintenanceScreen';
 import { BubbleNavigationShowcase } from './components/navigation/BubbleNavigationShowcase';
+import { CaraivaDeliveryApp } from './components/delivery/CaraivaDeliveryApp';
 import './index.css';
 import './theme/caraiva-design-system.css';
 import './components/guia/caraiva-mobile-layout.css';
@@ -91,6 +92,8 @@ function RootApp() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="/delivery" element={<CaraivaDeliveryApp />} />
+        <Route path="/ifood" element={<CaraivaDeliveryApp />} />
         <Route path="/demonstracao/business" element={<DemoPage type="business" />} />
         <Route path="/demonstracao/entregas" element={<DemoPage type="rider" />} />
         <Route path="/demonstracao/radar" element={<DemoPage type="radar" />} />
@@ -108,7 +111,7 @@ function RootApp() {
         <Route path="/hospede" element={<CaraivaGuestNfcView />} />
         <Route path="/guia/viagem" element={<JourneyPage />} />
         <Route path="/guia/pedidos" element={<Navigate to="/guia/viagem?aba=pedidos" replace />} />
-        <Route path="/pedidos" element={<Navigate to="/guia/viagem?aba=pedidos" replace />} />
+        <Route path="/pedidos" element={<CaraivaDeliveryApp />} />
         <Route path="/guia/checkout/:businessId" element={<CheckoutPage />} />
         <Route path="/parceiros/painel-workspace" element={<PartnerDashboardWorkspacePage />} />
         <Route path="/parceiros/painel-classico" element={<PartnerDashboardClassicPage />} />
