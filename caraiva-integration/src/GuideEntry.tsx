@@ -14,6 +14,7 @@ import { CaraivaGuestNfcView } from './components/guia/CaraivaGuestNfcView';
 import { CaraivaExperienceShowcase } from './components/experience/CaraivaExperienceShowcase';
 import { CaraivaMagicOnboardingExperience } from './components/partner/onboarding-magic';
 import { CaraivaMaintenanceScreen } from './components/maintenance/CaraivaMaintenanceScreen';
+import { BubbleNavigationShowcase } from './components/navigation/BubbleNavigationShowcase';
 import './index.css';
 import './theme/caraiva-design-system.css';
 import './components/guia/caraiva-mobile-layout.css';
@@ -101,6 +102,8 @@ function RootApp() {
         <Route path="/parceiros/apresentacao" element={<MagicPresentationPage />} />
         <Route path="/parceiros/magic" element={<MagicPresentationPage />} />
         <Route path="/experience" element={<CaraivaExperienceShowcase />} />
+        <Route path="/navegacao" element={<BubbleNavigationShowcase onBack={() => location.assign('/guia')} />} />
+        <Route path="/bubble" element={<BubbleNavigationShowcase onBack={() => location.assign('/guia')} />} />
         <Route path="/admin/radar" element={<Navigate to="/demonstracao/radar" replace />} />
         <Route path="/hospede" element={<CaraivaGuestNfcView />} />
         <Route path="/guia/viagem" element={<JourneyPage />} />
