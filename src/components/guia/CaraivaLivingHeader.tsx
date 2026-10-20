@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { ArrowLeft, ClipboardList, Compass, Store, Sun, Volume2, VolumeX } from "lucide-react";
+import { ArrowLeft, ClipboardList, Compass, Sparkles, Store, Sun, Volume2, VolumeX } from "lucide-react";
 import { Link } from "react-router-dom";
 import type { CaraivaMoment } from "./useCaraivaMoment";
 import { GuideThemeButton } from "./GuideThemeButton";
@@ -16,13 +16,27 @@ interface Props {
   onAudio: () => void;
   onBusiness: () => void;
   onReplayIntro?: () => void;
+  onOpenTour?: () => void;
   theme: GuideTheme;
   onToggleTheme: () => void;
   activeTab?: GuiaTab;
   onBack?: () => void;
 }
 
-export function CaraivaLivingHeader({ moment, audioActive, salesAdmin: _salesAdmin, onHome, onAudio, onBusiness, onReplayIntro, theme, onToggleTheme, activeTab, onBack }: Props) {
+export function CaraivaLivingHeader({
+  moment,
+  audioActive,
+  salesAdmin: _salesAdmin,
+  onHome,
+  onAudio,
+  onBusiness,
+  onReplayIntro,
+  onOpenTour,
+  theme,
+  onToggleTheme,
+  activeTab,
+  onBack,
+}: Props) {
   const [isVisible, setIsVisible] = useState(true);
   const [isScrolled, setIsScrolled] = useState(false);
   const lastScrollY = useRef(0);
@@ -83,8 +97,21 @@ export function CaraivaLivingHeader({ moment, audioActive, salesAdmin: _salesAdm
             </button>
           </div>
 
-          {/* Ações Essenciais Curadas: Pedidos/Sacola + Som + Business + Tema */}
+          {/* Ações Essenciais Curadas: Guia da Vila + Pedidos/Sacola + Som + Business + Tema */}
           <div className="caraiva-header-actions flex items-center gap-1.5">
+            {/* 0. Dicas e Passo a Passo da Vila (Farol Sensorial) */}
+            {onOpenTour && (
+              <button
+                type="button"
+                className="caraiva-icon-button text-amber-400 hover:text-amber-300 bg-amber-400/10 border-amber-400/25 transition-transform active:scale-95"
+                onClick={onOpenTour}
+                aria-label="Abrir guia rápido da vila"
+                title="Dicas da Vila (Passo a Passo)"
+              >
+                <Sparkles size={18} className="text-amber-400 animate-pulse" />
+              </button>
+            )}
+
             {/* 1. Rever Intro 3D do Sol sob demanda */}
             {onReplayIntro && (
               <button

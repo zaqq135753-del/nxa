@@ -282,6 +282,22 @@ export const GuiaCaraivaApp: React.FC = () => {
     return () => window.removeEventListener("popstate", handlePopState);
   }, [selectedBusiness, activeStory, isPostingStory, isTideModalOpen, isCameraModalOpen, isMagicOnboardingOpen]);
 
+  // Motor de Rolagem Aveludada Inercial (Lenis + GSAP Ticker — Estilo United Carriers)
+  useEffect(() => {
+    initCaraivaSmoothScroll({ duration: 1.25 });
+  }, []);
+
+  // Pausa suave da inércia no Mapa 3D para conceder prioridade total aos controles de toque/câmera OrbitControls
+  useEffect(() => {
+    const lenis = getCaraivaSmoothScroll();
+    if (!lenis) return;
+    if (activeTab === "mapa") {
+      lenis.stop();
+    } else {
+      lenis.start();
+    }
+  }, [activeTab]);
+
   // Suporte a abertura direta de negócio via URL: ?local=boteco-do-para
   useEffect(() => {
     try {

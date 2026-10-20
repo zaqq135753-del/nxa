@@ -34,3 +34,42 @@
 /* Content remains readable even if the intersection observer has not run. */
 .caraiva-guide .cv-reveal{opacity:1;translate:none;transition:none}.caraiva-guide .cv-revealed{animation:cv-card-reveal .65s var(--cv-ease) both;animation-delay:var(--cv-delay,0ms)}@keyframes cv-card-reveal{from{transform:translateY(12px);filter:brightness(.9)}to{transform:none;filter:none}}@media(prefers-reduced-motion:reduce){.caraiva-guide .cv-revealed{animation:none}}
 .caraiva-guide .cv-place-media{position:relative;width:100%;height:100%;overflow:hidden;background:linear-gradient(145deg,#143c3b,#10232f)}.caraiva-guide .cv-place-media img{width:100%;height:100%;object-fit:cover}.caraiva-guide .cv-place-media-fallback{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;color:#a6dace}.caraiva-guide .cv-place-media-fallback strong{font-size:25px;letter-spacing:.05em}.caraiva-guide .cv-place-media-fallback small{font-size:8px;text-align:center;padding:0 5px;color:#a2b6b6}
+
+/* United Carriers Style: Kinetic Velocity Momentum & Golden Specular Sheen */
+@media (prefers-reduced-motion: no-preference) {
+  .caraiva-guide .caraiva-content {
+    transform: skewY(var(--cv-scroll-skew, 0deg));
+    transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+  }
+}
+
+.cd-card-3d,
+.cv-explore-place {
+  position: relative;
+  overflow: hidden;
+  will-change: transform;
+}
+
+.cd-card-3d::before,
+.cv-explore-place::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: radial-gradient(
+    360px circle at var(--cursor-x, 50%) var(--cursor-y, 50%),
+    rgba(246, 201, 69, 0.14),
+    transparent 65%
+  );
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 4;
+}
+
+.cd-card-3d:hover::before,
+.cv-explore-place:hover::before {
+  opacity: 1;
+}
+

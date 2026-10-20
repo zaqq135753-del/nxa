@@ -35,6 +35,7 @@ export default function CaraivaCartoon3DMap(props: LiveMapEngineProps) {
   // Shaders de Água (Rio e Mar)
   const riverMaterialRef = useRef<THREE.ShaderMaterial | null>(null);
   const oceanMaterialRef = useRef<THREE.ShaderMaterial | null>(null);
+  const crossingBoatRef = useRef<THREE.Group | null>(null);
 
   // Grupos interativos para Raycaster
   const interactiveHousesRef = useRef<Map<THREE.Object3D, LiveMapPoint>>(new Map());
@@ -117,8 +118,8 @@ export default function CaraivaCartoon3DMap(props: LiveMapEngineProps) {
     scene.add(pathsGroup);
     scene.add(foamMesh);
 
-    // 2. RIO CARAÍVA COM CUSTOM SHADER
-    const riverGeo = new THREE.PlaneGeometry(75, 260, 48, 48);
+    // 2. RIO CARAÍVA COM CUSTOM SHADER (Kelvin Wake Simulation)
+    const riverGeo = new THREE.PlaneGeometry(75, 260, 96, 96);
     const riverMat = createWaterShaderMaterial(false);
     riverMaterialRef.current = riverMat;
     const riverMesh = new THREE.Mesh(riverGeo, riverMat);
@@ -135,7 +136,7 @@ export default function CaraivaCartoon3DMap(props: LiveMapEngineProps) {
     pierMesh.receiveShadow = true;
     scene.add(pierMesh);
 
-    // Canoas Coloridas de Caraíva
+    // Canoas Coloridas de Caraíva Atracadas na Margem
     const createCanoe = (x: number, z: number, angle: number, colorHex: number) => {
       const canoeGroup = new THREE.Group();
       const hullGeo = new THREE.CylinderGeometry(0.8, 0.6, 4.5, 6);
@@ -152,6 +153,78 @@ export default function CaraivaCartoon3DMap(props: LiveMapEngineProps) {
     createCanoe(-34, -24, 0.3, 0xef4444);
     createCanoe(-35, -12, -0.2, 0xf6c945);
     createCanoe(-33, 5, 0.45, 0x0284c7);
+
+    // CANOA DA TRAVESSIA DO RIO CARAÍVA (VIVA COM FÍSICA DE ESTEIRA/WAKE)
+    const crossingBoat = new THREE.Group();
+    // Casco tradicional de cedro naval
+    const crossingHullGeo = new THREE.CylinderGeometry(0.82, 0.62, 5.2, 8);
+    const crossingHullMat = new THREE.MeshStandardMaterial({ color: 0x854d0e, roughness: 0.65 });
+    const crossingHull = new THREE.Mesh(crossingHullGeo, crossingHullMat);
+    crossingHull.rotation.z = Math.PI / 2;
+    crossingHull.scale.set(0.62, 1, 1.35);
+    crossingHull.castShadow = true;
+    crossingBoat.add(crossingHull);
+
+    // Faixa amarela e terracota baiana
+    const crossingStripeGeo = new THREE.CylinderGeometry(0.84, 0.84, 0.4, 8);
+    const crossingStripeMat = new THREE.MeshStandardMaterial({ color: 0xf6c945, roughness: 0.4 });
+    const crossingStripe = new THREE.Mesh(crossingStripeGeo, crossingStripeMat);
+    crossingStripe.rotation.z = Math.PI / 2;
+    crossingStripe.scale.set(0.63, 1, 1.36);
+    crossingBoat.add(crossingStripe);
+
+    // Bancos de madeira para passageiros
+    [-1.2, 0, 1.2].forEach((bx) => {
+      const benchGeo = new THREE.BoxGeometry(0.2, 0.08, 1.05);
+      const benchMat = new THREE.MeshStandardMaterial({ color: 0x451a03, roughness: 0.85 });
+      const bench = new THREE.Mesh(benchGeo, benchMat);
+      bench.position.set(bx, 0.2, 0);
+      crossingBoat.add(bench);
+    });
+
+    // Lampião acolhedor na proa com luz quente
+    const lampGeo = new THREE.CylinderGeometry(0.1, 0.14, 0.28, 6);
+    const lampMat = new THREE.MeshStandardMaterial({ 
+      color: 0xfef08a, 
+      emissive: 0xf59e0b, 
+      emissiveIntensity: 0.9 
+    });
+    const lamp = new THREE.Mesh(lampGeo, lampMat);
+    lamp.position.set(2.35, 0.42, 0);
+    crossingBoat.add(lamp);
+
+    const lampLight = new THREE.PointLight(0xf59e0b, 0.75, 8);
+    lampLight.position.set(2.35, 0.55, 0);
+    crossingBoat.add(lampLight);
+
+    // Silhueta do Barqueiro nativo
+    const boatman = new THREE.Group();
+    const torsoGeo = new THREE.CylinderGeometry(0.2, 0.26, 0.65, 6);
+    const torsoMat = new THREE.MeshStandardMaterial({ color: 0xf8fafc, roughness: 0.9 });
+    const torso = new THREE.Mesh(torsoGeo, torsoMat);
+    torso.position.set(0, 0.52, 0);
+    boatman.add(torso);
+
+    const hatGeo = new THREE.ConeGeometry(0.5, 0.16, 8);
+    const hatMat = new THREE.MeshStandardMaterial({ color: 0xd97706, roughness: 0.9 });
+    const hat = new THREE.Mesh(hatGeo, hatMat);
+    hat.position.set(0, 0.98, 0);
+    boatman.add(hat);
+
+    const oarGeo = new THREE.CylinderGeometry(0.04, 0.04, 1.8, 4);
+    const oarMat = new THREE.MeshStandardMaterial({ color: 0x78350f });
+    const oar = new THREE.Mesh(oarGeo, oarMat);
+    oar.position.set(0.3, 0.4, 0.55);
+    oar.rotation.x = 0.52;
+    oar.rotation.z = -0.3;
+    boatman.add(oar);
+
+    boatman.position.set(-1.4, 0, 0);
+    crossingBoat.add(boatman);
+
+    crossingBoat.position.set(-84, 0.25, -18);
+    scene.add(crossingBoat);
+    crossingBoatRef.current = crossingBoat;
 
     // 3. OCEANO ATLÂNTICO COM CUSTOM SHADER
     const oceanGeo = new THREE.PlaneGeometry(90, 260, 48, 48);
@@ -256,6 +329,64 @@ export default function CaraivaCartoon3DMap(props: LiveMapEngineProps) {
       }
       if (oceanMaterialRef.current?.uniforms?.uTime) {
         oceanMaterialRef.current.uniforms.uTime.value = elapsedTime;
+      }
+
+      // Física da Canoa da Travessia e Wake Shader Kelvin
+      const crossingBoat = crossingBoatRef.current;
+      if (crossingBoat && riverMaterialRef.current?.uniforms) {
+        const cyclePeriod = 26; // Ciclo de 26 segundos de travessia
+        const cycleProgress = (elapsedTime % cyclePeriod) / cyclePeriod;
+        
+        let targetX = -84;
+        let boatSpeed = 0;
+        let boatHeadingX = 1;
+
+        if (cycleProgress < 0.38) {
+          // Travessia: Continente -> Píer de Caraíva
+          const p = cycleProgress / 0.38;
+          const smoothP = p * p * (3 - 2 * p);
+          targetX = -84 + smoothP * 46; // de -84 a -38
+          boatSpeed = Math.sin(p * Math.PI) * 1.7;
+          boatHeadingX = 1;
+          crossingBoat.rotation.y = 0;
+        } else if (cycleProgress < 0.50) {
+          // Desembarque no Píer de Caraíva
+          targetX = -38;
+          boatSpeed = 0;
+          boatHeadingX = 1;
+        } else if (cycleProgress < 0.88) {
+          // Travessia: Píer de Caraíva -> Continente
+          const p = (cycleProgress - 0.50) / 0.38;
+          const smoothP = p * p * (3 - 2 * p);
+          targetX = -38 - smoothP * 46; // de -38 a -84
+          boatSpeed = Math.sin(p * Math.PI) * 1.7;
+          boatHeadingX = -1;
+          crossingBoat.rotation.y = Math.PI;
+        } else {
+          // Embarque no Continente
+          targetX = -84;
+          boatSpeed = 0;
+          boatHeadingX = -1;
+        }
+
+        const bob = Math.sin(elapsedTime * 2.8) * 0.05;
+        const roll = Math.sin(elapsedTime * 2.2) * 0.03;
+        const pitch = Math.sin(elapsedTime * 1.8) * 0.02;
+
+        crossingBoat.position.set(targetX, 0.25 + bob, -18);
+        crossingBoat.rotation.z = roll;
+        crossingBoat.rotation.x = pitch;
+
+        // Injeção de Telemetria no Shader de Água
+        if (riverMaterialRef.current.uniforms.uBoatPos) {
+          riverMaterialRef.current.uniforms.uBoatPos.value.set(targetX, 0, -18);
+        }
+        if (riverMaterialRef.current.uniforms.uBoatDir) {
+          riverMaterialRef.current.uniforms.uBoatDir.value.set(boatHeadingX, 0);
+        }
+        if (riverMaterialRef.current.uniforms.uBoatSpeed) {
+          riverMaterialRef.current.uniforms.uBoatSpeed.value = boatSpeed;
+        }
       }
 
       // Ondulação suave da espuma
@@ -454,10 +585,11 @@ export default function CaraivaCartoon3DMap(props: LiveMapEngineProps) {
   }, [props.command]);
 
   return (
-    <div className="relative w-full h-full overflow-hidden select-none bg-[#090B0C]">
+    <div className="relative w-full h-full overflow-hidden select-none bg-[#090B0C]" data-lenis-prevent="true">
       {/* CANVAS THREE.JS CONTAINER */}
       <div
         ref={containerRef}
+        data-lenis-prevent="true"
         onPointerDown={handlePointerDown}
         className="w-full h-full cursor-grab active:cursor-grabbing touch-none"
       />
