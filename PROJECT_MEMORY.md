@@ -393,3 +393,9 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
   4. **Carrossel Horizontal `snap-x` para "Peça em 1 Toque":** Cards compactos de `160px` com foto 1:1 e botao `+` vermelho flutuante sobre a foto para adicao instantanea.
   5. **Lista Compacta de Restaurantes Padrao iFood:** Densidade de 4 a 5 restaurantes visiveis por tela (miniatura 64x64, estrelas, tempo, taxa e selo Super), com botao de alternancia para modo Banners.
   6. **KDS Power Strip (iFood Gestor / Toast POS):** Adicionado **1-Tap Item Killswitch** (pausar prato esgotado em tempo real), **Modo Cozinha Lotada (+15m SLA)** e seletor de **Modal Logistico Preferencial** (*A Pé*, *Bike Cargueira*, *Canoa*).
+
+### ADR 018: Ergonomia Estável (Fim da Distorção Vestibular) e Canoa Tradicional Ultra-HD PBR - 20/10/2026
+* **Contexto:** Distorções dinâmicas de skew (--cv-scroll-skew) e cursor customizado com física inercial geravam fadiga visual e enjoo no usuário (efeito vestibular negativo). Modelos procedurais 3D de cilindros primitivos destoavam da qualidade visual requerida.
+* **Decisão Tomada:**
+  1. Eliminação imediata do skewing de scroll, do cursor customizado e de canvas 3D sobreposto a fotos do Hero: retorno ao cursor nativo estável e rolagem ergonômica sem distorção.
+  2. Criação do módulo RealisticBahianCanoe.ts: casco esculpido com arqueamento de quilha (rocker) e curvatura paramétrica autêntica, texturas PBR (1024x1024) com veios de madeira de lei, pintura naval ultramar/terracota desgastada pelo salitre, corda de sisal na proa, lampião a querosene Dietz com vidro translúcido físico e remada rítmica.
