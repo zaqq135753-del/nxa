@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "motion/react";
 import { Volume2, VolumeX, MapPin, Compass, ArrowRight, CheckCircle2, Sparkles } from "lucide-react";
 import { caraivaAudio } from "../../utils/caraivaAudio";
 import { Caraiva3DSunLogoCanvas } from "./Caraiva3DSunLogoCanvas";
+import { markIntroAsSeen } from "../../services/introLifecycleService";
 
 interface CaraivaInteractiveIntroProps {
   onComplete: () => void;
@@ -18,7 +19,7 @@ const POETIC_STEPS = [
 
 export const CaraivaInteractiveIntro: React.FC<CaraivaInteractiveIntroProps> = ({
   onComplete,
-  autoPlayDelayMs = 9000,
+  autoPlayDelayMs = 3800,
 }) => {
   const [progress, setProgress] = useState(0);
   const [stepIndex, setStepIndex] = useState(0);
@@ -26,6 +27,31 @@ export const CaraivaInteractiveIntro: React.FC<CaraivaInteractiveIntroProps> = (
   const [orbTaps, setOrbTaps] = useState(0);
   const [isReadyPhase, setIsReadyPhase] = useState(false); // Transição "Seu ambiente está pronto"
   const videoRef = useRef<HTMLVideoElement>(null);
+
+  // Grava imediatamente na montagem que a intro já foi exibida (nunca repete no F5!)
+  useEffect(() => {
+    markIntroAsSeen();
+  }, []);
+
+  // Auto-transição inteligente ao chegar em 100% (não trava esperando clique obrigatório)
+  useEffect(() => {
+    if (!isReadyPhase) return;
+    const autoEnterTimer = setTimeout(() => {
+      onComplete();
+    }, 950);
+    return () => clearTimeout(autoEnterTimer);
+  }, [isReadyPhase, onComplete]);
+
+  // Permite fechar imediatamente com Escape, Enter ou Espaço
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape" || e.key === "Enter" || e.key === " ") {
+        onComplete();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [onComplete]);
 
   // Alterna frases poéticas sincronizadas com o progresso
   useEffect(() => {

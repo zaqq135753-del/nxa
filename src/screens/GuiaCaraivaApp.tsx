@@ -66,6 +66,14 @@ import { GuideThemeButton } from "../components/guia/GuideThemeButton";
 import { GuidePhotoCredits } from "../components/guia/GuidePhotoCredits";
 import { useGuideMotion } from "../components/guia/useGuideMotion";
 import { GuideOnboarding, hasGuideResume, readGuideGreeting, readGuideInterests } from "../components/guia/GuideOnboarding";
+import { CaraivaDynamicTourIsland } from "../components/guia/CaraivaDynamicTourIsland";
+import { initCaraivaSmoothScroll, getCaraivaSmoothScroll } from "../services/motion/smoothScroll";
+import {
+  evaluateShouldShowIntro,
+  evaluateShouldShowTourIsland,
+  markIntroAsSeen,
+  markTourIslandAsSeen,
+} from "../services/introLifecycleService";
 // High-definition Caraíva stories
 const HD_CARAIVA_STORIES: GuiaStory[] = [
   {
@@ -126,6 +134,9 @@ export const GuiaCaraivaApp: React.FC = () => {
   const { theme, toggleTheme } = useGuideTheme();
   const [photoCreditsOpen, setPhotoCreditsOpen] = useState(false);
   const [onboardingOpen, setOnboardingOpen] = useState(false);
+  const [isTourIslandOpen, setIsTourIslandOpen] = useState<boolean>(() =>
+    evaluateShouldShowTourIsland()
+  );
   const onboardingRole = "visitor" as const;
   const [welcomeRevision, setWelcomeRevision] = useState(0);
   const visitorName = useMemo(readGuideGreeting, [welcomeRevision]);
@@ -138,32 +149,13 @@ export const GuiaCaraivaApp: React.FC = () => {
       : "inicio";
   });
 
-  const [isIntroOpen, setIsIntroOpen] = useState<boolean>(() => {
-    if (typeof window === "undefined") return false;
-    const params = new URLSearchParams(window.location.search);
-    // Permite reabrir explicitamente com ?intro=1 ou ?intro=true
-    if (params.get("intro") === "1" || params.get("intro") === "true") return true;
-    if (params.get("intro") === "0" || params.get("intro") === "false") return false;
-    try {
-      // Usuário existente que já assistiu: NÃO abre a intro toda vez!
-      const seen = localStorage.getItem("caraiva_intro_seen_v1");
-      return !seen;
-    } catch {
-      return false;
-    }
-  });
+  const [isIntroOpen, setIsIntroOpen] = useState<boolean>(() =>
+    evaluateShouldShowIntro().shouldShow
+  );
 
   const handleIntroComplete = useCallback(() => {
     setIsIntroOpen(false);
-    try {
-      localStorage.setItem("caraiva_intro_seen_v1", "true");
-      sessionStorage.setItem("caraiva_intro_seen_v1", "true");
-      if (!localStorage.getItem("caraiva_first_visit_date")) {
-        localStorage.setItem("caraiva_first_visit_date", new Date().toISOString());
-      }
-    } catch {
-      // ignora em navegadores com restrições
-    }
+    markIntroAsSeen();
   }, []);
 
   const [useBubbleNav] = useState<boolean>(() => {
@@ -456,6 +448,25 @@ export const GuiaCaraivaApp: React.FC = () => {
       {photoCreditsOpen && <GuidePhotoCredits onClose={() => setPhotoCreditsOpen(false)} />}
       {(activeTab === "mapa" || activeTab === "business") && !overlayOpen && <GuideThemeButton theme={theme} onToggle={toggleTheme} floating />}
       {onboardingOpen && <GuideOnboarding initialRole={onboardingRole} onClose={() => { setOnboardingOpen(false); if (hasGuideResume()) history.replaceState(null, "", location.pathname + location.search); }} onDone={() => { setOnboardingOpen(false); setWelcomeRevision(v => v + 1); if (hasGuideResume()) history.replaceState(null, "", location.pathname + location.search); }} />}
+      {/* Dynamic Tour Island — Passo a Passo Inicial em Notificações Flutuantes */}
+      <CaraivaDynamicTourIsland
+        isOpen={isTourIslandOpen}
+        onClose={() => {
+          markTourIslandAsSeen();
+          setIsTourIslandOpen(false);
+        }}
+        onAction={(action) => {
+          if (action === "mare") {
+            setIsTideModalOpen(true);
+          } else if (action === "taptable") {
+            setIsMagicOnboardingOpen(true);
+          } else if (action === "mapa") {
+            navigateGuide("mapa");
+          } else if (action === "concluir") {
+            showToast("✨ Bem-vindo a Caraíva! Aproveite seu tempo na vila.");
+          }
+        }}
+      />
       {/* Floating Toast Notification */}
       {toastMessage && (
         <div className="fixed top-4 left-4 right-4 max-w-sm mx-auto z-50 bg-[#0e1620]/95 backdrop-blur-xl text-white px-4 py-3 rounded-2xl text-xs font-semibold shadow-2xl flex items-center gap-2.5 border border-white/20 animate-in fade-in duration-200">
@@ -480,6 +491,7 @@ export const GuiaCaraivaApp: React.FC = () => {
           onAudio={handleToggleGlobalAudio}
           onBusiness={() => location.assign("/parceiros/painel")} 
           onReplayIntro={handleReplayIntro}
+          onOpenTour={() => setIsTourIslandOpen(true)}
           theme={theme} 
           onToggleTheme={toggleTheme}
           activeTab={activeTab}
