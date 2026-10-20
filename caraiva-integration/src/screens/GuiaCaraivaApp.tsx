@@ -364,6 +364,7 @@ export const GuiaCaraivaApp: React.FC = () => {
   const handleStartRoute = (business: Business) => {
     setMapFocusBusiness(null);
     setRouteBusiness(business);
+    navigateGuide("mapa");
   };
 
   const handleIntentionSelect = (intentionId: string) => {

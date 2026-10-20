@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Map, Marker, type GeoJSONSource } from "maplibre-gl";
+import { Map, Marker, LngLatBounds, type GeoJSONSource } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import "./cartoon-map.css";
 import { type LiveMapEngineProps } from "../../../services/maps/liveMapModel";
@@ -287,6 +287,16 @@ export default function Open3DMap(props: LiveMapEngineProps) {
           "line-width": 4,
           "line-opacity": 0.95,
         },
+      });
+    }
+
+    if (props.activeRouteCoordinates && props.activeRouteCoordinates.length >= 2 && !props.command.povCamera) {
+      const bounds = new LngLatBounds();
+      props.activeRouteCoordinates.forEach((c) => bounds.extend([c.lng, c.lat]));
+      map.fitBounds(bounds, {
+        padding: { top: 90, bottom: 270, left: 60, right: 60 },
+        maxZoom: 17.5,
+        duration: 1200,
       });
     }
   }, [props.activeRouteCoordinates]);

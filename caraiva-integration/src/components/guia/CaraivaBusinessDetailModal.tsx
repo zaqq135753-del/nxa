@@ -415,24 +415,39 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
 
           {detailTab === "cardapio" && (
             <div className="pt-2">
-              <CloudCheckout key={business.id} businessId={business.id} businessName={business.name} mode="goods"/>
+              {(() => {
+                const catalog = getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory);
+                if (catalog) {
+                  return (
+                    <CaraivaBusinessShowcaseTab
+                      catalog={catalog}
+                      businessName={business.name}
+                      cartItems={cartItems}
+                      onOpenCartModal={() => setIsCartModalOpen(true)}
+                    />
+                  );
+                }
+                return <CloudCheckout key={business.id} businessId={business.id} businessName={business.name} mode="goods"/>;
+              })()}
             </div>
           )}
 
           {detailTab === "vitrine" && (
             <div className="pt-2">
               {(() => {
-                if (cloudCheckoutEnabled) return <CloudCheckout key={business.id} businessId={business.id} businessName={business.name} mode={['hospedagens','passeios','noite'].includes(business.category)?business.category:'goods'}/>;
                 const catalog = getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory);
-                if (!catalog) return null;
-                return (
-                  <CaraivaBusinessShowcaseTab
-                    catalog={catalog}
-                    businessName={business.name}
-                    cartItems={cartItems}
-                    onOpenCartModal={() => setIsCartModalOpen(true)}
-                  />
-                );
+                if (catalog) {
+                  return (
+                    <CaraivaBusinessShowcaseTab
+                      catalog={catalog}
+                      businessName={business.name}
+                      cartItems={cartItems}
+                      onOpenCartModal={() => setIsCartModalOpen(true)}
+                    />
+                  );
+                }
+                if (cloudCheckoutEnabled) return <CloudCheckout key={business.id} businessId={business.id} businessName={business.name} mode={['hospedagens','passeios','noite'].includes(business.category)?business.category:'goods'}/>;
+                return null;
               })()}
             </div>
           )}
@@ -652,7 +667,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
           const currentCatalog = getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory);
           const hasShowcase = isFood || Boolean(currentCatalog);
 
-          if (cloudCheckoutEnabled) return <div className="sticky bottom-0 p-3 sm:p-4 bg-[#080d12]/95 backdrop-blur-xl border-t border-white/10 flex items-center gap-2.5 z-30"><button type="button" className="px-4 py-3 rounded-xl border border-white/20 text-white" onClick={() => { if (onStartRoute) onStartRoute(business); else onOpenMap?.(business); onClose(); }}>Ver no mapa</button>{!['praias','pontos'].includes(business.category) && <a className="flex-1 px-4 py-3 rounded-xl bg-amber-400 text-slate-950 text-center font-bold" href={`/guia/checkout/${encodeURIComponent(business.id)}?modo=${detailTab === 'reserva' || business.category === 'hospedagens' || business.category === 'passeios' || business.category === 'noite' ? business.category : 'goods'}`}>Consultar {detailTab === 'reserva' ? 'reserva' : 'catálogo'} no app</a>}</div>;
+
 
           return (
             <div className="sticky bottom-0 p-3 sm:p-4 bg-[#080d12]/95 backdrop-blur-xl border-t border-white/10 flex items-center gap-2.5 z-30">
