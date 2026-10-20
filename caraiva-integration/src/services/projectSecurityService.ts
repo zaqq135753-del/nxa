@@ -12,12 +12,7 @@ const LOCKOUT_KEY = 'caraiva_gate_lockout_until';
 
 // Chaves autorizadas para acesso ao ecossistema
 const VALID_PASSCODES = new Set<string>([
-  'caraiva2026',
-  'nxa2026',
-  'zaq2026',
-  'caraiva',
-  'nxa',
-  'zaq',
+  '135753',
   // Chave personalizada do .env se existir
   ...(import.meta.env.VITE_PROJECT_PASSWORD ? [String(import.meta.env.VITE_PROJECT_PASSWORD).trim().toLowerCase()] : []),
   ...(import.meta.env.VITE_SITE_ACCESS_KEY ? [String(import.meta.env.VITE_SITE_ACCESS_KEY).trim().toLowerCase()] : []),

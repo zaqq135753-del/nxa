@@ -176,7 +176,7 @@ export const ProjectAccessGate: React.FC<ProjectAccessGateProps> = ({ onUnlock }
                   if (errorMsg) setErrorMsg("");
                 }}
                 disabled={securityStatus.isLockedOut || isSubmitting}
-                placeholder="Ex: caraiva2026"
+                placeholder="Digite a chave autorizada..."
                 autoFocus
                 autoComplete="current-password"
                 className={`w-full px-4 py-3.5 pr-12 rounded-2xl bg-black/60 border text-white text-sm font-medium tracking-wide placeholder:text-slate-600 focus:outline-none transition-all shadow-inner ${

@@ -18,8 +18,6 @@ import { CaraivaDeliveryApp } from './components/delivery/CaraivaDeliveryApp';
 import { ProjectAccessGate } from './components/security/ProjectAccessGate';
 import { ProjectLockBadge } from './components/security/ProjectLockBadge';
 import { isProjectUnlocked, initConsoleSecurityBanner } from './services/projectSecurityService';
-import { CaraivaMagneticCursor } from './components/guia/CaraivaMagneticCursor';
-import { initCaraivaSmoothScroll } from './services/motion/smoothScroll';
 import './index.css';
 import './theme/caraiva-design-system.css';
 import './components/guia/caraiva-mobile-layout.css';
@@ -82,8 +80,7 @@ function RootApp() {
 
   useEffect(() => {
     initConsoleSecurityBanner();
-    initCaraivaSmoothScroll({ duration: 1.55 });
-  }, []);
+    }, []);
 
   if (!unlocked) {
     return <ProjectAccessGate onUnlock={() => setUnlocked(true)} />;
@@ -91,7 +88,6 @@ function RootApp() {
 
   return (
     <>
-      <CaraivaMagneticCursor />
       <ProjectLockBadge />
       <BrowserRouter>
         <Routes>

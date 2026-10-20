@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { Waves, Sun, VolumeX, Compass, Camera } from "lucide-react";
 import { useCaraivaWeatherAndTide } from "./useCaraivaWeatherAndTide";
 import { CaraivaSmartSearch } from "./CaraivaSmartSearch";
-import { CaraivaHeroWaterCanvas } from "./CaraivaHeroWaterCanvas";
 import { caraivaAudio } from "../../utils/caraivaAudio";
 import { asset } from "../../lib/asset";
 
@@ -121,9 +120,7 @@ export const CaraivaCinematicHero: React.FC<CaraivaCinematicHeroProps> = ({
           </>
         )}
 
-        {/* Travessia Viva do Rio Caraíva em 3D WebGL com Wake Shader Físico */}
-        <CaraivaHeroWaterCanvas isLight={isLight} />
-
+        
         {/* Partículas Atmosféricas Vivas (Brisa & Luz de Caraíva) */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-[2]">
           {[
