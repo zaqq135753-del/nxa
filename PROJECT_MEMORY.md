@@ -421,3 +421,19 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
        - *Conveniência & Hortifrúti:* Empório & Mercearia Caraíva (galão de água 20L, gelo 5kg, coco verde gelado, cestas de frutas e repelentes).
        - *Tatuagem & Arte Pataxó:* Atelier & Tatuagem Roots e Centro de Artesanato Pataxó (flash tattoos fine-line, gamelas de madeira nobre e biojoias).
      - Atualização de `CaraivaBusinessDetailModal.tsx` para sempre renderizar a vitrine/cardápio interativo via `CaraivaBusinessShowcaseTab` com fallback confiável, eliminando telas vazias ou dependência de banco em demonstração.
+
+
+### ADR 020: Redesign Gastronômico Dark Luxury do Cardápio, Botões Anti-Quebra e Modal Gourmet do Prato - 20/10/2026
+* **Contexto:**
+  1. A nomenclatura "Cardápio Vivo" soava artificial e poluída.
+  2. Em telas mobile (< 390px), os botões amarelos estourados sofriam quebra de linha grosseira (`+ Adicion` em cima e `ar` embaixo).
+  3. Havia fotos genéricas inadequadas (como aquário de peixes fluorescentes para a isca de peixe).
+  4. Um botão verde fosforescente "Ver Sacola" poluía a parte inferior da tela mesmo com a sacola vazia.
+* **Decisão Tomada:**
+  1. **Nomenclatura Limpa:** Substituição definitiva de "Cardápio Vivo" por **"Cardápio"** em todas as abas e serviços.
+  2. **Barra de Busca Dinâmica & Pílulas com Contadores:** Implementada busca instantânea em tempo real por pratos, ingredientes e bebidas, combinada a pílulas de categoria com badges numéricos.
+  3. **Chef's Signature Hero:** O primeiro prato em destaque ganha card amplo 16:9 widescreen cinematográfico com gradiente de sombra, descrição dos ingredientes e botão anti-quebra.
+  4. **Lista Editorial Gastronômica (Estilo Relais & Châteaux / iFood Black):** Layout refinado com texto à esquerda (65%) e fotografia gastronômica 1:1 à direita (35%), com pílula de adição compacta (`whitespace-nowrap shrink-0`) que nunca quebra linha e se expande suavemente para `[-] qty [+]` quando selecionado.
+  5. **Modal Gourmet de Detalhes do Prato:** Tocar no card abre um Bottom Sheet com foto estendida, história dos ingredientes, campo de observações para a cozinha (*"sem coentro"*, *"ponto do peixe"*) e botão CTA de adição rápida com seletor de quantidade.
+  6. **Barra Flutuante Dark Luxury:** Remoção do verde fosforescente; a sacola agora permanece oculta quando vazia e, quando há itens, exibe uma barra flutuante magnética em `#141719` com borda e glow dourado (`#F6C945`), total em R$ e revisão do pedido.
+  7. **Curadoria de Imagens Gastronômicas:** Fotos atualizadas com pratos reais da culinária brasileira (pastéis dourados, moqueca borbulhante na panela de barro, iscas de peixe crocantes com limão cravo e caipirinhas rústicas de caju).
