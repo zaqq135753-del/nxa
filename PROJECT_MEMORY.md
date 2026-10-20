@@ -399,3 +399,25 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
 * **Decisão Tomada:**
   1. Eliminação imediata do skewing de scroll, do cursor customizado e de canvas 3D sobreposto a fotos do Hero: retorno ao cursor nativo estável e rolagem ergonômica sem distorção.
   2. Criação do módulo RealisticBahianCanoe.ts: casco esculpido com arqueamento de quilha (rocker) e curvatura paramétrica autêntica, texturas PBR (1024x1024) com veios de madeira de lei, pintura naval ultramar/terracota desgastada pelo salitre, corda de sisal na proa, lampião a querosene Dietz com vidro translúcido físico e remada rítmica.
+
+
+### ADR 019: Geolocalização GPS Real com Geofencing Pedonal na Areia e Catálogos Multi-Nicho 100% Autônomos - 20/10/2026
+* **Contexto:**
+  1. O recurso "Como Chegar" falhava em capturar a localização atual do usuário via GPS, dependendo exclusivamente de nós fixos no modal e sem transicionar automaticamente para a aba do mapa nem enquadrar a rota.
+  2. Vários nichos comerciais da vila (Mercadinhos, Tatuagem & Arte, Artesanato Pataxó, Pousadas de Charme, Passeios de Buggy) estavam sem dados ricos de cardápio/catálogo, ou ficavam travados em tentativas frustradas de checkout em banco remoto quando o usuário abria a aba de Cardápio.
+* **Decisão Tomada:**
+  1. **Geolocalização Real (`navigator.geolocation.getCurrentPosition` & `watchPosition`):**
+     - Leitura com `enableHighAccuracy: true` e cálculo de distância geodésica (Haversine) até o centro de Caraíva.
+     - **Geofencing Inteligente:** Se o usuário estiver a <= 25km de Caraíva, o ponto de origem é automaticamente preenchido com seu GPS real (`Minha Localização Atual (GPS)`) e a rota é calculada a partir dos seus passos pela areia.
+     - **Modo Remoto / Teste:** Se o usuário estiver a > 25km (ex: São Paulo, Rio, etc.), o sistema informa a distância com badge elegante, disponibiliza o GPS real na lista de origens e inicia por padrão no Porto dos Barcos para garantir uma rota realista nas ruas da vila.
+     - **Enquadramento de Câmera Automático:** Ao carregar a rota, `map.fitBounds` com MapLibre GL enquadra suavemente a origem e o destino na tela.
+     - **Navegação Integrada:** Ao clicar "Como Chegar", o app transiciona diretamente para a aba "mapa" e permite ativar o modo HUD Waze/Maps sobreposto ao 3D ou abrir no Google/Apple Maps nativo.
+  2. **Catálogos Multi-Nicho Completos:**
+     - Implementação de catálogos ricos e independentes em `catalogCartService.ts` com itens, preços reais em R$, fotos de alta resolução, descrições autênticas, selos ("Famoso", "Mais Vendido", "Pé na Areia") e controle de quantidade para:
+       - *Gastronomia:* Boteco do Pará, Culinária Central, Canto da Duca, Restaurante do Jacarandá, Manga Rosa, Bar do Porto.
+       - *Hospedagens:* Pousada Vila do Mar, Pousada Casa de Areia, Pousada Nativa (suítes com ar-condicionado, varanda, café colonial e massagens).
+       - *Passeios Náuticos & Terrestres:* Caraíva Brasil (Corumbau de barco, descida de boia no rio, lancha privativa) e Buggy Tour Corumbau & Falésias.
+       - *Noite & Cultura:* Forró do Ouriço, Forró do Pelé e Beco da Lua (ingressos antecipados, combos de cerveja gelada e cachaça nativa).
+       - *Conveniência & Hortifrúti:* Empório & Mercearia Caraíva (galão de água 20L, gelo 5kg, coco verde gelado, cestas de frutas e repelentes).
+       - *Tatuagem & Arte Pataxó:* Atelier & Tatuagem Roots e Centro de Artesanato Pataxó (flash tattoos fine-line, gamelas de madeira nobre e biojoias).
+     - Atualização de `CaraivaBusinessDetailModal.tsx` para sempre renderizar a vitrine/cardápio interativo via `CaraivaBusinessShowcaseTab` com fallback confiável, eliminando telas vazias ou dependência de banco em demonstração.
