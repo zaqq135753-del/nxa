@@ -184,8 +184,16 @@ export const CaraivaDelivery3DHero: React.FC<CaraivaDelivery3DHeroProps> = ({
       container.appendChild(renderer.domElement);
 
       const scene = new THREE.Scene();
-      const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 50);
-      camera.position.set(0, 3.1, 6.2);
+      const camera = new THREE.PerspectiveCamera(34, width / height, 0.1, 50);
+      const updateCameraFraming = (w: number, h: number) => {
+        const aspect = w / Math.max(h, 1);
+        camera.aspect = aspect;
+        // Compensa containers estreitos no mobile (aspect < 1) afastando suavemente a câmera
+        const distScale = aspect < 1 ? Math.min(1.45, 0.98 / Math.max(aspect, 0.55)) : 1;
+        camera.position.set(0, 3.0 * distScale, 5.6 * distScale);
+        camera.updateProjectionMatrix();
+      };
+      updateCameraFraming(width, height);
 
       const controls = new OrbitControls(camera, renderer.domElement);
       controls.enableDamping = true;
@@ -194,7 +202,7 @@ export const CaraivaDelivery3DHero: React.FC<CaraivaDelivery3DHeroProps> = ({
       controls.enablePan = false;
       controls.minPolarAngle = Math.PI / 5;
       controls.maxPolarAngle = Math.PI / 2.25;
-      controls.target.set(0, 0.35, 0);
+      controls.target.set(0, 0.18, 0);
 
       // Iluminação de Estúdio Apple VisionOS / Dark Luxury
       const hemiLight = new THREE.HemisphereLight("#FFF4ED", "#090B0C", 1.9);
@@ -506,10 +514,9 @@ export const CaraivaDelivery3DHero: React.FC<CaraivaDelivery3DHeroProps> = ({
       // Resize & Visibility Observers
       const resizeObserver = new ResizeObserver(() => {
         if (!container || !renderer) return;
-        const w = container.clientWidth || 380;
-        const h = container.clientHeight || 280;
-        camera.aspect = w / h;
-        camera.updateProjectionMatrix();
+        const w = container.clientWidth || 180;
+        const h = container.clientHeight || 180;
+        updateCameraFraming(w, h);
         renderer.setSize(w, h);
         wakeUpRender(800);
       });
@@ -566,79 +573,77 @@ export const CaraivaDelivery3DHero: React.FC<CaraivaDelivery3DHeroProps> = ({
   return (
     <section
       aria-label="Vitrine Espacial 3D Caraíva Delivery"
-      className="relative overflow-hidden rounded-[28px] border border-white/12 bg-gradient-to-br from-[#141719] via-[#0D1013] to-[#090B0C] p-5 sm:p-7 shadow-[0_24px_60px_-15px_rgba(0,0,0,0.85)]"
+      className="relative overflow-hidden rounded-[24px] border border-white/12 bg-gradient-to-br from-[#14181C] via-[#0E1114] to-[#090B0C] p-3.5 sm:p-5 shadow-[0_18px_45px_-12px_rgba(0,0,0,0.85)]"
     >
       {/* Ambient Radial Highlight synced with active tab/category */}
       <div
-        className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full opacity-25 blur-3xl transition-colors duration-700"
+        className="pointer-events-none absolute -top-20 -right-16 h-56 w-56 rounded-full opacity-25 blur-3xl transition-colors duration-700"
         style={{ backgroundColor: theme.rimColor }}
       />
       <div
-        className="pointer-events-none absolute -bottom-24 -left-24 h-64 w-64 rounded-full opacity-15 blur-3xl transition-colors duration-700"
+        className="pointer-events-none absolute -bottom-20 -left-16 h-48 w-48 rounded-full opacity-15 blur-3xl transition-colors duration-700"
         style={{ backgroundColor: activeTabColor }}
       />
 
-      <div className="relative z-10 grid items-center gap-6 lg:grid-cols-12">
-        {/* Left Column: Apple/Google Spatial Typography & Actions */}
-        <div className="space-y-4 lg:col-span-7">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-[#F6C945]/35 bg-[#F6C945]/10 px-3 py-1 text-[11px] font-bold tracking-wider text-[#F6C945] uppercase">
-              <Sparkles className="h-3.5 w-3.5" />
-              {theme.badge}
+      {/* Side-by-Side Bento Grid on Mobile & Desktop (Zero Fold Splitting) */}
+      <div className="relative z-10 grid grid-cols-12 items-center gap-2 sm:gap-5">
+        {/* Left Column (7 cols): Compact Big Tech Editorial & 1-Tap Action */}
+        <div className="col-span-7 flex flex-col justify-between space-y-2 sm:space-y-3">
+          <div className="flex flex-wrap items-center gap-1.5">
+            <span className="inline-flex items-center gap-1 rounded-full border border-[#F6C945]/35 bg-[#F6C945]/10 px-2 py-0.5 text-[9px] sm:text-[10px] font-extrabold tracking-wider text-[#F6C945] uppercase">
+              <Sparkles className="h-2.5 w-2.5 shrink-0" />
+              <span className="truncate">{theme.badge}</span>
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium text-white/75">
+            <span className="hidden sm:inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-2.5 py-0.5 text-[10px] font-medium text-white/75">
               <Clock className="h-3 w-3 text-emerald-400" />
               {selectedZoneName} • {selectedZoneEta}
             </span>
           </div>
 
-          <h1 className="text-2xl font-black tracking-tight text-white sm:text-3xl lg:text-4xl lg:leading-[1.12]">
+          <h1 className="text-base font-black leading-tight tracking-tight text-white sm:text-2xl lg:text-3xl line-clamp-2">
             {theme.title}
           </h1>
 
-          <p className="max-w-xl text-xs leading-relaxed text-white/70 sm:text-sm">
-            {theme.subtitle}. Acompanhe o preparo no KDS em tempo real e receba com código de segurança de 4 dígitos.
+          <p className="line-clamp-2 text-[11px] leading-snug text-white/65 sm:text-xs">
+            {theme.subtitle}
           </p>
 
-          <div className="flex flex-wrap items-center gap-3 pt-1">
+          <div className="flex flex-wrap items-center gap-2 pt-1">
             <button
               type="button"
               onClick={onOrderFeatured}
-              className="group inline-flex items-center gap-2.5 rounded-2xl bg-[#EA1D2C] px-5 py-3 text-xs font-extrabold text-white shadow-lg shadow-[#EA1D2C]/30 transition hover:bg-[#d81927] active:scale-[0.99] sm:text-sm"
+              className="group inline-flex items-center gap-1.5 rounded-xl bg-[#EA1D2C] px-3.5 py-2 sm:px-4 sm:py-2.5 text-[11px] sm:text-xs font-extrabold text-white shadow-lg shadow-[#EA1D2C]/30 transition hover:bg-[#d81927] active:scale-95 cursor-pointer"
             >
-              <Flame className="h-4 w-4" />
-              <span>Pedir Agora • {theme.priceLabel}</span>
-              <ArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              <Flame className="h-3.5 w-3.5 shrink-0" />
+              <span>Pedir • {theme.priceLabel}</span>
+              <ArrowUpRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
             </button>
 
             <button
               type="button"
               onClick={onOpenTracker}
-              className="inline-flex items-center gap-2 rounded-2xl border border-white/15 bg-white/[0.04] px-4 py-3 text-xs font-bold text-white backdrop-blur-md transition hover:border-[#F6C945]/50 hover:bg-white/[0.08] sm:text-sm"
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-xl border border-white/15 bg-white/[0.04] px-3 py-2.5 text-xs font-bold text-white backdrop-blur-md transition hover:border-[#F6C945]/50 hover:bg-white/[0.08] cursor-pointer"
             >
-              <ShieldCheck className="h-4 w-4 text-emerald-400" />
-              <span>Rastrear Pedido ao Vivo</span>
+              <ShieldCheck className="h-3.5 w-3.5 text-emerald-400" />
+              <span>Rastrear 3D</span>
             </button>
           </div>
         </div>
 
-        {/* Right Column: Interactive Three.js 3D Culinary Viewport */}
-        <div className="relative lg:col-span-5">
+        {/* Right Column (5 cols): Contained Three.js 3D Culinary Stage */}
+        <div className="relative col-span-5">
           <div
             onMouseEnter={() => wakeUpRenderRef.current?.(2500)}
             onTouchStart={() => wakeUpRenderRef.current?.(3000)}
-            className="relative h-64 w-full overflow-hidden rounded-3xl bg-radial from-white/[0.04] to-transparent sm:h-72"
+            className="relative h-36 sm:h-48 lg:h-56 w-full overflow-hidden rounded-2xl bg-radial from-white/[0.05] to-transparent"
           >
             {webglFallback ? (
-              <div className="flex h-full w-full flex-col items-center justify-center p-6 text-center">
+              <div className="flex h-full w-full flex-col items-center justify-center p-2 text-center">
                 <img
                   src="https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=800&q=80"
                   alt={theme.title}
-                  className="h-40 w-40 rounded-2xl object-cover shadow-lg"
+                  className="h-28 w-28 rounded-2xl object-cover shadow-lg"
                 />
-                <span className="mt-2 text-xs font-bold text-[#F6C945]">
-                  {theme.title}
-                </span>
               </div>
             ) : (
               <div
@@ -648,19 +653,14 @@ export const CaraivaDelivery3DHero: React.FC<CaraivaDelivery3DHeroProps> = ({
               />
             )}
 
-            {/* Floating 360° Interactive Hint Pill */}
-            <div className="pointer-events-none absolute right-3 bottom-3 left-3 flex items-center justify-between rounded-2xl border border-white/10 bg-black/65 px-3 py-1.5 text-[11px] text-white/80 backdrop-blur-md">
-              <span className="flex items-center gap-1.5 font-semibold">
-                <Rotate3d
-                  className={`h-3.5 w-3.5 text-[#F6C945] ${
-                    isInteracting ? "animate-spin" : ""
-                  }`}
-                />
-                Palco Three.js 360° Interativo
-              </span>
-              <span className="font-mono text-[10px] font-bold text-emerald-400">
-                WebGL On-Demand
-              </span>
+            {/* Compact 360° Interactive Badge */}
+            <div className="pointer-events-none absolute bottom-1.5 right-1.5 left-1.5 flex items-center justify-center gap-1 rounded-full border border-white/10 bg-black/60 px-2 py-0.5 text-[9px] font-bold text-white/80 backdrop-blur-md">
+              <Rotate3d
+                className={`h-2.5 w-2.5 text-[#F6C945] ${
+                  isInteracting ? "animate-spin" : ""
+                }`}
+              />
+              <span>360° Interativo</span>
             </div>
           </div>
         </div>

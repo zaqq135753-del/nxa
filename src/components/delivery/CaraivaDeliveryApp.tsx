@@ -74,6 +74,11 @@ export const CaraivaDeliveryApp: React.FC = () => {
   const [onlyFreeDelivery, setOnlyFreeDelivery] = useState<boolean>(false);
   const [onlySuperMerchants, setOnlySuperMerchants] = useState<boolean>(false);
   const [selectedZone, setSelectedZone] = useState<DeliveryZone>(DELIVERY_ZONES[0]);
+  const [isAddressSheetOpen, setIsAddressSheetOpen] = useState<boolean>(false);
+  const [selectedPousadaRef, setSelectedPousadaRef] = useState<string>(
+    "Pousada Vila do Mar • Suíte 04"
+  );
+  const [compactStoreView, setCompactStoreView] = useState<boolean>(true);
 
   const [selectedMerchant, setSelectedMerchant] = useState<DeliveryMerchant | null>(
     null
@@ -290,17 +295,17 @@ export const CaraivaDeliveryApp: React.FC = () => {
         style={{ backgroundColor: activeNavItem.color }}
       />
 
-      {/* Apple Dynamic Island / Single-Row Glass Bar */}
+      {/* Apple iOS & iFood Native Mobile Header (Zero Overlap on 390px) */}
       <header
         className={`sticky top-0 z-30 w-full border-b backdrop-blur-2xl transition-colors duration-300 ${
           themeMode === "light"
-            ? "border-slate-200/80 bg-white/90 text-slate-900 shadow-sm"
-            : "border-white/[0.06] bg-[#090B0C]/85 shadow-lg shadow-black/40"
+            ? "border-slate-200/80 bg-white/92 text-slate-900 shadow-sm"
+            : "border-white/[0.06] bg-[#090B0C]/90 shadow-lg shadow-black/40"
         }`}
       >
         <div className="mx-auto flex h-14 max-w-5xl items-center justify-between gap-2 px-3 sm:px-4">
-          {/* Left: Voltar + Pill Compacto de Localização com Chevron */}
-          <div className="flex items-center gap-2 min-w-0">
+          {/* Left: Voltar + Botão Tátil de Endereço (Abre Bottom Sheet de Pousadas/Zonas) */}
+          <div className="flex items-center gap-2 min-w-0 flex-1">
             <Link
               to="/guia"
               className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border transition active:scale-95 ${
@@ -313,43 +318,33 @@ export const CaraivaDeliveryApp: React.FC = () => {
               <ArrowLeft className="h-4 w-4" />
             </Link>
 
-            {/* Location Dropdown Pill integrado */}
-            <div
-              className={`relative flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 transition ${
+            {/* Tactile Address Trigger (Estilo iFood Drawer) */}
+            <button
+              type="button"
+              onClick={() => setIsAddressSheetOpen(true)}
+              className={`group flex min-w-0 flex-1 max-w-[240px] sm:max-w-xs items-center justify-between gap-1.5 rounded-xl border px-2.5 py-1.5 text-left transition active:scale-[0.99] cursor-pointer ${
                 themeMode === "light"
-                  ? "border-slate-200 bg-white shadow-sm"
+                  ? "border-slate-200 bg-white shadow-sm hover:border-[#EA1D2C]/40"
                   : "border-white/10 bg-white/[0.03] hover:border-white/20"
               }`}
             >
-              <MapPin className="h-3.5 w-3.5 shrink-0 text-[#EA1D2C]" />
-              <div className="flex flex-col min-w-0">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-[#EA1D2C] leading-none">
-                  Entregar em
-                </span>
-                <select
-                  aria-label="Zona de entrega em Caraíva"
-                  value={selectedZone.id}
-                  onChange={(e) => {
-                    const z = DELIVERY_ZONES.find((item) => item.id === e.target.value);
-                    if (z) setSelectedZone(z);
-                  }}
-                  className={`cursor-pointer appearance-none bg-transparent pr-4 text-xs font-bold focus:outline-none truncate ${
-                    themeMode === "light" ? "text-slate-900" : "text-white"
-                  }`}
-                >
-                  {DELIVERY_ZONES.map((zone) => (
-                    <option
-                      key={zone.id}
-                      value={zone.id}
-                      className={themeMode === "light" ? "bg-white text-slate-900" : "bg-[#141719] text-white"}
-                    >
-                      {zone.name} • {zone.estimatedMinutes}
-                    </option>
-                  ))}
-                </select>
+              <div className="flex items-center gap-1.5 min-w-0">
+                <MapPin className="h-3.5 w-3.5 shrink-0 text-[#EA1D2C]" />
+                <div className="flex flex-col min-w-0">
+                  <span className="text-[9px] font-extrabold uppercase tracking-wider text-[#EA1D2C] leading-none">
+                    Entregar em • {selectedZone.estimatedMinutes}
+                  </span>
+                  <span
+                    className={`truncate text-xs font-bold mt-0.5 ${
+                      themeMode === "light" ? "text-slate-900" : "text-white"
+                    }`}
+                  >
+                    {selectedZone.name}
+                  </span>
+                </div>
               </div>
-              <ChevronDown className="pointer-events-none absolute right-1.5 top-1/2 -translate-y-1/2 h-3 w-3 text-white/40" />
-            </div>
+              <ChevronDown className="h-3.5 w-3.5 shrink-0 text-white/50 transition-transform group-hover:translate-y-0.5" />
+            </button>
           </div>
 
           {/* Center Desktop Pill Switcher (Sincronizado ao BubbleNavigation) */}
@@ -390,13 +385,13 @@ export const CaraivaDeliveryApp: React.FC = () => {
             })}
           </nav>
 
-          {/* Right: Active Order Pill + Theme Switcher + Cart Button */}
+          {/* Right: Desktop Active Order + Theme Switcher + Cart Button (Zero Mobile Overflow) */}
           <div className="flex items-center gap-1.5 sm:gap-2 shrink-0">
             {activeOrder.status !== "DELIVERED" && (
               <button
                 type="button"
                 onClick={() => handleSwitchTab("pedidos")}
-                className="flex h-9 items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-2 sm:px-3 text-xs font-bold text-emerald-600 dark:text-emerald-400 transition hover:bg-emerald-500/20 active:scale-95"
+                className="hidden sm:flex h-9 items-center gap-1.5 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-2.5 text-xs font-bold text-emerald-400 transition hover:bg-emerald-500/20 active:scale-95 cursor-pointer"
                 title="Rastrear pedido ativo"
               >
                 <span className="relative flex h-2 w-2">
@@ -416,7 +411,7 @@ export const CaraivaDeliveryApp: React.FC = () => {
                   ? "Alternar para modo Clean Light"
                   : "Alternar para modo Dark Luxury"
               }
-              className={`flex h-9 w-9 items-center justify-center rounded-xl border transition active:scale-95 ${
+              className={`flex h-9 w-9 items-center justify-center rounded-xl border transition active:scale-95 cursor-pointer ${
                 themeMode === "light"
                   ? "border-slate-200 bg-white text-amber-500 shadow-sm hover:bg-slate-50"
                   : "border-white/10 bg-white/[0.04] text-yellow-400 hover:border-white/20 hover:bg-white/[0.08]"
@@ -433,7 +428,7 @@ export const CaraivaDeliveryApp: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
-              className="flex h-9 items-center gap-2 rounded-xl bg-[#EA1D2C] px-3 sm:px-3.5 text-xs font-extrabold text-white shadow-md shadow-[#EA1D2C]/25 transition hover:bg-[#d81927] active:scale-95 cursor-pointer"
+              className="flex h-9 items-center gap-1.5 rounded-xl bg-[#EA1D2C] px-3 text-xs font-extrabold text-white shadow-md shadow-[#EA1D2C]/25 transition hover:bg-[#d81927] active:scale-95 cursor-pointer"
             >
               <ShoppingBag className="h-4 w-4" />
               <span className="hidden sm:inline">
@@ -452,7 +447,7 @@ export const CaraivaDeliveryApp: React.FC = () => {
       </header>
 
       {/* Main Content Container with Spatial Tab Transitions */}
-      <main className="relative z-10 mx-auto max-w-5xl px-4 pt-5">
+      <main className="relative z-10 mx-auto max-w-5xl px-3.5 sm:px-4 pt-3.5 sm:pt-5">
         <AnimatePresence mode="wait" initial={false}>
           <motion.div
             key={activeTab}
@@ -483,17 +478,55 @@ export const CaraivaDeliveryApp: React.FC = () => {
           >
             {/* TAB 1: INÍCIO (MARKETPLACE IFOOD CLEAN + THREE.JS 3D HERO) */}
             {activeTab === "inicio" && (
-              <div className="space-y-6 sm:space-y-8">
-                {/* Search & Quick Filter Bar (Apple Spotlight Style) */}
-                <div className="flex flex-col gap-2.5 sm:flex-row sm:items-center">
-                  <div className="relative flex-1">
+              <div className="space-y-4 sm:space-y-6">
+                {/* iOS Dynamic Island / iFood Live Activity Order Bar (Mobile Clean Tracker) */}
+                {activeOrder.status !== "DELIVERED" && (
+                  <motion.div
+                    initial={{ opacity: 0, y: -8 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    onClick={() => handleSwitchTab("pedidos")}
+                    className="flex cursor-pointer items-center justify-between gap-2 rounded-2xl border border-emerald-500/30 bg-gradient-to-r from-emerald-950/70 via-[#141719] to-[#141719] px-3.5 py-2.5 shadow-lg transition hover:border-emerald-400/60"
+                  >
+                    <div className="flex items-center gap-2.5 min-w-0">
+                      <span className="relative flex h-2.5 w-2.5 shrink-0">
+                        <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                        <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500" />
+                      </span>
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-1.5">
+                          <span className="text-[11px] font-extrabold text-white truncate">
+                            Pedido #{activeOrder.orderId} •{" "}
+                            {activeOrder.status === "CONFIRMED"
+                              ? "Confirmado"
+                              : activeOrder.status === "PREPARING"
+                              ? "Preparando na Cozinha"
+                              : "Saiu para Entrega"}
+                          </span>
+                          <span className="rounded bg-[#F6C945]/20 px-1.5 py-0.5 font-mono text-[9px] font-black text-[#F6C945]">
+                            PIN {activeOrder.confirmationPin}
+                          </span>
+                        </div>
+                        <p className="truncate text-[10px] text-white/60">
+                          {activeOrder.merchantName} • Chega em {selectedZone.estimatedMinutes} ({selectedZone.courierModal})
+                        </p>
+                      </div>
+                    </div>
+                    <span className="shrink-0 rounded-xl bg-emerald-500/20 px-2.5 py-1 text-[10px] font-extrabold text-emerald-300">
+                      Mapa 3D &gt;
+                    </span>
+                  </motion.div>
+                )}
+
+                {/* Search & Quick Filter Bar (Apple Spotlight + iFood Sticky Chips) */}
+                <div className="space-y-2.5">
+                  <div className="relative">
                     <Search className="pointer-events-none absolute top-1/2 left-3.5 h-4 w-4 -translate-y-1/2 text-[#EA1D2C]" />
                     <input
                       type="text"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Buscar prato, moqueca, pastel do Pará, açaí ou restaurante..."
-                      className={`w-full rounded-2xl border py-3 pr-10 pl-10 text-xs font-medium placeholder-white/40 shadow-inner transition focus:outline-none sm:text-sm ${
+                      placeholder="Buscar em Caraíva: moqueca, pastel de arraia, açaí..."
+                      className={`w-full rounded-2xl border py-2.5 pr-9 pl-10 text-xs font-medium placeholder-white/40 shadow-inner transition focus:outline-none sm:text-sm ${
                         themeMode === "light"
                           ? "border-slate-200 bg-white text-slate-900 focus:border-[#EA1D2C]"
                           : "border-white/10 bg-white/[0.04] text-white focus:border-[#F6C945]"
@@ -510,53 +543,51 @@ export const CaraivaDeliveryApp: React.FC = () => {
                     )}
                   </div>
 
-                  <div className="flex items-center gap-2 overflow-x-auto no-scrollbar">
+                  {/* Horizontal Quick Filter Rail */}
+                  <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-0.5">
                     <button
                       type="button"
                       onClick={() => setOnlyFreeDelivery((v) => !v)}
-                      className={`shrink-0 rounded-2xl border px-3.5 py-2.5 text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
+                      className={`shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-bold transition flex items-center gap-1.5 active:scale-95 cursor-pointer ${
                         onlyFreeDelivery
-                          ? "border-emerald-400/80 bg-emerald-500/20 text-emerald-400 shadow-md shadow-emerald-500/10"
+                          ? "border-emerald-400/80 bg-emerald-500/20 text-emerald-300 shadow-sm"
                           : themeMode === "light"
                           ? "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                          : "border-white/10 bg-white/[0.03] text-white/70 hover:border-white/20 hover:text-white"
+                          : "border-white/10 bg-white/[0.03] text-white/75 hover:border-white/20 hover:text-white"
                       }`}
                     >
                       <span>🛵</span>
                       <span>Entrega Grátis</span>
                     </button>
+
                     <button
                       type="button"
                       onClick={() => setOnlySuperMerchants((v) => !v)}
-                      className={`shrink-0 rounded-2xl border px-3.5 py-2.5 text-xs font-bold transition flex items-center gap-1.5 active:scale-95 ${
+                      className={`shrink-0 rounded-full border px-3 py-1.5 text-[11px] font-bold transition flex items-center gap-1.5 active:scale-95 cursor-pointer ${
                         onlySuperMerchants
-                          ? "border-[#F6C945] bg-[#F6C945]/20 text-[#F6C945] shadow-md shadow-[#F6C945]/10"
+                          ? "border-[#F6C945] bg-[#F6C945]/20 text-[#F6C945] shadow-sm"
                           : themeMode === "light"
                           ? "border-slate-200 bg-white text-slate-700 hover:bg-slate-50"
-                          : "border-white/10 bg-white/[0.03] text-white/70 hover:border-white/20 hover:text-white"
+                          : "border-white/10 bg-white/[0.03] text-white/75 hover:border-white/20 hover:text-white"
                       }`}
                     >
-                      <Star className="h-3.5 w-3.5 fill-[#F6C945] text-[#F6C945]" />
+                      <Star className="h-3 w-3 fill-[#F6C945] text-[#F6C945]" />
                       <span>Super Restaurantes</span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setIsAddressSheetOpen(true)}
+                      className="shrink-0 rounded-full border border-sky-400/25 bg-sky-500/10 px-3 py-1.5 text-[11px] font-bold text-sky-300 transition hover:bg-sky-500/20 flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <span>🌊</span>
+                      <span>Maré Baixa • Areia Firme ({selectedZone.courierModal})</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Tactile Glass Chips Categories (Zero Clutter / Apple Fluid Scroll) */}
                 <div>
-                  <div className="mb-2.5 flex items-center justify-between px-1">
-                    <div className="flex items-center gap-2">
-                      <h2 className={`text-xs font-extrabold uppercase tracking-wider ${themeMode === "light" ? "text-slate-600" : "text-white/70"}`}>
-                        Categorias da Vila
-                      </h2>
-                      <span className="rounded-full bg-white/[0.06] px-2 py-0.5 text-[9px] font-semibold text-[#F6C945]">
-                        Palco 3D Sincronizado
-                      </span>
-                    </div>
-                    <span className="text-[10px] text-white/40 hidden sm:inline">
-                      Modal: {selectedZone.courierModal}
-                    </span>
-                  </div>
                   <div className="flex gap-2 overflow-x-auto pb-1 no-scrollbar scroll-smooth">
                     {DELIVERY_CATEGORIES.map((cat) => {
                       const isActive = selectedCategory === cat.id;
@@ -565,15 +596,15 @@ export const CaraivaDeliveryApp: React.FC = () => {
                           key={cat.id}
                           type="button"
                           onClick={() => setSelectedCategory(cat.id)}
-                          className={`group relative flex shrink-0 items-center gap-2 rounded-full px-3.5 py-2 text-xs font-bold tracking-wide transition-all duration-200 active:scale-95 ${
+                          className={`group relative flex shrink-0 items-center gap-1.5 rounded-2xl px-3 py-2 text-xs font-bold tracking-wide transition-all duration-200 active:scale-95 cursor-pointer ${
                             isActive
-                              ? "border border-[#EA1D2C] bg-gradient-to-r from-[#EA1D2C] to-[#d81927] text-white shadow-lg shadow-[#EA1D2C]/25"
+                              ? "border border-[#EA1D2C] bg-gradient-to-r from-[#EA1D2C] to-[#d81927] text-white shadow-md shadow-[#EA1D2C]/25"
                               : themeMode === "light"
                               ? "border border-slate-200 bg-white text-slate-700 hover:border-slate-300 shadow-sm"
-                              : "border border-white/[0.08] bg-white/[0.03] text-white/70 hover:border-white/20 hover:bg-white/[0.06] hover:text-white"
+                              : "border border-white/[0.08] bg-[#141719] text-white/75 hover:border-white/20 hover:text-white"
                           }`}
                         >
-                          <span className="text-sm transition-transform duration-200 group-hover:scale-125">
+                          <span className="text-sm transition-transform duration-200 group-hover:scale-110">
                             {cat.emoji}
                           </span>
                           <span>{cat.label}</span>
@@ -583,7 +614,7 @@ export const CaraivaDeliveryApp: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Three.js 3D Interactive Hero Stage */}
+                {/* Compact Bento Three.js 3D Interactive Hero Stage */}
                 <CaraivaDelivery3DHero
                   activeCategory={selectedCategory}
                   activeTabColor={activeNavItem.color}
@@ -597,73 +628,90 @@ export const CaraivaDeliveryApp: React.FC = () => {
                   onOpenTracker={() => handleSwitchTab("pedidos")}
                 />
 
-                {/* 1-Click Popular Dishes Shelf (Apple/Google Spatial Cards) */}
+                {/* 1-Click Popular Dishes Horizontal Carousel (Padrão iFood / DoorDash) */}
                 <div>
-                  <div className="mb-3.5 flex items-center justify-between">
+                  <div className="mb-2.5 flex items-center justify-between px-0.5">
                     <div className="flex items-center gap-2">
                       <div className="flex h-6 w-6 items-center justify-center rounded-lg bg-[#EA1D2C]/20 text-[#EA1D2C]">
                         <Flame className="h-3.5 w-3.5" />
                       </div>
-                      <h2 className="text-sm font-extrabold text-white sm:text-base">
-                        Peça em 1 Toque — Campeões de Pedidos Hoje
+                      <h2 className={`text-sm font-extrabold sm:text-base ${themeMode === "light" ? "text-slate-900" : "text-white"}`}>
+                        Peça em 1 Toque
                       </h2>
                     </div>
-                    <span className="text-[11px] font-semibold text-[#F6C945]">
-                      Embalagem térmica lacrada
+                    <span className="text-[10px] font-bold text-[#F6C945]">
+                      Deslize para ver mais &rarr;
                     </span>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {/* Horizontal Snap Carousel on Mobile, Grid on Desktop */}
+                  <div className="flex gap-3 overflow-x-auto pb-2 pt-0.5 snap-x snap-mandatory no-scrollbar sm:grid sm:grid-cols-3 sm:overflow-visible">
                     {popularDishesShowcase.slice(0, 6).map(({ merchant, item }) => (
                       <motion.div
                         key={item.id}
-                        whileHover={{ y: -3 }}
-                        className="flex flex-col justify-between rounded-[24px] border border-white/10 border-t-white/20 bg-gradient-to-b from-[#171B1E] to-[#111417] p-4 shadow-xl transition hover:border-[#F6C945]/45"
+                        whileHover={{ y: -2 }}
+                        className={`w-[160px] sm:w-auto shrink-0 snap-start flex flex-col justify-between rounded-2xl border p-2.5 shadow-lg transition ${
+                          themeMode === "light"
+                            ? "border-slate-200 bg-white hover:border-[#EA1D2C]/40"
+                            : "border-white/10 bg-[#141719] hover:border-[#F6C945]/45"
+                        }`}
                       >
-                        <div
-                          onClick={() => setSelectedMerchant(merchant)}
-                          className="flex cursor-pointer gap-3.5"
-                        >
-                          <img
-                            src={item.image}
-                            alt={item.name}
-                            className="h-20 w-20 shrink-0 rounded-2xl border border-white/10 object-cover shadow-md"
-                          />
-                          <div className="min-w-0 flex-1">
-                            <span className="block truncate text-[10px] font-bold tracking-wide text-[#F6C945] uppercase">
+                        <div>
+                          {/* Appetizing 1:1 Dish Photo with Floating 1-Tap "+" Button */}
+                          <div
+                            onClick={() => setSelectedMerchant(merchant)}
+                            className="relative h-28 sm:h-32 w-full cursor-pointer overflow-hidden rounded-xl"
+                          >
+                            <img
+                              src={item.image}
+                              alt={item.name}
+                              className="h-full w-full object-cover transition duration-300 hover:scale-105"
+                            />
+                            {item.prepTime && (
+                              <span className="absolute top-1.5 left-1.5 rounded-md bg-black/70 px-1.5 py-0.5 text-[9px] font-bold text-white backdrop-blur-sm">
+                                ⏱ {item.prepTime}
+                              </span>
+                            )}
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleQuickAddPopular(merchant, item);
+                              }}
+                              title="Adicionar 1x direto na sacola"
+                              className="absolute right-1.5 bottom-1.5 flex h-8 w-8 items-center justify-center rounded-full bg-[#EA1D2C] text-white shadow-lg shadow-black/50 transition hover:bg-[#d81927] active:scale-90 cursor-pointer"
+                            >
+                              <Plus className="h-4 w-4 stroke-[2.5]" />
+                            </button>
+                          </div>
+
+                          <div
+                            onClick={() => setSelectedMerchant(merchant)}
+                            className="mt-2 cursor-pointer"
+                          >
+                            <span className="block truncate text-[9px] font-extrabold tracking-wide text-[#F6C945] uppercase">
                               {merchant.name}
                             </span>
-                            <h3 className="mt-0.5 line-clamp-2 text-xs font-extrabold text-white">
+                            <h3
+                              className={`mt-0.5 line-clamp-2 text-xs font-extrabold leading-snug ${
+                                themeMode === "light" ? "text-slate-900" : "text-white"
+                              }`}
+                            >
                               {item.name}
                             </h3>
-                            <div className="mt-2 flex items-center gap-2">
-                              <span className="text-sm font-black text-emerald-400">
-                                R$ {item.price.toFixed(2).replace(".", ",")}
-                              </span>
-                              {item.prepTime && (
-                                <span className="text-[10px] text-white/45">
-                                  • {item.prepTime}
-                                </span>
-                              )}
-                            </div>
                           </div>
                         </div>
 
-                        <div className="mt-3.5 flex items-center justify-between border-t border-white/[0.07] pt-3">
+                        <div className="mt-2 flex items-center justify-between pt-1">
+                          <span className="text-xs sm:text-sm font-black text-emerald-400">
+                            R$ {item.price.toFixed(2).replace(".", ",")}
+                          </span>
                           <button
                             type="button"
                             onClick={() => setSelectedMerchant(merchant)}
-                            className="text-[11px] font-semibold text-white/60 transition hover:text-white"
+                            className="text-[10px] font-bold text-white/50 hover:text-white cursor-pointer"
                           >
-                            Personalizar prato
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleQuickAddPopular(merchant, item)}
-                            className="flex items-center gap-1 rounded-xl bg-[#EA1D2C] px-3 py-1.5 text-[11px] font-extrabold text-white shadow-md shadow-[#EA1D2C]/25 transition hover:bg-[#d81927] active:scale-95"
-                          >
-                            <Plus className="h-3.5 w-3.5" />
-                            Adicionar
+                            Opções &gt;
                           </button>
                         </div>
                       </motion.div>
@@ -671,77 +719,147 @@ export const CaraivaDeliveryApp: React.FC = () => {
                   </div>
                 </div>
 
-                {/* Restaurants / Merchants Listing */}
+                {/* Restaurants / Merchants Listing (High-Density iFood List Standard) */}
                 <div>
-                  <div className="mb-3.5 flex items-center justify-between">
-                    <h2 className="text-base font-extrabold text-white">
-                      Lojas e Restaurantes em Caraíva ({filteredMerchants.length})
+                  <div className="mb-3 flex items-center justify-between px-0.5">
+                    <h2 className={`text-sm sm:text-base font-extrabold ${themeMode === "light" ? "text-slate-900" : "text-white"}`}>
+                      Lojas e Restaurantes ({filteredMerchants.length})
                     </h2>
+                    <button
+                      type="button"
+                      onClick={() => setCompactStoreView((v) => !v)}
+                      className="rounded-lg border border-white/10 bg-white/[0.04] px-2.5 py-1 text-[10px] font-bold text-white/70 hover:text-white cursor-pointer"
+                    >
+                      {compactStoreView ? "Ver Banners" : "Lista Compacta iFood"}
+                    </button>
                   </div>
 
-                  <div className="grid gap-4 sm:grid-cols-2">
-                    {filteredMerchants.map((merchant) => (
-                      <motion.div
-                        key={merchant.id}
-                        whileHover={{ y: -3 }}
-                        onClick={() => setSelectedMerchant(merchant)}
-                        className="group cursor-pointer overflow-hidden rounded-[26px] border border-white/10 border-t-white/20 bg-[#141719] shadow-xl transition hover:border-[#EA1D2C]/50"
-                      >
-                        <div className="relative h-40 w-full overflow-hidden">
-                          <img
-                            src={merchant.coverImage}
-                            alt={merchant.name}
-                            className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-[#141719] via-transparent to-black/30" />
-
-                          {merchant.promoTag && (
-                            <span className="absolute top-3 left-3 rounded-full bg-[#EA1D2C] px-3 py-1 text-[10px] font-extrabold text-white shadow-lg">
-                              {merchant.promoTag}
-                            </span>
-                          )}
-
-                          <div className="absolute top-3 right-3 flex items-center gap-1 rounded-full border border-white/15 bg-black/75 px-2.5 py-1 text-xs font-bold text-[#F6C945] backdrop-blur-md">
-                            <Star className="h-3.5 w-3.5 fill-[#F6C945]" />
-                            {merchant.rating.toFixed(1)}
-                          </div>
-                        </div>
-
-                        <div className="flex items-center justify-between gap-3 p-4">
-                          <div className="flex min-w-0 items-center gap-3.5">
+                  {compactStoreView ? (
+                    /* Padrão Lista Compacta do iFood (4 a 5 lojas por tela no celular) */
+                    <div className="grid gap-2.5 sm:grid-cols-2">
+                      {filteredMerchants.map((merchant) => (
+                        <motion.div
+                          key={merchant.id}
+                          whileHover={{ y: -2 }}
+                          onClick={() => setSelectedMerchant(merchant)}
+                          className={`group flex cursor-pointer items-center gap-3.5 rounded-2xl border p-3 transition ${
+                            themeMode === "light"
+                              ? "border-slate-200 bg-white shadow-sm hover:border-[#EA1D2C]/50"
+                              : "border-white/[0.08] bg-[#141719] shadow-md hover:border-[#EA1D2C]/50"
+                          }`}
+                        >
+                          {/* Store Thumbnail 64x64 */}
+                          <div className="relative h-16 w-16 shrink-0">
                             <img
                               src={merchant.logoImage}
                               alt={merchant.name}
-                              className="h-12 w-12 shrink-0 rounded-2xl border border-white/15 object-cover"
+                              className="h-full w-full rounded-2xl border border-white/15 object-cover shadow-sm"
                             />
-                            <div className="min-w-0">
-                              <h3 className="truncate text-sm font-extrabold text-white group-hover:text-[#F6C945]">
+                            {merchant.isSuperMerchant && (
+                              <span
+                                title="Super Restaurante Caraíva"
+                                className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full border border-black bg-[#F6C945] text-[10px] font-black text-black shadow"
+                              >
+                                ★
+                              </span>
+                            )}
+                          </div>
+
+                          {/* Store Metadata */}
+                          <div className="min-w-0 flex-1">
+                            <div className="flex items-center justify-between gap-2">
+                              <h3
+                                className={`truncate text-sm font-extrabold group-hover:text-[#F6C945] ${
+                                  themeMode === "light" ? "text-slate-900" : "text-white"
+                                }`}
+                              >
                                 {merchant.name}
                               </h3>
-                              <p className="truncate text-xs text-white/55">
-                                {merchant.category} • {merchant.addressZone}
-                              </p>
-                              <div className="mt-1 flex items-center gap-3 text-xs">
-                                <span className="flex items-center gap-1 text-white/80">
-                                  <Clock className="h-3.5 w-3.5 text-emerald-400" />
-                                  {merchant.deliveryTime}
+                              <span className="flex shrink-0 items-center gap-1 text-xs font-extrabold text-[#F6C945]">
+                                <Star className="h-3 w-3 fill-[#F6C945]" />
+                                {merchant.rating.toFixed(1)}
+                              </span>
+                            </div>
+
+                            <p className="mt-0.5 truncate text-[11px] text-white/55">
+                              {merchant.category} • {merchant.addressZone}
+                            </p>
+
+                            <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[11px]">
+                              <span className="flex items-center gap-1 font-medium text-white/80">
+                                <Clock className="h-3 w-3 text-emerald-400" />
+                                {merchant.deliveryTime}
+                              </span>
+                              <span className="text-white/30">•</span>
+                              <span className="font-extrabold text-emerald-400">
+                                {merchant.deliveryFee === 0
+                                  ? "Entrega Grátis"
+                                  : `R$ ${merchant.deliveryFee.toFixed(2).replace(".", ",")}`}
+                              </span>
+                              {merchant.promoTag && (
+                                <span className="rounded-md bg-[#EA1D2C]/15 px-1.5 py-0.5 text-[9px] font-bold text-[#EA1D2C]">
+                                  {merchant.promoTag}
                                 </span>
-                                <span className="font-bold text-emerald-400">
-                                  {merchant.deliveryFee === 0
-                                    ? "Entrega Grátis"
-                                    : `Entrega R$ ${merchant.deliveryFee.toFixed(2).replace(".", ",")}`}
-                                </span>
-                              </div>
+                              )}
                             </div>
                           </div>
 
-                          <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-white/5 text-white/60 transition group-hover:bg-[#EA1D2C] group-hover:text-white">
-                            <ChevronRight className="h-4 w-4" />
+                          <ChevronRight className="h-4 w-4 shrink-0 text-white/35 transition group-hover:translate-x-0.5 group-hover:text-white" />
+                        </motion.div>
+                      ))}
+                    </div>
+                  ) : (
+                    /* Modo Banners Expandidos */
+                    <div className="grid gap-4 sm:grid-cols-2">
+                      {filteredMerchants.map((merchant) => (
+                        <motion.div
+                          key={merchant.id}
+                          whileHover={{ y: -3 }}
+                          onClick={() => setSelectedMerchant(merchant)}
+                          className="group cursor-pointer overflow-hidden rounded-[24px] border border-white/10 bg-[#141719] shadow-xl transition hover:border-[#EA1D2C]/50"
+                        >
+                          <div className="relative h-32 w-full overflow-hidden">
+                            <img
+                              src={merchant.coverImage}
+                              alt={merchant.name}
+                              className="h-full w-full object-cover transition duration-500 group-hover:scale-105"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-[#141719] via-transparent to-black/30" />
+
+                            {merchant.promoTag && (
+                              <span className="absolute top-2.5 left-2.5 rounded-full bg-[#EA1D2C] px-2.5 py-0.5 text-[10px] font-extrabold text-white shadow-lg">
+                                {merchant.promoTag}
+                              </span>
+                            )}
+
+                            <div className="absolute top-2.5 right-2.5 flex items-center gap-1 rounded-full border border-white/15 bg-black/75 px-2 py-0.5 text-xs font-bold text-[#F6C945] backdrop-blur-md">
+                              <Star className="h-3 w-3 fill-[#F6C945]" />
+                              {merchant.rating.toFixed(1)}
+                            </div>
                           </div>
-                        </div>
-                      </motion.div>
-                    ))}
-                  </div>
+
+                          <div className="flex items-center justify-between gap-3 p-3.5">
+                            <div className="flex min-w-0 items-center gap-3">
+                              <img
+                                src={merchant.logoImage}
+                                alt={merchant.name}
+                                className="h-11 w-11 shrink-0 rounded-xl border border-white/15 object-cover"
+                              />
+                              <div className="min-w-0">
+                                <h3 className="truncate text-sm font-extrabold text-white group-hover:text-[#F6C945]">
+                                  {merchant.name}
+                                </h3>
+                                <p className="truncate text-xs text-white/55">
+                                  {merchant.category} • {merchant.addressZone}
+                                </p>
+                              </div>
+                            </div>
+                            <ChevronRight className="h-4 w-4 text-white/50" />
+                          </div>
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
@@ -953,27 +1071,151 @@ export const CaraivaDeliveryApp: React.FC = () => {
             )}
           </motion.div>
         </AnimatePresence>
+
+        {/* Safe-Area Bottom Spacer so BubbleNavigation & Cart Bar never occlude content */}
+        <div className="h-32 md:h-12" aria-hidden="true" />
       </main>
 
-      {/* Floating iFood Red Bag Bar (when cart has items) */}
+      {/* Hyper-Local Relational Address & Pousada Bottom Sheet Drawer (iFood Style) */}
+      <AnimatePresence>
+        {isAddressSheetOpen && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            onClick={() => setIsAddressSheetOpen(false)}
+            className="fixed inset-0 z-50 flex items-end justify-center bg-black/75 backdrop-blur-sm sm:items-center sm:p-4"
+          >
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", stiffness: 360, damping: 34 }}
+              onClick={(e) => e.stopPropagation()}
+              className="w-full max-w-lg rounded-t-[28px] sm:rounded-[28px] border border-white/15 bg-[#141719] p-5 text-white shadow-2xl"
+            >
+              <div className="mx-auto mb-3 h-1.5 w-12 rounded-full bg-white/20 sm:hidden" />
+              <div className="flex items-center justify-between">
+                <div>
+                  <span className="text-[10px] font-extrabold tracking-wider text-[#EA1D2C] uppercase">
+                    Logística Nativa • Sem CEP Urbano
+                  </span>
+                  <h3 className="text-base font-black text-white">
+                    Onde vamos entregar em Caraíva?
+                  </h3>
+                </div>
+                <button
+                  type="button"
+                  onClick={() => setIsAddressSheetOpen(false)}
+                  className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 text-xs font-bold text-white/70 hover:text-white cursor-pointer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* Pousada / Referência Rápida */}
+              <div className="mt-3.5">
+                <label className="text-[11px] font-bold text-white/70">
+                  Pousada, Suíte ou Ponto na Praia
+                </label>
+                <div className="mt-1.5 flex flex-wrap gap-1.5">
+                  {[
+                    "Pousada Vila do Mar • Suíte 04",
+                    "Pousada Casa da Praia • Chalé 02",
+                    "Pousada da Barra • Recepção",
+                    "Praia da Barra • Guarda-Sol 08",
+                  ].map((preset) => (
+                    <button
+                      key={preset}
+                      type="button"
+                      onClick={() => setSelectedPousadaRef(preset)}
+                      className={`rounded-xl border px-2.5 py-1.5 text-[11px] font-bold transition cursor-pointer ${
+                        selectedPousadaRef === preset
+                          ? "border-[#F6C945] bg-[#F6C945]/20 text-[#F6C945]"
+                          : "border-white/10 bg-[#090B0C] text-white/70 hover:text-white"
+                      }`}
+                    >
+                      {preset}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Zonas Logísticas com Cálculo de Maré & Areia */}
+              <div className="mt-4 space-y-2 max-h-64 overflow-y-auto pr-1">
+                {DELIVERY_ZONES.map((zone) => {
+                  const isSelected = selectedZone.id === zone.id;
+                  return (
+                    <button
+                      key={zone.id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedZone(zone);
+                        setIsAddressSheetOpen(false);
+                        triggerToast(`Entrega ajustada para ${zone.name} (${zone.estimatedMinutes})`);
+                      }}
+                      className={`flex w-full items-center justify-between rounded-2xl border p-3 text-left transition cursor-pointer ${
+                        isSelected
+                          ? "border-[#EA1D2C] bg-[#EA1D2C]/15"
+                          : "border-white/10 bg-[#090B0C] hover:border-white/25"
+                      }`}
+                    >
+                      <div className="min-w-0 pr-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-xs font-extrabold text-white">
+                            {zone.name}
+                          </span>
+                          <span className="rounded-md bg-white/10 px-1.5 py-0.5 text-[9px] font-bold text-[#F6C945]">
+                            {zone.courierModal}
+                          </span>
+                        </div>
+                        <p className="mt-0.5 truncate text-[11px] text-white/55">
+                          {zone.referenceHint}
+                        </p>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <span className="block text-xs font-black text-emerald-400">
+                          {zone.estimatedMinutes}
+                        </span>
+                        <span className="text-[10px] text-white/60">
+                          {zone.baseFee === 0 ? "Taxa Grátis" : `+ R$ ${zone.baseFee},00`}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Floating iFood Red Bag Bar (Stacked cleanly above BubbleNavigation) */}
       <AnimatePresence>
         {cartItemsCount > 0 && !isCartOpen && (
           <motion.div
             initial={{ y: 40, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
             exit={{ y: 40, opacity: 0 }}
-            className="fixed right-4 bottom-24 left-4 z-30 mx-auto max-w-md"
+            className="fixed right-3 bottom-[84px] md:bottom-6 left-3 z-30 mx-auto max-w-md"
           >
             <button
               type="button"
               onClick={() => setIsCartOpen(true)}
-              className="flex w-full items-center justify-between rounded-2xl border border-white/15 bg-[#EA1D2C] px-5 py-3.5 text-white shadow-2xl shadow-[#EA1D2C]/40 transition hover:bg-[#d81927]"
+              className="flex w-full items-center justify-between rounded-2xl border border-white/15 bg-[#EA1D2C] px-4 py-3 text-white shadow-2xl shadow-[#EA1D2C]/40 transition hover:bg-[#d81927] cursor-pointer"
             >
               <div className="flex items-center gap-2.5">
                 <span className="flex h-6 w-6 items-center justify-center rounded-full bg-black/25 text-xs font-black">
                   {cartItemsCount}
                 </span>
-                <span className="text-xs font-bold">Ver Sacola Caraíva</span>
+                <div className="text-left">
+                  <span className="block text-xs font-extrabold leading-none">
+                    Ver Sacola • {selectedZone.name}
+                  </span>
+                  <span className="text-[10px] text-white/80">
+                    {selectedPousadaRef}
+                  </span>
+                </div>
               </div>
               <span className="text-sm font-black">
                 R$ {cartSubtotal.toFixed(2).replace(".", ",")}
