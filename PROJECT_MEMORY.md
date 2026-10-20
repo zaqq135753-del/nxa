@@ -437,3 +437,19 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
   5. **Modal Gourmet de Detalhes do Prato:** Tocar no card abre um Bottom Sheet com foto estendida, história dos ingredientes, campo de observações para a cozinha (*"sem coentro"*, *"ponto do peixe"*) e botão CTA de adição rápida com seletor de quantidade.
   6. **Barra Flutuante Dark Luxury:** Remoção do verde fosforescente; a sacola agora permanece oculta quando vazia e, quando há itens, exibe uma barra flutuante magnética em `#141719` com borda e glow dourado (`#F6C945`), total em R$ e revisão do pedido.
   7. **Curadoria de Imagens Gastronômicas:** Fotos atualizadas com pratos reais da culinária brasileira (pastéis dourados, moqueca borbulhante na panela de barro, iscas de peixe crocantes com limão cravo e caipirinhas rústicas de caju).
+
+
+### ADR 021: Barramento Universal Reativo Entre Apps (Guia ➔ Delivery ➔ Pousadas ➔ TapTable KDS ➔ Rider) - 20/10/2026
+* **Contexto:**
+  O ecossistema possuía múltiplos produtos desacoplados (Guia, Delivery, Pousadas/Reservas, TapTable NFC e Rider Cockpit) que precisavam operar como uma única malha coesa em tempo real. O usuário solicitou uma revisão completa em .md, estruturação de segurança contra quedas e acessos indevidos, auditoria do banco de dados e testes comprovando que um pedido feito no Guia já dispara o Delivery, KDS e Rider.
+* **Decisão Tomada:**
+  1. **Documentação Master (`docs/ECOSYSTEM_MASTER_ARCHITECTURE_E_COMUNICACAO.md`):** Mapeamento detalhado dos 6 produtos, ciclo de vida unificado de pedidos, sinergia simbiótica entre mesas/pousadas e delivery, auditoria de segurança (Gatekeeper, RLS, zero crash) e ajustes do Supabase.
+  2. **Simbiose Guia ➔ Delivery:** Pedidos enviados pela sacola do Guia (`CaraivaCartCheckoutModal`) ou pelo Delivery (`DeliveryCartDrawer`) geram o objeto ativo `ActiveDeliveryOrder` com PIN de 4 dígitos e gravam em `caraiva_active_delivery_order`, emitindo `caraiva:delivery-order-created`. O modal de sucesso do Guia exibe o código PIN em destaque e oferece botão de 1 clique para acompanhar no Delivery ao vivo (`/delivery?tab=pedidos`).
+  3. **Sincronização Reflexiva KDS ➔ Rastreio:** O avanço de status no KDS do Comerciante (`villageUnifiedOrdersService.ts`) reflete instantaneamente no rastreador do cliente:
+     - `novo` / `confirmado` ➔ `CONFIRMED` (20%)
+     - `preparando` ➔ `PREPARING` (50%)
+     - `em_rota` ➔ `OUT_FOR_DELIVERY` (82%)
+     - `concluido` ➔ `DELIVERED` (100% após validação do PIN do turista)
+  4. **Sinergia Pousadas ➔ Delivery:** Reservas confirmadas em pousadas (`CaraivaLivingBookingSection`) gravam o token `caraiva_guest_preset` no navegador, preenchendo automaticamente o endereço da suíte quando o hóspede pede delivery à noite.
+  5. **Auditoria de Banco & Migração:** Criada migração `20261020130000_ecosystem_interconnected_operations.sql` adicionando `delivery_pin`, `courier_modal`, tabelas `cd_riders` e `cd_tables`, além de habilitar `supabase_realtime` em `cd_orders` e `cd_bookings`.
+  6. **Verificação Automatizada:** Criado teste `scripts/verify-connected-ecosystem-flow.mjs` com 16 asserções cobrindo o ciclo completo ponta a ponta com 100% de sucesso. Build de produção (`tsc -b && vite build`) validado em 23s e sincronizado nos remotos `origin` e `nxacorp` em `main` e `codex/mvp-connected-operations`.
