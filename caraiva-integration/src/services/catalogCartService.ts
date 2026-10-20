@@ -83,8 +83,8 @@ export const CARAIVA_NICHED_CATALOGS: Record<string, BusinessCatalog> = {
   'boteco-do-para': {
     businessId: 'boteco-do-para',
     niche: 'gastronomia',
-    tabLabel: '🍽️ Cardápio Vivo',
-    subtitle: 'Os lendários pastéis de arraia, moquecas e drinks na beira do Rio Caraíva',
+    tabLabel: '🍽️ Cardápio',
+    subtitle: 'Gastronomia tradicional beira-rio, pastéis artesanais e moquecas no pôr do sol',
     deliveryAvailable: true,
     deliveryFee: 12,
     minimumOrder: 40,
@@ -131,7 +131,7 @@ export const CARAIVA_NICHED_CATALOGS: Record<string, BusinessCatalog> = {
         description: 'Postas de robalo fresco e camarões em leite de coco natural, dendê suave, arroz, pirão e farofa.',
         stockStatus: 'em_estoque',
         badge: 'Exclusivo',
-        image: 'https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=600&q=80',
+        image: 'https://images.unsplash.com/photo-1559847844-5315695dadae?auto=format&fit=crop&w=800&q=80',
       },
       {
         id: 'bp-4',
@@ -142,7 +142,7 @@ export const CARAIVA_NICHED_CATALOGS: Record<string, BusinessCatalog> = {
         unit: 'porção 400g',
         description: 'Tiras crocantes empanadas na farinha de mandioca crocante da Bahia com molho da casa.',
         stockStatus: 'em_estoque',
-        image: 'https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=600&q=80',
+        image: 'https://images.unsplash.com/photo-1532550907401-a500c9a57435?auto=format&fit=crop&w=800&q=80',
       },
       {
         id: 'bp-5',
@@ -176,7 +176,7 @@ export const CARAIVA_NICHED_CATALOGS: Record<string, BusinessCatalog> = {
   'culinaria-central': {
     businessId: 'culinaria-central',
     niche: 'gastronomia',
-    tabLabel: '🍽️ Cardápio Vivo',
+    tabLabel: '🍽️ Cardápio',
     subtitle: 'Pratos brasileiros clássicos, moquecas e peixes no coração da Rua Sete de Setembro',
     deliveryAvailable: true,
     deliveryFee: 10,

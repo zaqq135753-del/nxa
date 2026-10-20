@@ -353,7 +353,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
             const currentCatalog = getBusinessCatalog(business.id, business.category, business.subcategory || business.subCategory);
             const hasShowcase = isFood || Boolean(currentCatalog);
             const canRequestBooking = isFood || ["hospedagens", "passeios", "noite"].includes(business.category);
-            const showcaseTabLabel = isFood ? "🍽️ Cardápio Vivo" : currentCatalog?.tabLabel || "🛍️ Vitrine";
+            const showcaseTabLabel = isFood ? "🍽️ Cardápio" : (currentCatalog?.tabLabel?.replace("Vivo", "").trim() || "🛍️ Vitrine");
             const businessCartCount = cartItems.filter(i => i.businessId === business.id).reduce((acc, i) => acc + i.quantity, 0);
             const bookingTabLabel = isFood
               ? "🌅 Reserva Solar"
@@ -733,7 +733,7 @@ export const CaraivaBusinessDetailModal: React.FC<CaraivaBusinessDetailModalProp
                       setDetailTab("visao-geral");
                     }
                   }}
-                  className="flex-1 min-w-0 py-3 px-3.5 rounded-2xl bg-gradient-to-r from-teal-500 to-emerald-500 hover:from-teal-400 hover:to-emerald-400 text-slate-950 font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 active:scale-98 transition-all cursor-pointer"
+                  className="flex-1 min-w-0 py-3 px-3.5 rounded-2xl bg-gradient-to-r from-amber-400 via-[#F6C945] to-amber-500 hover:from-amber-300 hover:to-amber-400 text-slate-950 font-black text-xs sm:text-sm flex items-center justify-center gap-2 shadow-lg shadow-teal-500/25 active:scale-98 transition-all cursor-pointer"
                 >
                   {business.category === "hospedagens" ? (
                     <>
