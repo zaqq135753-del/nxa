@@ -551,8 +551,8 @@ export default function CaraivaCartoon3DMap(props: LiveMapEngineProps) {
         controls.target.set(2, 2.5, -10);
         break;
       case "rio":
-        camera.position.set(-28, 14, -8);
-        controls.target.set(-36, 1, -18);
+        camera.position.set(-48, 16, 8);
+        controls.target.set(-61, 1, -18);
         break;
       case "praia":
         camera.position.set(40, 22, -10);
