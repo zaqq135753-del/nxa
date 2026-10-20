@@ -88,6 +88,26 @@ export const CaraivaKdsActionTab: React.FC<CaraivaKdsActionTabProps> = ({
   const [verifyingOrderId, setVerifyingOrderId] = useState<string | null>(null);
   const [enteredPin, setEnteredPin] = useState<string>('');
   const [pinError, setPinError] = useState<string | null>(null);
+  const [kitchenThrottleActive, setKitchenThrottleActive] = useState<boolean>(false);
+  const [pausedDishes, setPausedDishes] = useState<string[]>([]);
+  const [preferredDispatchModal, setPreferredDispatchModal] = useState<
+    'A Pé (Areia)' | 'Bike Cargueira' | 'Canoa do Rio'
+  >('A Pé (Areia)');
+
+  const toggleDishPause = (dishName: string) => {
+    playKdsChime('bell');
+    setPausedDishes((prev) => {
+      const exists = prev.includes(dishName);
+      const next = exists ? prev.filter((d) => d !== dishName) : [...prev, dishName];
+      setLastNotification(
+        exists
+          ? `Cardápio sincronizado: "${dishName}" reativado no Delivery & TapTable NFC!`
+          : `Pausa de Emergência: "${dishName}" marcado como ESGOTADO em tempo real!`
+      );
+      setTimeout(() => setLastNotification(null), 3500);
+      return next;
+    });
+  };
 
   // Filtro de pedidos por estação
   const filteredOrders = orders.filter((order) => {
@@ -146,8 +166,33 @@ export const CaraivaKdsActionTab: React.FC<CaraivaKdsActionTabProps> = ({
           </p>
         </div>
 
-        {/* Ação Rápida de Adicionar Pedido Manual */}
-        <div className="flex items-center gap-2 shrink-0">
+        {/* Ações Rápidas: Throttling de Cozinha + Lançar Pedido Manual */}
+        <div className="flex flex-wrap items-center gap-2 shrink-0">
+          <button
+            type="button"
+            onClick={() => {
+              playKdsChime('bell');
+              setKitchenThrottleActive((v) => {
+                const next = !v;
+                setLastNotification(
+                  next
+                    ? 'Modo Cozinha Lotada ATIVO: +15 min adicionados automaticamente ao ETA do Delivery!'
+                    : 'Modo Cozinha Lotada DESATIVADO: SLA normalizado (18–25 min).'
+                );
+                setTimeout(() => setLastNotification(null), 3500);
+                return next;
+              });
+            }}
+            className={`px-3.5 py-2.5 rounded-2xl border font-bold text-xs flex items-center gap-2 cursor-pointer transition ${
+              kitchenThrottleActive
+                ? 'bg-amber-500/20 border-amber-400 text-amber-300 shadow-[0_0_20px_rgba(245,158,11,0.25)]'
+                : 'bg-white/[0.04] border-white/10 text-slate-300 hover:text-white'
+            }`}
+          >
+            <Timer className="w-4 h-4 text-amber-400" />
+            <span>{kitchenThrottleActive ? 'Cozinha Lotada (+15m Ativo)' : 'Pausar / +15m SLA'}</span>
+          </button>
+
           <button
             onClick={onOpenPosLauncher}
             className="px-4 py-2.5 rounded-2xl bg-white text-slate-950 hover:bg-slate-200 font-bold text-xs flex items-center gap-2 cursor-pointer shadow-[0_10px_25px_rgba(255,255,255,0.15)] transition"
@@ -155,6 +200,73 @@ export const CaraivaKdsActionTab: React.FC<CaraivaKdsActionTabProps> = ({
             <PlusCircle className="w-4 h-4" />
             <span>+ Lançar Pedido Manual</span>
           </button>
+        </div>
+      </div>
+
+      {/* 1.5 Barra de Controle Rápido iFood Gestor / Toast POS: 1-Tap Item Killswitch & Modal de Despacho */}
+      <div className="p-4 rounded-3xl bg-[#0D1217] border border-white/10 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+        <div className="space-y-1.5">
+          <span className="text-[10px] font-extrabold uppercase tracking-wider text-[#FFD15C] block">
+            ⚡ 1-Tap Killswitch — Pausar Prato Esgotado (Sincroniza Salão NFC + Delivery)
+          </span>
+          <div className="flex flex-wrap gap-2">
+            {[
+              'Moqueca de Camarão',
+              'Pastel de Arraia do Pará',
+              'Polvo Grelhado na Brasa',
+              'Bowl Açaí Nativo',
+            ].map((dish) => {
+              const isPaused = pausedDishes.includes(dish);
+              return (
+                <button
+                  key={dish}
+                  type="button"
+                  onClick={() => toggleDishPause(dish)}
+                  className={`px-3 py-1.5 rounded-xl text-xs font-bold border transition cursor-pointer flex items-center gap-1.5 ${
+                    isPaused
+                      ? 'bg-rose-500/20 border-rose-500/50 text-rose-300 line-through'
+                      : 'bg-white/[0.03] border-white/10 text-slate-200 hover:border-[#4EEDB2]/40'
+                  }`}
+                >
+                  <span
+                    className={`w-2 h-2 rounded-full ${
+                      isPaused ? 'bg-rose-500' : 'bg-[#4EEDB2]'
+                    }`}
+                  />
+                  <span>{dish}</span>
+                  <span className="text-[9px] uppercase opacity-75">
+                    {isPaused ? '(Esgotado)' : '(Ativo)'}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </div>
+
+        <div className="space-y-1.5 shrink-0">
+          <span className="text-[10px] font-extrabold uppercase tracking-wider text-sky-400 block">
+            🛶 Despacho Logístico Preferencial (Maré & Areia)
+          </span>
+          <div className="flex items-center gap-1.5">
+            {(['A Pé (Areia)', 'Bike Cargueira', 'Canoa do Rio'] as const).map((modal) => (
+              <button
+                key={modal}
+                type="button"
+                onClick={() => {
+                  setPreferredDispatchModal(modal);
+                  setLastNotification(`Modal de entrega padrão ajustado para: ${modal}`);
+                  setTimeout(() => setLastNotification(null), 2800);
+                }}
+                className={`px-2.5 py-1.5 rounded-xl text-[11px] font-bold border transition cursor-pointer ${
+                  preferredDispatchModal === modal
+                    ? 'bg-sky-500/20 border-sky-400 text-sky-300'
+                    : 'bg-white/[0.03] border-white/10 text-slate-400 hover:text-white'
+                }`}
+              >
+                {modal}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
 

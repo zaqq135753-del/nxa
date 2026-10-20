@@ -372,3 +372,13 @@ Usuário solicitou novas ideias gerais de interface e funcionalidades. Registrad
      - pb-60 dinamico no wrapper de delivery e navegacao docked no mobile-first com md:hidden para nao cobrir cards no desktop.
   6. **KDS com Validacao Anti-Fraude de PIN 4 Digitos:**
      - Protocolo de entrega segura no KDS: operador confere e digita os 4 digitos da tela do cliente para liberar o pedido com baixa em estoque e som C6 de expedicao.
+
+### ADR 017: Overhaul Mobile 390px iFood Clean, Bento 3D Hero sem Corte na Dobra, Carrossel Horizontal 1-Click e KDS Killswitch — 19/10/2026
+* **Contexto:** Auditoria com agentes especializados (`code-reviewer` e `research`) sobre 3 screenshots mobile (390x844px) revelou 5 problemas de compressao desktop-to-mobile: (1) colisao no header de 429px em tela de 390px com badge `#IFD-9482` sobrepondo o endereco; (2) `ProjectLockBadge` flutuando em `top-3 right-3` cobrindo o botao da sacola; (3) `CaraivaDelivery3DHero` cortado ao meio na dobra de 844px por excesso de altura vertical; (4) cards de pratos populares empilhados verticalmente; (5) banners de restaurantes gigantes (250px) exibindo apenas 1,5 loja por tela.
+* **Decisao Tomada:**
+  1. **ProjectLockBadge Oculto no Mobile (`hidden lg:block fixed bottom-4 left-4`):** Zero interferencia com a sacola ou header em smartphones.
+  2. **Header 390px-Safe + Drawer Hiper-Local de Pousadas & Maré:** Botao de endereco tatil que abre um Bottom Sheet nativo para escolha de Pousada/Suite e Zona Logistica com modal (*A Pé pela Areia*, *Bike Cargueira*, *Canoa*). O pedido ativo saiu do header mobile e virou uma **iOS Live Activity / Dynamic Island Bar** dedicada no topo do feed.
+  3. **Bento 3D Hero Compacto Lado-a-Lado (`grid-cols-12` mesmo no mobile):** Texto enxuto (7 colunas) ao lado do palco Three.js (5 colunas, `h-36 sm:h-48`) com `updateCameraFraming` adaptativo ao aspect ratio, eliminando 100% o corte na dobra da tela.
+  4. **Carrossel Horizontal `snap-x` para "Peça em 1 Toque":** Cards compactos de `160px` com foto 1:1 e botao `+` vermelho flutuante sobre a foto para adicao instantanea.
+  5. **Lista Compacta de Restaurantes Padrao iFood:** Densidade de 4 a 5 restaurantes visiveis por tela (miniatura 64x64, estrelas, tempo, taxa e selo Super), com botao de alternancia para modo Banners.
+  6. **KDS Power Strip (iFood Gestor / Toast POS):** Adicionado **1-Tap Item Killswitch** (pausar prato esgotado em tempo real), **Modo Cozinha Lotada (+15m SLA)** e seletor de **Modal Logistico Preferencial** (*A Pé*, *Bike Cargueira*, *Canoa*).

@@ -5,18 +5,19 @@ import { lockProject } from "../../services/projectSecurityService";
 export const ProjectLockBadge: React.FC = () => {
   const [showConfirm, setShowConfirm] = useState(false);
 
+  // Oculto em viewports mobile (< 1024px) para nunca sobrepor o header ou sacola do app
   return (
-    <div className="fixed top-3 right-3 z-50 pointer-events-auto">
+    <div className="hidden lg:block fixed bottom-4 left-4 z-50 pointer-events-auto">
       {!showConfirm ? (
         <button
           type="button"
           onClick={() => setShowConfirm(true)}
-          className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/60 hover:bg-black/90 border border-white/10 hover:border-[#F6C945]/40 backdrop-blur-md text-[10px] font-semibold text-slate-300 hover:text-white transition-all shadow-md group cursor-pointer"
+          className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-black/70 hover:bg-black/90 border border-white/10 hover:border-[#F6C945]/40 backdrop-blur-md text-[10px] font-semibold text-slate-300 hover:text-white transition-all shadow-md group cursor-pointer"
           title="Projeto protegido por senha. Clique para trancar novamente."
         >
           <ShieldCheck className="w-3 h-3 text-emerald-400 group-hover:hidden" />
           <Lock className="w-3 h-3 text-[#F6C945] hidden group-hover:block" />
-          <span>Privado</span>
+          <span>Ambiente Homologado</span>
         </button>
       ) : (
         <div className="flex items-center gap-1.5 p-1 rounded-full bg-[#141719] border border-amber-500/40 backdrop-blur-lg shadow-xl text-[10px] animate-in fade-in zoom-in-95">
