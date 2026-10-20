@@ -24,7 +24,9 @@ import {
   ChevronRight,
   Settings,
   X,
-  Sparkles
+  Sparkles,
+  Smartphone,
+  Bike
 } from 'lucide-react';
 import { CaraivaSpatialSuite3D } from './CaraivaSpatialSuite3D';
 import { CaraivaKdsActionTab } from './tabs/CaraivaKdsActionTab';
@@ -366,7 +368,12 @@ const INITIAL_PRODUCTS: RetailProduct[] = [
   { id: 'p-04', name: 'Chapéu de Palha Trançado à Mão', price: 110, costCmv: 32, stock: 5, minStock: 4, category: 'Acessórios', available: true, nfcScansToday: 22 },
 ];
 
-type SystemUniversalTab = 'operacao_principal' | 'fila_pedidos' | 'financeiro_dre' | 'crm_clientes';
+type SystemUniversalTab =
+  | 'operacao_principal'
+  | 'fila_pedidos'
+  | 'delivery_ifood'
+  | 'financeiro_dre'
+  | 'crm_clientes';
 
 export const CaraivaUniversalBusinessApp: React.FC = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -378,8 +385,9 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
   );
   const [selectedNiche, setSelectedNiche] = useState<OrderNiche>(() => activeNicheParam || 'gastronomia');
   const [hubSearch, setHubSearch] = useState<string>('');
+  const [showHubDeliveryStudio, setShowHubDeliveryStudio] = useState<boolean>(false);
 
-  // 4 Abas Universais e Padronizadas em todos os nichos
+  // Abas Universais e Padronizadas em todos os nichos + Estúdio Delivery iFood
   const [activeUniversalTab, setActiveUniversalTab] = useState<SystemUniversalTab>('operacao_principal');
   const [showConfigModal, setShowConfigModal] = useState<boolean>(false);
   const [showPosLauncher, setShowPosLauncher] = useState<boolean>(false);
@@ -747,8 +755,8 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
     return (
       <div className="min-h-screen bg-[#0B0D10] text-slate-100 font-sans pb-24">
         {/* Topbar Minimalista do Centralizador */}
-        <header className="sticky top-0 z-30 bg-[#0B0D10]/90 backdrop-blur-xl border-b border-white/[0.06] px-6 py-4">
-          <div className="max-w-6xl mx-auto flex items-center justify-between gap-4">
+        <header className="sticky top-0 z-30 bg-[#0B0D10]/90 backdrop-blur-xl border-b border-white/[0.06] px-4 sm:px-6 py-4">
+          <div className="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-3">
               <div className="w-9 h-9 rounded-xl bg-white/[0.06] border border-white/10 flex items-center justify-center text-slate-200">
                 <LayoutGrid className="w-4 h-4" />
@@ -756,29 +764,44 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
               <div>
                 <div className="flex items-center gap-2">
                   <span className="text-[11px] font-semibold uppercase tracking-widest text-slate-400">
-                    Centralizador de Sistemas B2B
+                    Centralizador de Sistemas B2B & B2C
                   </span>
                 </div>
                 <h1 className="text-base font-bold text-white tracking-tight">
-                  Painel Central dos 4 Sistemas Operacionais
+                  Painel Central dos 5 Sistemas Operacionais
                 </h1>
               </div>
             </div>
 
-            <div className="flex items-center gap-2.5">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowHubDeliveryStudio((v) => !v)}
+                className={`px-3.5 py-2 rounded-xl border text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${
+                  showHubDeliveryStudio
+                    ? 'bg-[#EA1D2C] border-[#EA1D2C] text-white shadow-lg shadow-[#EA1D2C]/30'
+                    : 'bg-[#EA1D2C]/15 hover:bg-[#EA1D2C]/25 border-[#EA1D2C]/40 text-[#FF6B76]'
+                }`}
+              >
+                <Smartphone className="w-3.5 h-3.5" />
+                <span>{showHubDeliveryStudio ? 'Fechar Estúdio Delivery' : '🍕 Sistema Delivery iFood & KDS'}</span>
+              </button>
+
+              <Link
+                to="/delivery"
+                className="px-3.5 py-2 rounded-xl bg-[#F6C945]/15 hover:bg-[#F6C945]/25 border border-[#F6C945]/40 text-xs font-bold text-[#F6C945] flex items-center gap-1.5 transition"
+              >
+                <span>📱 Abrir App Delivery (390px)</span>
+                <ExternalLink className="w-3.5 h-3.5" />
+              </Link>
+
               <Link
                 to="/entregas"
                 className="px-3.5 py-2 rounded-xl bg-emerald-500/15 hover:bg-emerald-500/25 border border-emerald-500/40 text-xs font-bold text-emerald-300 flex items-center gap-1.5 transition"
               >
                 <span>🏍️ App Motoboy & Mapa</span>
               </Link>
-              <Link
-                to="/guia/pedidos"
-                className="px-3.5 py-2 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-xs font-medium text-slate-200 flex items-center gap-1.5 transition"
-              >
-                <span>App do Cliente</span>
-                <ExternalLink className="w-3.5 h-3.5 text-slate-400" />
-              </Link>
+
               <Link
                 to="/guia"
                 className="px-3.5 py-2 rounded-xl bg-white text-slate-950 hover:bg-slate-200 text-xs font-semibold transition"
@@ -789,16 +812,16 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
           </div>
         </header>
 
-        <main className="max-w-6xl mx-auto px-6 pt-8 space-y-8">
+        <main className="max-w-6xl mx-auto px-4 sm:px-6 pt-6 sm:pt-8 space-y-8">
           {/* Resumo Executivo Clean da Plataforma */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.06] space-y-1">
               <span className="text-xs font-medium text-slate-400">Sistemas do Ecossistema</span>
               <div className="flex items-baseline justify-between pt-1">
-                <strong className="text-2xl font-bold text-white">4 Módulos Ativos</strong>
+                <strong className="text-2xl font-bold text-white">5 Módulos Ativos</strong>
                 <span className="text-xs text-emerald-400 font-medium">100% Operacional</span>
               </div>
-              <p className="text-[11px] text-slate-500">Gastronomia, Hotelaria, Náutica e Varejo</p>
+              <p className="text-[11px] text-slate-500">Delivery iFood 3D, Gastronomia, Hotelaria, Náutica e Varejo</p>
             </div>
 
             <div className="p-5 rounded-2xl bg-[#121519] border border-white/[0.06] space-y-1">
@@ -818,6 +841,110 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
               </div>
               <p className="text-[11px] text-slate-500">Abertura instantânea no smartphone</p>
             </div>
+          </div>
+
+          {/* MÓDULO ESPECIAL DE DESTAQUE: SISTEMA DELIVERY IFOOD CARAÍVA + GESTOR KDS */}
+          <div className="rounded-3xl border border-[#EA1D2C]/40 bg-gradient-to-br from-[#1A0D10] via-[#121519] to-[#0B0D10] p-6 shadow-[0_20px_50px_rgba(234,29,44,0.15)] space-y-5">
+            <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+              <div className="space-y-1.5">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#EA1D2C]/20 border border-[#EA1D2C]/40 text-[#FF6B76] text-[11px] font-extrabold uppercase tracking-wider">
+                  <Bike className="w-3.5 h-3.5" />
+                  <span>5º Sistema do Ecossistema • Novo Mobile UX 390px + KDS Gestor</span>
+                </div>
+                <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight">
+                  Sistema Delivery iFood Caraíva & Rastreio Topográfico 3D
+                </h2>
+                <p className="text-xs text-slate-300 max-w-2xl">
+                  Visualize e opere simultaneamente as duas pontas: o <strong>App Mobile do Cliente (otimizado para celular 390px)</strong> com Bento 3D Hero, Carrossel 1-Toque, Lista Compacta iFood e Drawer de Pousadas, e o <strong>Painel KDS do Dono</strong> com 1-Tap Killswitch (pausa de pratos), Modo Cozinha Lotada (+15m) e validação por PIN de 4 dígitos.
+                </p>
+              </div>
+
+              <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={() => setShowHubDeliveryStudio((v) => !v)}
+                  className="px-4 py-3 rounded-2xl bg-[#EA1D2C] hover:bg-[#d81927] text-white font-extrabold text-xs flex items-center gap-2 shadow-lg shadow-[#EA1D2C]/30 transition cursor-pointer"
+                >
+                  <Smartphone className="w-4 h-4" />
+                  <span>
+                    {showHubDeliveryStudio
+                      ? 'Ocultar Simulador Lado a Lado'
+                      : 'Abrir Cliente Mobile (390px) + Dono KDS Aqui'}
+                  </span>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedNiche('gastronomia');
+                    setViewMode('sistema_negocio');
+                    setActiveUniversalTab('fila_pedidos');
+                  }}
+                  className="px-4 py-3 rounded-2xl bg-white/[0.06] hover:bg-white/[0.12] border border-white/15 text-white font-bold text-xs flex items-center gap-2 transition cursor-pointer"
+                >
+                  <ChefHat className="w-4 h-4 text-[#F6C945]" />
+                  <span>Abrir KDS Cozinha & Killswitch</span>
+                </button>
+
+                <Link
+                  to="/delivery"
+                  className="px-4 py-3 rounded-2xl bg-[#F6C945] hover:bg-[#eab832] text-slate-950 font-extrabold text-xs flex items-center gap-1.5 transition"
+                >
+                  <span>Tela Cheia (/delivery)</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </Link>
+              </div>
+            </div>
+
+            {/* ESTÚDIO INTEGRADO LADO A LADO: CLIENTE MOBILE (390PX) + DONO DO RESTAURANTE (KDS) */}
+            {showHubDeliveryStudio && (
+              <div className="pt-4 border-t border-white/10 grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+                {/* Coluna Esquerda (5 cols): Mockup Celular 390px Real com o App do Cliente */}
+                <div className="xl:col-span-5 flex flex-col items-center">
+                  <div className="w-full max-w-[395px] mb-2 flex items-center justify-between px-2">
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-[#F6C945]">
+                      📱 Visão do Cliente (Viewport Mobile 390px)
+                    </span>
+                    <Link
+                      to="/delivery"
+                      className="text-[11px] font-bold text-emerald-400 hover:underline flex items-center gap-1"
+                    >
+                      <span>Expandir</span>
+                      <ExternalLink className="w-3 h-3" />
+                    </Link>
+                  </div>
+                  <div className="w-full max-w-[395px] h-[780px] rounded-[38px] border-[6px] border-[#22272E] bg-[#090B0C] shadow-[0_25px_70px_rgba(0,0,0,0.9)] overflow-hidden relative">
+                    <iframe
+                      src="/delivery"
+                      title="Simulador Mobile 390px Caraíva Delivery"
+                      className="w-full h-full border-0"
+                    />
+                  </div>
+                </div>
+
+                {/* Coluna Direita (7 cols): Painel do Dono / Gestor KDS ao Vivo */}
+                <div className="xl:col-span-7 bg-[#0B0D10] rounded-3xl border border-white/10 p-5">
+                  <div className="mb-4 pb-3 border-b border-white/10 flex items-center justify-between">
+                    <span className="text-xs font-extrabold uppercase tracking-wider text-[#4EEDB2]">
+                      👨‍🍳 Visão do Dono do Negócio (Gestor KDS + Killswitch + PIN 4 Dígitos)
+                    </span>
+                    <span className="text-[11px] text-slate-400">
+                      Sincronizado em Tempo Real
+                    </span>
+                  </div>
+                  <CaraivaKdsActionTab
+                    niche="gastronomia"
+                    orders={orders.filter((o) => o.niche === 'gastronomia')}
+                    onOrderUpdated={() => setOrders(getUnifiedOrders())}
+                    onOpenPosLauncher={() => {
+                      setSelectedNiche('gastronomia');
+                      setViewMode('sistema_negocio');
+                      setShowPosLauncher(true);
+                    }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Barra de Busca e Instrução de Redirecionamento */}
@@ -1053,6 +1180,18 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
             >
               <Users className="w-3.5 h-3.5" />
               <span>4. Clientes ({uniqueCustomers.length})</span>
+            </button>
+
+            <button
+              onClick={() => setActiveUniversalTab('delivery_ifood')}
+              className={`px-3.5 py-2 rounded-xl text-xs font-bold transition shrink-0 flex items-center gap-2 cursor-pointer ${
+                activeUniversalTab === 'delivery_ifood'
+                  ? 'bg-[#EA1D2C] text-white shadow-[0_0_20px_rgba(234,29,44,0.4)]'
+                  : 'text-[#EA1D2C] bg-[#EA1D2C]/10 border border-[#EA1D2C]/25 hover:bg-[#EA1D2C]/20'
+              }`}
+            >
+              <Bike className="w-3.5 h-3.5" />
+              <span>5. Delivery iFood & KDS</span>
             </button>
           </div>
 
@@ -2103,6 +2242,60 @@ export const CaraivaUniversalBusinessApp: React.FC = () => {
             niche={selectedNiche}
             customers={crmCustomerProfiles}
           />
+        )}
+
+        {/* ==================================================================== */}
+        {/* ABA 5: DELIVERY IFOOD CARAÍVA & ESTÚDIO KDS LADO A LADO             */}
+        {/* ==================================================================== */}
+        {activeUniversalTab === 'delivery_ifood' && (
+          <div className="space-y-6">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-4 rounded-2xl bg-[#EA1D2C]/[0.07] border border-[#EA1D2C]/25">
+              <div>
+                <div className="flex items-center gap-2">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#EA1D2C] text-white text-[10px] font-black uppercase tracking-widest">
+                    Estúdio Lado a Lado
+                  </span>
+                  <span className="text-xs font-bold text-[#F6C945]">
+                    App Cliente 390px + Gestor KDS em Tempo Real
+                  </span>
+                </div>
+                <p className="text-xs text-slate-300 mt-1">
+                  Teste a visão mobile do turista em Caraíva ao lado do Gestor de Pedidos (com Pausa 1-Toque, Modo Cozinha Lotada +15m e Despacho Multimodal).
+                </p>
+              </div>
+              <Link
+                to="/delivery"
+                className="px-4 py-2.5 rounded-xl bg-[#EA1D2C] hover:bg-[#D01725] text-white text-xs font-black transition flex items-center gap-2 shrink-0"
+              >
+                <ExternalLink className="w-3.5 h-3.5" />
+                Abrir /delivery em Tela Cheia
+              </Link>
+            </div>
+
+            <div className="grid grid-cols-1 xl:grid-cols-12 gap-6 items-start">
+              <div className="xl:col-span-5 flex flex-col items-center">
+                <div className="w-full max-w-[395px] rounded-[42px] p-2.5 bg-[#050607] border-4 border-white/15 shadow-[0_24px_70px_rgba(0,0,0,0.85)]">
+                  <div className="w-24 h-4 mx-auto mb-2 rounded-full bg-white/10" />
+                  <div className="w-full h-[760px] rounded-[32px] overflow-hidden border border-white/10 bg-[#090B0C]">
+                    <iframe
+                      src="/delivery"
+                      title="Caraíva Delivery Mobile Preview"
+                      className="w-full h-full border-0"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="xl:col-span-7 rounded-2xl bg-[#0B0F17] border border-white/10 p-4 sm:p-5">
+                <CaraivaKdsActionTab
+                  niche={selectedNiche}
+                  orders={nicheOrders}
+                  onOrderUpdated={() => setOrders(getUnifiedOrders())}
+                  onOpenPosLauncher={() => setShowPosLauncher(true)}
+                />
+              </div>
+            </div>
+          </div>
         )}
       </main>
 
