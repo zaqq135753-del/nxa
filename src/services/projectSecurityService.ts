@@ -67,7 +67,14 @@ export function isProjectUnlocked(): boolean {
     return true;
   }
 
-  // 2. Verifica armazenamento local e de sessão
+  // 2. Em ambiente de desenvolvimento local (localhost / 127.0.0.1), o criador tem acesso direto
+  if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+    if (sessionStorage.getItem('caraiva_manual_lock') !== 'true') {
+      return true;
+    }
+  }
+
+  // 3. Verifica armazenamento local e de sessão
   try {
     const localAuth = localStorage.getItem(STORAGE_KEY);
     const sessionAuth = sessionStorage.getItem(STORAGE_KEY);
@@ -90,6 +97,7 @@ export function isProjectUnlocked(): boolean {
 export function setProjectUnlocked(unlocked: boolean, rememberDevice = true): void {
   try {
     if (unlocked) {
+      sessionStorage.removeItem('caraiva_manual_lock');
       if (rememberDevice) {
         localStorage.setItem(STORAGE_KEY, 'authorized');
         localStorage.setItem('caraiva_maintenance_bypass', 'true');
@@ -101,6 +109,7 @@ export function setProjectUnlocked(unlocked: boolean, rememberDevice = true): vo
       localStorage.removeItem(ATTEMPTS_KEY);
       localStorage.removeItem(LOCKOUT_KEY);
     } else {
+      sessionStorage.setItem('caraiva_manual_lock', 'true');
       localStorage.removeItem(STORAGE_KEY);
       sessionStorage.removeItem(STORAGE_KEY);
       localStorage.removeItem('caraiva_maintenance_bypass');
