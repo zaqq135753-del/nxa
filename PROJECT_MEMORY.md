@@ -110,6 +110,16 @@ Este repositório constrói o primeiro **Sistema Integrado de Destino Inteligent
 
 ---
 
+### ADR 009: O Farol de Caraíva — Dynamic Tour Island
+* **Data:** 17/10/2026
+* **Decisão:** Onboarding turista estilo Dynamic Island com física de mola e Web Audio API.
+
+### ADR 010: Auditoria United Carriers (Three.js + GLSL Wake + GSAP + Lenis + Barba.js)
+* **Data:** 20/10/2026
+* **Decisão:** Engenharia reversa dos shaders oceânicos e arquitetura headless de alta performance.
+
+---
+
 ## ⚠️ 4. ARMADILHAS EVITADAS & LIÇÕES APRENDIDAS (NÃO REPETIR)
 
 1. **Evitar concorrência de Remotion Players:** Nunca colocar `<Player />` do Remotion dentro de listas com scroll infinito (`map()`). Isso trava o navegador móvel. Use sempre `<video loop autoPlay muted playsInline>` com assets pré-renderizados.
@@ -130,7 +140,8 @@ Este repositório constrói o primeiro **Sistema Integrado de Destino Inteligent
 - [x] **Passo 5:** Otimizar empacotamento com Vite code-splitting e PWA resilience (`manifest.webmanifest` + `sw.js`).
 - [x] **Passo 6:** Implementar o Cardápio Vivo com Comanda Flutuante (Bandeja na Areia), Sommelier IA da Maré e Reservas com Inteligência Solar (Pôr do Sol, Luau, Sombra de Amendoeira).
 - [x] **Passo 7:** Criar o Ecossistema de Onboarding Mágico com Cartão NFC / QR Code e Construção Procedural 3D em Tempo Real da Casa Colonial na Areia (`onboarding-magic/` + Three.js + TapTable Mesa 01).
-- [ ] **Passo 8:** Renderizar loops de vídeo de pratos em Remotion para exibição no cardápio de mesas do TapTable.
+- [x] **Passo 8:** Rolagem Aveludada Inercial (Lenis + GSAP Ticker) e Canoa Viva com Wake Shader Kelvin no Rio Caraíva.
+- [ ] **Passo 9:** Renderizar loops de vídeo de pratos em Remotion para exibição no cardápio de mesas do TapTable.
 
 ---
 

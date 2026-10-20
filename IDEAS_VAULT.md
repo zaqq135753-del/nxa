@@ -123,3 +123,19 @@ Fase A implementada e testada: cadastro de quatro etapas por oito nichos, rascun
 
 ### Ideia 08 — fase C entregue
 Conceitos aprovados; cinema e miniaturas 3D paramétricas publicados em 0be378c, com GLB exportável. Não equivale a réplica fotográfica. Próxima frente solicitada: plano comercial e programa de parceiros/influenciadores, incluindo atribuição B2B/B2C ainda a implementar.
+
+
+---
+
+### 🌟 Ideia 09: O Farol Sensorial de Caraíva — Dynamic Island & Onboarding Flutuante do Turista
+* **Projetos Conectados:** `caraiva-ecosystem` + `taptable-app` + `caraiva-cinematic` + `supabase`
+* **Conceito Original:** Incluir um passo a passo inicial em notificações animadas instruindo o turista a como usar a plataforma e ter a melhor experiência.
+* **Multiplicação 3X:**
+  1. *Engenharia:* Cápsula flutuante no topo estilo Dynamic Island da Apple Pro (`#090B0C`, vidro fosco e glow dourado `#F6C945`) animada com física de mola via Motion React. Em vez de pop-ups intrusivos, são micro-notificações que brotam suavemente com síntese sonora de acordes via Web Audio API. Disparado no primeiro acesso com persistência no `localStorage` e botão elegante de replay no header para rever quando quiser.
+  2. *Monetização & Viralidade:* Cada passo é orientado a ação e gera valor real imediato:
+     - 🌊 *Maré ao Vivo:* Avisa quando o caminho de areia para o Satu/Corumbau está aberto a pé, estimulando reservas e passeios.
+     - 📱 *TapTable NFC:* Ensina a encostar o celular na mesa de bares parceiros para pedir sem garçom, impulsionando pedidos digitais.
+     - 🏮 *Navegação Noturna na Areia:* Ensina a usar o mapa 3D para achar o forró no escuro das ruelas sem postes.
+     - ⚡ *Modo Areia Offline:* Garante que o turista confie no app mesmo quando o 4G da praia oscilar.
+  3. *Sinergia Cruzada:* Conecta diretamente o Guia à mesa NFC do TapTable e ao motor de marés em tempo real.
+* **Status:** `[APROVADA - EM IMPLEMENTAÇÃO]`
