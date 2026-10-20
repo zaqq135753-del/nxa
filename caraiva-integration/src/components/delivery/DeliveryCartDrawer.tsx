@@ -1,3 +1,4 @@
+import { createUnifiedOrder } from "../../services/villageUnifiedOrdersService";
 import React, { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import QRCode from "qrcode";
@@ -162,6 +163,70 @@ export const DeliveryCartDrawer: React.FC<DeliveryCartDrawerProps> = ({
         progressPct: 18,
       },
     };
+
+    // 1. Sincroniza cache unificado do Delivery
+    try {
+      localStorage.setItem("caraiva_active_delivery_order", JSON.stringify(newOrder));
+      window.dispatchEvent(new CustomEvent("caraiva:delivery-order-created", { detail: newOrder }));
+    } catch {}
+
+    // 2. Registra no serviço unificado de pedidos conectado ao KDS (Merchant OS / TapTable)
+    try {
+      createUnifiedOrder({
+        businessId: merchant.id,
+        businessName: merchant.name,
+        niche: "gastronomia",
+        orderType: "delivery",
+        customer: {
+          name: "Cliente Caraíva VIP",
+          phone: "73999990000",
+          whatsappFormatted: "5573999990000",
+        },
+        items: cart.map((it) => ({
+          id: it.cartItemId,
+          name: it.menuItem.name,
+          quantity: it.quantity,
+          unitPrice: it.unitTotal,
+          subtotal: it.lineTotal,
+          notes: it.notes || undefined,
+        })),
+        totalAmount: total,
+        paidAmount: total,
+        paymentMethod: "pix",
+        paymentStatus: "paid",
+        destination: {
+          type: deliveryMode === "PICKUP" ? "retirada" : "pousada",
+          label: deliveryMode === "PICKUP" ? "Retirada no Balcão" : selectedZone.name,
+          detail: `${newOrder.pousadaOrAddress} (${newOrder.referencePoint}) • PIN ${pin}`,
+        },
+      });
+    } catch {}
+
+    // 3. Sincroniza KDS do Comerciante localmente
+    try {
+      const businessStoreKey = "caraiva-demo-v2";
+      const rawStore = localStorage.getItem(businessStoreKey);
+      const storeData = rawStore ? JSON.parse(rawStore) : { orders: [], bookings: [], products: [] };
+      const newEcosystemOrder = {
+        id: newOrder.orderId,
+        establishmentId: merchant.id,
+        items: cart.map(i => ({ name: i.menuItem.name, qty: i.quantity, price: i.unitTotal })),
+        address: `🛵 ${newOrder.pousadaOrAddress} (PIN: ${pin})`,
+        zone: selectedZone.name,
+        split: { gross: total, merchantNet: subtotal, courierNet: deliveryFee, platformFee: 0 },
+        status: "novo",
+        createdAt: Date.now(),
+        customerName: "Cliente Caraíva VIP",
+        paymentMethod: "pix",
+        paymentStatus: "paid"
+      };
+      storeData.orders = [newEcosystemOrder, ...(storeData.orders || [])];
+      localStorage.setItem(businessStoreKey, JSON.stringify(storeData));
+      const bc = new BroadcastChannel(businessStoreKey);
+      bc.postMessage("sync");
+      bc.close();
+      window.dispatchEvent(new Event(businessStoreKey));
+    } catch {}
 
     onOrderCreated(newOrder);
   };

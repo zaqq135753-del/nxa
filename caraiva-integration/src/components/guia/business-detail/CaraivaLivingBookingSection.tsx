@@ -301,6 +301,25 @@ export const CaraivaLivingBookingSection: React.FC<CaraivaLivingBookingSectionPr
         console.warn('Erro ao registrar reserva unificada:', err);
       }
 
+      // Salva guest preset para sincronização automática com o Delivery e Guia
+      try {
+        const guestPreset = {
+          pousada: businessName,
+          suite: selectedAmbience.title,
+          deliveryPreset: `${businessName} • ${selectedAmbience.title}`,
+          checkIn: getResolvedDateString(),
+          guestName: customerName.trim() || 'Hóspede Caraíva VIP',
+          voucherCode,
+          confirmedAt: new Date().toISOString()
+        };
+        localStorage.setItem('caraiva_guest_preset', JSON.stringify(guestPreset));
+        if (typeof window !== 'undefined') {
+          window.dispatchEvent(new CustomEvent('caraiva:guest-preset-updated', { detail: guestPreset }));
+        }
+      } catch (e) {
+        console.warn('Erro ao salvar guest preset:', e);
+      }
+
       setIsSubmitting(false);
     }, 700);
   };

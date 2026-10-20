@@ -396,6 +396,49 @@ export function updateOrderStatus(orderId: string, newStatus: UnifiedOrderStatus
 
   current[index] = updatedOrder;
   saveAndBroadcast(current);
+
+  // Sincroniza reflexivamente com o Caraíva Delivery App se este for o pedido ativo
+  try {
+    const rawActive = localStorage.getItem("caraiva_active_delivery_order");
+    if (rawActive) {
+      const activeObj = JSON.parse(rawActive);
+      const cleanNum = updatedOrder.orderNumber.replace('#', '');
+      const isMatch = activeObj.orderId === cleanNum ||
+                      activeObj.orderId === updatedOrder.id ||
+                      activeObj.orderId.includes(cleanNum) ||
+                      (activeObj.merchantId === updatedOrder.businessId && activeObj.status !== "DELIVERED");
+      if (isMatch) {
+        let mappedStatus: "CONFIRMED" | "PREPARING" | "OUT_FOR_DELIVERY" | "DELIVERED" = "CONFIRMED";
+        let progress = 20;
+        if (newStatus === "preparando") {
+          mappedStatus = "PREPARING";
+          progress = 50;
+        } else if (newStatus === "em_rota") {
+          mappedStatus = "OUT_FOR_DELIVERY";
+          progress = 82;
+        } else if (newStatus === "concluido" || newStatus === "checkin_realizado") {
+          mappedStatus = "DELIVERED";
+          progress = 100;
+        }
+
+        const syncedActive = {
+          ...activeObj,
+          status: mappedStatus,
+          courier: {
+            ...activeObj.courier,
+            progressPct: progress,
+          },
+        };
+        localStorage.setItem("caraiva_active_delivery_order", JSON.stringify(syncedActive));
+        if (typeof window !== "undefined") {
+          window.dispatchEvent(new CustomEvent("caraiva:active-order-updated", { detail: syncedActive }));
+        }
+      }
+    }
+  } catch (err) {
+    console.warn("Erro ao sincronizar active delivery order:", err);
+  }
+
   return updatedOrder;
 }
 

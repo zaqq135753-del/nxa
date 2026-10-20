@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "motion/react";
 import {
@@ -67,7 +67,19 @@ export const CaraivaDeliveryApp: React.FC = () => {
     });
   };
 
-  const [activeTab, setActiveTab] = useState<string>("inicio");
+  const [activeTab, setActiveTab] = useState<string>(() => {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const tabParam = params.get("tab");
+      if (tabParam && ["inicio", "busca", "pedidos", "perfil"].includes(tabParam)) {
+        return tabParam;
+      }
+      if (window.location.pathname.includes("/pedidos")) {
+        return "pedidos";
+      }
+    } catch {}
+    return "inicio";
+  });
   const [tabDirection, setTabDirection] = useState<number>(1);
   const [selectedCategory, setSelectedCategory] = useState<string>("todos");
   const [searchQuery, setSearchQuery] = useState<string>("");
@@ -75,9 +87,13 @@ export const CaraivaDeliveryApp: React.FC = () => {
   const [onlySuperMerchants, setOnlySuperMerchants] = useState<boolean>(false);
   const [selectedZone, setSelectedZone] = useState<DeliveryZone>(DELIVERY_ZONES[0]);
   const [isAddressSheetOpen, setIsAddressSheetOpen] = useState<boolean>(false);
-  const [selectedPousadaRef, setSelectedPousadaRef] = useState<string>(
-    "Pousada Vila do Mar • Suíte 04"
-  );
+  const [selectedPousadaRef, setSelectedPousadaRef] = useState<string>(() => {
+    try {
+      const preset = JSON.parse(localStorage.getItem("caraiva_guest_preset") || "null");
+      if (preset?.deliveryPreset) return preset.deliveryPreset;
+    } catch {}
+    return "Pousada Vila do Mar • Suíte 04";
+  });
   const [compactStoreView, setCompactStoreView] = useState<boolean>(true);
 
   const [selectedMerchant, setSelectedMerchant] = useState<DeliveryMerchant | null>(
@@ -85,10 +101,38 @@ export const CaraivaDeliveryApp: React.FC = () => {
   );
   const [cart, setCart] = useState<CartItemSelection[]>([]);
   const [isCartOpen, setIsCartOpen] = useState<boolean>(false);
-  const [activeOrder, setActiveOrder] = useState<ActiveDeliveryOrder>(
-    INITIAL_DEMO_ACTIVE_ORDER
-  );
+  const [activeOrder, setActiveOrder] = useState<ActiveDeliveryOrder>(() => {
+    try {
+      const saved = localStorage.getItem("caraiva_active_delivery_order");
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && parsed.orderId) return parsed;
+      }
+    } catch {}
+    return INITIAL_DEMO_ACTIVE_ORDER;
+  });
   const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  useEffect(() => {
+    const handleActiveOrderSync = (e: Event) => {
+      const customEvent = e as CustomEvent<ActiveDeliveryOrder>;
+      if (customEvent.detail) {
+        setActiveOrder(customEvent.detail);
+      } else {
+        try {
+          const saved = localStorage.getItem("caraiva_active_delivery_order");
+          if (saved) setActiveOrder(JSON.parse(saved));
+        } catch {}
+      }
+    };
+
+    window.addEventListener("caraiva:delivery-order-created", handleActiveOrderSync);
+    window.addEventListener("caraiva:active-order-updated", handleActiveOrderSync);
+    return () => {
+      window.removeEventListener("caraiva:delivery-order-created", handleActiveOrderSync);
+      window.removeEventListener("caraiva:active-order-updated", handleActiveOrderSync);
+    };
+  }, []);
 
   const handleSwitchTab = (nextTabId: string) => {
     if (nextTabId === activeTab) return;
@@ -259,14 +303,21 @@ export const CaraivaDeliveryApp: React.FC = () => {
     nextStatus: DeliveryOrderStatus,
     nextProgress: number
   ) => {
-    setActiveOrder((prev) => ({
-      ...prev,
-      status: nextStatus,
-      courier: {
-        ...prev.courier,
-        progressPct: nextProgress,
-      },
-    }));
+    setActiveOrder((prev) => {
+      const updated = {
+        ...prev,
+        status: nextStatus,
+        courier: {
+          ...prev.courier,
+          progressPct: nextProgress,
+        },
+      };
+      try {
+        localStorage.setItem("caraiva_active_delivery_order", JSON.stringify(updated));
+        window.dispatchEvent(new CustomEvent("caraiva:active-order-updated", { detail: updated }));
+      } catch {}
+      return updated;
+    });
   };
 
   const cartItemsCount = useMemo(

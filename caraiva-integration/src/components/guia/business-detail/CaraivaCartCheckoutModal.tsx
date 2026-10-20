@@ -49,6 +49,7 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
   const [customerName, setCustomerName] = useState('');
   const [paymentMethod, setPaymentMethod] = useState<'pix' | 'cartao_entrega' | 'dinheiro'>('pix');
   const [submittedOrder, setSubmittedOrder] = useState<VillageOrderPayload | null>(null);
+  const [orderPin, setOrderPin] = useState<string>('');
 
   if (!isOpen) return null;
   if (cloudCheckoutEnabled) return <div className="fixed inset-0 z-50 bg-black/80 flex items-end sm:items-center justify-center p-3"><div className="w-full max-w-lg"><CloudCheckout key={businessId} businessId={businessId} businessName={businessName} onClose={onClose}/></div></div>;
@@ -72,7 +73,63 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
       paymentMethod,
     });
 
+    const pin = String(Math.floor(1000 + Math.random() * 9000));
+    setOrderPin(pin);
     setSubmittedOrder(payload);
+
+    try {
+      const activeDeliveryOrder = {
+        orderId: payload.orderId.replace('#', '') || `CAR-${Math.floor(1000 + Math.random() * 8999)}`,
+        createdAt: "Agora mesmo",
+        merchantId: businessId,
+        merchantName: businessName,
+        merchantLogo: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=120&q=80",
+        items: currentItems.map((ci) => ({
+          cartItemId: `item-${ci.product.id}`,
+          merchantId: businessId,
+          merchantName: businessName,
+          menuItem: {
+            id: ci.product.id,
+            name: ci.product.name,
+            description: ci.product.description || "",
+            price: ci.product.price,
+            image: ci.product.image || "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=200&q=80",
+            category: ci.product.category || "Gastronomia",
+          },
+          quantity: ci.quantity,
+          selectedOptions: [],
+          notes: ci.notes || "",
+          unitTotal: ci.product.price,
+          lineTotal: ci.product.price * ci.quantity,
+        })),
+        subtotal,
+        deliveryFee,
+        discount: 0,
+        total,
+        status: "CONFIRMED" as const,
+        deliveryMode: destinationType === 'retirada' ? "PICKUP" as const : "DELIVERY" as const,
+        zone: {
+          id: destinationType === 'praia' ? "praia-barra" as const : "beira-rio" as const,
+          name: destinationType === 'praia' ? "Praia da Barra & Beira-Mar" : "Beira-Rio & Centro Histórico",
+          referenceHint: destinationDetail,
+          baseFee: deliveryFee,
+          estimatedMinutes: "25-35 min",
+          courierModal: destinationType === 'praia' ? "A Pé pela Areia" as const : "Bike Cargueira" as const,
+        },
+        pousadaOrAddress: destinationDetail,
+        referencePoint: destinationType === 'pousada' ? "Pousada em Caraíva" : "Vila de Caraíva",
+        confirmationPin: pin,
+        courier: {
+          name: "Neto Pataxó • Frota Caraíva VIP",
+          modal: destinationType === 'praia' ? "A Pé pela Areia" : "Bike Cargueira",
+          rating: 4.99,
+          avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80",
+          progressPct: 15,
+        },
+      };
+      localStorage.setItem("caraiva_active_delivery_order", JSON.stringify(activeDeliveryOrder));
+      window.dispatchEvent(new CustomEvent("caraiva:delivery-order-created", { detail: activeDeliveryOrder }));
+    } catch {}
 
     // Sincroniza em tempo real com o KDS do Business (/business/delivery) via BroadcastChannel e localStorage
     try {
@@ -242,16 +299,37 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
                 </p>
               </div>
 
+              {orderPin && (
+                <div className="p-3 rounded-2xl bg-amber-400/10 border border-amber-400/30 flex items-center justify-between text-left">
+                  <div>
+                    <span className="text-[10px] uppercase font-black text-amber-400 block tracking-wider">Código de Entrega (PIN)</span>
+                    <span className="text-[11px] text-slate-300">Informe ao entregador quando receber</span>
+                  </div>
+                  <span className="font-mono text-lg font-black text-amber-400 tracking-widest bg-black/40 px-3 py-1 rounded-xl border border-amber-400/30">
+                    {orderPin}
+                  </span>
+                </div>
+              )}
+
               <div className="pt-2 flex flex-col gap-2">
+                <a
+                  href="/delivery?tab=pedidos"
+                  onClick={() => {
+                    clearCart();
+                  }}
+                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-amber-400 via-amber-500 to-[#F6C945] text-slate-950 font-black text-xs shadow-xl active:scale-95 transition-all flex items-center justify-center gap-1.5 hover:brightness-105"
+                >
+                  <ShoppingBag className="w-4 h-4 fill-slate-950" />
+                  <span>Acompanhar no Caraíva Delivery (Rastreio ao Vivo & PIN)</span>
+                </a>
                 <a
                   href="/guia/pedidos"
                   onClick={() => {
                     clearCart();
                   }}
-                  className="w-full py-3.5 rounded-xl bg-gradient-to-r from-teal-500 to-emerald-500 text-slate-950 font-black text-xs shadow-lg active:scale-95 transition-all flex items-center justify-center gap-1.5"
+                  className="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-slate-200 font-bold text-xs flex items-center justify-center gap-1.5 transition-all"
                 >
-                  <ShoppingBag className="w-4 h-4" />
-                  <span>Acompanhar meus Pedidos & Status</span>
+                  <span>Ver Histórico no Guia</span>
                 </a>
                 <button
                   type="button"
@@ -259,7 +337,7 @@ export const CaraivaCartCheckoutModal: React.FC<CaraivaCartCheckoutModalProps> =
                     clearCart();
                     onClose();
                   }}
-                  className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-300 font-bold text-xs transition-all"
+                  className="w-full py-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-white font-bold text-xs transition-all cursor-pointer"
                 >
                   Voltar ao Guia de Caraíva
                 </button>
